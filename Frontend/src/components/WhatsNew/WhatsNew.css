@@ -1,0 +1,41 @@
+/* What's New — section chrome only. Product grid + card styles live in
+   components/ProductCard/ProductCard.css (shared with the Men's page). */
+
+.whats-new-section {
+  background-color: var(--bg-whats-new);
+  border-bottom: 1px solid var(--color-grey-200);
+}
+
+/* Category Filter Bar */
+.category-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(24px, 3vw, 32px);
+}
+
+.category-pill {
+  padding: 8px 22px;
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-grey-600);
+  background-color: var(--color-grey-50);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-xs);
+  transition: all var(--dur-fast) var(--ease-smooth);
+}
+
+.category-pill:hover {
+  color: var(--color-ink);
+  border-color: var(--color-grey-400);
+  background-color: var(--color-white);
+}
+
+.category-pill.active {
+  background-color: var(--color-ink);
+  color: var(--color-white);
+  border-color: var(--color-ink);
+  box-shadow: var(--shadow-sm);
+}

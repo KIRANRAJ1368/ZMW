@@ -1,0 +1,218 @@
+/* Category Showcase — Men's / Women's / Kids' Fashion */
+
+.category-section {
+  background-color: var(--bg-category);
+  border-bottom: 1px solid var(--color-grey-200);
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Card — Architectural box structure with crisp edges */
+.category-card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-grey-300);
+  background-color: var(--color-sand);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--dur-normal) var(--ease-smooth);
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-accent-deep);
+  box-shadow: var(--shadow-lg);
+}
+
+.category-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background-color: var(--color-sand);
+}
+
+.category-main-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--ease-smooth);
+}
+
+.category-card:hover .category-main-img {
+  transform: scale(1.05);
+}
+
+.category-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 17, 16, 0.04) 0%,
+    rgba(18, 17, 16, 0.22) 48%,
+    rgba(18, 17, 16, 0.88) 100%
+  );
+  z-index: 1;
+  transition: opacity var(--dur-normal);
+}
+
+/* Accent Image — crisp floating detail card */
+.category-accent-wrapper {
+  position: absolute;
+  bottom: 146px;
+  right: 18px;
+  width: 100px;
+  height: 130px;
+  overflow: hidden;
+  z-index: 3;
+  border: 2px solid var(--color-white);
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-md);
+  background-color: var(--color-sand);
+}
+
+.category-accent-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms var(--ease-smooth);
+}
+
+.category-card:hover .category-accent-img {
+  transform: scale(1.08);
+}
+
+/* Content */
+.category-card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 26px 22px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.category-count {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.category-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.8vw + 0.8rem, 1.95rem);
+  font-weight: 600;
+  color: var(--color-white);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.category-subtitle-text {
+  font-size: var(--text-small);
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+}
+
+.category-description {
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  margin-top: 4px;
+  display: none;
+}
+
+.category-card:hover .category-description {
+  display: block;
+}
+
+.category-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: var(--text-small);
+  font-weight: 700;
+  color: var(--color-white);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color var(--dur-fast);
+}
+
+.category-card:hover .category-cta {
+  color: var(--color-accent);
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 820px) {
+  .category-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .category-image-container {
+    aspect-ratio: 16 / 10;
+  }
+
+  .category-accent-wrapper {
+    width: 90px;
+    height: 115px;
+    bottom: 120px;
+    right: 14px;
+  }
+
+  .category-card-content {
+    padding: 22px 18px;
+  }
+
+  .category-description {
+    display: block;
+  }
+}
+
+@media (max-width: 576px) {
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-image-container {
+    aspect-ratio: 3 / 4;
+  }
+
+  .category-accent-wrapper {
+    width: 80px;
+    height: 100px;
+    bottom: 110px;
+    right: 12px;
+  }
+
+  .category-card-content {
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .category-image-container {
+    aspect-ratio: 4 / 5;
+  }
+}

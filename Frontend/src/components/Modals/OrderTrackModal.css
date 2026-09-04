@@ -1,0 +1,190 @@
+/* Order Track Modal Styles */
+
+.order-track-container {
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: 36px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: fadeInUp var(--dur-normal) var(--ease-smooth);
+}
+
+.order-track-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-sand);
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: all var(--dur-fast);
+}
+
+.order-track-close-btn:hover {
+  background: var(--color-ink);
+  color: var(--color-white);
+}
+
+.order-track-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.order-track-kicker {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--color-accent-deep);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.order-track-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--color-ink);
+  margin-bottom: 8px;
+}
+
+.order-track-desc {
+  font-size: var(--text-xs);
+  color: var(--color-grey-600);
+  line-height: 1.5;
+}
+
+.order-track-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.track-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 12px;
+}
+
+/* Results Card */
+.tracking-results-card {
+  background-color: var(--color-sand-light);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  border: 1px solid var(--color-grey-200);
+}
+
+.tracking-meta-banner {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-grey-200);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.meta-sub {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-grey-400);
+}
+
+.meta-val {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.meta-val.highlight {
+  color: var(--color-accent-deep);
+}
+
+/* Timeline */
+.tracking-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  padding-left: 8px;
+}
+
+.timeline-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+}
+
+.timeline-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: 11px;
+  width: 2px;
+  height: calc(100% + 4px);
+  background-color: var(--color-grey-200);
+}
+
+.timeline-step.done:not(:last-child)::after {
+  background-color: var(--color-forest);
+}
+
+.timeline-marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-grey-200);
+  color: var(--color-grey-600);
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.timeline-step.done .timeline-marker {
+  background-color: var(--color-forest);
+  color: var(--color-white);
+}
+
+.timeline-step.active .timeline-marker {
+  background-color: var(--color-ink);
+  color: var(--color-white);
+  box-shadow: 0 0 0 4px var(--color-accent-soft);
+}
+
+.timeline-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.timeline-date {
+  font-size: 0.7rem;
+  color: var(--color-grey-400);
+}
+
+@media (max-width: 540px) {
+  .track-form-row {
+    grid-template-columns: 1fr;
+  }
+}

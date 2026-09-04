@@ -1,0 +1,208 @@
+/* Tabbed Showcase Styles */
+
+.tabbed-showcase-section {
+  background: #f8f6f0;
+  border-bottom: 1px solid var(--color-grey-200);
+}
+
+.showcase-tabs-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(24px, 3vw, 32px);
+}
+
+.showcase-tabs {
+  display: inline-flex;
+  background-color: var(--color-white);
+  padding: 5px;
+  border-radius: var(--radius-xs);
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-grey-200);
+}
+
+.showcase-tab {
+  padding: 10px 26px;
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-grey-600);
+  border-radius: var(--radius-xs);
+  transition: all var(--dur-fast) var(--ease-smooth);
+}
+
+.showcase-tab:hover {
+  color: var(--color-ink);
+}
+
+.showcase-tab.active {
+  background-color: var(--color-ink);
+  color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabbed-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px 20px;
+}
+
+.tabbed-product-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-white);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  border: 1px solid var(--color-grey-200);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--dur-normal) var(--ease-smooth);
+}
+
+.tabbed-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent-deep);
+}
+
+.tabbed-img-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  background-color: var(--color-grey-100);
+  margin-bottom: 14px;
+}
+
+.tabbed-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms var(--ease-smooth);
+}
+
+.tabbed-product-card:hover .tabbed-img {
+  transform: scale(1.05);
+}
+
+.tabbed-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all var(--dur-fast);
+}
+
+.tabbed-product-card:hover .tabbed-actions {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.tabbed-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-xs);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--color-grey-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--dur-fast);
+}
+
+.tabbed-action-btn:hover {
+  background: var(--color-ink);
+  color: var(--color-white);
+}
+
+.tabbed-action-btn.saved {
+  color: var(--color-accent-deep);
+}
+
+.tabbed-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tabbed-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.tabbed-category {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-grey-400);
+  font-weight: 600;
+}
+
+.tabbed-title {
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabbed-title:hover {
+  color: var(--color-accent-deep);
+}
+
+.tabbed-price-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.btn-quick-add {
+  margin-top: auto;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--color-grey-100);
+  color: var(--color-ink);
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-grey-200);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all var(--dur-fast);
+}
+
+.btn-quick-add:hover {
+  background-color: var(--color-ink);
+  color: var(--color-white);
+  border-color: var(--color-ink);
+}
+
+@media (max-width: 1100px) {
+  .tabbed-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .tabbed-product-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .showcase-tab {
+    padding: 8px 16px;
+    font-size: var(--text-xs);
+  }
+}

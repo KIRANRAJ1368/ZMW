@@ -1,0 +1,38 @@
+/*
+  Per the homepage design spec, the newsletter block is the page's one
+  intentional dark section — so this counter strip stays on the light
+  grey-100 surface instead, functioning as the "editorial/story" rhythm
+  break between the cream feature banner and the white testimonials.
+*/
+.stats {
+  background: var(--color-grey-100);
+  color: var(--color-ink);
+  padding-block: var(--space-2xl);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+  text-align: center;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 3vw, 3.2rem);
+  color: var(--color-accent-deep);
+}
+
+.stat-label {
+  margin-top: 0.6rem;
+  font-size: var(--text-small);
+  color: var(--color-grey-600);
+  max-width: 22ch;
+  margin-inline: auto;
+}
+
+@media (max-width: 760px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -1,0 +1,151 @@
+/* Design Tokens for ZMW — Luxury Minimalist E-Commerce */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+/* Visual Rhythm: Alternating distinct section background treatments */
+
+:root {
+  /* Section-by-Section Distinct Backgrounds */
+  --bg-hero:           #F9F7F2;
+  --bg-trust:          #FFFFFF;
+  --bg-category:       #F5F2EA;
+  --bg-whats-new:      #FFFFFF;
+  --bg-collections:    #EFECE5;
+  --bg-tabbed:         #F6F3EC;
+  --bg-split:          #161514;
+  --bg-testimonials:   #FAF8F4;
+  --bg-instagram:      #FFFFFF;
+  --bg-footer:         #121110;
+
+  /* Core Palette */
+  --color-cream:       #F8F6F0;   /* main warm neutral */
+  --color-sand:        #F5F2EA;   /* secondary warm neutral */
+  --color-sand-light:  #FAF8F4;   /* soft off-white */
+  --color-sand-hover:  #E8E4D9;   /* hover state */
+  --color-white:       #FFFFFF;   /* pure white */
+
+  /* Brand Accent — luxury warm champagne gold */
+  --color-accent:      #C89D3C;
+  --color-accent-hover:#B58B2E;  /* hover state */
+  --color-accent-soft: #FBF6EB;  /* light accent tint */
+  --color-accent-deep: #8E6B1D;  /* readable gold accent for text */
+  --color-accent-border: #DFBF73;
+
+  /* Legacy aliases for backwards compatibility */
+  --color-rust:        #C89D3C;
+  --color-rust-hover:  #B58B2E;
+  --color-rust-soft:   #FBF6EB;
+  --color-rust-deep:   #8E6B1D;
+  --color-ink-soft:    #5E5C56;
+  --color-paper:       #F8F6F0;
+  --color-linen:       #F8F6F0;
+  --color-linen-deep:  #ECE8DE;
+  --color-line:        #E5E2D9;
+  --color-off-white:   #FAF8F4;
+  --color-olive:       #8E6B1D;
+
+  /* Step scale aliases */
+  --step-small:  var(--text-small);
+  --step-h2:     var(--text-h2);
+  --step-lead:   var(--text-lead);
+
+  /* Neutrals */
+  --color-grey-50:  #FAFAF8;
+  --color-grey-100: #F4F2EB;
+  --color-grey-200: #E6E3DA;
+  --color-grey-300: #CCC8BC;
+  --color-grey-400: #9C988D;
+  --color-grey-600: #5E5C56;
+  --color-grey-800: #2C2B27;
+
+  /* Ink */
+  --color-ink:      #181715;
+  --color-ink-deep: #0D0C0A;
+
+  /* Fashion Accents */
+  --color-gold:        #C29B4D;
+  --color-gold-deep:   #9C772F;
+  --color-gold-soft:   #F8F4EA;
+  --color-forest:      #264E3A;
+  --color-forest-soft: #E9F3EE;
+  --color-rose:        #C7655B;
+
+  /* Semantic */
+  --color-success:    #237848;
+  --color-success-bg: #E8F7EE;
+  --color-error:      #B83224;
+  --color-error-bg:   #FDF1F0;
+  --color-warning:    #C26B08;
+  --color-warning-bg: #FEF6E6;
+
+  /* Overlays & Glass */
+  --color-overlay-dark:   rgba(18, 17, 16, 0.65);
+  --color-overlay-glass:  rgba(255, 255, 255, 0.94);
+  --color-glass-border:   rgba(204, 200, 188, 0.5);
+  --color-glass-card:     rgba(255, 255, 255, 0.95);
+
+  /* Typography */
+  --font-primary:      "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display:      "Playfair Display", Georgia, serif;
+  --font-body:         "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif-accent: "Playfair Display", Georgia, serif;
+
+  /* Fluid Type Scale */
+  --text-hero: clamp(2.4rem, 4.8vw + 1rem, 4.5rem);
+  --text-h1:   clamp(1.9rem, 3.2vw + 0.8rem, 3.2rem);
+  --text-h2:   clamp(1.5rem, 2.4vw + 0.6rem, 2.35rem);
+  --text-h3:   clamp(1.2rem, 1.4vw + 0.5rem, 1.6rem);
+  --text-h4:   1.12rem;
+  --text-lead: clamp(0.98rem, 0.4vw + 0.88rem, 1.15rem);
+  --text-body: 0.94rem;
+  --text-small: 0.84rem;
+  --text-xs:   0.75rem;
+  --text-badge: 0.68rem;
+
+  /* Spacing System */
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs:  8px;
+  --space-sm:  12px;
+  --space-md:  20px;
+  --space-lg:  32px;
+  --space-xl:  44px;
+  --space-2xl: 60px;
+  --space-3xl: 80px;
+
+  /* Layout */
+  --container-max: 1380px;
+  --container-pad: clamp(16px, 4vw, 48px);
+
+  /* Architectural Box/Card Geometry (Non-rounded, crisp luxury look) */
+  --radius-xs:  2px;
+  --radius-sm:  3px;
+  --radius-md:  4px;
+  --radius-lg:  4px;
+  --radius-xl:  6px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(24, 23, 21, 0.05);
+  --shadow-md: 0 8px 24px rgba(24, 23, 21, 0.08);
+  --shadow-lg: 0 16px 40px rgba(24, 23, 21, 0.12);
+  --shadow-xl: 0 24px 60px rgba(24, 23, 21, 0.16);
+  --shadow-drawer: -10px 0 35px rgba(0, 0, 0, 0.15);
+  --shadow-accent: 0 4px 20px rgba(200, 157, 60, 0.35);
+
+  /* Transitions */
+  --ease-smooth:    cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring:    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-instant:    150ms;
+  --dur-fast:       250ms;
+  --dur-normal:     400ms;
+  --dur-slow:       700ms;
+
+  /* Z-Index Hierarchy */
+  --z-sticky-nav: 900;
+  --z-overlay:    1000;
+  --z-drawer:     1050;
+  --z-modal:      1100;
+  --z-lightbox:   1200;
+  --z-toast:      1300;
+  --z-fab:        950;
+}
