@@ -1,29 +1,15 @@
-import useScrollReveal from "../../hooks/useScrollReveal";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-/**
- * ScrollReveal
- * Thin wrapper so pages/components can opt an element into the shared
- * reveal-on-scroll treatment without re-wiring the hook each time.
- *
- *   <ScrollReveal as="li" delay={2} className="card">...</ScrollReveal>
- */
-export default function ScrollReveal({
-  as: Tag = "div",
-  delay = 0,
-  className = "",
-  threshold,
-  ...rest
-}) {
-  const [ref, visible] = useScrollReveal(
-    threshold ? { threshold } : undefined
-  );
-  const delayClass = delay ? `reveal-delay-${delay}` : "";
 
-  return (
-    <Tag
-      ref={ref}
-      className={`reveal ${visible ? "is-visible" : ""} ${delayClass} ${className}`.trim()}
-      {...rest}
-    />
-  );
+export default function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+  }, [pathname, hash]);
+
+  return null;
 }

@@ -1,17 +1,15 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Footer.css";
 
 const QUICK_LINKS = [
-  { label: "Summer Collection", href: "#whats-new" },
-  { label: "Best Sellers", href: "#tabbed-showcase" },
-  { label: "New Arrivals", href: "#tabbed-showcase" },
-  { label: "Underwear & Intimates", href: "#collections" },
-  { label: "Accessories & Bags", href: "#whats-new" },
-  { label: "Swimwear & Resort", href: "#collections" }
+  { label: "Summer Collection", href: "/#whats-new" },
+  { label: "Best Sellers", href: "/#tabbed-showcase" },
+  { label: "New Arrivals", href: "/#tabbed-showcase" }
 ];
 
 const INFO_LINKS = [
-  { label: "About Our Atelier", href: "#features" },
+  { label: "About Our Atelier", href: "/#features" },
   { label: "Sustainability Commitment", href: "#" },
   { label: "Size Guide", href: "#" },
   { label: "Fabric Care Manual", href: "#" },
@@ -53,9 +51,9 @@ export default function Footer() {
         <div className="footer-grid">
           {/* Brand Column */}
           <div className="footer-brand-col">
-            <a href="#home" className="footer-logo">
+            <Link to="/" className="footer-logo">
               <span className="footer-brand-main">ZMW</span>
-            </a>
+            </Link>
 
 
             <p className="footer-brand-tagline">

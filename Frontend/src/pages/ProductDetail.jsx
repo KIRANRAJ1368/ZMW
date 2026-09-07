@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import { MEN_PRODUCTS, WOMEN_PRODUCTS } from "../data/products";
+import { MEN_PRODUCTS, WOMEN_PRODUCTS, KIDS_PRODUCTS } from "../data/products";
 import ProductCard from "../components/ProductCard/ProductCard";
 import "./ProductDetail.css";
 
@@ -34,9 +34,12 @@ export default function ProductDetail() {
   } = useShop();
 
   // Combined catalog so product detail, related, and recently-viewed all
-  // resolve correctly regardless of which category page (Men or Women)
-  // the person navigated from.
-  const ALL_PRODUCTS = useMemo(() => [...MEN_PRODUCTS, ...WOMEN_PRODUCTS], []);
+  // resolve correctly regardless of which category page (Men, Women, or
+  // Kids) the person navigated from.
+  const ALL_PRODUCTS = useMemo(
+    () => [...MEN_PRODUCTS, ...WOMEN_PRODUCTS, ...KIDS_PRODUCTS],
+    []
+  );
 
   // Find product from the combined catalog
   const product = useMemo(
@@ -133,10 +136,15 @@ export default function ProductDetail() {
 
   // Determine which category page this product belongs to, so the
   // breadcrumb and "back to collection" links point somewhere correct
-  // regardless of whether the person arrived via /men or /women.
+  // regardless of whether the person arrived via /men, /women, or /kids.
   const isWomensProduct = WOMEN_PRODUCTS.some((p) => p.id === product.id);
-  const collectionPath = isWomensProduct ? "/women" : "/men";
-  const collectionLabel = isWomensProduct ? "Women's Collection" : "Men's Collection";
+  const isKidsProduct = KIDS_PRODUCTS.some((p) => p.id === product.id);
+  const collectionPath = isKidsProduct ? "/kids" : isWomensProduct ? "/women" : "/men";
+  const collectionLabel = isKidsProduct
+    ? "Kids' Collection"
+    : isWomensProduct
+    ? "Women's Collection"
+    : "Men's Collection";
 
   // Add to Cart handler
   const handleAddToCart = () => {
