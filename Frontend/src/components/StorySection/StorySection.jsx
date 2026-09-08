@@ -15,14 +15,14 @@ export default function StorySection() {
             style={{ transform: `translateY(${offset}px)` }}
           >
             <img
-              src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=80"
+              src="/images/photo-1490481651871-ab68de25d43d.jpg"
               alt="Bolts of undyed natural linen fabric stacked on a workshop table"
               loading="lazy"
             />
           </div>
           <div className="story-visual-frame frame-front">
             <img
-              src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=700&q=80"
+              src="/images/photo-1445205170230-053b83016050.jpg"
               alt="Seamstress hand-finishing a garment hem"
               loading="lazy"
             />

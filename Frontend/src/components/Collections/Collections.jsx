@@ -8,7 +8,7 @@ const ITEMS = [
     was: "₹2,988",
     tag: "New",
     size: "tall",
-    img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
+    img: "/images/photo-1521572163474-6864f9cf17ab.jpg",
   },
   {
     name: "Kimono Sleeve Top",
@@ -16,7 +16,7 @@ const ITEMS = [
     was: "₹2,656",
     tag: "-25%",
     size: "wide",
-    img: "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=900&q=80",
+    img: "/images/photo-1487222477894-8943e31ef7b2.jpg",
   },
   {
     name: "Mesh Overshirt",
@@ -24,7 +24,7 @@ const ITEMS = [
     was: "₹3,735",
     tag: "New",
     size: "wide",
-    img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=900&q=80",
+    img: "/images/photo-1591047139829-d91aecb6caea.jpg",
   },
   {
     name: "Washed Denim Skirt",
@@ -32,7 +32,7 @@ const ITEMS = [
     was: "₹3,320",
     tag: "-20%",
     size: "tall",
-    img: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&w=800&q=80",
+    img: "/images/photo-1583496661160-fb5886a0aaaa.jpg",
   },
 ];
 

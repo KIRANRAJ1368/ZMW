@@ -9,7 +9,7 @@ export default function SplitBanner() {
           {/* Left Banner */}
           <div className="split-card left-banner">
             <img
-              src="https://images.unsplash.com/photo-1560243563-062bfc001d68?auto=format&fit=crop&w=1200&q=85"
+              src="/images/photo-1560243563-062bfc001d68.jpg"
               alt="Best Sellers Editorial"
               className="split-bg-img"
               loading="lazy"
@@ -35,7 +35,7 @@ export default function SplitBanner() {
           {/* Right Banner */}
           <div className="split-card right-banner">
             <img
-              src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1200&q=85"
+              src="/images/photo-1544441893-675973e31985.jpg"
               alt="New Arrivals Editorial"
               className="split-bg-img"
               loading="lazy"

@@ -24,7 +24,7 @@ export const ShopProvider = ({ children }) => {
           price: 68,
           color: "Cream Linen",
           size: "M",
-          image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80",
+          image: "/images/photo-1521572267360-ee0c2909d518.jpg",
           quantity: 1
         }
       ];

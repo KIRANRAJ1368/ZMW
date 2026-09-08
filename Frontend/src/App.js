@@ -7,19 +7,20 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
-// Route pages (lazy-loaded so `npm run dev`/webpack only has to compile
-// the page you're actually viewing instead of Home+Men+Women+Kids+
-// ProductDetail — ~280KB of JSX/CSS plus their component trees — all
-// upfront on every dev server start. Falls back to `null` while a page
-// chunk loads, matching the existing convention used for the modals below).
-const Home = lazy(() => import("./pages/Home"));
-const Men = lazy(() => import("./pages/Men"));
-const Women = lazy(() => import("./pages/Women"));
-const Kids = lazy(() => import("./pages/Kids"));
-const ComingSoon = lazy(() => import("./pages/ComingSoon"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+// Route pages are statically imported so navigation is instant — a lazy
+// (dynamically fetched) route page causes a flash of the Footer/short
+// blank on navigation because <Footer> sits outside the Suspense boundary
+// while the new page's chunk loads. Static imports keep every page
+// available immediately, so route changes render the destination directly.
+import Home from "./pages/Home";
+import Men from "./pages/Men";
+import Women from "./pages/Women";
+import Kids from "./pages/Kids";
+import ComingSoon from "./pages/ComingSoon";
+import ProductDetail from "./pages/ProductDetail";
 
-// Modals & Drawers (lazy-loaded for performance)
+// Modals & Drawers (lazy-loaded for performance) — these only render on
+// demand, so lazy-loading does not cause any navigation/route flash.
 const CartDrawer = lazy(() => import("./components/Modals/CartDrawer"));
 const WishlistDrawer = lazy(() => import("./components/Modals/WishlistDrawer"));
 const QuickViewModal = lazy(() => import("./components/Modals/QuickViewModal"));
@@ -38,20 +39,18 @@ export default function App() {
       <Navbar />
 
       <main id="main-content">
-        <Suspense fallback={null}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/men" element={<Men />} />
-            <Route path="/women" element={<Women />} />
-            <Route path="/product/:productId" element={<ProductDetail />} />
-            <Route path="/kids" element={<Kids />} />
-            <Route
-              path="/oversized-t-shirts"
-              element={<ComingSoon title="Oversized T-Shirts" />}
-            />
-            <Route path="*" element={<ComingSoon title="Page Not Found" />} />
-          </Routes>
-        </Suspense>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/men" element={<Men />} />
+          <Route path="/women" element={<Women />} />
+          <Route path="/product/:productId" element={<ProductDetail />} />
+          <Route path="/kids" element={<Kids />} />
+          <Route
+            path="/oversized-t-shirts"
+            element={<ComingSoon title="Oversized T-Shirts" />}
+          />
+          <Route path="*" element={<ComingSoon title="Page Not Found" />} />
+        </Routes>
       </main>
 
       <Footer />

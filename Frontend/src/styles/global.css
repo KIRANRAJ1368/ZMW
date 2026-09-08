@@ -11,7 +11,12 @@
 
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
+  /* scroll-behavior is intentionally NOT set globally here.
+     Setting it to "smooth" on html causes the browser to animate
+     window.scrollTo() calls — including the programmatic reset in
+     ScrollToTop — producing an unwanted bottom-to-top scroll on
+     every route change.  Smooth scrolling for anchor / hash links
+     is handled in ScrollToTop.jsx on a per-navigation basis. */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

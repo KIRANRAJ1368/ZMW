@@ -7,10 +7,10 @@ import "./ProductDetail.css";
 
 // Supplementary high-res detail images to ensure 4 distinct angles per garment
 const DETAIL_FALLBACK_ANGLES = [
-  "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1622470953794-aa9c70b0fb9d?auto=format&fit=crop&w=900&q=85"
+  "/images/photo-1576566588028-4147f3842f27.jpg",
+  "/images/photo-1583743814966-8936f5b7be1a.jpg",
+  "/images/photo-1618354691373-d851c5c3a990.jpg",
+  "/images/photo-1622470953794-aa9c70b0fb9d.jpg"
 ];
 
 // Size guide data
@@ -618,7 +618,7 @@ export default function ProductDetail() {
           <div className="pd-insights-grid">
             <div className="pd-insight-card">
               <img
-                src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=700&q=85"
+                src="/images/photo-1521572267360-ee0c2909d518.jpg"
                 alt="240 GSM heavyweight cotton fabric texture"
                 className="pd-insight-img"
                 loading="lazy"
@@ -632,7 +632,7 @@ export default function ProductDetail() {
 
             <div className="pd-insight-card">
               <img
-                src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=700&q=85"
+                src="/images/photo-1503342217505-b0a15ec3261c.jpg"
                 alt="Boxy drop shoulder silhouette"
                 className="pd-insight-img"
                 loading="lazy"
@@ -646,7 +646,7 @@ export default function ProductDetail() {
 
             <div className="pd-insight-card">
               <img
-                src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=700&q=85"
+                src="/images/photo-1576566588028-4147f3842f27.jpg"
                 alt="High density screen print artwork"
                 className="pd-insight-img"
                 loading="lazy"
@@ -660,7 +660,7 @@ export default function ProductDetail() {
 
             <div className="pd-insight-card">
               <img
-                src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=700&q=85"
+                src="/images/photo-1516257984-b1b4d707412e.jpg"
                 alt="Breathable combed cotton fiber"
                 className="pd-insight-img"
                 loading="lazy"

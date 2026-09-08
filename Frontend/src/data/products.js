@@ -22,8 +22,8 @@ export const PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1617127365659-c47fa864d8bc.jpg",
+      "/images/photo-1594633312681-425c7b97ccd1.jpg"
     ],
     colors: [
       { name: "Terracotta Earth", hex: "#B85D38" },
@@ -50,8 +50,8 @@ export const PRODUCTS = [
     isSale: false,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1539109136881-3be0616acf4b.jpg",
+      "/images/photo-1515372039744-b8f02a3ae446.jpg"
     ],
     colors: [
       { name: "Champagne Cream", hex: "#F2EBE0" },
@@ -78,8 +78,8 @@ export const PRODUCTS = [
     isSale: false,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1756483492198-8ca91227489b?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1742677143629-b9784beab2e1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1756483492198-8ca91227489b.jpg",
+      "/images/photo-1742677143629-b9784beab2e1.jpg"
     ],
     colors: [
       { name: "Emerald Gold", hex: "#1C5E40" },
@@ -106,8 +106,8 @@ export const PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1509319117193-57bab727e09d?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1509319117193-57bab727e09d.jpg",
+      "/images/photo-1516257984-b1b4d707412e.jpg"
     ],
     colors: [
       { name: "Sand Beige", hex: "#D8CDBC" },
@@ -134,8 +134,8 @@ export const PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1521572163474-6864f9cf17ab.jpg",
+      "/images/photo-1617137968427-85924c800a22.jpg"
     ],
     colors: [
       { name: "Warm Terracotta", hex: "#B85D38" },
@@ -162,8 +162,8 @@ export const PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1746386914795-83d2febc9a96?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1763089402370-fb496fefdbb0?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1746386914795-83d2febc9a96.jpg",
+      "/images/photo-1763089402370-fb496fefdbb0.jpg"
     ],
     colors: [
       { name: "Sage Mint", hex: "#9EB69E" },
@@ -190,8 +190,8 @@ export const PRODUCTS = [
     isSale: false,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1515886657613-9f3515b0c78f.jpg",
+      "/images/photo-1524504388940-b1c1722653e1.jpg"
     ],
     colors: [
       { name: "Oat Milk", hex: "#F3EDE3" },
@@ -218,8 +218,8 @@ export const PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1489987707025-afc232f7ea0f.jpg",
+      "/images/photo-1618354691373-d851c5c3a990.jpg"
     ],
     colors: [
       { name: "Crisp White", hex: "#F7F5EF" },
@@ -238,7 +238,7 @@ export const COLLECTIONS_DATA = [
     subtitle: "Liquid silks, structured linen separates, and heirloom sarees",
     itemCount: "58 styles",
     tag: "Trending",
-    image: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=900&q=85"
+    image: "/images/photo-1539533018447-63fcce2678e3.jpg"
   },
   {
     id: "col-men",
@@ -246,7 +246,7 @@ export const COLLECTIONS_DATA = [
     subtitle: "Unstructured linen blazers, relaxed trousers, and crisp shirts",
     itemCount: "44 styles",
     tag: "New Season",
-    image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=900&q=85"
+    image: "/images/photo-1509631179647-0177331693ae.jpg"
   },
   {
     id: "col-kids",
@@ -254,7 +254,7 @@ export const COLLECTIONS_DATA = [
     subtitle: "Organic cotton and breezy linen crafted for playful elegance",
     itemCount: "36 styles",
     tag: "Summer Drop",
-    image: "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=900&q=85"
+    image: "/images/photo-1518831959646-742c3a14ebf7.jpg"
   },
   {
     id: "col-knitwear",
@@ -262,7 +262,7 @@ export const COLLECTIONS_DATA = [
     subtitle: "Featherweight merino wool and breathable openwork weaves",
     itemCount: "32 styles",
     tag: "Luxury",
-    image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=85"
+    image: "/images/photo-1576566588028-4147f3842f27.jpg"
   }
 ];
 
@@ -273,8 +273,8 @@ export const CATEGORY_SHOWCASE = [
     subtitle: "Sharp tailoring meets relaxed luxury",
     description: "From unstructured linen blazers and crisp French flax shirts to pleated trousers, our men's line blends Italian craftsmanship with modern silhouettes.",
     itemCount: "44 Curated Styles",
-    image: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?auto=format&fit=crop&w=900&q=85",
-    accentImage: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=500&q=85",
+    image: "/images/photo-1506152983158-b4a74a01c721.jpg",
+    accentImage: "/images/photo-1594938298603-c8148c4dae35.jpg",
     href: "/men"
   },
   {
@@ -283,8 +283,8 @@ export const CATEGORY_SHOWCASE = [
     subtitle: "Editorial draping & timeless elegance",
     description: "Fluid silk bias dresses, rich designer sarees, and sculpted separates designed for the contemporary woman who values considered luxury.",
     itemCount: "58 Curated Styles",
-    image: "https://images.unsplash.com/photo-1741816219933-2bf406bc9739?auto=format&fit=crop&w=900&q=85",
-    accentImage: "https://images.unsplash.com/photo-1741250782029-2770cfaf666c?auto=format&fit=crop&w=500&q=85",
+    image: "/images/photo-1741816219933-2bf406bc9739.jpg",
+    accentImage: "/images/photo-1741250782029-2770cfaf666c.jpg",
     href: "/women"
   },
   {
@@ -293,8 +293,8 @@ export const CATEGORY_SHOWCASE = [
     subtitle: "Playful comfort in premium natural fibres",
     description: "Soft organic cottons and breathable linen sets crafted for active little explorers. Vibrant, comfortable, and made to cherish.",
     itemCount: "36 Curated Styles",
-    image: "https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?auto=format&fit=crop&w=900&q=85",
-    accentImage: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=500&q=85",
+    image: "/images/photo-1471286174890-9c112ffca5b4.jpg",
+    accentImage: "/images/photo-1567401893414-76b7b1e5a7a5.jpg",
     href: "/kids"
   }
 ];
@@ -302,35 +302,35 @@ export const CATEGORY_SHOWCASE = [
 export const INSTAGRAM_SHOWCASE = [
   {
     id: "insta-1",
-    image: "https://images.unsplash.com/photo-1496217590455-aa63a8350eea?auto=format&fit=crop&w=800&q=85",
+    image: "/images/photo-1496217590455-aa63a8350eea.jpg",
     handle: "@zmw.studio",
     caption: "Sun-drenched tailoring & layered neutrals for effortless Mediterranean evenings.",
     likes: "3.4k"
   },
   {
     id: "insta-2",
-    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=85",
+    image: "/images/photo-1519741497674-611481863552.jpg",
     handle: "@zmw.studio",
     caption: "Flowing silk separates — the new summer wardrobe capsule.",
     likes: "5.8k"
   },
   {
     id: "insta-3",
-    image: "https://images.unsplash.com/photo-1521566652839-697aa473761a?auto=format&fit=crop&w=800&q=85",
+    image: "/images/photo-1521566652839-697aa473761a.jpg",
     handle: "@zmw.studio",
     caption: "Editorial draping in warm, sun-lit neutrals. Shot on location.",
     likes: "6.2k"
   },
   {
     id: "insta-4",
-    image: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=85",
+    image: "/images/photo-1503919545889-aef636e10ad4.jpg",
     handle: "@zmw.studio",
     caption: "Kids' summer boutique capsule: breathable organic linens for sunny days.",
     likes: "2.9k"
   },
   {
     id: "insta-5",
-    image: "https://images.unsplash.com/photo-1616415852242-2d061343d9a1?auto=format&fit=crop&w=800&q=85",
+    image: "/images/photo-1616415852242-2d061343d9a1.jpg",
     handle: "@zmw.studio",
     caption: "Feminine florals & fluid fabric — the 2026 Signature Collection.",
     likes: "4.7k"
@@ -417,8 +417,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1521572163474-6864f9cf17ab.jpg",
+      "/images/photo-1503341504253-dff4815485f1.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -446,8 +446,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1516257984-b1b4d707412e.jpg",
+      "/images/photo-1521572163474-6864f9cf17ab.jpg"
     ],
     colors: [
       { name: "Charcoal", hex: "#2C2B27" },
@@ -474,8 +474,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1583743814966-8936f5b7be1a.jpg",
+      "/images/photo-1521572163474-6864f9cf17ab.jpg"
     ],
     colors: [
       { name: "Sage Green", hex: "#6E7A67" },
@@ -502,8 +502,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1618354691373-d851c5c3a990.jpg",
+      "/images/photo-1602810318383-e386cc2a3ccf.jpg"
     ],
     colors: [
       { name: "Ivory", hex: "#FAF8F2" },
@@ -530,8 +530,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1576566588028-4147f3842f27.jpg",
+      "/images/photo-1503341504253-dff4815485f1.jpg"
     ],
     colors: [
       { name: "Racing Red", hex: "#B3271D" },
@@ -558,8 +558,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1622470953794-aa9c70b0fb9d?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1618354691792-d1d42acfd860?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1622470953794-aa9c70b0fb9d.jpg",
+      "/images/photo-1618354691792-d1d42acfd860.jpg"
     ],
     colors: [
       { name: "Olive", hex: "#4B5A3F" },
@@ -587,8 +587,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1562157873-818bc0726f68?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1581655353564-df123a1eb820.jpg",
+      "/images/photo-1562157873-818bc0726f68.jpg"
     ],
     colors: [
       { name: "Ivory", hex: "#FAF8F2" },
@@ -615,8 +615,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1586790170083-2f9ceadc732d.jpg",
+      "/images/photo-1578587018452-892bacefd3f2.jpg"
     ],
     colors: [
       { name: "Maroon", hex: "#5C1F26" },
@@ -643,8 +643,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1583743814966-8936f5b7be1a.jpg",
+      "/images/photo-1521572267360-ee0c2909d518.jpg"
     ],
     colors: [
       { name: "Espresso Brown", hex: "#3A2A1E" },
@@ -671,8 +671,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1507679799987-c73779587ccf.jpg",
+      "/images/photo-1534030347209-467a5b0ad3e6.jpg"
     ],
     colors: [
       { name: "Mustard Gold", hex: "#C89D3C" },
@@ -699,8 +699,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1617127365659-c47fa864d8bc.jpg",
+      "/images/photo-1521572267360-ee0c2909d518.jpg"
     ],
     colors: [
       { name: "Sand Beige", hex: "#D8CDBC" },
@@ -727,8 +727,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1602810318383-e386cc2a3ccf.jpg",
+      "/images/photo-1618354691373-d851c5c3a990.jpg"
     ],
     colors: [
       { name: "Crisp White", hex: "#F7F5EF" },
@@ -756,8 +756,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1622470953794-aa9c70b0fb9d?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1622470953794-aa9c70b0fb9d.jpg",
+      "/images/photo-1602810318383-e386cc2a3ccf.jpg"
     ],
     colors: [
       { name: "Beige", hex: "#D8CDBC" },
@@ -784,8 +784,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1618354691792-d1d42acfd860?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1622470953794-aa9c70b0fb9d?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1618354691792-d1d42acfd860.jpg",
+      "/images/photo-1622470953794-aa9c70b0fb9d.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" }
@@ -811,8 +811,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1584865288642-42078afe6942?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1552902865-b72c031ac5ea.jpg",
+      "/images/photo-1584865288642-42078afe6942.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -839,8 +839,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1584865288642-42078afe6942?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1584865288642-42078afe6942.jpg",
+      "/images/photo-1552902865-b72c031ac5ea.jpg"
     ],
     colors: [
       { name: "Gun Metal Grey", hex: "#5E5C56" }
@@ -866,8 +866,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1556821840-3a63f95609a7.jpg",
+      "/images/photo-1620799140408-edc6dcb6d633.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -894,8 +894,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1620799140408-edc6dcb6d633.jpg",
+      "/images/photo-1556821840-3a63f95609a7.jpg"
     ],
     colors: [
       { name: "Sand Beige", hex: "#D8CDBC" },
@@ -922,8 +922,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1576566588028-4147f3842f27.jpg",
+      "/images/photo-1521572267360-ee0c2909d518.jpg"
     ],
     colors: [
       { name: "Navy Blue", hex: "#1A2B4C" },
@@ -950,8 +950,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1521572163474-6864f9cf17ab.jpg",
+      "/images/photo-1618354691373-d851c5c3a990.jpg"
     ],
     colors: [
       { name: "Off White", hex: "#F3EFE4" },
@@ -978,8 +978,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1583743814966-8936f5b7be1a.jpg",
+      "/images/photo-1503341504253-dff4815485f1.jpg"
     ],
     colors: [
       { name: "Acid Black", hex: "#222224" },
@@ -1006,8 +1006,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1521572163474-6864f9cf17ab.jpg",
+      "/images/photo-1516257984-b1b4d707412e.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -1034,8 +1034,8 @@ export const MEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1581655353564-df123a1eb820.jpg",
+      "/images/photo-1503341504253-dff4815485f1.jpg"
     ],
     colors: [
       { name: "Ivory White", hex: "#FDFDFD" },
@@ -1062,8 +1062,8 @@ export const MEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1622470953794-aa9c70b0fb9d?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1618354691373-d851c5c3a990.jpg",
+      "/images/photo-1622470953794-aa9c70b0fb9d.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -1107,8 +1107,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1594633312681-425c7b97ccd1.jpg",
+      "/images/photo-1539109136881-3be0616acf4b.jpg"
     ],
     colors: [
       { name: "Sunflower Yellow", hex: "#E8B93C" },
@@ -1136,8 +1136,8 @@ export const WOMEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1756483492198-8ca91227489b?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1515372039744-b8f02a3ae446.jpg",
+      "/images/photo-1756483492198-8ca91227489b.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -1164,8 +1164,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1742677143629-b9784beab2e1?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1742677143629-b9784beab2e1.jpg",
+      "/images/photo-1594633312681-425c7b97ccd1.jpg"
     ],
     colors: [
       { name: "Ivory", hex: "#FAF8F2" },
@@ -1192,8 +1192,8 @@ export const WOMEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1509319117193-57bab727e09d?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1509319117193-57bab727e09d.jpg",
+      "/images/photo-1516257984-b1b4d707412e.jpg"
     ],
     colors: [
       { name: "Racing Red", hex: "#B3271D" },
@@ -1220,8 +1220,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1746386914795-83d2febc9a96?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1763089402370-fb496fefdbb0?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1746386914795-83d2febc9a96.jpg",
+      "/images/photo-1763089402370-fb496fefdbb0.jpg"
     ],
     colors: [
       { name: "Sunflower Yellow", hex: "#E8B93C" },
@@ -1248,8 +1248,8 @@ export const WOMEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1515886657613-9f3515b0c78f.jpg",
+      "/images/photo-1524504388940-b1c1722653e1.jpg"
     ],
     colors: [
       { name: "Stone Beige", hex: "#D8CDBC" }
@@ -1275,8 +1275,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1489987707025-afc232f7ea0f.jpg",
+      "/images/photo-1618354691373-d851c5c3a990.jpg"
     ],
     colors: [
       { name: "Sage Green", hex: "#6E7A67" },
@@ -1303,8 +1303,8 @@ export const WOMEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1617127365659-c47fa864d8bc.jpg",
+      "/images/photo-1594633312681-425c7b97ccd1.jpg"
     ],
     colors: [
       { name: "Ivory", hex: "#FAF8F2" },
@@ -1331,8 +1331,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1539109136881-3be0616acf4b.jpg",
+      "/images/photo-1515372039744-b8f02a3ae446.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -1359,8 +1359,8 @@ export const WOMEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1756483492198-8ca91227489b?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1742677143629-b9784beab2e1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1756483492198-8ca91227489b.jpg",
+      "/images/photo-1742677143629-b9784beab2e1.jpg"
     ],
     colors: [
       { name: "Espresso Brown", hex: "#3A2A1E" },
@@ -1387,8 +1387,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1509319117193-57bab727e09d?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1509319117193-57bab727e09d.jpg",
+      "/images/photo-1516257984-b1b4d707412e.jpg"
     ],
     colors: [
       { name: "Sage Green", hex: "#6E7A67" },
@@ -1415,8 +1415,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1746386914795-83d2febc9a96?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1763089402370-fb496fefdbb0?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1746386914795-83d2febc9a96.jpg",
+      "/images/photo-1763089402370-fb496fefdbb0.jpg"
     ],
     colors: [
       { name: "Espresso Brown", hex: "#3A2A1E" },
@@ -1443,8 +1443,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1515886657613-9f3515b0c78f.jpg",
+      "/images/photo-1524504388940-b1c1722653e1.jpg"
     ],
     colors: [
       { name: "Ivory", hex: "#FAF8F2" },
@@ -1472,8 +1472,8 @@ export const WOMEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1489987707025-afc232f7ea0f.jpg",
+      "/images/photo-1618354691373-d851c5c3a990.jpg"
     ],
     colors: [
       { name: "Blush Pink", hex: "#E3B9B0" },
@@ -1500,8 +1500,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1617127365659-c47fa864d8bc.jpg",
+      "/images/photo-1594633312681-425c7b97ccd1.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -1529,8 +1529,8 @@ export const WOMEN_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1756483492198-8ca91227489b?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1742677143629-b9784beab2e1?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1756483492198-8ca91227489b.jpg",
+      "/images/photo-1742677143629-b9784beab2e1.jpg"
     ],
     colors: [
       { name: "Sage Green", hex: "#6E7A67" },
@@ -1557,8 +1557,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1509319117193-57bab727e09d?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1509319117193-57bab727e09d.jpg",
+      "/images/photo-1516257984-b1b4d707412e.jpg"
     ],
     colors: [
       { name: "Ivory", hex: "#FAF8F2" },
@@ -1585,8 +1585,8 @@ export const WOMEN_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1746386914795-83d2febc9a96?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1763089402370-fb496fefdbb0?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1746386914795-83d2febc9a96.jpg",
+      "/images/photo-1763089402370-fb496fefdbb0.jpg"
     ],
     colors: [
       { name: "Espresso Brown", hex: "#3A2A1E" },
@@ -1631,8 +1631,8 @@ export const KIDS_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1596870230751-ebdfce98ec42.jpg",
+      "/images/photo-1519238263530-99bdd11df2ea.jpg"
     ],
     colors: [
       { name: "Jungle Green", hex: "#4B5A3F" },
@@ -1660,8 +1660,8 @@ export const KIDS_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1529756148791-fbca69bfe693?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1758782213532-bbb5fd89885e?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1529756148791-fbca69bfe693.jpg",
+      "/images/photo-1758782213532-bbb5fd89885e.jpg"
     ],
     colors: [
       { name: "Charcoal", hex: "#2C2B27" },
@@ -1688,8 +1688,8 @@ export const KIDS_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1519238263530-99bdd11df2ea.jpg",
+      "/images/photo-1596870230751-ebdfce98ec42.jpg"
     ],
     colors: [
       { name: "Jet Black", hex: "#181715" },
@@ -1716,8 +1716,8 @@ export const KIDS_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1758782213532-bbb5fd89885e?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1529756148791-fbca69bfe693?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1758782213532-bbb5fd89885e.jpg",
+      "/images/photo-1529756148791-fbca69bfe693.jpg"
     ],
     colors: [
       { name: "Olive", hex: "#6E7A67" },
@@ -1744,8 +1744,8 @@ export const KIDS_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1590480598135-3be152c87913?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1590480598135-3be152c87913.jpg",
+      "/images/photo-1518831959646-742c3a14ebf7.jpg"
     ],
     colors: [
       { name: "Sunflower Yellow", hex: "#E8B93C" },
@@ -1772,8 +1772,8 @@ export const KIDS_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1518831959646-742c3a14ebf7.jpg",
+      "/images/photo-1519457431-44ccd64a579b.jpg"
     ],
     colors: [
       { name: "Off White", hex: "#F3EFE4" },
@@ -1800,8 +1800,8 @@ export const KIDS_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1590480598135-3be152c87913?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1519457431-44ccd64a579b.jpg",
+      "/images/photo-1590480598135-3be152c87913.jpg"
     ],
     colors: [
       { name: "Blush Pink", hex: "#D99A9A" },
@@ -1829,8 +1829,8 @@ export const KIDS_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1590480598135-3be152c87913?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1621452773781-0f992fd1f5cb.jpg",
+      "/images/photo-1590480598135-3be152c87913.jpg"
     ],
     colors: [
       { name: "Lilac", hex: "#B7A6D9" },
@@ -1857,8 +1857,8 @@ export const KIDS_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1534880786429-7cb3199b7b0f?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1534880786429-7cb3199b7b0f.jpg",
+      "/images/photo-1596870230751-ebdfce98ec42.jpg"
     ],
     colors: [
       { name: "Rust", hex: "#B85D38" },
@@ -1885,8 +1885,8 @@ export const KIDS_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1534880786429-7cb3199b7b0f?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1519238263530-99bdd11df2ea.jpg",
+      "/images/photo-1534880786429-7cb3199b7b0f.jpg"
     ],
     colors: [
       { name: "Sky Blue", hex: "#9BB8CC" },
@@ -1914,8 +1914,8 @@ export const KIDS_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1621452773781-0f992fd1f5cb.jpg",
+      "/images/photo-1519457431-44ccd64a579b.jpg"
     ],
     colors: [
       { name: "Denim Blue", hex: "#4A5A73" },
@@ -1942,8 +1942,8 @@ export const KIDS_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1758782213532-bbb5fd89885e?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1534880786429-7cb3199b7b0f?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1758782213532-bbb5fd89885e.jpg",
+      "/images/photo-1534880786429-7cb3199b7b0f.jpg"
     ],
     colors: [
       { name: "Lilac", hex: "#B7A6D9" },
@@ -1970,8 +1970,8 @@ export const KIDS_PRODUCTS = [
     isSale: true,
     isBestSeller: true,
     images: [
-      "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1758782213532-bbb5fd89885e?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1519238263530-99bdd11df2ea.jpg",
+      "/images/photo-1758782213532-bbb5fd89885e.jpg"
     ],
     colors: [
       { name: "Navy", hex: "#28344A" },
@@ -1998,8 +1998,8 @@ export const KIDS_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1518831959646-742c3a14ebf7.jpg",
+      "/images/photo-1621452773781-0f992fd1f5cb.jpg"
     ],
     colors: [
       { name: "Blush Pink", hex: "#D99A9A" },
@@ -2026,8 +2026,8 @@ export const KIDS_PRODUCTS = [
     isSale: true,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1758782213532-bbb5fd89885e?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1529756148791-fbca69bfe693?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1758782213532-bbb5fd89885e.jpg",
+      "/images/photo-1529756148791-fbca69bfe693.jpg"
     ],
     colors: [
       { name: "Rust", hex: "#B85D38" },
@@ -2054,8 +2054,8 @@ export const KIDS_PRODUCTS = [
     isSale: false,
     isBestSeller: false,
     images: [
-      "https://images.unsplash.com/photo-1590480598135-3be152c87913?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=900&q=85"
+      "/images/photo-1590480598135-3be152c87913.jpg",
+      "/images/photo-1519457431-44ccd64a579b.jpg"
     ],
     colors: [
       { name: "Sky Blue", hex: "#9BB8CC" },
