@@ -505,12 +505,13 @@
 .price-number-input {
   width: 100%;
   padding: 6px 8px 6px 20px;
-  border: 1px solid var(--color-grey-300);
+  border: 1px solid var(--color-grey-200);
   border-radius: var(--radius-xs);
   font-size: var(--text-small);
   font-weight: 600;
   color: var(--color-ink);
   outline: none;
+  transition: border-color var(--dur-fast);
 }
 
 .price-number-input:focus {
@@ -1045,7 +1046,7 @@
 
 /* ── 11. Streetwear Quality Guide & Editorial ────────────────── */
 .m-editorial-section {
-  background-color: #EFECE5;
+  background-color: var(--bg-collections);
   border-top: 1px solid #E2DED4;
 }
 

@@ -250,7 +250,7 @@
   background-color: var(--color-accent);
   color: #0E0D0C !important;
   padding: 15px 30px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   font-size: var(--text-base);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -281,7 +281,7 @@
   align-items: center;
   justify-content: center;
   padding: 15px 28px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   font-size: var(--text-base);
   font-weight: 600;
   letter-spacing: 0.04em;

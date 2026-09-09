@@ -102,7 +102,7 @@ export default function TabbedShowcase() {
                     <span className="tabbed-category">{product.category}</span>
                     <div className="star-rating">
                       <span>★</span>
-                      <span>{product.rating}</span>
+                      <span>{Number(product.rating || 5).toFixed(1)}</span>
                     </div>
                   </div>
 

@@ -45,10 +45,19 @@ const FAQS = [
 const INITIAL_PAGE_SIZE = 12;
 
 export default function Women() {
-  const { formatPrice } = useShop();
+  const { formatPrice, currency, currencies } = useShop();
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
   const hasCategorySelection = Boolean(categoryFromUrl);
+
+  const rate = (currencies && currencies[currency]?.rate) || 83;
+  const currencySymbol = (currencies && currencies[currency]?.symbol) || "₹";
+
+  // Calculate dynamic price ceiling
+  const priceCeiling = useMemo(
+    () => Math.ceil(Math.max(...WOMEN_PRODUCTS.map((p) => p.price * rate)) / 100) * 100,
+    [rate]
+  );
 
   // Filter States
   const [activeSubCategory, setActiveSubCategory] = useState(
@@ -58,8 +67,14 @@ export default function Women() {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [availability, setAvailability] = useState("all"); // all | inStock | outOfStock
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(70);
+  const [maxPrice, setMaxPrice] = useState(priceCeiling);
   const [sortBy, setSortBy] = useState("featured");
+
+  // Reset price range when currency / priceCeiling changes
+  useEffect(() => {
+    setMaxPrice(priceCeiling);
+    setMinPrice(0);
+  }, [priceCeiling]);
 
   // Layout & Pagination States — desktop only supports 3 or 4 columns
   const [gridDensity, setGridDensity] = useState(4); // 3 or 4 columns
@@ -76,12 +91,6 @@ export default function Women() {
     availability: true,
     category: true
   });
-
-  // Calculate dynamic price ceiling
-  const priceCeiling = useMemo(
-    () => Math.max(...WOMEN_PRODUCTS.map((p) => p.price)),
-    []
-  );
 
   // Sync active subcategory when URL param changes
   useEffect(() => {
@@ -191,7 +200,8 @@ export default function Women() {
         return false;
       if (availability === "inStock" && !p.inStock) return false;
       if (availability === "outOfStock" && p.inStock) return false;
-      if (p.price < minPrice || p.price > maxPrice) return false;
+      const pPrice = Math.round(p.price * rate);
+      if (pPrice < minPrice || pPrice > maxPrice) return false;
       return true;
     });
 
@@ -222,7 +232,7 @@ export default function Women() {
         break;
     }
     return list;
-  }, [activeSubCategory, selectedColors, selectedSizes, availability, minPrice, maxPrice, sortBy]);
+  }, [activeSubCategory, selectedColors, selectedSizes, availability, minPrice, maxPrice, sortBy, rate]);
 
   // Paginated visible slice
   const displayedProducts = useMemo(() => {
@@ -308,7 +318,7 @@ export default function Women() {
           <div className="filter-accordion-content">
             <div className="price-inputs-row">
               <div className="price-input-group">
-                <span className="price-input-prefix">$</span>
+                <span className="price-input-prefix">{currencySymbol}</span>
                 <input
                   type="number"
                   min={0}
@@ -321,7 +331,7 @@ export default function Women() {
               </div>
               <span className="price-separator">to</span>
               <div className="price-input-group">
-                <span className="price-input-prefix">$</span>
+                <span className="price-input-prefix">{currencySymbol}</span>
                 <input
                   type="number"
                   min={minPrice}
@@ -337,14 +347,15 @@ export default function Women() {
               type="range"
               min={0}
               max={priceCeiling}
+              step={50}
               value={maxPrice}
               onChange={(e) => setMaxPrice(Number(e.target.value))}
               className="price-slider"
               aria-label="Maximum price range"
             />
             <div className="price-range-labels">
-              <span>{formatPrice(0)}</span>
-              <span>up to {formatPrice(maxPrice)}</span>
+              <span>{currencySymbol}0</span>
+              <span>up to {currencySymbol}{maxPrice.toLocaleString("en-IN")}</span>
             </div>
           </div>
         )}
@@ -652,7 +663,9 @@ export default function Women() {
                     }}
                     title="Reset price filter"
                   >
-                    <span>${minPrice} - ${maxPrice}</span>
+                    <span>
+                      {currencySymbol}{minPrice.toLocaleString("en-IN")} - {currencySymbol}{maxPrice.toLocaleString("en-IN")}
+                    </span>
                     <span className="m-tag-close">✕</span>
                   </button>
                 )}

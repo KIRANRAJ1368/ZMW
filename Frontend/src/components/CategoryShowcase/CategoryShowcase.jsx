@@ -31,14 +31,14 @@ export default function CategoryShowcase() {
                 <div className="category-overlay" />
 
                 {/* Accent Image */}
-                <div className="category-accent-wrapper">
+                {/* <div className="category-accent-wrapper">
                   <img
                     src={cat.accentImage}
                     alt={`${cat.title} featured`}
                     className="category-accent-img"
                     loading="lazy"
                   />
-                </div>
+                </div> */}
 
                 {/* Content */}
                 <div className="category-card-content">
