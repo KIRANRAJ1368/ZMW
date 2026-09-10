@@ -1090,92 +1090,13 @@
   line-height: 1.6;
 }
 
-/* ── 12. FAQ Accordion Section ──────────────────────────────── */
-.m-faq-section {
-  background-color: #FAF8F4;
-  border-top: 1px solid #E8E5DC;
-}
-
-.m-faq-accordion {
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.m-faq-item {
-  background-color: #FFFFFF;
-  border: 1px solid #E5E1D8;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  transition: border-color var(--dur-fast);
-}
-
-.m-faq-item.open {
-  border-color: #B0AAA4;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-}
-
-.m-faq-trigger {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 24px;
-  text-align: left;
-  cursor: pointer;
-  background: none;
-}
-
-.m-faq-question-text {
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--color-ink);
-  flex: 1;
-}
-
-.m-faq-icon-wrap {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: #E5E1D8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all var(--dur-fast);
-}
-
-.m-faq-item.open .m-faq-icon-wrap {
-  background-color: #1C1819;
-  color: #F8F3EE;
-}
-
-.m-faq-icon {
-  transition: transform 0.25s ease;
-}
-
-.m-faq-item.open .m-faq-icon-v {
-  opacity: 0;
-}
-
-.m-faq-panel {
-  padding: 0 24px 20px;
-  animation: fadeIn 0.2s ease-in-out;
-}
-
-.m-faq-panel p {
-  font-size: var(--text-small);
-  color: #5E5C56;
-  line-height: 1.7;
-}
-
 /* ── 13. Responsive Media Queries ───────────────────────────── */
 @media (max-width: 1200px) {
   .m-product-grid.density-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .m-recently-viewed-section .m-product-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -1200,6 +1121,11 @@
 
   .m-product-grid.density-3,
   .m-product-grid.density-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+
+  .m-recently-viewed-section .m-product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px 16px;
   }
@@ -1230,6 +1156,11 @@
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .m-recently-viewed-section .m-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px;
+  }
 }
 
 @media (max-width: 540px) {
@@ -1239,11 +1170,93 @@
     gap: 14px 10px;
   }
 
-  .m-faq-trigger {
-    padding: 14px 16px;
+  .m-recently-viewed-section .m-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 10px;
+  }
+}
+
+@media (max-width: 425px) {
+  .women-hero {
+    min-height: 500px;
   }
 
-  .m-faq-panel {
-    padding: 0 16px 16px;
+  .women-hero .hero-content .hero-title {
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+  }
+
+  .women-hero .hero-content .hero-subtitle {
+    font-size: 0.92rem;
+  }
+
+  .m-subcategory-bar {
+    top: 74px;
+    padding: 10px 0;
+  }
+
+  .m-toolbar-left {
+    gap: 10px;
+  }
+
+  .m-sort-label {
+    display: none;
+  }
+
+  .m-toolbar-total {
+    font-size: 0.75rem;
+  }
+
+  .m-product-grid.density-3,
+  .m-product-grid.density-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 8px;
+  }
+
+  .m-recently-viewed-section .m-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 8px;
+  }
+
+  .m-product-grid .product-name {
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+
+  .m-product-grid .product-image-box {
+    margin-bottom: 8px;
+  }
+
+  .m-product-grid .product-category-label {
+    font-size: 0.62rem;
+  }
+
+  .m-editorial-grid {
+    margin-top: 16px;
+  }
+
+  .m-btn-load-more {
+    min-width: 180px;
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 340px) {
+  .m-product-grid.density-3,
+  .m-product-grid.density-4 {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .m-recently-viewed-section .m-product-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .m-product-grid .product-name {
+    font-size: 0.85rem;
+  }
+
+  .m-product-grid .product-image-box {
+    aspect-ratio: 4 / 5;
   }
 }

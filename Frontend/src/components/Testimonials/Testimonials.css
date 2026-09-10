@@ -125,7 +125,20 @@
 
 @media (max-width: 992px) {
   .testimonials-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 680px) {
+  .testimonials-grid {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 425px) {
+  .testimonial-card {
+    padding: 22px 18px;
   }
 }

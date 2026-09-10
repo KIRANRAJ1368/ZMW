@@ -6,16 +6,14 @@ import "./styles/global.css";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
+import SocialFloatWidget from "./components/Widgets/SocialFloatWidget";
 
-// Route pages are statically imported so navigation is instant — a lazy
-// (dynamically fetched) route page causes a flash of the Footer/short
-// blank on navigation because <Footer> sits outside the Suspense boundary
-// while the new page's chunk loads. Static imports keep every page
-// available immediately, so route changes render the destination directly.
+
 import Home from "./pages/Home";
 import Men from "./pages/Men";
 import Women from "./pages/Women";
 import Kids from "./pages/Kids";
+import Wishlist from "./pages/Wishlist";
 import ComingSoon from "./pages/ComingSoon";
 import ProductDetail from "./pages/ProductDetail";
 
@@ -45,6 +43,7 @@ export default function App() {
           <Route path="/women" element={<Women />} />
           <Route path="/product/:productId" element={<ProductDetail />} />
           <Route path="/kids" element={<Kids />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route
             path="/oversized-t-shirts"
             element={<ComingSoon title="Oversized T-Shirts" />}
@@ -54,6 +53,8 @@ export default function App() {
       </main>
 
       <Footer />
+
+      <SocialFloatWidget />
 
       {/* Global Interactive Layer — Modals, Drawers, Toasts */}
       <Suspense fallback={null}>

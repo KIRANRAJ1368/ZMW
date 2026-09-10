@@ -319,4 +319,42 @@
   .checkout-grid {
     grid-template-columns: 1fr;
   }
+
+  .checkout-form-col {
+    border-right: none;
+    border-bottom: 1px solid var(--color-grey-200);
+  }
+}
+
+@media (max-width: 425px) {
+  .checkout-form-col {
+    padding: 22px 16px;
+  }
+
+  .checkout-summary-col {
+    padding: 22px 16px;
+  }
+
+  .checkout-heading {
+    font-size: 1.35rem;
+  }
+
+  .form-grid-2,
+  .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-success-view {
+    padding: 28px 16px;
+  }
+}
+
+@media (max-width: 320px) {
+  .payment-option-card {
+    padding: 8px 10px;
+  }
+
+  .card-input-box {
+    padding: 12px;
+  }
 }

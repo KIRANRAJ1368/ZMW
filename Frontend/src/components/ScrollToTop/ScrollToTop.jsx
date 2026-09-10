@@ -1,36 +1,49 @@
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
  * ScrollToTop
  *
- * Fires synchronously (useLayoutEffect) before the browser paints the new
- * route, so the page always starts at position 0 — no bottom-to-top scroll
- * animation is ever visible.
- *
- * Root cause note: CSS `scroll-behavior: smooth` on <html> causes even
- * programmatic window.scrollTo() calls to animate.  We guard against this by
- * temporarily overriding the inline style to "auto" before scrolling, then
- * restoring it afterwards — making this component resilient even if smooth
- * scrolling is re-introduced via a stylesheet in the future.
+ * When navigating with a hash (e.g. #most-loved-pieces, #whats-new-this-season),
+ * smoothly scrolls directly to the target element.
+ * When navigating between standard routes without a hash, instantly resets
+ * scroll position to 0.
  */
 export default function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (hash) {
-      // Hash links (e.g. #section) — let the browser handle these normally.
+      const id = hash.replace("#", "");
+      const scrollToSection = () => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+          return true;
+        }
+        return false;
+      };
+
+      if (!scrollToSection()) {
+        const timer1 = setTimeout(scrollToSection, 60);
+        const timer2 = setTimeout(scrollToSection, 180);
+        const timer3 = setTimeout(scrollToSection, 350);
+        return () => {
+          clearTimeout(timer1);
+          clearTimeout(timer2);
+          clearTimeout(timer3);
+        };
+      }
       return;
     }
 
-    // Temporarily disable any CSS scroll-behavior so the scroll is instant.
+    // Temporarily disable any CSS scroll-behavior so normal page reset is instant.
     const html = document.documentElement;
     const prev = html.style.scrollBehavior;
     html.style.scrollBehavior = "auto";
 
     window.scrollTo(0, 0);
 
-    // Restore in the next frame (after the instant scroll has been applied).
     const id = requestAnimationFrame(() => {
       html.style.scrollBehavior = prev;
     });

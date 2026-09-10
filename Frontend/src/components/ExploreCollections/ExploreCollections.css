@@ -136,3 +136,15 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 320px) {
+  .collection-content {
+    left: 12px;
+    right: 12px;
+  }
+
+  .collection-pill-btn {
+    padding: 9px 14px;
+    font-size: 0.78rem;
+  }
+}

@@ -28,3 +28,23 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+
+@media (max-width: 425px) {
+  .coming-soon-inner {
+    padding-block: 48px;
+    padding-inline: 16px;
+  }
+
+  .coming-soon-title {
+    font-size: 1.7rem;
+  }
+
+  .coming-soon-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .coming-soon-actions .btn {
+    width: 100%;
+  }
+}

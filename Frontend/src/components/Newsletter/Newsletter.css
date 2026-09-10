@@ -79,3 +79,28 @@
     flex-direction: column;
   }
 }
+
+@media (max-width: 425px) {
+  .newsletter {
+    padding-block: var(--space-lg);
+  }
+
+  .newsletter-inner {
+    padding: 1.5rem;
+    gap: var(--space-md);
+  }
+
+  .newsletter-inner h2 {
+    font-size: 1.4rem;
+  }
+
+  .newsletter-form input {
+    padding: 0.8rem 1rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .newsletter-inner {
+    padding: 1.25rem;
+  }
+}

@@ -19,29 +19,6 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Customer Rating" }
 ];
 
-const FAQS = [
-  {
-    q: "How does ZMW's Women's fit run — true to size or relaxed?",
-    a: "Tops and printed tees run true to standard sizing with a regular, easy fit. Co-ord sets are cut with a touch of relaxed room through the body — if you prefer a closer fit, we recommend sizing down for the top piece."
-  },
-  {
-    q: "What fabrics are the Women's tops and co-ords made from?",
-    a: "Printed tees and tops use soft-washed combed cotton jersey or ribbed stretch knit. Co-ord sets use breathable viscose, linen-cotton blends, or brushed fleece depending on the style — fabric details are listed on every product page."
-  },
-  {
-    q: "Can I buy the co-ord pieces separately?",
-    a: "Yes — each co-ord set is sold as a matching top and bottom together, but both pieces also work individually with the rest of your wardrobe. Reach out to support if you'd like just one half of a set."
-  },
-  {
-    q: "Can I return or exchange a Women's item if the size doesn't work?",
-    a: "Yes — every Women's item qualifies for our standard 14-day return window, unworn and with tags attached. See the Returns & Exchanges page for the full policy."
-  },
-  {
-    q: "Do you offer Cash on Delivery (COD) and Free Shipping?",
-    a: "Yes! Complimentary express shipping is included on all prepaid and COD orders across all major destinations, with real-time order tracking notifications sent directly to your email and SMS."
-  }
-];
-
 const INITIAL_PAGE_SIZE = 12;
 
 export default function Women() {
@@ -81,7 +58,6 @@ export default function Women() {
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState(0);
 
   // Accordion open/collapse states in filters
   const [openFilters, setOpenFilters] = useState({
@@ -542,7 +518,7 @@ export default function Women() {
             <span className="section-eyebrow">WOMENSWEAR</span>
             <h2 className="section-title">Shop All Women's</h2>
             <p className="section-subtitle">
-              {WOMEN_PRODUCTS.length} pieces across printed tees, co-ords, and tops.
+              {WOMEN_PRODUCTS.length} pieces across printed tees and co-ords.
             </p>
           </div>
 
@@ -920,45 +896,6 @@ export default function Women() {
                 crack, peel, or lose vibrancy, keeping graphics and color crisp wear after wear.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Collapsible FAQ Accordion Section */}
-      <section className="section-padding m-faq-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-eyebrow">COMMON QUESTIONS</span>
-            <h2 className="section-title">Frequently Asked Questions</h2>
-            <p className="section-subtitle">
-              Everything you need to know about our fits, fabric care, shipping, and exchanges.
-            </p>
-          </div>
-
-          <div className="m-faq-accordion">
-            {FAQS.map((item, i) => (
-              <div key={i} className={`m-faq-item ${openFaq === i ? "open" : ""}`}>
-                <button
-                  type="button"
-                  className="m-faq-trigger"
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  aria-expanded={openFaq === i}
-                >
-                  <span className="m-faq-question-text">{item.q}</span>
-                  <span className="m-faq-icon-wrap" aria-hidden="true">
-                    <svg className="m-faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="12" y1="5" x2="12" y2="19" className="m-faq-icon-v"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  </span>
-                </button>
-                {openFaq === i && (
-                  <div className="m-faq-panel">
-                    <p>{item.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
           </div>
         </div>
       </section>

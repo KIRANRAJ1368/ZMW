@@ -42,3 +42,27 @@
   transform: translateY(-2px);
   color: var(--color-ink);
 }
+
+@media (max-width: 425px) {
+  .press-inner {
+    gap: var(--space-sm);
+  }
+
+  .press-item {
+    font-size: 1.05rem;
+  }
+
+  .press-list {
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .press-item {
+    font-size: 0.95rem;
+  }
+
+  .press-list {
+    gap: 1rem;
+  }
+}

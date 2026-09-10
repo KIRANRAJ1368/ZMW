@@ -15,7 +15,8 @@ export default function WhatsNew() {
       : products.filter((p) => p.category.toLowerCase() === activeCategory.toLowerCase());
 
   return (
-    <section id="whats-new" className="section-padding whats-new-section">
+    <section id="whats-new-this-season" className="section-padding whats-new-section">
+      <span id="whats-new" aria-hidden="true" style={{ position: "absolute" }} />
       <div className="container">
         {/* Section Header */}
         <div className="section-header">

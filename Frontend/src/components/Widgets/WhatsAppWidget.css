@@ -207,3 +207,27 @@
 .whatsapp-send-btn:hover {
   background-color: #128c7e;
 }
+
+@media (max-width: 425px) {
+  .whatsapp-widget-wrapper {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .whatsapp-fab {
+    width: 52px;
+    height: 52px;
+  }
+
+  .whatsapp-popup {
+    width: calc(100vw - 32px);
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 320px) {
+  .whatsapp-widget-wrapper {
+    bottom: 12px;
+    right: 12px;
+  }
+}

@@ -133,3 +133,18 @@
     gap: 24px;
   }
 }
+
+@media (max-width: 340px) {
+  .instagram-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .brand-logo-text {
+    font-size: 1rem;
+  }
+
+  .partners-list {
+    gap: 16px;
+  }
+}

@@ -98,3 +98,29 @@
     padding: 24px;
   }
 }
+
+@media (max-width: 425px) {
+  .split-banner-section {
+    padding: var(--space-lg) 0;
+  }
+
+  .split-card {
+    min-height: 320px;
+    padding: 20px;
+  }
+
+  .split-title {
+    font-size: 1.25rem;
+  }
+
+  .split-desc {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .split-card {
+    min-height: 290px;
+    padding: 16px;
+  }
+}

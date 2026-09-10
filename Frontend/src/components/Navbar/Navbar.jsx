@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
-import { MEN_SUBCATEGORIES, WOMEN_SUBCATEGORIES, KIDS_SUBCATEGORIES } from "../../data/products";
+import { MEN_SUBCATEGORIES, WOMEN_SUBCATEGORIES, KIDS_SUBCATEGORIES, MEN_FLYOUT } from "../../data/products";
 import "./Navbar.css";
 
 const PROMO_MESSAGES = [
@@ -9,11 +9,6 @@ const PROMO_MESSAGES = [
   "🌿 100% ORGANIC & SUSTAINABLY SOURCED NATURAL FIBRES",
   "✈️ COMPLIMENTARY EXPRESS WORLDWIDE SHIPPING ON ORDERS ₹12,450+"
 ];
-
-const MEN_FLYOUT = {
-  "Oversized T-Shirts": ["Graphic", "Polo", "Sports", "Music"],
-  Hoodie: ["Graphic Hoodie"]
-};
 
 export default function Navbar() {
   const {
@@ -61,10 +56,26 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const location = useLocation();
+
   const closeAllMenus = useCallback(() => {
     setOpenDesktopMenu(null);
     setOpenFlyout(null);
   }, []);
+
+  const handleSectionClick = (e, sectionId) => {
+    closeAllMenus();
+    setMobileMenuOpen(false);
+
+    if (location.pathname === "/") {
+      e.preventDefault();
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        window.history.pushState(null, "", `/#${sectionId}`);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!openDesktopMenu) return;
@@ -330,14 +341,22 @@ export default function Navbar() {
             </li>
 
             <li>
-              <a href="/#tabbed-showcase" className="nav-link">
-                Bestsellers
-              </a>
+              <Link
+                to="/#most-loved-pieces"
+                className="nav-link"
+                onClick={(e) => handleSectionClick(e, "most-loved-pieces")}
+              >
+                Best Seller
+              </Link>
             </li>
             <li>
-              <a href="/#whats-new" className="nav-link">
-                New Arrivals
-              </a>
+              <Link
+                to="/#whats-new-this-season"
+                className="nav-link"
+                onClick={(e) => handleSectionClick(e, "whats-new-this-season")}
+              >
+                New Arrival
+              </Link>
             </li>
           </ul>
 
@@ -366,10 +385,10 @@ export default function Navbar() {
               </svg>
             </button>
 
-            <button
-              className="action-btn"
-              onClick={() => setIsWishlistOpen(true)}
-              aria-label="View Wishlist"
+            <Link
+              to="/wishlist"
+              className="action-btn wishlist-nav-link"
+              aria-label={`View Wishlist (${wishlist.length} items)`}
               title="Wishlist"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -378,7 +397,7 @@ export default function Navbar() {
               {wishlist.length > 0 && (
                 <span className="badge-count">{wishlist.length}</span>
               )}
-            </button>
+            </Link>
 
             <button
               className="action-btn cart-btn"
@@ -606,14 +625,28 @@ export default function Navbar() {
           </li>
 
           <li>
-            <a href="/#tabbed-showcase" onClick={() => setMobileMenuOpen(false)}>
-              Bestsellers
-            </a>
+            <Link
+              to="/#most-loved-pieces"
+              onClick={(e) => handleSectionClick(e, "most-loved-pieces")}
+            >
+              Best Seller
+            </Link>
           </li>
           <li>
-            <a href="/#whats-new" onClick={() => setMobileMenuOpen(false)}>
-              New Arrivals
-            </a>
+            <Link
+              to="/#whats-new-this-season"
+              onClick={(e) => handleSectionClick(e, "whats-new-this-season")}
+            >
+              New Arrival
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/wishlist"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Wishlist {wishlist.length > 0 ? `(${wishlist.length})` : ""}
+            </Link>
           </li>
         </ul>
 

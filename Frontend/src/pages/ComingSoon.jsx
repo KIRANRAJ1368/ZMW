@@ -1,14 +1,6 @@
 import { Link } from "react-router-dom";
 import "./ComingSoon.css";
 
-/**
- * ComingSoon
- * Lightweight placeholder used for the category routes that are wired
- * into the nav but not yet built out (Women, Kids, Oversized T-Shirts as
- * a standalone landing). Keeps every nav item navigable to a real page —
- * styled with the same tokens as the rest of the site — without building
- * full catalog pages for them yet.
- */
 export default function ComingSoon({ title }) {
   return (
     <section className="coming-soon-section">

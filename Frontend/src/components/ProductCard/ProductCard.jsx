@@ -137,19 +137,7 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        {/* Color Swatches */}
-        {product.colors && product.colors.length > 0 && (
-          <div className="product-swatches">
-            {product.colors.map((c, i) => (
-              <span
-                key={i}
-                className="color-dot"
-                style={{ backgroundColor: c.hex }}
-                title={c.name}
-              />
-            ))}
-          </div>
-        )}
+
       </div>
     </div>
   );

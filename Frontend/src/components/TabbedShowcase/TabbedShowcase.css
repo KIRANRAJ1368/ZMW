@@ -210,9 +210,30 @@
   .tabbed-product-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .showcase-tab {
-    padding: 8px 16px;
+    padding: 8px 14px;
     font-size: var(--text-xs);
+  }
+
+  .showcase-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .showcase-tabs {
+    padding: 4px;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 340px) {
+  .tabbed-product-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
 }

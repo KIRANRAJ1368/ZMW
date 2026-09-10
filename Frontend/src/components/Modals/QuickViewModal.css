@@ -311,3 +311,42 @@
     padding: 24px;
   }
 }
+
+@media (max-width: 425px) {
+  .quickview-container {
+    max-height: 92vh;
+  }
+
+  .quickview-gallery {
+    padding: 16px;
+  }
+
+  .quickview-details {
+    padding: 20px 16px;
+  }
+
+  .quickview-title {
+    font-size: 1.3rem;
+  }
+
+  .quickview-thumbnails {
+    gap: 8px;
+  }
+
+  .thumb-btn {
+    width: 52px;
+    height: 64px;
+  }
+}
+
+@media (max-width: 340px) {
+  .quickview-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-add-bag {
+    order: 2;
+    flex: 1 1 100%;
+  }
+}

@@ -139,3 +139,36 @@
     grid-column: span 1;
   }
 }
+
+@media (max-width: 425px) {
+  .collections {
+    padding-block: var(--space-lg);
+  }
+
+  .collections-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .collections-head h2 {
+    font-size: 1.4rem;
+  }
+
+  .collections-head p {
+    font-size: var(--text-small);
+  }
+
+  .product-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .collections-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}

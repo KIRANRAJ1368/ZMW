@@ -1,87 +1,156 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import "./SearchModal.css";
 
-const TRENDING_SEARCHES = ["Linen Boxy", "Silk Dress", "Merino Mockneck", "Calfskin Bag", "Linen Skirt", "Organic Cotton"];
+const POPULAR_SEARCHES = ["Linen Shirt", "Silk Slip Dress", "T-Shirt", "Oversized", "Pants", "Blazer"];
 
 export default function SearchModal() {
   const {
     isSearchOpen,
     setIsSearchOpen,
-    products,
-    formatPrice,
-    setQuickViewProduct
+    allProducts,
+    products
   } = useShop();
 
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
+  const containerRef = useRef(null);
+  const navigate = useNavigate();
 
+  // Combine products list safely
+  const productCatalog = useMemo(() => {
+    return allProducts && allProducts.length > 0 ? allProducts : products || [];
+  }, [allProducts, products]);
+
+  // Focus input on open, clear on close
   useEffect(() => {
-    if (isSearchOpen && inputRef.current) {
-      setTimeout(() => inputRef.current.focus(), 100);
+    if (isSearchOpen) {
+      const timer = setTimeout(() => {
+        if (inputRef.current) inputRef.current.focus();
+      }, 50);
+      return () => clearTimeout(timer);
+    } else {
+      setQuery("");
     }
   }, [isSearchOpen]);
 
+  // Handle ESC key to close
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && isSearchOpen) {
+        setIsSearchOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isSearchOpen, setIsSearchOpen]);
+
   if (!isSearchOpen) return null;
 
-  const filteredProducts = query.trim()
-    ? products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query.toLowerCase()) ||
-          p.category.toLowerCase().includes(query.toLowerCase()) ||
-          p.description.toLowerCase().includes(query.toLowerCase())
-      )
+  const trimmed = query.trim().toLowerCase();
+
+  const filteredProducts = trimmed
+    ? productCatalog
+        .filter((p) => {
+          const nameMatch = p.name?.toLowerCase().includes(trimmed);
+          const catMatch = p.category?.toLowerCase().includes(trimmed);
+          const descMatch = p.description?.toLowerCase().includes(trimmed);
+          const colorMatch = p.colors?.some((c) =>
+            c.name?.toLowerCase().includes(trimmed)
+          );
+          return nameMatch || catMatch || descMatch || colorMatch;
+        })
+        .slice(0, 8) // Keep compact & fast
     : [];
 
-  const handleProductClick = (product) => {
+  const formatINR = (amount) => {
+    if (amount === null || amount === undefined) return "";
+    const inr = Math.round(amount * 83);
+    return `₹${new Intl.NumberFormat("en-IN").format(inr)}`;
+  };
+
+  const handleSelectProduct = (productId) => {
     setIsSearchOpen(false);
-    setQuickViewProduct(product);
+    navigate(`/product/${productId}`);
   };
 
   return (
-    <div className="modal-overlay active" onClick={() => setIsSearchOpen(false)}>
-      <div className="search-modal-container" onClick={(e) => e.stopPropagation()}>
-        {/* Search Header */}
-        <div className="search-modal-header">
-          <div className="search-input-wrapper">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <div className="search-dropdown-overlay" onClick={() => setIsSearchOpen(false)}>
+      <div
+        className="search-dropdown-container"
+        ref={containerRef}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search catalog"
+      >
+        {/* Search Bar Row */}
+        <div className="search-bar-row">
+          <div className="search-input-box">
+            <svg
+              className="search-bar-icon"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
+
             <input
               ref={inputRef}
               type="text"
-              placeholder="Search garments, fabrics, colors, silhouettes..."
+              className="search-input-field"
+              placeholder="Search products…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="search-main-input"
+              aria-label="Search products"
+              autoComplete="off"
             />
+
             {query && (
-              <button className="clear-query-btn" onClick={() => setQuery("")}>
+              <button
+                type="button"
+                className="search-clear-btn"
+                onClick={() => {
+                  setQuery("");
+                  if (inputRef.current) inputRef.current.focus();
+                }}
+                aria-label="Clear search text"
+                title="Clear"
+              >
                 ✕
               </button>
             )}
           </div>
+
           <button
-            className="search-close-btn"
+            type="button"
+            className="search-dropdown-close-btn"
             onClick={() => setIsSearchOpen(false)}
             aria-label="Close search"
           >
-            Esc
+            Close
           </button>
         </div>
 
-        {/* Search Content */}
-        <div className="search-modal-body">
-          {/* Trending Searches */}
-          {!query && (
-            <div className="trending-searches-box">
-              <span className="trending-label">POPULAR SEARCHES:</span>
-              <div className="trending-chips">
-                {TRENDING_SEARCHES.map((term) => (
+        {/* Instant Suggestions / Results Dropdown */}
+        <div className="search-dropdown-content">
+          {/* Quick Popular Tags when empty */}
+          {!trimmed && (
+            <div className="search-popular-section">
+              <span className="search-popular-label">Popular Searches</span>
+              <div className="search-popular-chips">
+                {POPULAR_SEARCHES.map((term) => (
                   <button
                     key={term}
-                    className="trending-chip"
+                    type="button"
+                    className="search-chip-btn"
                     onClick={() => setQuery(term)}
                   >
                     {term}
@@ -92,32 +161,72 @@ export default function SearchModal() {
           )}
 
           {/* Results List */}
-          {query && (
-            <div className="search-results-box">
-              <span className="results-count">
-                Found {filteredProducts.length} results for "{query}"
-              </span>
+          {trimmed && (
+            <div className="search-results-section">
+              <div className="search-results-header">
+                <span className="search-results-count">
+                  {filteredProducts.length === 0
+                    ? `No results for "${query}"`
+                    : `${filteredProducts.length} ${
+                        filteredProducts.length === 1 ? "result" : "results"
+                      } found`}
+                </span>
+              </div>
 
-              {filteredProducts.length === 0 ? (
-                <div className="search-no-results">
-                  <p>No products match your search. Try searching for "Linen", "Silk", or "Tee".</p>
-                </div>
-              ) : (
-                <div className="search-results-grid">
-                  {filteredProducts.map((p) => (
+              {filteredProducts.length > 0 ? (
+                <div className="search-results-list">
+                  {filteredProducts.map((product) => (
                     <div
-                      key={p.id}
-                      className="search-result-card"
-                      onClick={() => handleProductClick(p)}
+                      key={product.id}
+                      className="search-result-item"
+                      onClick={() => handleSelectProduct(product.id)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleSelectProduct(product.id);
+                        }
+                      }}
                     >
-                      <img src={p.images[0]} alt={p.name} className="search-res-img" />
-                      <div className="search-res-info">
-                        <span className="search-res-category">{p.category}</span>
-                        <h4 className="search-res-title">{p.name}</h4>
-                        <span className="search-res-price">{formatPrice(p.price)}</span>
+                      <div className="search-item-img-wrap">
+                        <img
+                          src={product.images && product.images[0]}
+                          alt={product.name}
+                          className="search-item-img"
+                          loading="lazy"
+                        />
                       </div>
+
+                      <div className="search-item-details">
+                        <span className="search-item-category">
+                          {product.category}
+                        </span>
+                        <h4 className="search-item-name">{product.name}</h4>
+                        <div className="search-item-price-row">
+                          <span className="search-item-price">
+                            {formatINR(product.price)}
+                          </span>
+                          {product.originalPrice && (
+                            <span className="search-item-original-price">
+                              {formatINR(product.originalPrice)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <span className="search-item-arrow" aria-hidden="true">
+                        &rarr;
+                      </span>
                     </div>
                   ))}
+                </div>
+              ) : (
+                <div className="search-no-results">
+                  <p>We couldn't find any products matching your search.</p>
+                  <span className="search-no-results-hint">
+                    Try checking for spelling errors or using more general terms like "Linen", "Dress", or "Shirt".
+                  </span>
                 </div>
               )}
             </div>

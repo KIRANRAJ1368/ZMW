@@ -291,3 +291,22 @@
     text-align: center;
   }
 }
+
+@media (max-width: 320px) {
+  .footer-grid {
+    gap: 24px;
+  }
+  .footer-brand-main {
+    font-size: 1.4rem;
+  }
+  .footer-col-heading {
+    margin-bottom: 14px;
+  }
+  .newsletter-input,
+  .newsletter-btn {
+    font-size: 0.7rem;
+  }
+  .payment-icons-strip {
+    justify-content: center;
+  }
+}

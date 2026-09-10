@@ -18,29 +18,6 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Customer Rating" }
 ];
 
-const FAQS = [
-  {
-    q: "How does ZMW's oversized fit compare to standard t-shirts?",
-    a: "Our oversized t-shirts feature an intentional drop-shoulder, wider chest, and longer sleeve cut designed to hang loosely with a modern streetwear silhouette. If you prefer a tailored or standard fit, we recommend ordering one size down from your usual size."
-  },
-  {
-    q: "What does 240 GSM combed cotton mean for feel and durability?",
-    a: "GSM stands for Grams per Square Meter. Standard t-shirts typically use 140–160 GSM fabric. Our 240 GSM heavyweight combed cotton provides substantial drape, opacity (zero see-through), enhanced breathability, and long-term shape retention wash after wash."
-  },
-  {
-    q: "How should I wash and care for graphic print t-shirts?",
-    a: "We recommend washing inside out in cold water (30°C or below) on a gentle cycle. Avoid bleaching or tumble drying on high heat. Iron inside-out and never place a hot iron directly onto the graphic print."
-  },
-  {
-    q: "What is your return and exchange policy?",
-    a: "We offer hassle-free 14-day returns and exchanges on all Men's collection items, provided they are unwashed, unworn, and retain all original tags and packaging. Reverse pickup is available across all serviceable postal codes."
-  },
-  {
-    q: "Do you offer Cash on Delivery (COD) and Free Shipping?",
-    a: "Yes! Complimentary express shipping is included on all prepaid and COD orders across all major destinations, with real-time order tracking notifications sent directly to your email and SMS."
-  }
-];
-
 const INITIAL_PAGE_SIZE = 12;
 
 export default function Men() {
@@ -74,7 +51,6 @@ export default function Men() {
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState(0);
 
   // Accordion open/collapse states in filters
   const [openFilters, setOpenFilters] = useState({
@@ -541,7 +517,7 @@ export default function Men() {
             <span className="section-eyebrow">MENSWEAR</span>
             <h2 className="section-title">Shop All Men's</h2>
             <p className="section-subtitle">
-              {MEN_PRODUCTS.length} pieces across oversized tees, polos, joggers, and fleece.
+              {MEN_PRODUCTS.length} pieces across oversized tees, polos, plain tees, joggers, hoodies, and sweatshirts.
             </p>
           </div>
 
@@ -919,45 +895,6 @@ export default function Men() {
                 or lose vibrancy, keeping your graphics crisp wear after wear.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Collapsible FAQ Accordion Section */}
-      <section className="section-padding m-faq-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-eyebrow">COMMON QUESTIONS</span>
-            <h2 className="section-title">Frequently Asked Questions</h2>
-            <p className="section-subtitle">
-              Everything you need to know about our fits, fabric care, shipping, and exchanges.
-            </p>
-          </div>
-
-          <div className="m-faq-accordion">
-            {FAQS.map((item, i) => (
-              <div key={i} className={`m-faq-item ${openFaq === i ? "open" : ""}`}>
-                <button
-                  type="button"
-                  className="m-faq-trigger"
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  aria-expanded={openFaq === i}
-                >
-                  <span className="m-faq-question-text">{item.q}</span>
-                  <span className="m-faq-icon-wrap" aria-hidden="true">
-                    <svg className="m-faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="12" y1="5" x2="12" y2="19" className="m-faq-icon-v"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  </span>
-                </button>
-                {openFaq === i && (
-                  <div className="m-faq-panel">
-                    <p>{item.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
           </div>
         </div>
       </section>

@@ -28,7 +28,8 @@ export default function TabbedShowcase() {
   });
 
   return (
-    <section id="tabbed-showcase" className="section-padding tabbed-showcase-section">
+    <section id="most-loved-pieces" className="section-padding tabbed-showcase-section">
+      <span id="tabbed-showcase" aria-hidden="true" style={{ position: "absolute" }} />
       <div className="container">
         {/* Section Header */}
         <div className="section-header">

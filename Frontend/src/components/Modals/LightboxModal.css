@@ -168,3 +168,18 @@
     right: 12px;
   }
 }
+
+@media (max-width: 425px) {
+  .lightbox-modal {
+    padding: 12px;
+  }
+
+  .lightbox-details {
+    padding: 24px 16px;
+  }
+
+  .lightbox-nav-btn {
+    width: 36px;
+    height: 36px;
+  }
+}

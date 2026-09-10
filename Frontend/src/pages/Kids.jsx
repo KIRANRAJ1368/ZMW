@@ -19,29 +19,6 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Customer Rating" }
 ];
 
-const FAQS = [
-  {
-    q: "How do ZMW Kids sizes map to my child's age?",
-    a: "Our Kids sizing runs by age band, from 0-1Y up through 9-10Y, with a little extra room built in for growth. If your child is between two sizes or tends to run tall, we recommend sizing up for a comfortable fit that lasts longer."
-  },
-  {
-    q: "What fabrics are used in the Kids collection?",
-    a: "Everyday tees, sets, and rompers are made from soft-washed, breathable combed cotton that's gentle on sensitive skin. Dresses and co-ord sets use pre-shrunk cotton blends with flat-locked seams to reduce chafing during play."
-  },
-  {
-    q: "Are the prints and dyes safe for kids?",
-    a: "Yes — all graphic prints and dyes are tested to be skin-friendly and free from harmful azo dyes, with fade-resistant pigments that stay vibrant through repeated washing."
-  },
-  {
-    q: "Can I return or exchange a Kids item if the size doesn't fit?",
-    a: "Yes — every Kids item qualifies for our standard 14-day return window, unworn and with tags attached. See the Returns & Exchanges page for the full policy."
-  },
-  {
-    q: "Do you offer Cash on Delivery (COD) and Free Shipping?",
-    a: "Yes! Complimentary express shipping is included on all prepaid and COD orders across all major destinations, with real-time order tracking notifications sent directly to your email and SMS."
-  }
-];
-
 const INITIAL_PAGE_SIZE = 12;
 
 export default function Kids() {
@@ -81,7 +58,6 @@ export default function Kids() {
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState(0);
 
   // Accordion open/collapse states in filters
   const [openFilters, setOpenFilters] = useState({
@@ -494,9 +470,8 @@ export default function Kids() {
         <div className="hero-backdrop">
           <img
             src="/images/cat-banner-kids.jpg"
-            alt="Cute stylish child wearing a modern Urban Explorer graphic T-shirt"
-            className="hero-backdrop-img"
-            style={{ objectPosition: "82% 22%" }}
+            alt="Happy stylish kids wearing colorful modern graphic T-shirts"
+            className="hero-backdrop-img kids-hero-backdrop-img"
             loading="eager"
           />
           <div className="hero-backdrop-scrim" />
@@ -542,7 +517,7 @@ export default function Kids() {
             <span className="section-eyebrow">KIDSWEAR</span>
             <h2 className="section-title">Shop All Kids'</h2>
             <p className="section-subtitle">
-              {KIDS_PRODUCTS.length} pieces across graphic tees, co-ord sets, dresses, and rompers.
+              {KIDS_PRODUCTS.length} pieces across boys' and girls' graphic tees.
             </p>
           </div>
 
@@ -920,45 +895,6 @@ export default function Kids() {
                 crack, peel, or lose vibrancy, keeping graphics crisp wash after wash.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Collapsible FAQ Accordion Section */}
-      <section className="section-padding m-faq-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-eyebrow">COMMON QUESTIONS</span>
-            <h2 className="section-title">Frequently Asked Questions</h2>
-            <p className="section-subtitle">
-              Everything you need to know about our fits, fabric care, shipping, and exchanges.
-            </p>
-          </div>
-
-          <div className="m-faq-accordion">
-            {FAQS.map((item, i) => (
-              <div key={i} className={`m-faq-item ${openFaq === i ? "open" : ""}`}>
-                <button
-                  type="button"
-                  className="m-faq-trigger"
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  aria-expanded={openFaq === i}
-                >
-                  <span className="m-faq-question-text">{item.q}</span>
-                  <span className="m-faq-icon-wrap" aria-hidden="true">
-                    <svg className="m-faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="12" y1="5" x2="12" y2="19" className="m-faq-icon-v"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  </span>
-                </button>
-                {openFaq === i && (
-                  <div className="m-faq-panel">
-                    <p>{item.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
           </div>
         </div>
       </section>

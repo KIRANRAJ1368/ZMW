@@ -580,6 +580,16 @@
   box-shadow: 0 1px 3px rgba(200, 157, 60, 0.3);
 }
 
+/* Wishlist nav icon — Link styled to match action-btn */
+.wishlist-nav-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.wishlist-nav-link:hover {
+  text-decoration: none;
+}
+
 /* Cart button */
 .cart-btn {
   display: flex;
@@ -929,5 +939,130 @@
   .action-btn {
     width: 36px;
     height: 36px;
+  }
+}
+
+@media (max-width: 425px) {
+  .announcement-inner {
+    gap: 8px;
+  }
+
+  .announcement-message {
+    font-size: 0.6rem;
+    letter-spacing: 0.02em;
+  }
+
+  .announcement-right {
+    gap: 6px;
+  }
+
+  .currency-selector select,
+  .language-selector select {
+    font-size: 0.62rem;
+  }
+
+  .navbar-inner {
+    gap: 10px;
+    height: 52px;
+  }
+
+  .navbar-scrolled .navbar-inner {
+    height: 50px;
+  }
+
+  .brand-main {
+    font-size: 1.15rem;
+    letter-spacing: 0.14em;
+  }
+
+  .brand-sub {
+    font-size: 0.48rem;
+    letter-spacing: 0.22em;
+  }
+
+  .action-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .cart-btn {
+    padding: 6px 10px;
+    gap: 4px;
+  }
+
+  .hamburger-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .mobile-nav-drawer {
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .navbar-inner {
+    gap: 6px;
+    height: 50px;
+  }
+
+  .brand-main {
+    font-size: 1.05rem;
+    letter-spacing: 0.12em;
+  }
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .action-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 320px) {
+  .announcement-message {
+    font-size: 0.56rem;
+  }
+
+  .hamburger-btn {
+    gap: 4px;
+  }
+
+  .hamburger-line {
+    height: 1.8px;
+  }
+
+  .navbar-inner {
+    gap: 4px;
+  }
+
+  .brand-main {
+    font-size: 1rem;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .cart-btn {
+    padding: 6px 8px;
+  }
+
+  .mobile-nav-drawer {
+    padding: 16px 14px;
+  }
+
+  .mobile-nav-list > li > a,
+  .mobile-nav-list > li > .mobile-nav-expand-row > a {
+    padding: 9px 12px;
+    font-size: 0.98rem;
+  }
+
+  .mobile-nav-submenu a {
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
 }

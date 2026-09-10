@@ -103,3 +103,21 @@
     padding-bottom: 24%;
   }
 }
+
+@media (max-width: 425px) {
+  .story {
+    padding-block: var(--space-lg);
+  }
+
+  .story-copy h2 {
+    font-size: 1.4rem;
+  }
+
+  .story-list li {
+    font-size: 0.9rem;
+  }
+
+  .story-copy > p {
+    font-size: 0.88rem;
+  }
+}

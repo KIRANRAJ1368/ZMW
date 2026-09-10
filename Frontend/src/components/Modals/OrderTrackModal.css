@@ -188,3 +188,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 425px) {
+  .order-track-container {
+    padding: 24px 16px;
+  }
+
+  .order-track-title {
+    font-size: 1.35rem;
+  }
+}

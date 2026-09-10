@@ -1,5 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { PRODUCTS, INSTAGRAM_SHOWCASE } from "../data/products";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import {
+  PRODUCTS,
+  MEN_PRODUCTS,
+  WOMEN_PRODUCTS,
+  KIDS_PRODUCTS,
+  INSTAGRAM_SHOWCASE
+} from "../data/products";
 
 const ShopContext = createContext();
 
@@ -13,6 +19,29 @@ const CURRENCIES = {
 const FREE_SHIPPING_THRESHOLD = 75; // in USD
 
 export const ShopProvider = ({ children }) => {
+  // Unified product lookup across all catalogs
+  const allProducts = useMemo(() => {
+    const seen = new Set();
+    const list = [];
+    [...PRODUCTS, ...MEN_PRODUCTS, ...WOMEN_PRODUCTS, ...KIDS_PRODUCTS].forEach((p) => {
+      if (!seen.has(p.id)) {
+        seen.add(p.id);
+        list.push(p);
+      }
+    });
+    return list;
+  }, []);
+
+  const allProductsMap = useMemo(() => {
+    const map = new Map();
+    allProducts.forEach((p) => {
+      map.set(p.id, p);
+    });
+    return map;
+  }, [allProducts]);
+
+  const findProduct = (productId) => allProductsMap.get(productId) || null;
+
   // Cart state
   const [cart, setCart] = useState(() => {
     try {
@@ -167,7 +196,7 @@ export const ShopProvider = ({ children }) => {
 
   // Wishlist operations
   const toggleWishlist = (productId) => {
-    const product = PRODUCTS.find((p) => p.id === productId);
+    const product = findProduct(productId);
     const name = product ? product.name : "Product";
 
     setWishlist((prev) => {
@@ -182,7 +211,7 @@ export const ShopProvider = ({ children }) => {
   };
 
   const moveToCartFromWishlist = (productId) => {
-    const product = PRODUCTS.find((p) => p.id === productId);
+    const product = findProduct(productId);
     if (product) {
       addToCart(product);
       setWishlist((prev) => prev.filter((id) => id !== productId));
@@ -243,6 +272,8 @@ export const ShopProvider = ({ children }) => {
       value={{
         // Catalog
         products: PRODUCTS,
+        allProducts,
+        findProduct,
         // Cart
         cart,
         cartItemCount,

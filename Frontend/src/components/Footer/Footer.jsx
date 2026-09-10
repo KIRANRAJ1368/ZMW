@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import "./Footer.css";
 
 const QUICK_LINKS = [
-  { label: "Summer Collection", href: "/#whats-new" },
-  { label: "Best Sellers", href: "/#tabbed-showcase" },
-  { label: "New Arrivals", href: "/#tabbed-showcase" }
+  { label: "Summer Collection", href: "/#whats-new-this-season" },
+  { label: "Best Sellers", href: "/#most-loved-pieces" },
+  { label: "New Arrivals", href: "/#whats-new-this-season" }
 ];
 
 const INFO_LINKS = [

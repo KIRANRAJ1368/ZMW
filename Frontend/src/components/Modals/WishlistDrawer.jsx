@@ -7,7 +7,7 @@ export default function WishlistDrawer() {
     isWishlistOpen,
     setIsWishlistOpen,
     wishlist,
-    products,
+    findProduct,
     toggleWishlist,
     moveToCartFromWishlist,
     formatPrice,
@@ -16,7 +16,7 @@ export default function WishlistDrawer() {
 
   if (!isWishlistOpen) return null;
 
-  const wishlistProducts = products.filter((p) => wishlist.includes(p.id));
+  const wishlistProducts = wishlist.map((id) => findProduct(id)).filter(Boolean);
 
   const handleMoveAllToBag = () => {
     wishlistProducts.forEach((p) => {

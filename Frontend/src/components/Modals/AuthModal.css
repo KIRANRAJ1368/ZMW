@@ -126,3 +126,23 @@
   font-weight: 700;
   text-decoration: underline;
 }
+
+@media (max-width: 425px) {
+  .auth-modal-container {
+    padding: 28px 20px;
+  }
+
+  .auth-title {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .auth-modal-container {
+    padding: 22px 16px;
+  }
+
+  .auth-header {
+    margin-bottom: 20px;
+  }
+}
