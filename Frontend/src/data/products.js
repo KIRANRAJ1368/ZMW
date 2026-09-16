@@ -1,8 +1,3 @@
-/**
- * ZMW Luxury Fashion Product Catalog
- * Rich editorial products with multi-view photos, color swatches, sizes, ratings, and tags.
- * High-resolution professional fashion photography with prominent clothing focus.
- */
 
 export const PRODUCTS = [
   {
@@ -275,7 +270,7 @@ export const CATEGORY_SHOWCASE = [
     itemCount: "44 Curated Styles",
     image: "/images/photo-1506152983158-b4a74a01c721.jpg",
     accentImage: "/images/photo-1594938298603-c8148c4dae35.jpg",
-    href: "/men"
+    href: "/collection?category=men"
   },
   {
     id: "cat-women",
@@ -285,7 +280,7 @@ export const CATEGORY_SHOWCASE = [
     itemCount: "58 Curated Styles",
     image: "/images/photo-1741816219933-2bf406bc9739.jpg",
     accentImage: "/images/photo-1741250782029-2770cfaf666c.jpg",
-    href: "/women"
+    href: "/collection?category=women"
   },
   {
     id: "cat-kids",
@@ -295,7 +290,7 @@ export const CATEGORY_SHOWCASE = [
     itemCount: "36 Curated Styles",
     image: "/images/photo-1471286174890-9c112ffca5b4.jpg",
     accentImage: "/images/photo-1567401893414-76b7b1e5a7a5.jpg",
-    href: "/kids"
+    href: "/collection?category=kids"
   }
 ];
 
@@ -311,7 +306,7 @@ export const INSTAGRAM_SHOWCASE = [
     id: "insta-2",
     image: "/images/photo-1519741497674-611481863552.jpg",
     handle: "@zmw.studio",
-    caption: "Flowing silk separates — the new summer wardrobe capsule.",
+    caption: "Flowing silk separates â€” the new summer wardrobe capsule.",
     likes: "5.8k"
   },
   {
@@ -332,7 +327,7 @@ export const INSTAGRAM_SHOWCASE = [
     id: "insta-5",
     image: "/images/photo-1616415852242-2d061343d9a1.jpg",
     handle: "@zmw.studio",
-    caption: "Feminine florals & fluid fabric — the 2026 Signature Collection.",
+    caption: "Feminine florals & fluid fabric â€” the 2026 Signature Collection.",
     likes: "4.7k"
   }
 ];
@@ -383,23 +378,16 @@ export const BRAND_LOGOS = [
  * nav's flyout menu always list the same set of subcategories.
  */
 export const MEN_SUBCATEGORIES = [
-  "Oversized T-Shirts",
-  "Polo T-Shirts",
-  "Plain T-Shirts",
-  "Joggers",
-  "Hoodies",
-  "Sweatshirts"
+  "Round Neck T-shirt",
+  "Polo T-shirt",
+  "Mens Hoodies"
 ];
-
-export const MEN_FLYOUT = {
-  "Oversized T-Shirts": ["Graphic", "Polo", "Sports", "Music"]
-};
 
 /**
  * MEN_PRODUCTS
  * Dedicated catalog for the Men's category page. Shares the exact same
  * product shape as PRODUCTS (see above) so it works with ProductCard,
- * the cart, wishlist, and quick-view without any special-casing —
+ * the cart, wishlist, and quick-view without any special-casing â€”
  * only addition is `subCategory`, used for the page's filter pills.
  */
 export const MEN_PRODUCTS = [
@@ -407,7 +395,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m01",
     name: "CM Original Oversized Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Best Seller",
     badgeType: "hot",
     price: 42,
@@ -436,7 +424,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m02",
     name: "Racer Stripe Oversized Tee",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "New Drop",
     badgeType: "new",
     price: 45,
@@ -464,7 +452,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m03",
     name: "UnderRated Script Oversized Tee",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Trending",
     badgeType: "hot",
     price: 40,
@@ -492,7 +480,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m04",
     name: "Street Calm Zipper Oversized Tee",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: null,
     badgeType: "new",
     price: 44,
@@ -520,7 +508,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m05",
     name: "Initial D Oversized Racing Tee",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Limited",
     badgeType: "hot",
     price: 46,
@@ -548,7 +536,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m06",
     name: "Original 99 Oversized Tee",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "New Drop",
     badgeType: "new",
     price: 43,
@@ -577,7 +565,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m07",
     name: "Mono Line Zipper Regular Polo",
     category: "Polo",
-    subCategory: "Polo T-Shirts",
+    subCategory: "Polo T-shirt",
     badge: "Best Seller",
     badgeType: "hot",
     price: 39,
@@ -605,7 +593,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m08",
     name: "Shadow Hunter Oversized Polo",
     category: "Polo",
-    subCategory: "Polo T-Shirts",
+    subCategory: "Polo T-shirt",
     badge: "New Drop",
     badgeType: "new",
     price: 41,
@@ -633,7 +621,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m09",
     name: "Spartans High-Density Oversized Polo",
     category: "Polo",
-    subCategory: "Polo T-Shirts",
+    subCategory: "Polo T-shirt",
     badge: "Trending",
     badgeType: "hot",
     price: 44,
@@ -661,7 +649,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m10",
     name: "Detroit High-Neck Oversized Polo",
     category: "Polo",
-    subCategory: "Polo T-Shirts",
+    subCategory: "Polo T-shirt",
     badge: null,
     badgeType: "new",
     price: 42,
@@ -683,13 +671,13 @@ export const MEN_PRODUCTS = [
       { name: "Jet Black", hex: "#181715" }
     ],
     sizes: ["M", "L", "XL"],
-    description: "High-neck placket polo in brushed pique cotton with contrast trim at the cuffs and collar. Currently out of stock — restocking soon."
+    description: "High-neck placket polo in brushed pique cotton with contrast trim at the cuffs and collar. Currently out of stock â€” restocking soon."
   },
   {
     id: "zmw-m11",
     name: "Neutral Wave Regular Polo",
     category: "Polo",
-    subCategory: "Polo T-Shirts",
+    subCategory: "Polo T-shirt",
     badge: "New Drop",
     badgeType: "new",
     price: 38,
@@ -717,7 +705,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m12",
     name: "Relaxed Boxy Oxford Weave Shirt",
     category: "T-Shirt",
-    subCategory: "Plain T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Best Seller",
     badgeType: "hot",
     price: 46,
@@ -740,13 +728,13 @@ export const MEN_PRODUCTS = [
       { name: "Charcoal Twill", hex: "#3B3B3B" }
     ],
     sizes: ["S", "M", "L", "XL"],
-    description: "Oxford-weave cotton in a relaxed boxy cut, no branding — a wardrobe staple built to layer under a shirt or blazer."
+    description: "Oxford-weave cotton in a relaxed boxy cut, no branding â€” a wardrobe staple built to layer under a shirt or blazer."
   },
   {
     id: "zmw-m13",
     name: "Beige Atelier Regular Long Sleeve",
     category: "T-Shirt",
-    subCategory: "Plain T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: null,
     badgeType: "new",
     price: 37,
@@ -768,13 +756,13 @@ export const MEN_PRODUCTS = [
       { name: "Ivory", hex: "#FAF8F2" }
     ],
     sizes: ["S", "M", "L", "XL"],
-    description: "Fine-gauge cotton long sleeve with a mock-neck placket. Regular fit, minimal branding — an easy layering piece."
+    description: "Fine-gauge cotton long sleeve with a mock-neck placket. Regular fit, minimal branding â€” an easy layering piece."
   },
   {
     id: "zmw-m14",
     name: "Dark Dimension Full Sleeve Tee",
     category: "T-Shirt",
-    subCategory: "Plain T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Trending",
     badgeType: "hot",
     price: 39,
@@ -801,7 +789,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m19",
     name: "Originals 88 Oversized T-Shirt - Navy & White",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Best Seller",
     badgeType: "hot",
     price: 44,
@@ -829,7 +817,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m20",
     name: "Fast Lane Full Sleeve Oversized Tee - Off White & Red",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "New Drop",
     badgeType: "new",
     price: 48,
@@ -857,7 +845,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m21",
     name: "Riders Life Acid Wash Oversized Tee - Black & Denim",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Trending",
     badgeType: "hot",
     price: 46,
@@ -885,7 +873,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m22",
     name: "Sprint Club Oversized Tee - Contrast 5 Thread Black",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Sale",
     badgeType: "sale",
     price: 42,
@@ -913,7 +901,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m23",
     name: "Madrid Oversized Graphic Tee - White & Navy",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "Best Seller",
     badgeType: "hot",
     price: 45,
@@ -941,7 +929,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m24",
     name: "Eternal Khepri Oversized Tee - Black & Hazelnut",
     category: "T-Shirt",
-    subCategory: "Oversized T-Shirts",
+    subCategory: "Round Neck T-shirt",
     badge: "New Drop",
     badgeType: "new",
     price: 47,
@@ -969,7 +957,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m25",
     name: "Urban Cargo Joggers - Olive",
     category: "Joggers",
-    subCategory: "Joggers",
+
     badge: "Best Seller",
     badgeType: "hot",
     price: 52,
@@ -998,7 +986,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m26",
     name: "Slim Fit Tech Joggers - Black",
     category: "Joggers",
-    subCategory: "Joggers",
+
     badge: "New Drop",
     badgeType: "new",
     price: 48,
@@ -1026,7 +1014,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m27",
     name: "Relaxed French Terry Joggers - Sand",
     category: "Joggers",
-    subCategory: "Joggers",
+
     badge: "Trending",
     badgeType: "hot",
     price: 46,
@@ -1055,7 +1043,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m28",
     name: "Track Joggers with Side Stripes",
     category: "Joggers",
-    subCategory: "Joggers",
+
     badge: "Sale",
     badgeType: "sale",
     price: 42,
@@ -1083,7 +1071,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m29",
     name: "Heavyweight Zip-Up Hoodie - Charcoal",
     category: "Hoodie",
-    subCategory: "Hoodies",
+    subCategory: "Mens Hoodies",
     badge: "Best Seller",
     badgeType: "hot",
     price: 68,
@@ -1112,7 +1100,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m30",
     name: "Oversized Pullover Hoodie - Forest",
     category: "Hoodie",
-    subCategory: "Hoodies",
+    subCategory: "Mens Hoodies",
     badge: "New Drop",
     badgeType: "new",
     price: 72,
@@ -1140,7 +1128,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m31",
     name: "Graphic Logo Hoodie - Vintage Wash",
     category: "Hoodie",
-    subCategory: "Hoodies",
+    subCategory: "Mens Hoodies",
     badge: "Trending",
     badgeType: "hot",
     price: 65,
@@ -1168,7 +1156,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m32",
     name: "Oversized Zip Hoodie - Ink Black",
     category: "Hoodie",
-    subCategory: "Hoodies",
+    subCategory: "Mens Hoodies",
     badge: null,
     badgeType: "new",
     price: 70,
@@ -1196,7 +1184,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m33",
     name: "Heavyweight Crewneck Sweatshirt - Navy",
     category: "Sweatshirt",
-    subCategory: "Sweatshirts",
+
     badge: "Best Seller",
     badgeType: "hot",
     price: 58,
@@ -1225,7 +1213,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m34",
     name: "Half-Zip Sweatshirt - Stone",
     category: "Sweatshirt",
-    subCategory: "Sweatshirts",
+
     badge: "New Drop",
     badgeType: "new",
     price: 62,
@@ -1253,7 +1241,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m35",
     name: "Oversized Logo Crewneck Sweatshirt",
     category: "Sweatshirt",
-    subCategory: "Sweatshirts",
+
     badge: "Trending",
     badgeType: "hot",
     price: 56,
@@ -1281,7 +1269,7 @@ export const MEN_PRODUCTS = [
     id: "zmw-m36",
     name: "Striped Crewneck Sweatshirt - Retro",
     category: "Sweatshirt",
-    subCategory: "Sweatshirts",
+
     badge: "Sale",
     badgeType: "sale",
     price: 48,
@@ -1312,13 +1300,13 @@ export const MEN_PRODUCTS = [
  * Mirrors the Navbar's Women dropdown so the page's filter pills and the
  * nav's flyout menu always list the same set of subcategories.
  */
-export const WOMEN_SUBCATEGORIES = ["Printed T-Shirts", "Co-ords"];
+export const WOMEN_SUBCATEGORIES = ["Round Neck", "V Neck", "Women's Hoodies", "Women's Tees"];
 
 /**
  * WOMEN_PRODUCTS
  * Dedicated catalog for the Women's category page. Shares the exact same
  * product shape as MEN_PRODUCTS so it works with ProductCard, the cart,
- * wishlist, and quick-view without any special-casing — only addition is
+ * wishlist, and quick-view without any special-casing â€” only addition is
  * `subCategory`, used for the page's filter pills.
  */
 export const WOMEN_PRODUCTS = [
@@ -1326,7 +1314,7 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w01",
     name: "Star League Varsity Printed Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: "Best Seller",
     badgeType: "hot",
     price: 38,
@@ -1355,7 +1343,7 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w02",
     name: "Retro Script Printed Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: "New Drop",
     badgeType: "new",
     price: 36,
@@ -1383,7 +1371,7 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w03",
     name: "Floral Graphic Boxy Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: "Trending",
     badgeType: "hot",
     price: 39,
@@ -1411,7 +1399,7 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w04",
     name: "Motorsport Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: null,
     badgeType: "new",
     price: 37,
@@ -1439,7 +1427,7 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w05",
     name: "Star League University Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: "Best Seller",
     badgeType: "hot",
     price: 40,
@@ -1461,13 +1449,13 @@ export const WOMEN_PRODUCTS = [
       { name: "Ivory", hex: "#FAF8F2" }
     ],
     sizes: ["S", "M", "L", "XL"],
-    description: "Collegiate university crest print in a relaxed, colorblocked boxy tee — pairs easily with joggers or a midi skirt."
+    description: "Collegiate university crest print in a relaxed, colorblocked boxy tee â€” pairs easily with joggers or a midi skirt."
   },
   {
     id: "zmw-w06",
     name: "Minimal Line-Art Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: "New Drop",
     badgeType: "new",
     price: 35,
@@ -1488,13 +1476,13 @@ export const WOMEN_PRODUCTS = [
       { name: "Stone Beige", hex: "#D8CDBC" }
     ],
     sizes: ["XS", "S", "M"],
-    description: "Delicate single-line art print on lightweight combed cotton. Currently out of stock — restocking soon."
+    description: "Delicate single-line art print on lightweight combed cotton. Currently out of stock â€” restocking soon."
   },
   {
     id: "zmw-w19",
     name: "City Skyline Oversized Tee - Downtown",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: "Trending",
     badgeType: "hot",
     price: 38,
@@ -1522,7 +1510,7 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w20",
     name: "Sunset Palm Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: "New Drop",
     badgeType: "new",
     price: 34,
@@ -1550,7 +1538,7 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w21",
     name: "Abstract Muse Artist Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: "Sale",
     badgeType: "sale",
     price: 32,
@@ -1578,7 +1566,7 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w22",
     name: "Total Eclipse Crop Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Printed T-Shirts",
+    subCategory: "Women's Tees",
     badge: null,
     badgeType: "new",
     price: 36,
@@ -1606,7 +1594,6 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w23",
     name: "Linen Blend Co-ord Set - Sage",
     category: "Co-ord",
-    subCategory: "Co-ords",
     badge: "Best Seller",
     badgeType: "hot",
     price: 88,
@@ -1635,7 +1622,6 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w24",
     name: "Ribbed Knit Co-ord - Espresso",
     category: "Co-ord",
-    subCategory: "Co-ords",
     badge: "New Drop",
     badgeType: "new",
     price: 76,
@@ -1663,7 +1649,6 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w25",
     name: "Cotton Poplin Co-ord Set - White",
     category: "Co-ord",
-    subCategory: "Co-ords",
     badge: "Trending",
     badgeType: "hot",
     price: 82,
@@ -1691,7 +1676,6 @@ export const WOMEN_PRODUCTS = [
     id: "zmw-w26",
     name: "Oversized Tee & Mini Skirt Co-ord - Noir",
     category: "Co-ord",
-    subCategory: "Co-ords",
     badge: null,
     badgeType: "new",
     price: 68,
@@ -1724,12 +1708,39 @@ export const WOMEN_PRODUCTS = [
  */
 export const KIDS_SUBCATEGORIES = ["Boys", "Girls"];
 
+export const BOYS_SUBCATEGORIES = [
+  "Round Neck",
+  "High Neck",
+  "Shorts",
+  "Sweatshirts",
+  "Hoodies"
+];
+
+export const GIRLS_SUBCATEGORIES = [
+  "Round Neck",
+  "High Neck",
+  "Shorts",
+  "Sweatshirts",
+  "Hoodies",
+  "Casual Wear",
+  "Long Gown"
+];
+
+export const BABIES_SUBCATEGORIES = [
+  "Romper",
+  "T-shirt",
+  "Babies Pyjama",
+  "Sweatshirts",
+  "Babies Hoodies",
+  "Babies Bottoms"
+];
+
 /**
  * KIDS_PRODUCTS
  * Dedicated catalog for the Kids' category page. Shares the exact same
  * product shape as MEN_PRODUCTS / WOMEN_PRODUCTS so it works with
  * ProductCard, the cart, wishlist, and quick-view without any
- * special-casing — sizes use age bands (e.g. "2-3Y") instead of
+ * special-casing â€” sizes use age bands (e.g. "2-3Y") instead of
  * letter sizes, and `subCategory` drives the page's filter pills.
  */
 export const KIDS_PRODUCTS = [
@@ -1737,7 +1748,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k01",
     name: "Dino Explorer Graphic Tee & Shorts Set",
     category: "T-Shirt Set",
-    subCategory: "Boys",
+    subCategory: "Shorts",
     badge: "Best Seller",
     badgeType: "hot",
     price: 22,
@@ -1766,7 +1777,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k03",
     name: "Space Mission Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Boys",
+    subCategory: "Round Neck",
     badge: "Trending",
     badgeType: "hot",
     price: 16,
@@ -1794,7 +1805,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k07",
     name: "Ruffle Sleeve Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Girls",
+    subCategory: "Round Neck",
     badge: "Trending",
     badgeType: "hot",
     price: 15,
@@ -1823,7 +1834,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k13",
     name: "Varsity Stripe Polo & Shorts Set",
     category: "T-Shirt Set",
-    subCategory: "Boys",
+    subCategory: "Shorts",
     badge: "Best Seller",
     badgeType: "hot",
     price: 25,
@@ -1851,7 +1862,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k17",
     name: "Shark Attack Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Boys",
+    subCategory: "Round Neck",
     badge: "Best Seller",
     badgeType: "hot",
     price: 15,
@@ -1879,7 +1890,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k18",
     name: "Rainbow Hearts Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Girls",
+    subCategory: "Round Neck",
     badge: "Trending",
     badgeType: "hot",
     price: 14,
@@ -1901,13 +1912,13 @@ export const KIDS_PRODUCTS = [
       { name: "Lilac", hex: "#B7A6D9" }
     ],
     sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y"],
-    description: "Rainbow heart print on a soft-washed tee with flutter sleeves — breathable and comfortable for all-day play."
+    description: "Rainbow heart print on a soft-washed tee with flutter sleeves â€” breathable and comfortable for all-day play."
   },
   {
     id: "zmw-k19",
     name: "Construction Crew Graphic Tee",
     category: "T-Shirt",
-    subCategory: "Boys",
+    subCategory: "Round Neck",
     badge: "New Drop",
     badgeType: "new",
     price: 16,
@@ -1935,7 +1946,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k20",
     name: "Butterfly Garden Print Tee",
     category: "T-Shirt",
-    subCategory: "Girls",
+    subCategory: "Round Neck",
     badge: "Best Seller",
     badgeType: "hot",
     price: 15,
@@ -1963,7 +1974,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k21",
     name: "Astro Rocket Friend Tee",
     category: "T-Shirt",
-    subCategory: "Boys",
+    subCategory: "Round Neck",
     badge: "New Drop",
     badgeType: "new",
     price: 16,
@@ -1991,7 +2002,7 @@ export const KIDS_PRODUCTS = [
     id: "zmw-k22",
     name: "Sweet Treats Hearts Tee",
     category: "T-Shirt",
-    subCategory: "Girls",
+    subCategory: "Round Neck",
     badge: "Sale",
     badgeType: "sale",
     price: 14,
@@ -2013,6 +2024,1139 @@ export const KIDS_PRODUCTS = [
       { name: "Vanilla", hex: "#F5EFE0" }
     ],
     sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y"],
-    description: "Cupcake-and-heart print on a supersoft washed tee with a gently rounded hem — a sweet everyday favorite."
+    description: "Cupcake-and-heart print on a supersoft washed tee with a gently rounded hem â€” a sweet everyday favorite."
   }
 ];
+
+/**
+ * BOYS_PRODUCTS
+ * Dedicated catalog for the Boys' category page. Covers every Boys'
+ * subcategory — Round Neck, High Neck, Shorts, Sweatshirts and Hoodies.
+ */
+export const BOYS_PRODUCTS = [
+  {
+    id: "zmw-b01",
+    name: "Wave Runner Round Neck Tee",
+    category: "T-Shirt",
+    subCategory: "Round Neck",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 15,
+    originalPrice: 20,
+    rating: 4.9,
+    reviewCount: 156,
+    sku: "ZMW-BOY-TS-01",
+    inStock: true,
+    stockCount: 38,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1596870230751-ebdfce98ec42.jpg",
+      "/images/photo-1519238263530-99bdd11df2ea.jpg"
+    ],
+    colors: [
+      { name: "Navy Blue", hex: "#28344A" },
+      { name: "Off White", hex: "#F3EFE4" },
+      { name: "Brick Red", hex: "#A83A26" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Soft-washed combed cotton tee with a bold wave graphic. Ribbed crew neck and reinforced seams for daily play."
+  },
+  {
+    id: "zmw-b02",
+    name: "Surf Stripe Round Neck Tee",
+    category: "T-Shirt",
+    subCategory: "Round Neck",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 16,
+    originalPrice: 21,
+    rating: 4.8,
+    reviewCount: 98,
+    sku: "ZMW-BOY-TS-02",
+    inStock: true,
+    stockCount: 31,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1519238263530-99bdd11df2ea.jpg",
+      "/images/photo-1509631179647-0177331693ae.jpg"
+    ],
+    colors: [
+      { name: "Sky Blue", hex: "#9BB8CC" },
+      { name: "Crisp White", hex: "#F7F5EF" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Nautical stripe tee in breathable single jersey with a tagless neck and pre-shrunk cotton finish."
+  },
+  {
+    id: "zmw-b03",
+    name: "Cozy Fleece High Neck Top",
+    category: "High Neck",
+    subCategory: "High Neck",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 19,
+    originalPrice: 24,
+    rating: 4.7,
+    reviewCount: 74,
+    sku: "ZMW-BOY-HN-01",
+    inStock: true,
+    stockCount: 26,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1503342217505-b0a15ec3261c.jpg",
+      "/images/photo-1507679799987-c73779587ccf.jpg"
+    ],
+    colors: [
+      { name: "Forest Olive", hex: "#2F4A37" },
+      { name: "Charcoal", hex: "#2C2B27" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Brushed fleece high-neck top with a covered mock neckline. Warm, soft and easy to layer under hoodies."
+  },
+  {
+    id: "zmw-b04",
+    name: "Contrast Zip High Neck Top",
+    category: "High Neck",
+    subCategory: "High Neck",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 20,
+    originalPrice: 26,
+    rating: 4.8,
+    reviewCount: 67,
+    sku: "ZMW-BOY-HN-02",
+    inStock: true,
+    stockCount: 19,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1507679799987-c73779587ccf.jpg",
+      "/images/photo-1503341504253-dff4815485f1.jpg"
+    ],
+    colors: [
+      { name: "Navy", hex: "#1D2B3A" },
+      { name: "Off White", hex: "#F3EFE4" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y"],
+    description: "Sporty zip-neck high top with contrast trim. Lightweight French terry with soft-brushed interior."
+  },
+  {
+    id: "zmw-b05",
+    name: "Cargo Pocket Play Shorts",
+    category: "Shorts",
+    subCategory: "Shorts",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 16,
+    originalPrice: 21,
+    rating: 4.8,
+    reviewCount: 143,
+    sku: "ZMW-BOY-SH-01",
+    inStock: true,
+    stockCount: 34,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1590480598135-3be152c87913.jpg",
+      "/images/photo-1445205170230-053b83016050.jpg"
+    ],
+    colors: [
+      { name: "Olive", hex: "#4B5A3F" },
+      { name: "Khaki", hex: "#C2A878" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Sturdy cotton twill shorts with utility cargo pockets and an elasticated waist for easy on-off."
+  },
+  {
+    id: "zmw-b06",
+    name: "Cuffed Fleece Jogger Shorts",
+    category: "Shorts",
+    subCategory: "Shorts",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 15,
+    originalPrice: 20,
+    rating: 4.7,
+    reviewCount: 88,
+    sku: "ZMW-BOY-SH-02",
+    inStock: true,
+    stockCount: 27,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1445205170230-053b83016050.jpg",
+      "/images/photo-1490481651871-ab68de25d43d.jpg"
+    ],
+    colors: [
+      { name: "Jet Black", hex: "#181715" },
+      { name: "Charcoal", hex: "#2C2B27" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y"],
+    description: "Brushed fleece jogger shorts with ribbed cuffs and a drawstring waist for a snug, comfy fit."
+  },
+  {
+    id: "zmw-b07",
+    name: "Heavyweight Crew Sweatshirt",
+    category: "Sweatshirt",
+    subCategory: "Sweatshirts",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 22,
+    originalPrice: 28,
+    rating: 4.8,
+    reviewCount: 121,
+    sku: "ZMW-BOY-SW-01",
+    inStock: true,
+    stockCount: 24,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1509631179647-0177331693ae.jpg",
+      "/images/photo-1503342217505-b0a15ec3261c.jpg"
+    ],
+    colors: [
+      { name: "Navy", hex: "#1D2B3A" },
+      { name: "Heather Grey", hex: "#8A8680" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y", "8-9Y"],
+    description: "Heavyweight French terry crewneck with a ribbed collar, cuffs and hem. Built for rough-and-tumble days."
+  },
+  {
+    id: "zmw-b08",
+    name: "Color-Block Sweatshirt",
+    category: "Sweatshirt",
+    subCategory: "Sweatshirts",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 21,
+    originalPrice: 27,
+    rating: 4.7,
+    reviewCount: 66,
+    sku: "ZMW-BOY-SW-02",
+    inStock: true,
+    stockCount: 20,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1503342217505-b0a15ec3261c.jpg",
+      "/images/photo-1503919545889-aef636e10ad4.jpg"
+    ],
+    colors: [
+      { name: "Red & White", hex: "#B3271D" },
+      { name: "Navy & White", hex: "#1D2B3A" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Sporty color-block sweatshirt in soft brushed fleece with a bold contrast chest panel."
+  },
+  {
+    id: "zmw-b09",
+    name: "Kangaroo Pocket Zip Hoodie",
+    category: "Hoodie",
+    subCategory: "Hoodies",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 25,
+    originalPrice: 32,
+    rating: 4.9,
+    reviewCount: 132,
+    sku: "ZMW-BOY-HD-01",
+    inStock: true,
+    stockCount: 22,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1506152983158-b4a74a01c721.jpg",
+      "/images/photo-1496217590455-aa63a8350eea.jpg"
+    ],
+    colors: [
+      { name: "Charcoal", hex: "#2C2B27" },
+      { name: "Olive", hex: "#4B5A3F" },
+      { name: "Navy", hex: "#1D2B3A" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y", "8-9Y"],
+    description: "Zip-up hoodie in brushed cotton rich fleece with a kangaroo pocket and drawcord hood."
+  },
+  {
+    id: "zmw-b10",
+    name: "Over-Head Fleece Hoodie",
+    category: "Hoodie",
+    subCategory: "Hoodies",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 24,
+    originalPrice: 30,
+    rating: 4.8,
+    reviewCount: 79,
+    sku: "ZMW-BOY-HD-02",
+    inStock: true,
+    stockCount: 18,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1496217590455-aa63a8350eea.jpg",
+      "/images/photo-1503919545889-aef636e10ad4.jpg"
+    ],
+    colors: [
+      { name: "Sky Blue", hex: "#9BB8CC" },
+      { name: "Off White", hex: "#F3EFE4" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Easy pullover hoodie in soft brushed fleece with a roomy hood and ribbed trims."
+  }
+];
+
+/**
+ * GIRLS_PRODUCTS
+ * Dedicated catalog for the Girls' category page. Covers every Girls'
+ * subcategory — Round Neck, High Neck, Shorts, Sweatshirts, Hoodies,
+ * Night Wear and Long Gown.
+ */
+export const GIRLS_PRODUCTS = [
+  {
+    id: "zmw-g01",
+    name: "Buttercup Round Neck Tee",
+    category: "T-Shirt",
+    subCategory: "Round Neck",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 14,
+    originalPrice: 19,
+    rating: 4.9,
+    reviewCount: 165,
+    sku: "ZMW-GIR-TS-01",
+    inStock: true,
+    stockCount: 36,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1519457431-44ccd64a579b.jpg",
+      "/images/photo-1758782213532-bbb5fd89885e.jpg"
+    ],
+    colors: [
+      { name: "Blush Pink", hex: "#D99A9A" },
+      { name: "Lilac", hex: "#B7A6D9" },
+      { name: "Off White", hex: "#F3EFE4" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Buttercup print tee in soft-washed cotton with flutter-sleeve detail and a gentle rounded hem."
+  },
+  {
+    id: "zmw-g02",
+    name: "Heart Pop Round Neck Tee",
+    category: "T-Shirt",
+    subCategory: "Round Neck",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 15,
+    originalPrice: 20,
+    rating: 4.8,
+    reviewCount: 104,
+    sku: "ZMW-GIR-TS-02",
+    inStock: true,
+    stockCount: 29,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1758782213532-bbb5fd89885e.jpg",
+      "/images/photo-1519457431-44ccd64a579b.jpg"
+    ],
+    colors: [
+      { name: "Peony", hex: "#E87BA0" },
+      { name: "Vanilla", hex: "#F5EFE0" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y"],
+    description: "Charming heart print tee in breathable single jersey, garment-washed for softness from the first wear."
+  },
+  {
+    id: "zmw-g03",
+    name: "Flutter Sleeve High Neck Top",
+    category: "High Neck",
+    subCategory: "High Neck",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 19,
+    originalPrice: 25,
+    rating: 4.8,
+    reviewCount: 87,
+    sku: "ZMW-GIR-HN-01",
+    inStock: true,
+    stockCount: 24,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1544441893-675973e31985.jpg",
+      "/images/photo-1560243563-062bfc001d68.jpg"
+    ],
+    colors: [
+      { name: "Coral", hex: "#E5816A" },
+      { name: "Cream", hex: "#F5EFE0" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Pretty high-neck top with airy flutter sleeves and soft ruffle trims in lightweight cotton."
+  },
+  {
+    id: "zmw-g04",
+    name: "Ribbed High Neck Long Sleeve",
+    category: "High Neck",
+    subCategory: "High Neck",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 18,
+    originalPrice: 23,
+    rating: 4.7,
+    reviewCount: 62,
+    sku: "ZMW-GIR-HN-02",
+    inStock: true,
+    stockCount: 21,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1560243563-062bfc001d68.jpg",
+      "/images/photo-1487222477894-8943e31ef7b2.jpg"
+    ],
+    colors: [
+      { name: "Blush Pink", hex: "#D99A9A" },
+      { name: "Crisp White", hex: "#F7F5EF" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y"],
+    description: "Stretchy ribbed knit long sleeve with a snug high neck for cozy warmth on cooler days."
+  },
+  {
+    id: "zmw-g05",
+    name: "Tiered Ruffle Play Shorts",
+    category: "Shorts",
+    subCategory: "Shorts",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 16,
+    originalPrice: 21,
+    rating: 4.8,
+    reviewCount: 118,
+    sku: "ZMW-GIR-SH-01",
+    inStock: true,
+    stockCount: 30,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1503919545889-aef636e10ad4.jpg",
+      "/images/photo-1490481651871-ab68de25d43d.jpg"
+    ],
+    colors: [
+      { name: "Dusky Peach", hex: "#E8B2A2" },
+      { name: "Sage Mint", hex: "#9EB69E" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y"],
+    description: "Tiered ruffle shorts in soft woven cotton with an elasticated waist and full cotton lining."
+  },
+  {
+    id: "zmw-g06",
+    name: "Tulip Waist Cotton Shorts",
+    category: "Shorts",
+    subCategory: "Shorts",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 15,
+    originalPrice: 20,
+    rating: 4.7,
+    reviewCount: 73,
+    sku: "ZMW-GIR-SH-02",
+    inStock: true,
+    stockCount: 26,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1490481651871-ab68de25d43d.jpg",
+      "/images/photo-1567401893414-76b7b1e5a7a5.jpg"
+    ],
+    colors: [
+      { name: "Lavender", hex: "#B7A6D9" },
+      { name: "Off White", hex: "#F3EFE4" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y"],
+    description: "Tulip-waist shorts with a sweet bow detail, cut from breathable cotton twill for all-day comfort."
+  },
+  {
+    id: "zmw-g07",
+    name: "Cozy Heart Crew Sweatshirt",
+    category: "Sweatshirt",
+    subCategory: "Sweatshirts",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 22,
+    originalPrice: 28,
+    rating: 4.9,
+    reviewCount: 139,
+    sku: "ZMW-GIR-SW-01",
+    inStock: true,
+    stockCount: 23,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1544441893-675973e31985.jpg",
+      "/images/photo-1519457431-44ccd64a579b.jpg"
+    ],
+    colors: [
+      { name: "Blush Pink", hex: "#D99A9A" },
+      { name: "Stone Beige", hex: "#D8CDBC" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Snuggly crewneck with a tonal heart embroidery, cut from brushed cotton fleece with ribbed trims."
+  },
+  {
+    id: "zmw-g08",
+    name: "Rainbow Stripe Sweatshirt",
+    category: "Sweatshirt",
+    subCategory: "Sweatshirts",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 21,
+    originalPrice: 27,
+    rating: 4.8,
+    reviewCount: 91,
+    sku: "ZMW-GIR-SW-02",
+    inStock: true,
+    stockCount: 19,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1560243563-062bfc001d68.jpg",
+      "/images/photo-1503919545889-aef636e10ad4.jpg"
+    ],
+    colors: [
+      { name: "Rainbow Cream", hex: "#F2E3E0" },
+      { name: "Pastel Mix", hex: "#DDC6E0" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Cheerful rainbow-stripe sweatshirt in soft French terry with a relaxed, comfy fit."
+  },
+  {
+    id: "zmw-g09",
+    name: "Hooded Cloud Zip Hoodie",
+    category: "Hoodie",
+    subCategory: "Hoodies",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 24,
+    originalPrice: 31,
+    rating: 4.8,
+    reviewCount: 96,
+    sku: "ZMW-GIR-HD-01",
+    inStock: true,
+    stockCount: 21,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1519457431-44ccd64a579b.jpg",
+      "/images/photo-1544441893-675973e31985.jpg"
+    ],
+    colors: [
+      { name: "Lilac", hex: "#B7A6D9" },
+      { name: "Cream", hex: "#F5EFE0" },
+      { name: "Blush", hex: "#D99A9A" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Cloud-print zip hoodie in brushed fleece with a drawcord hood and cozy kangaroo pocket."
+  },
+  {
+    id: "zmw-g10",
+    name: "Softest Oversized Hoodie",
+    category: "Hoodie",
+    subCategory: "Hoodies",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 25,
+    originalPrice: 32,
+    rating: 4.9,
+    reviewCount: 84,
+    sku: "ZMW-GIR-HD-02",
+    inStock: true,
+    stockCount: 17,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1758782213532-bbb5fd89885e.jpg",
+      "/images/photo-1746386914795-83d2febc9a96.jpg"
+    ],
+    colors: [
+      { name: "Blush Pink", hex: "#D99A9A" },
+      { name: "Powder Blue", hex: "#A9C4D8" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y", "8-9Y"],
+    description: "Ultra-soft oversized pullover hoodie in plush brushed fleece with dropped shoulders for a relaxed drape."
+  },
+  {
+    id: "zmw-g11",
+    name: "Satin Trim Pyjama Set",
+    category: "Pyjama Set",
+    subCategory: "Casual Wear",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 26,
+    originalPrice: 34,
+    rating: 4.9,
+    reviewCount: 127,
+    sku: "ZMW-GIR-NW-01",
+    inStock: true,
+    stockCount: 25,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1746386914795-83d2febc9a96.jpg",
+      "/images/photo-1763089402370-fb496fefdbb0.jpg"
+    ],
+    colors: [
+      { name: "Ice Pink", hex: "#E8C4D0" },
+      { name: "Mint", hex: "#B9D6C4" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y", "8-9Y"],
+    description: "Sweet two-piece pyjama set with satin piped trim and flutter sleeves. Buttery-soft cotton for dreamy sleep."
+  },
+  {
+    id: "zmw-g12",
+    name: "Sweet Dream Sleep Set",
+    category: "Pyjama Set",
+    subCategory: "Casual Wear",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 24,
+    originalPrice: 30,
+    rating: 4.8,
+    reviewCount: 88,
+    sku: "ZMW-GIR-NW-02",
+    inStock: true,
+    stockCount: 22,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1763089402370-fb496fefdbb0.jpg",
+      "/images/photo-1758782213532-bbb5fd89885e.jpg"
+    ],
+    colors: [
+      { name: "Oatmeal", hex: "#ECE6DA" },
+      { name: "Dusty Grey", hex: "#9B978F" }
+    ],
+    sizes: ["2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Cozy nightwear set with a relaxed tee and cuffed pants, garment-washed for cloud-soft comfort."
+  },
+  {
+    id: "zmw-g13",
+    name: "Lace Collar Long Gown",
+    category: "Gown",
+    subCategory: "Long Gown",
+    badge: "Limited",
+    badgeType: "hot",
+    price: 38,
+    originalPrice: 48,
+    rating: 4.9,
+    reviewCount: 76,
+    sku: "ZMW-GIR-LG-01",
+    inStock: true,
+    stockCount: 14,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1544441893-675973e31985.jpg",
+      "/images/photo-1756483492198-8ca91227489b.jpg"
+    ],
+    colors: [
+      { name: "Ivory", hex: "#FAF8F2" },
+      { name: "Dusty Pink", hex: "#D9B4AC" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y", "8-9Y"],
+    description: "Elegant long gown with a delicate lace collar, smocked back and gently flared floor-sweeping skirt."
+  },
+  {
+    id: "zmw-g14",
+    name: "Tulle Party Long Gown",
+    category: "Gown",
+    subCategory: "Long Gown",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 42,
+    originalPrice: 54,
+    rating: 4.8,
+    reviewCount: 69,
+    sku: "ZMW-GIR-LG-02",
+    inStock: true,
+    stockCount: 12,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1758782213532-bbb5fd89885e.jpg",
+      "/images/photo-1519457431-44ccd64a579b.jpg"
+    ],
+    colors: [
+      { name: "Blush", hex: "#D99A9A" },
+      { name: "Champagne", hex: "#E8DFC8" }
+    ],
+    sizes: ["3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y"],
+    description: "Party-ready tulle gown with a satin bodice, full twirl skirt and hidden soft cotton lining."
+  }
+];
+
+/**
+ * BABIES_PRODUCTS
+ * Dedicated catalog for the Babies' category page. Covers every Babies'
+ * subcategory — Romper, T-shirt, Babies Pyjama, Sweatshirts, Babies Hoodies
+ * and Babies Bottoms.
+ */
+export const BABIES_PRODUCTS = [
+  {
+    id: "zmw-bab01",
+    name: "Snap Button Cotton Romper",
+    category: "Romper",
+    subCategory: "Romper",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 18,
+    originalPrice: 24,
+    rating: 4.9,
+    reviewCount: 158,
+    sku: "ZMW-BAB-RM-01",
+    inStock: true,
+    stockCount: 42,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1567401893414-76b7b1e5a7a5.jpg",
+      "/images/photo-1617137968427-85924c800a22.jpg"
+    ],
+    colors: [
+      { name: "Sage", hex: "#9EB69E" },
+      { name: "Oatmeal", hex: "#ECE6DA" },
+      { name: "Peach", hex: "#E8B2A2" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Snap-button cotton romper with reinforced poppers and roomy cuffs for wriggly little ones."
+  },
+  {
+    id: "zmw-bab02",
+    name: "Terry Knit Baby Romper",
+    category: "Romper",
+    subCategory: "Romper",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 19,
+    originalPrice: 25,
+    rating: 4.8,
+    reviewCount: 112,
+    sku: "ZMW-BAB-RM-02",
+    inStock: true,
+    stockCount: 35,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1617137968427-85924c800a22.jpg",
+      "/images/photo-1567401893414-76b7b1e5a7a5.jpg"
+    ],
+    colors: [
+      { name: "Mustard", hex: "#C89D3C" },
+      { name: "Off White", hex: "#F3EFE4" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Plush terry knit romper with a snug hood and front pocket. Extreme softness for naptime and playtime."
+  },
+  {
+    id: "zmw-bab03",
+    name: "Organic Cotton Baby T-Shirt",
+    category: "T-Shirt",
+    subCategory: "T-shirt",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 12,
+    originalPrice: 16,
+    rating: 4.9,
+    reviewCount: 174,
+    sku: "ZMW-BAB-TS-01",
+    inStock: true,
+    stockCount: 48,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1519238263530-99bdd11df2ea.jpg",
+      "/images/photo-1509631179647-0177331693ae.jpg"
+    ],
+    colors: [
+      { name: "Sky Blue", hex: "#9BB8CC" },
+      { name: "Crisp White", hex: "#F7F5EF" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "GOTS-certified organic cotton tee with a tagless neck and flat-locked seams that never rub."
+  },
+  {
+    id: "zmw-bab04",
+    name: "Tiny Hearts Baby Tee",
+    category: "T-Shirt",
+    subCategory: "T-shirt",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 13,
+    originalPrice: 17,
+    rating: 4.8,
+    reviewCount: 101,
+    sku: "ZMW-BAB-TS-02",
+    inStock: true,
+    stockCount: 39,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1503342217505-b0a15ec3261c.jpg",
+      "/images/photo-1487222477894-8943e31ef7b2.jpg"
+    ],
+    colors: [
+      { name: "Blush", hex: "#D99A9A" },
+      { name: "Cream", hex: "#F5EFE0" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Sweet heart-print baby tee in supersoft washed cotton, cut generously for easy on-off dressing."
+  },
+  {
+    id: "zmw-bab05",
+    name: "Footed Fleece Pyjama",
+    category: "Pyjama",
+    subCategory: "Babies Pyjama",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 22,
+    originalPrice: 28,
+    rating: 4.8,
+    reviewCount: 96,
+    sku: "ZMW-BAB-PJ-01",
+    inStock: true,
+    stockCount: 27,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1507679799987-c73779587ccf.jpg",
+      "/images/photo-1503919545889-aef636e10ad4.jpg"
+    ],
+    colors: [
+      { name: "Grey Stripe", hex: "#9B978F" },
+      { name: "Blue Stripe", hex: "#6E8CA4" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "One-piece footed fleece pyjama with a front zip and snap-free design for safe, easy night changes."
+  },
+  {
+    id: "zmw-bab06",
+    name: "One-Piece Sleep Pyjama",
+    category: "Pyjama",
+    subCategory: "Babies Pyjama",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 24,
+    originalPrice: 30,
+    rating: 4.9,
+    reviewCount: 88,
+    sku: "ZMW-BAB-PJ-02",
+    inStock: true,
+    stockCount: 24,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1503919545889-aef636e10ad4.jpg",
+      "/images/photo-1503342217505-b0a15ec3261c.jpg"
+    ],
+    colors: [
+      { name: "Sage", hex: "#9EB69E" },
+      { name: "Mint Stripe", hex: "#B9D6C4" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Cozy one-piece sleep sack pyjama in breathable cotton knit with gentle elasticated cuffs."
+  },
+  {
+    id: "zmw-bab07",
+    name: "Quilted Baby Sweatshirt",
+    category: "Sweatshirt",
+    subCategory: "Sweatshirts",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 21,
+    originalPrice: 27,
+    rating: 4.8,
+    reviewCount: 84,
+    sku: "ZMW-BAB-SW-01",
+    inStock: true,
+    stockCount: 26,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1503341504253-dff4815485f1.jpg",
+      "/images/photo-1445205170230-053b83016050.jpg"
+    ],
+    colors: [
+      { name: "Oatmeal", hex: "#ECE6DA" },
+      { name: "Sky Blue", hex: "#9BB8CC" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Quilted-style sweatshirt in double-brushed fleece with a fold-over mitt-free cuff and snap shoulder."
+  },
+  {
+    id: "zmw-bab08",
+    name: "Plush Hooded Baby Hoodie",
+    category: "Hoodie",
+    subCategory: "Babies Hoodies",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 25,
+    originalPrice: 32,
+    rating: 4.8,
+    reviewCount: 92,
+    sku: "ZMW-BAB-HD-01",
+    inStock: true,
+    stockCount: 21,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1567401893414-76b7b1e5a7a5.jpg",
+      "/images/photo-1617137968427-85924c800a22.jpg"
+    ],
+    colors: [
+      { name: "Teddy Brown", hex: "#B98C62" },
+      { name: "Blush", hex: "#D99A9A" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Plush teddy-fleece hoodie with a soft-lining hood, snap-front closure and cozy ribbed trims."
+  },
+  {
+    id: "zmw-bab09",
+    name: "Zip Front Baby Hoodie",
+    category: "Hoodie",
+    subCategory: "Babies Hoodies",
+    badge: "Trending",
+    badgeType: "hot",
+    price: 24,
+    originalPrice: 30,
+    rating: 4.7,
+    reviewCount: 76,
+    sku: "ZMW-BAB-HD-02",
+    inStock: true,
+    stockCount: 23,
+    isNew: false,
+    isSale: true,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1617137968427-85924c800a22.jpg",
+      "/images/photo-1503342217505-b0a15ec3261c.jpg"
+    ],
+    colors: [
+      { name: "Navy", hex: "#1D2B3A" },
+      { name: "Charcoal", hex: "#2C2B27" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Easy zip-front baby hoodie in brushed French terry with a cozy hood and chunky safe zipper."
+  },
+  {
+    id: "zmw-bab10",
+    name: "Elastic Waist Baby Bottoms",
+    category: "Bottoms",
+    subCategory: "Babies Bottoms",
+    badge: "Best Seller",
+    badgeType: "hot",
+    price: 14,
+    originalPrice: 18,
+    rating: 4.8,
+    reviewCount: 121,
+    sku: "ZMW-BAB-BT-01",
+    inStock: true,
+    stockCount: 44,
+    isNew: false,
+    isSale: true,
+    isBestSeller: true,
+    images: [
+      "/images/photo-1445205170230-053b83016050.jpg",
+      "/images/photo-1503341504253-dff4815485f1.jpg"
+    ],
+    colors: [
+      { name: "Beige", hex: "#D8CDBC" },
+      { name: "Heather Grey", hex: "#8A8680" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Soft pull-on bottoms with a gentle elastic waist and ribbed ankle cuffs for a secure, comfy fit."
+  },
+  {
+    id: "zmw-bab11",
+    name: "Cuffed Knit Pants Bottoms",
+    category: "Bottoms",
+    subCategory: "Babies Bottoms",
+    badge: "New Drop",
+    badgeType: "new",
+    price: 15,
+    originalPrice: 19,
+    rating: 4.8,
+    reviewCount: 87,
+    sku: "ZMW-BAB-BT-02",
+    inStock: true,
+    stockCount: 31,
+    isNew: true,
+    isSale: false,
+    isBestSeller: false,
+    images: [
+      "/images/photo-1503341504253-dff4815485f1.jpg",
+      "/images/photo-1490481651871-ab68de25d43d.jpg"
+    ],
+    colors: [
+      { name: "Oatmeal", hex: "#ECE6DA" },
+      { name: "Olive", hex: "#4B5A3F" }
+    ],
+    sizes: ["0-6M", "6-12M", "12-18M", "18-24M"],
+    description: "Brushed knit pants with cuffed ankles and a soft wide waistband — made for crawling and first steps."
+  }
+];
+
+/**
+ * Normalizes any product from the catalog with standard properties:
+ * category (men|women|kids), productType, isBestSeller, isNewArrival, color, sizes, price, originalPrice, createdAt
+ */
+export function normalizeProduct(p, sourceCategory = null) {
+  let category = sourceCategory;
+  if (!category) {
+    if (p.id.startsWith("zmw-m") || (p.sku && p.sku.includes("-MEN-")) || p.id === "zmw-001" || p.id === "zmw-004" || p.id === "zmw-008") {
+      category = "mens";
+    } else if (p.id.startsWith("zmw-w") || (p.sku && (p.sku.includes("-WOM-") || p.sku.includes("-DRS-") || p.sku.includes("-ETH-") || p.sku.includes("-SKT-"))) || p.id === "zmw-002" || p.id === "zmw-003" || p.id === "zmw-005" || p.id === "zmw-007") {
+      category = "women";
+    } else if (p.id.startsWith("zmw-b") || (p.sku && p.sku.includes("-KID-BY-"))) {
+      category = "boys";
+    } else if (p.id.startsWith("zmw-g") || (p.sku && p.sku.includes("-KID-GL-"))) {
+      category = "girls";
+    } else if (p.id.startsWith("zmw-bab") || (p.sku && p.sku.includes("-BAB-"))) {
+      category = "babies";
+    } else if (p.id.startsWith("zmw-k") || (p.sku && p.sku.includes("-KID-")) || p.id === "zmw-006") {
+      category = "kids";
+    } else {
+      category = "mens";
+    }
+  }
+
+  // Standardize productType
+  let productType = "T-Shirts";
+  const cat = (p.category || "").toLowerCase();
+  const sub = (p.subCategory || "").toLowerCase();
+  const name = (p.name || "").toLowerCase();
+
+  if (cat.includes("hoodie") || sub.includes("hoodie") || name.includes("hoodie")) {
+    productType = "Hoodies";
+  } else if (cat.includes("sweatshirt") || sub.includes("sweatshirt") || name.includes("sweatshirt")) {
+    productType = "Sweatshirts";
+  } else if (cat.includes("jogger") || sub.includes("jogger") || name.includes("jogger")) {
+    productType = "Joggers";
+  } else if (cat.includes("polo") || sub.includes("polo") || name.includes("polo")) {
+    productType = "Polos";
+  } else if (cat.includes("co-ord") || sub.includes("co-ord") || name.includes("co-ord")) {
+    productType = "Co-ords";
+  } else if (cat.includes("dress") || sub.includes("dress") || cat.includes("saree") || name.includes("dress") || name.includes("saree")) {
+    productType = "Dresses";
+  } else if (cat.includes("skirt") || name.includes("skirt")) {
+    productType = "Skirts";
+  } else if (name.includes("blazer") || cat.includes("blazer")) {
+    productType = "Blazers";
+  } else if (cat.includes("set") || name.includes("set") || cat.includes("romper") || name.includes("romper")) {
+    productType = "Sets";
+  } else if (name.includes("shirt") && !name.includes("t-shirt") && !name.includes("tee")) {
+    productType = "Shirts";
+  } else {
+    productType = "T-Shirts";
+  }
+
+  const isBestSeller = Boolean(
+    p.isBestSeller ||
+    (p.badge && p.badge.toLowerCase().includes("best")) ||
+    p.badgeType === "hot"
+  );
+
+  const isNewArrival = Boolean(
+    p.isNew ||
+    (p.badge && (p.badge.toLowerCase().includes("new") || p.badge.toLowerCase().includes("drop"))) ||
+    p.badgeType === "new"
+  );
+
+  return {
+    ...p,
+    category,
+    productType,
+    isBestSeller,
+    isNewArrival,
+    isNew: isNewArrival,
+    color: p.colors || [],
+    sizes: p.sizes || ["S", "M", "L", "XL"],
+    price: p.price,
+    originalPrice: p.originalPrice || null,
+    createdAt: p.releaseDate || (p.createdAt ?? new Date(Date.now() - (parseInt((p.id || "1").replace(/\D/g, "") || "1", 10) * 86400000 * 2)).toISOString())
+  };
+}
+
+/**
+ * Single unified product catalog for the entire ZMW store.
+ * Merges MEN_PRODUCTS, WOMEN_PRODUCTS, BOYS_PRODUCTS, GIRLS_PRODUCTS,
+ * KIDS_PRODUCTS, BABIES_PRODUCTS and PRODUCTS without duplicating any item.
+ */
+export const UNIFIED_PRODUCTS = (() => {
+  const seen = new Set();
+  const list = [];
+
+  const sources = [
+    { items: MEN_PRODUCTS, cat: "mens" },
+    { items: WOMEN_PRODUCTS, cat: "women" },
+    { items: BOYS_PRODUCTS, cat: "boys" },
+    { items: GIRLS_PRODUCTS, cat: "girls" },
+    { items: KIDS_PRODUCTS, cat: "kids" },
+    { items: BABIES_PRODUCTS, cat: "babies" },
+    { items: PRODUCTS, cat: null }
+  ];
+
+  sources.forEach(({ items, cat }) => {
+    items.forEach((p) => {
+      if (!seen.has(p.id)) {
+        seen.add(p.id);
+        let sourceCategory = cat;
+        if (!sourceCategory) {
+          if (p.sku && p.sku.includes("-KID-BY-")) sourceCategory = "boys";
+          else if (p.sku && p.sku.includes("-KID-GL-")) sourceCategory = "girls";
+          else if (p.sku && p.sku.includes("-BAB-")) sourceCategory = "babies";
+          else if (p.id.startsWith("zmw-bab")) sourceCategory = "babies";
+          else if (p.id.startsWith("zmw-b")) sourceCategory = "boys";
+          else if (p.id.startsWith("zmw-g")) sourceCategory = "girls";
+          else if (p.id.startsWith("zmw-k")) sourceCategory = "kids";
+        }
+        list.push(normalizeProduct(p, sourceCategory));
+      }
+    });
+  });
+
+  return list;
+})();

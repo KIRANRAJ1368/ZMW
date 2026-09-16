@@ -1,0 +1,84 @@
+/* =========================================================
+   NewArrivals.css
+   Page-specific styles for /new-arrivals.
+   Imports Men.css for all shared filter/grid/drawer classes.
+   This file only adds page hero + color overrides for the
+   "new arrivals" visual identity (teal/emerald accent).
+   ========================================================= */
+
+/* ── 1. Page wrapper ─────────────────────────────────────── */
+.na-page {
+  background-color: var(--color-cream);
+  min-height: 100vh;
+  color: var(--color-ink);
+}
+
+/* ── 2. Page Hero Banner ─────────────────────────────────── */
+.na-hero {
+  background-color: var(--color-ink-deep);
+  color: var(--color-white);
+  padding: clamp(48px, 7vw, 88px) 0 clamp(36px, 5vw, 64px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle radial glow */
+.na-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 40% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.na-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.na-hero .section-eyebrow {
+  display: inline-block;
+  background-color: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  margin-bottom: 14px;
+}
+
+.na-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-white);
+  margin-bottom: 14px;
+  line-height: 1.1;
+}
+
+.na-hero-subtitle {
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 540px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+
+/* Gender tab pills — inherit from BestSellers.css but with green active */
+.na-gender-tab.active {
+  background-color: var(--color-white);
+  color: var(--color-ink);
+  border-color: var(--color-white);
+}
+
+/* ── 3. Catalog section ──────────────────────────────────── */
+.na-catalog-section {
+  background-color: var(--color-white);
+  border-top: 1px solid var(--color-grey-200);
+}
+
+/* ── 4. Responsive ───────────────────────────────────────── */
+@media (max-width: 375px) {
+  .na-hero-title {
+    font-size: 1.75rem;
+  }
+}

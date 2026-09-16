@@ -1,5 +1,7 @@
+@import "./ProductFilters.css";
+
 .women-collection-page {
-  background-color: #F7F2EE;
+  background-color: var(--color-cream);
   min-height: 100vh;
   color: var(--color-ink);
 }
@@ -34,29 +36,30 @@
   gap: 8px;
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-grey-600);
+  color: rgba(255, 255, 255, 0.72);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   margin-bottom: var(--space-md);
 }
 
 .women-breadcrumb a {
-  color: var(--color-grey-600);
+  color: rgba(255, 255, 255, 0.72);
   transition: color var(--dur-fast);
 }
 
 .women-breadcrumb a:hover {
-  color: var(--color-ink);
+  color: var(--color-accent);
 }
 
 .women-breadcrumb span[aria-current="page"] {
-  color: var(--color-ink);
+  color: var(--color-white);
+  font-weight: 700;
 }
 
 /* ── 2. Subcategory Quick-Filter Pills Bar ───────────────────── */
 .m-subcategory-bar {
-  background-color: #FDF9F7;
-  border-bottom: 1px solid #EAE0DB;
+  background-color: var(--color-sand);
+  border-bottom: 1px solid var(--color-grey-200);
   padding: 14px 0;
   position: sticky;
   top: 72px;
@@ -108,8 +111,8 @@
 
 /* ── 3. Main Catalog Section ────────────────────────────────── */
 .m-catalog-section {
-  background-color: #FFFFFF;
-  border-top: 1px solid #EAE0DB;
+  background-color: var(--color-white);
+  border-top: 1px solid var(--color-grey-200);
 }
 
 /* ── 4. Toolbar: Filter Trigger, Count, Sort, Columns ───────── */
@@ -694,19 +697,23 @@
 }
 
 .m-product-grid .product-name {
-  font-size: var(--text-small);
-  line-height: 1.35;
-  min-height: 2.7em;
+  font-family: var(--font-poppins);
+  font-size: 16px;
+  line-height: 1.4;
+  min-height: 2.8em;
+  font-weight: 600;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  color: var(--color-ink);
 }
 
 .m-product-grid .product-pricing {
+  font-family: var(--font-poppins);
   margin-top: auto;
   margin-bottom: 6px;
 }
@@ -815,12 +822,12 @@
 .m-filter-drawer-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(18, 17, 16, 0.55);
+  background-color: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(2px);
   z-index: 9998;
   opacity: 0;
   visibility: hidden;
-  transition: all var(--dur-default) var(--ease-smooth);
+  transition: all var(--dur-normal) var(--ease-smooth);
 }
 
 .m-filter-drawer-backdrop.open {
@@ -839,7 +846,7 @@
   display: flex;
   flex-direction: column;
   transform: translateX(-100%);
-  transition: transform var(--dur-default) var(--ease-smooth);
+  transition: transform var(--dur-normal) var(--ease-smooth);
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
 }
 
@@ -915,23 +922,23 @@
 
 /* ── 10. Recently Viewed Section (DARK SECTION) ─────────────── */
 .m-recently-viewed-section {
-  background-color: #1C1819;
-  color: #F8F3EE;
+  background-color: var(--color-ink-deep);
+  color: var(--color-soft-bg);
   padding: clamp(48px, 6vw, 80px) 0;
 }
 
 .m-recently-viewed-section .section-eyebrow {
   color: var(--color-ink);
-  background-color: #C89D3C;
-  border: 1px solid #DFBF73;
+  background-color: var(--color-accent);
+  border: 1px solid var(--color-accent-hover);
 }
 
 .m-recently-viewed-section .section-title {
-  color: #F8F3EE;
+  color: var(--color-soft-bg);
 }
 
 .m-recently-viewed-section .section-subtitle {
-  color: #C9C6BE;
+  color: var(--color-grey-300);
 }
 
 .m-recently-viewed-section .m-product-grid {
@@ -944,8 +951,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #252122;
-  border: 1px solid #362F31;
+  background-color: var(--bg-split);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-xs);
   overflow: hidden;
   transition: transform var(--dur-normal) var(--ease-smooth), box-shadow var(--dur-normal) var(--ease-smooth);
@@ -961,9 +968,9 @@
   aspect-ratio: 3 / 4;
   position: relative;
   overflow: hidden;
-  background-color: #2E2829;
+  background-color: rgba(255, 255, 255, 0.04);
   border: none;
-  border-bottom: 1px solid #362F31;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0;
   margin-bottom: 0;
 }
@@ -987,7 +994,7 @@
 
 .m-recently-viewed-section .product-name {
   font-size: var(--text-small);
-  line-height: 1.35;
+  line-height: 1.4;
   height: 2.7em;
   min-height: 2.7em;
   display: -webkit-box;
@@ -998,7 +1005,7 @@
   white-space: normal;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #F0E8E4;
+  color: var(--color-grey-100);
 }
 
 .m-recently-viewed-section .product-pricing {
@@ -1011,24 +1018,24 @@
 }
 
 .m-recently-viewed-section .product-pricing .price-current {
-  color: #FFFFFF;
-  font-weight: 700;
+  color: var(--color-white);
+  font-weight: 500;
 }
 
 .m-recently-viewed-section .product-pricing .price-original {
-  color: #B8B4AB;
+  color: var(--color-grey-400);
 }
 
 .m-recently-viewed-section .product-category-label {
-  color: #C9C6BE;
+  color: var(--color-grey-300);
 }
 
 .m-recently-viewed-section .rating-num {
-  color: #F0E8E4;
+  color: var(--color-grey-100);
 }
 
 .m-recently-viewed-section .review-count {
-  color: #A6A39B;
+  color: var(--color-grey-400);
 }
 
 .m-recently-viewed-section .product-swatches {
@@ -1041,7 +1048,7 @@
 /* ── 11. Streetwear Quality Guide & Editorial ────────────────── */
 .m-editorial-section {
   background-color: var(--bg-collections);
-  border-top: 1px solid #DDD5CE;
+  border-top: 1px solid var(--color-grey-200);
 }
 
 .m-editorial-grid {
@@ -1052,8 +1059,8 @@
 }
 
 .m-editorial-card {
-  background-color: #FFFFFF;
-  border: 1px solid #DDD5CE;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey-200);
   border-radius: var(--radius-sm);
   padding: clamp(24px, 3vw, 36px);
   transition: transform var(--dur-fast), box-shadow var(--dur-fast);
@@ -1218,8 +1225,9 @@
   }
 
   .m-product-grid .product-name {
-    font-size: 0.72rem;
-    line-height: 1.3;
+    font-size: 16px;
+    line-height: 1.4;
+    min-height: 2.7em;
   }
 
   .m-product-grid .product-image-box {
@@ -1253,7 +1261,7 @@
   }
 
   .m-product-grid .product-name {
-    font-size: 0.85rem;
+    font-size: 16px;
   }
 
   .m-product-grid .product-image-box {

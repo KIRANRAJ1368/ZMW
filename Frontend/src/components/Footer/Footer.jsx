@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import "./Footer.css";
 
 const QUICK_LINKS = [
-  { label: "Summer Collection", href: "/#whats-new-this-season" },
-  { label: "Best Sellers", href: "/#most-loved-pieces" },
-  { label: "New Arrivals", href: "/#whats-new-this-season" }
+  { label: "Shop All", href: "/collection" },
+  { label: "Best Sellers", href: "/collection?collection=best-sellers" },
+  { label: "New Arrivals", href: "/collection?collection=new-arrivals" }
 ];
 
 const INFO_LINKS = [
@@ -51,8 +51,12 @@ export default function Footer() {
         <div className="footer-grid">
           {/* Brand Column */}
           <div className="footer-brand-col">
-            <Link to="/" className="footer-logo">
-              <span className="footer-brand-main">ZMW</span>
+            <Link to="/" className="footer-logo" aria-label="ZMW">
+              <img
+                src={process.env.PUBLIC_URL + "/images/zmw-logo-transparent.png"}
+                alt="ZMW"
+                className="footer-brand-logo-img"
+              />
             </Link>
 
 
@@ -111,7 +115,11 @@ export default function Footer() {
             <ul className="footer-link-list">
               {QUICK_LINKS.map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="footer-nav-link">{l.label}</a>
+                  {l.href.startsWith("/") && !l.href.includes("#") ? (
+                    <Link to={l.href} className="footer-nav-link">{l.label}</Link>
+                  ) : (
+                    <a href={l.href} className="footer-nav-link">{l.label}</a>
+                  )}
                 </li>
               ))}
             </ul>

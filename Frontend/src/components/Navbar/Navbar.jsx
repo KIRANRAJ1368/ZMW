@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
-import { MEN_SUBCATEGORIES, WOMEN_SUBCATEGORIES, KIDS_SUBCATEGORIES, MEN_FLYOUT } from "../../data/products";
+import { MEN_SUBCATEGORIES, WOMEN_SUBCATEGORIES, BOYS_SUBCATEGORIES, GIRLS_SUBCATEGORIES, BABIES_SUBCATEGORIES } from "../../data/products";
 import "./Navbar.css";
 
 const PROMO_MESSAGES = [
-  "✨ NEW CUSTOMERS SAVE 10% WITH CODE WELCOME10 | FREE SHIPPING OVER ₹6,225",
-  "🌿 100% ORGANIC & SUSTAINABLY SOURCED NATURAL FIBRES",
-  "✈️ COMPLIMENTARY EXPRESS WORLDWIDE SHIPPING ON ORDERS ₹12,450+"
+  "🔥 FREE SHIPPING ON ALL PREPAID ORDERS | EXPRESS DELIVERY IN 2-4 DAYS 🚀",
+  "⚡ BUY 2 GET 10% OFF AUTO-APPLIED · USE CODE: ZMW10",
+  "👕 240+ GSM HEAVYWEIGHT COMBED COTTON · OVERSIZED STREETWEAR DROPS",
+  "📦 CASH ON DELIVERY (COD) AVAILABLE ACROSS 25,000+ PINCODES"
 ];
 
 export default function Navbar() {
@@ -35,8 +36,9 @@ export default function Navbar() {
   const [openFlyout, setOpenFlyout] = useState(null);
   const [mobileMenExpanded, setMobileMenExpanded] = useState(false);
   const [mobileWomenExpanded, setMobileWomenExpanded] = useState(false);
-  const [mobileKidsExpanded, setMobileKidsExpanded] = useState(false);
-  const [mobileMenFlyout, setMobileMenFlyout] = useState(null);
+  const [mobileBoysExpanded, setMobileBoysExpanded] = useState(false);
+  const [mobileGirlsExpanded, setMobileGirlsExpanded] = useState(false);
+  const [mobileBabiesExpanded, setMobileBabiesExpanded] = useState(false);
 
   const desktopNavRef = useRef(null);
 
@@ -58,6 +60,33 @@ export default function Navbar() {
 
   const location = useLocation();
 
+  // Compute exactly one active nav key from pathname + query params
+  const activeNav = (() => {
+    if (location.pathname === "/") return "home";
+    if (location.pathname === "/mens" || location.pathname === "/men") return "men";
+    if (location.pathname === "/womens" || location.pathname === "/women") return "women";
+    if (location.pathname === "/boys") return "boys";
+    if (location.pathname === "/kids") return "kids";
+    if (location.pathname === "/girls") return "girls";
+    if (location.pathname === "/babies") return "babies";
+    if (location.pathname === "/best-sellers" || location.pathname === "/best-seller") return "best-sellers";
+    if (location.pathname === "/new-arrivals" || location.pathname === "/new-arrival") return "new-arrivals";
+    if (location.pathname === "/collection") {
+      const sp = new URLSearchParams(location.search);
+      const cat = sp.get("category")?.toLowerCase();
+      const col = sp.get("collection")?.toLowerCase();
+      if (cat === "mens" || cat === "men") return "men";
+      if (cat === "womens" || cat === "women") return "women";
+      if (cat === "boys") return "boys";
+      if (cat === "kids") return "kids";
+      if (cat === "girls") return "girls";
+      if (cat === "babies") return "babies";
+      if (col === "best-sellers" || col === "best-seller") return "best-sellers";
+      if (col === "new-arrivals" || col === "new-arrival") return "new-arrivals";
+    }
+    return null;
+  })();
+
   const closeAllMenus = useCallback(() => {
     setOpenDesktopMenu(null);
     setOpenFlyout(null);
@@ -71,7 +100,7 @@ export default function Navbar() {
       e.preventDefault();
       const el = document.getElementById(sectionId);
       if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
+        el.scrollIntoView();
         window.history.pushState(null, "", `/#${sectionId}`);
       }
     }
@@ -91,6 +120,15 @@ export default function Navbar() {
   const toggleDesktopMenu = (menu) => {
     setOpenDesktopMenu((prev) => (prev === menu ? null : menu));
     setOpenFlyout(null);
+  };
+
+  const handleCategoryNameClick = (e, menu) => {
+    if (openDesktopMenu === menu) {
+      closeAllMenus();
+    } else {
+      e.preventDefault();
+      toggleDesktopMenu(menu);
+    }
   };
 
   return (
@@ -167,33 +205,33 @@ export default function Navbar() {
             <span className="hamburger-line"></span>
           </button>
 
-          <Link to="/" className="brand-logo" onClick={closeAllMenus}>
-            <span className="brand-main">ZMW</span>
+          <Link to="/" className="brand-logo" onClick={closeAllMenus} aria-label="ZMW">
+            <img
+              src={process.env.PUBLIC_URL + "/images/zmw-logo-transparent.png"}
+              alt="ZMW"
+              className="brand-logo-img"
+              width="142"
+              height="44"
+            />
           </Link>
 
           <ul className="nav-links">
-            <li>
-              <NavLink to="/" end className="nav-link">
-                Home
-              </NavLink>
-            </li>
-
             {/* Men */}
             <li className="nav-item has-dropdown">
               <div className="nav-item-row">
-                <NavLink
-                  to="/men"
-                  className="nav-link"
-                  onClick={() => toggleDesktopMenu("men")}
+                <Link
+                  to="/collection?category=mens"
+                  className={"nav-link" + (activeNav === "men" ? " active" : "")}
+                  onClick={(e) => handleCategoryNameClick(e, "mens")}
                 >
                   Men
-                </NavLink>
+                </Link>
                 <button
                   type="button"
                   className="nav-caret-btn"
-                  onClick={() => toggleDesktopMenu("men")}
+                  onClick={() => toggleDesktopMenu("mens")}
                   aria-haspopup="true"
-                  aria-expanded={openDesktopMenu === "men"}
+                  aria-expanded={openDesktopMenu === "mens"}
                   aria-label="Open Men menu"
                 >
                   <svg className="nav-caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
@@ -202,56 +240,23 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {openDesktopMenu === "men" && (
+              {openDesktopMenu === "mens" && (
                 <div className="mega-dropdown">
-                  <ul className="dropdown-col">
-                    {MEN_SUBCATEGORIES.map((sub) => {
-                      const hasFlyout = Boolean(MEN_FLYOUT[sub]);
-                      return (
-                        <li
-                          key={sub}
-                          className={hasFlyout ? "has-flyout" : ""}
-                          onMouseEnter={() => hasFlyout && setOpenFlyout(sub)}
-                          onMouseLeave={() => hasFlyout && setOpenFlyout(null)}
-                        >
+                  <div className="mega-dropdown-inner">
+                    <ul className="dropdown-col">
+                      <li className="dropdown-heading">Men's Apparel</li>
+                      {MEN_SUBCATEGORIES.map((sub) => (
+                        <li key={sub}>
                           <Link
-                            to={`/men?category=${encodeURIComponent(sub)}`}
-                            onClick={(e) => {
-                              if (hasFlyout) {
-                                e.preventDefault();
-                                setOpenFlyout((prev) => (prev === sub ? null : sub));
-                                return;
-                              }
-                              closeAllMenus();
-                            }}
+                            to={`/collection?category=mens&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            onClick={closeAllMenus}
                           >
                             {sub}
-                            {hasFlyout && (
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                              </svg>
-                            )}
                           </Link>
-
-                          {hasFlyout && openFlyout === sub && (
-                            <ul className="dropdown-col dropdown-flyout">
-                              <li className="dropdown-flyout-heading">{sub}</li>
-                              {MEN_FLYOUT[sub].map((item) => (
-                                <li key={item}>
-                                  <Link
-                                    to={`/men?category=${encodeURIComponent(sub)}&subcategory=${encodeURIComponent(item)}`}
-                                    onClick={closeAllMenus}
-                                  >
-                                    {item}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
                         </li>
-                      );
-                    })}
-                  </ul>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
             </li>
@@ -259,13 +264,13 @@ export default function Navbar() {
             {/* Women */}
             <li className="nav-item has-dropdown">
               <div className="nav-item-row">
-                <NavLink
-                  to="/women"
-                  className="nav-link"
-                  onClick={() => toggleDesktopMenu("women")}
+                <Link
+                  to="/collection?category=women"
+                  className={"nav-link" + (activeNav === "women" ? " active" : "")}
+                  onClick={(e) => handleCategoryNameClick(e, "women")}
                 >
                   Women
-                </NavLink>
+                </Link>
                 <button
                   type="button"
                   className="nav-caret-btn"
@@ -282,39 +287,42 @@ export default function Navbar() {
 
               {openDesktopMenu === "women" && (
                 <div className="mega-dropdown">
-                  <ul className="dropdown-col">
-                    {WOMEN_SUBCATEGORIES.map((sub) => (
-                      <li key={sub}>
-                        <Link
-                          to={`/women?category=${encodeURIComponent(sub)}`}
-                          onClick={closeAllMenus}
-                        >
-                          {sub}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mega-dropdown-inner">
+                    <ul className="dropdown-col">
+                      <li className="dropdown-heading">Women's Apparel</li>
+                      {WOMEN_SUBCATEGORIES.map((sub) => (
+                        <li key={sub}>
+                          <Link
+                            to={`/collection?category=women&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            onClick={closeAllMenus}
+                          >
+                            {sub}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
             </li>
 
-            {/* Kids */}
+            {/* Boys */}
             <li className="nav-item has-dropdown">
               <div className="nav-item-row">
-                <NavLink
-                  to="/kids"
-                  className="nav-link"
-                  onClick={() => toggleDesktopMenu("kids")}
+                <Link
+                  to="/collection?category=boys"
+                  className={"nav-link" + (activeNav === "boys" ? " active" : "")}
+                  onClick={(e) => handleCategoryNameClick(e, "boys")}
                 >
-                  Kids
-                </NavLink>
+                  Boys
+                </Link>
                 <button
                   type="button"
                   className="nav-caret-btn"
-                  onClick={() => toggleDesktopMenu("kids")}
+                  onClick={() => toggleDesktopMenu("boys")}
                   aria-haspopup="true"
-                  aria-expanded={openDesktopMenu === "kids"}
-                  aria-label="Open Kids menu"
+                  aria-expanded={openDesktopMenu === "boys"}
+                  aria-label="Open Boys menu"
                 >
                   <svg className="nav-caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
                     <polyline points="6 9 12 15 18 9"></polyline>
@@ -322,38 +330,131 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {openDesktopMenu === "kids" && (
+              {openDesktopMenu === "boys" && (
                 <div className="mega-dropdown">
-                  <ul className="dropdown-col">
-                    {KIDS_SUBCATEGORIES.map((sub) => (
-                      <li key={sub}>
-                        <Link
-                          to={`/kids?category=${encodeURIComponent(sub)}`}
-                          onClick={closeAllMenus}
-                        >
-                          {sub}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mega-dropdown-inner">
+                    <ul className="dropdown-col">
+                      <li className="dropdown-heading">Boys' Apparel</li>
+                      {BOYS_SUBCATEGORIES.map((sub) => (
+                        <li key={sub}>
+                          <Link
+                            to={`/collection?category=boys&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            onClick={closeAllMenus}
+                          >
+                            {sub}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </li>
+
+            {/* Girls */}
+            <li className="nav-item has-dropdown">
+              <div className="nav-item-row">
+                <Link
+                  to="/collection?category=girls"
+                  className={"nav-link" + (activeNav === "girls" ? " active" : "")}
+                  onClick={(e) => handleCategoryNameClick(e, "girls")}
+                >
+                  Girls
+                </Link>
+                <button
+                  type="button"
+                  className="nav-caret-btn"
+                  onClick={() => toggleDesktopMenu("girls")}
+                  aria-haspopup="true"
+                  aria-expanded={openDesktopMenu === "girls"}
+                  aria-label="Open Girls menu"
+                >
+                  <svg className="nav-caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+              {openDesktopMenu === "girls" && (
+                <div className="mega-dropdown">
+                  <div className="mega-dropdown-inner">
+                    <ul className="dropdown-col">
+                      <li className="dropdown-heading">Girls' Apparel</li>
+                      {GIRLS_SUBCATEGORIES.map((sub) => (
+                        <li key={sub}>
+                          <Link
+                            to={`/collection?category=girls&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            onClick={closeAllMenus}
+                          >
+                            {sub}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </li>
+
+            {/* Babies */}
+            <li className="nav-item has-dropdown">
+              <div className="nav-item-row">
+                <Link
+                  to="/collection?category=babies"
+                  className={"nav-link" + (activeNav === "babies" ? " active" : "")}
+                  onClick={(e) => handleCategoryNameClick(e, "babies")}
+                >
+                  Babies
+                </Link>
+                <button
+                  type="button"
+                  className="nav-caret-btn"
+                  onClick={() => toggleDesktopMenu("babies")}
+                  aria-haspopup="true"
+                  aria-expanded={openDesktopMenu === "babies"}
+                  aria-label="Open Babies menu"
+                >
+                  <svg className="nav-caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+              {openDesktopMenu === "babies" && (
+                <div className="mega-dropdown">
+                  <div className="mega-dropdown-inner">
+                    <ul className="dropdown-col">
+                      <li className="dropdown-heading">Baby Essentials</li>
+                      {BABIES_SUBCATEGORIES.map((sub) => (
+                        <li key={sub}>
+                          <Link
+                            to={`/collection?category=babies&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            onClick={closeAllMenus}
+                          >
+                            {sub}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
             </li>
 
             <li>
               <Link
-                to="/#most-loved-pieces"
-                className="nav-link"
-                onClick={(e) => handleSectionClick(e, "most-loved-pieces")}
+                to="/collection?collection=best-sellers"
+                className={"nav-link" + (activeNav === "best-sellers" ? " active" : "")}
+                onClick={closeAllMenus}
               >
                 Best Seller
               </Link>
             </li>
             <li>
               <Link
-                to="/#whats-new-this-season"
-                className="nav-link"
-                onClick={(e) => handleSectionClick(e, "whats-new-this-season")}
+                to="/collection?collection=new-arrivals"
+                className={"nav-link" + (activeNav === "new-arrivals" ? " active" : "")}
+                onClick={closeAllMenus}
               >
                 New Arrival
               </Link>
@@ -428,7 +529,20 @@ export default function Navbar() {
       />
       <div className={`mobile-nav-drawer ${mobileMenuOpen ? "open" : ""}`}>
         <div className="mobile-nav-header">
-          <span className="brand-main">ZMW</span>
+          <Link
+            to="/"
+            className="mobile-brand-logo"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="ZMW"
+          >
+            <img
+              src={process.env.PUBLIC_URL + "/images/zmw-logo-transparent.png"}
+              alt="ZMW"
+              className="mobile-brand-logo-img"
+              width="120"
+              height="38"
+            />
+          </Link>
           <button
             className="drawer-close-btn"
             onClick={() => setMobileMenuOpen(false)}
@@ -439,17 +553,13 @@ export default function Navbar() {
         </div>
 
         <ul className="mobile-nav-list">
-          <li>
-            <Link to="/" onClick={() => setMobileMenuOpen(false)}>
-              Home
-            </Link>
-          </li>
-
+          {/* Men */}
           <li className="mobile-nav-expandable">
             <div className="mobile-nav-expand-row">
               <Link
-                to="/men"
-                onClick={() => setMobileMenExpanded((v) => !v)}
+                to="/collection?category=mens"
+                className={activeNav === "men" ? "mobile-nav-active" : ""}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Men
               </Link>
@@ -474,75 +584,27 @@ export default function Navbar() {
             </div>
             {mobileMenExpanded && (
               <ul className="mobile-nav-submenu">
-                {MEN_SUBCATEGORIES.map((sub) => {
-                  const flyoutItems = MEN_FLYOUT[sub];
-                  return flyoutItems ? (
-                    <li key={sub} className="mobile-nav-expandable">
-                      <div className="mobile-nav-expand-row">
-                        <Link
-                          to={`/men?category=${encodeURIComponent(sub)}`}
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {sub}
-                        </Link>
-                        <button
-                          className="mobile-nav-expand-toggle"
-                          onClick={() =>
-                            setMobileMenFlyout((prev) => (prev === sub ? null : sub))
-                          }
-                          aria-label={`Expand ${sub} submenu`}
-                          aria-expanded={mobileMenFlyout === sub}
-                        >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            style={{
-                              transform: mobileMenFlyout === sub ? "rotate(180deg)" : "none"
-                            }}
-                          >
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                          </svg>
-                        </button>
-                      </div>
-                      {mobileMenFlyout === sub && (
-                        <ul className="mobile-nav-submenu">
-                          {flyoutItems.map((item) => (
-                            <li key={item}>
-                              <Link
-                                to={`/men?category=${encodeURIComponent(sub)}&subcategory=${encodeURIComponent(item)}`}
-                                onClick={() => setMobileMenuOpen(false)}
-                              >
-                                {item}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ) : (
-                    <li key={sub}>
-                      <Link
-                        to={`/men?category=${encodeURIComponent(sub)}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {sub}
-                      </Link>
-                    </li>
-                  );
-                })}
+                {MEN_SUBCATEGORIES.map((sub) => (
+                  <li key={sub}>
+                    <Link
+                      to={`/collection?category=mens&type=${encodeURIComponent(sub.toLowerCase())}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {sub}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             )}
           </li>
 
+          {/* Women */}
           <li className="mobile-nav-expandable">
             <div className="mobile-nav-expand-row">
               <Link
-                to="/women"
-                onClick={() => setMobileWomenExpanded((v) => !v)}
+                to="/collection?category=women"
+                className={activeNav === "women" ? "mobile-nav-active" : ""}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Women
               </Link>
@@ -570,7 +632,7 @@ export default function Navbar() {
                 {WOMEN_SUBCATEGORIES.map((sub) => (
                   <li key={sub}>
                     <Link
-                      to={`/women?category=${encodeURIComponent(sub)}`}
+                      to={`/collection?category=women&type=${encodeURIComponent(sub.toLowerCase())}`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {sub}
@@ -581,19 +643,21 @@ export default function Navbar() {
             )}
           </li>
 
+          {/* Boys */}
           <li className="mobile-nav-expandable">
             <div className="mobile-nav-expand-row">
               <Link
-                to="/kids"
-                onClick={() => setMobileKidsExpanded((v) => !v)}
+                to="/collection?category=boys"
+                className={activeNav === "boys" ? "mobile-nav-active" : ""}
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Kids
+                Boys
               </Link>
               <button
                 className="mobile-nav-expand-toggle"
-                onClick={() => setMobileKidsExpanded((v) => !v)}
-                aria-label="Expand Kids submenu"
-                aria-expanded={mobileKidsExpanded}
+                onClick={() => setMobileBoysExpanded((v) => !v)}
+                aria-label="Expand Boys submenu"
+                aria-expanded={mobileBoysExpanded}
               >
                 <svg
                   width="16"
@@ -602,18 +666,108 @@ export default function Navbar() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  style={{ transform: mobileKidsExpanded ? "rotate(180deg)" : "none" }}
+                  style={{ transform: mobileBoysExpanded ? "rotate(180deg)" : "none" }}
                 >
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </button>
             </div>
-            {mobileKidsExpanded && (
+            {mobileBoysExpanded && (
               <ul className="mobile-nav-submenu">
-                {KIDS_SUBCATEGORIES.map((sub) => (
+                {BOYS_SUBCATEGORIES.map((sub) => (
                   <li key={sub}>
                     <Link
-                      to={`/kids?category=${encodeURIComponent(sub)}`}
+                      to={`/collection?category=boys&type=${encodeURIComponent(sub.toLowerCase())}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {sub}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+
+          {/* Girls */}
+          <li className="mobile-nav-expandable">
+            <div className="mobile-nav-expand-row">
+              <Link
+                to="/collection?category=girls"
+                className={activeNav === "girls" ? "mobile-nav-active" : ""}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Girls
+              </Link>
+              <button
+                className="mobile-nav-expand-toggle"
+                onClick={() => setMobileGirlsExpanded((v) => !v)}
+                aria-label="Expand Girls submenu"
+                aria-expanded={mobileGirlsExpanded}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{ transform: mobileGirlsExpanded ? "rotate(180deg)" : "none" }}
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+            </div>
+            {mobileGirlsExpanded && (
+              <ul className="mobile-nav-submenu">
+                {GIRLS_SUBCATEGORIES.map((sub) => (
+                  <li key={sub}>
+                    <Link
+                      to={`/collection?category=girls&type=${encodeURIComponent(sub.toLowerCase())}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {sub}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+
+          {/* Babies */}
+          <li className="mobile-nav-expandable">
+            <div className="mobile-nav-expand-row">
+              <Link
+                to="/collection?category=babies"
+                className={activeNav === "babies" ? "mobile-nav-active" : ""}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Babies
+              </Link>
+              <button
+                className="mobile-nav-expand-toggle"
+                onClick={() => setMobileBabiesExpanded((v) => !v)}
+                aria-label="Expand Babies submenu"
+                aria-expanded={mobileBabiesExpanded}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{ transform: mobileBabiesExpanded ? "rotate(180deg)" : "none" }}
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+            </div>
+            {mobileBabiesExpanded && (
+              <ul className="mobile-nav-submenu">
+                {BABIES_SUBCATEGORIES.map((sub) => (
+                  <li key={sub}>
+                    <Link
+                      to={`/collection?category=babies&type=${encodeURIComponent(sub.toLowerCase())}`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {sub}
@@ -626,16 +780,18 @@ export default function Navbar() {
 
           <li>
             <Link
-              to="/#most-loved-pieces"
-              onClick={(e) => handleSectionClick(e, "most-loved-pieces")}
+              to="/collection?collection=best-sellers"
+              className={activeNav === "best-sellers" ? "mobile-nav-active" : ""}
+              onClick={() => setMobileMenuOpen(false)}
             >
               Best Seller
             </Link>
           </li>
           <li>
             <Link
-              to="/#whats-new-this-season"
-              onClick={(e) => handleSectionClick(e, "whats-new-this-season")}
+              to="/collection?collection=new-arrivals"
+              className={activeNav === "new-arrivals" ? "mobile-nav-active" : ""}
+              onClick={() => setMobileMenuOpen(false)}
             >
               New Arrival
             </Link>

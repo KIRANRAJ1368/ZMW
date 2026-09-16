@@ -11,10 +11,11 @@
   align-items: center;
   gap: 14px;
   animation: social-float-float 3.6s ease-in-out infinite;
-  will-change: transform;
+  pointer-events: none;
 }
 
 .social-float-btn {
+  pointer-events: auto;
   position: relative;
   width: 46px;
   height: 46px;

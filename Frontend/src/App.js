@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ShopProvider } from "./context/ShopContext";
 import "./styles/global.css";
 
@@ -8,11 +8,8 @@ import Footer from "./components/Footer/Footer";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import SocialFloatWidget from "./components/Widgets/SocialFloatWidget";
 
-
 import Home from "./pages/Home";
-import Men from "./pages/Men";
-import Women from "./pages/Women";
-import Kids from "./pages/Kids";
+import Collection from "./pages/Collection";
 import Wishlist from "./pages/Wishlist";
 import ComingSoon from "./pages/ComingSoon";
 import ProductDetail from "./pages/ProductDetail";
@@ -39,15 +36,20 @@ export default function App() {
       <main id="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/men" element={<Men />} />
-          <Route path="/women" element={<Women />} />
+          <Route path="/collection" element={<Collection />} />
+          <Route path="/men" element={<Navigate to="/collection?category=mens" replace />} />
+          <Route path="/mens" element={<Navigate to="/collection?category=mens" replace />} />
+          <Route path="/women" element={<Navigate to="/collection?category=women" replace />} />
+          <Route path="/kids" element={<Navigate to="/collection?category=kids" replace />} />
+          <Route path="/boys" element={<Navigate to="/collection?category=boys" replace />} />
+          <Route path="/girls" element={<Navigate to="/collection?category=girls" replace />} />
+          <Route path="/babies" element={<Navigate to="/collection?category=babies" replace />} />
+          <Route path="/best-sellers" element={<Navigate to="/collection?collection=best-sellers" replace />} />
+          <Route path="/best-seller" element={<Navigate to="/collection?collection=best-sellers" replace />} />
+          <Route path="/new-arrivals" element={<Navigate to="/collection?collection=new-arrivals" replace />} />
+          <Route path="/new-arrival" element={<Navigate to="/collection?collection=new-arrivals" replace />} />
           <Route path="/product/:productId" element={<ProductDetail />} />
-          <Route path="/kids" element={<Kids />} />
           <Route path="/wishlist" element={<Wishlist />} />
-          <Route
-            path="/oversized-t-shirts"
-            element={<ComingSoon title="Oversized T-Shirts" />}
-          />
           <Route path="*" element={<ComingSoon title="Page Not Found" />} />
         </Routes>
       </main>

@@ -1,55 +1,56 @@
-/* Trust Features Styles */
+/* Trust Features Styles — Modern D2C Streetwear Bar */
 
 .trust-section {
-  padding: clamp(24px, 3vw, 36px) 0;
-  background-color: var(--bg-trust);
-  border-top: 1px solid var(--color-grey-200);
-  border-bottom: 1px solid var(--color-grey-200);
+  padding: clamp(34px, 4vw, 50px) 0;
+  background-color: var(--color-soft-bg, #F5F5F0);
+  border-bottom: none;
 }
 
 .trust-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-md);
+  gap: clamp(14px, 1.8vw, 22px);
 }
 
 .trust-card {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 16px;
-  background-color: var(--color-grey-50);
-  border: 1px solid var(--color-grey-200);
-  border-radius: var(--radius-sm);
-  transition: all var(--dur-fast) var(--ease-smooth);
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: all var(--dur-normal) var(--ease-smooth);
 }
 
 .trust-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-grey-300);
-  box-shadow: var(--shadow-sm);
-  background-color: var(--color-white);
+  transform: translateY(-3px);
+  border-color: #FAA703;
+  box-shadow: 0 8px 24px rgba(250, 167, 3, 0.2);
 }
 
 .trust-icon-wrapper {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-xs);
-  background-color: var(--color-white);
-  border: 1px solid var(--color-grey-200);
-  color: var(--color-ink);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: #FFF8EC;
+  border: 1.5px solid #FAA703;
+  color: #8C5500;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: transform var(--dur-fast), background-color var(--dur-fast), border-color var(--dur-fast);
+  box-shadow: 0 2px 8px rgba(250, 167, 3, 0.15);
+  transition: all var(--dur-fast) var(--ease-smooth);
 }
 
 .trust-card:hover .trust-icon-wrapper {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent-border);
-  color: var(--color-ink);
+  background: #FAA703;
+  color: #111827;
+  border-color: #FAA703;
+  transform: scale(1.08) rotate(3deg);
+  box-shadow: 0 4px 16px rgba(250, 167, 3, 0.35);
 }
 
 .trust-text {
@@ -58,46 +59,76 @@
 }
 
 .trust-title {
-  font-family: var(--font-body);
-  font-size: var(--text-small);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 800;
   color: var(--color-ink);
-  margin-bottom: 4px;
-  letter-spacing: 0.01em;
+  margin-bottom: 3px;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
 .trust-desc {
-  font-size: var(--text-xs);
+  font-size: 0.76rem;
   color: var(--color-grey-600);
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .trust-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-sm);
+    gap: 14px;
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 540px) {
   .trust-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
-}
-
-@media (max-width: 340px) {
   .trust-card {
-    padding: 12px;
-    gap: 12px;
+    padding: 12px 14px;
   }
-
   .trust-icon-wrapper {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
   }
-
   .trust-title {
-    font-size: 0.78rem;
+    font-size: 0.82rem;
+  }
+  .trust-desc {
+    font-size: 0.72rem;
   }
 }
+
+/* ── Handcrafted in India Banner ── */
+.handcrafted-india-strip {
+  text-align: center;
+  margin-bottom: clamp(20px, 2.5vw, 30px);
+  padding-bottom: clamp(14px, 2vw, 20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.india-badge-pill {
+  display: inline-block;
+  background: #111827;
+  color: #FAA703;
+  border: 1.5px solid #FAA703;
+  font-size: clamp(0.78rem, 1.2vw, 0.92rem);
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  padding: 8px 24px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 16px rgba(250, 167, 3, 0.25);
+  margin-bottom: 8px;
+}
+
+.india-customers-subtitle {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+

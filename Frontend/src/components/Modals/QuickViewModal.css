@@ -133,17 +133,28 @@
 .quickview-price-row {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 8px;
   margin-bottom: 14px;
+  font-family: var(--font-poppins);
 }
 
 .quickview-price-row .price-current {
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-family: var(--font-poppins);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
 }
 
 .quickview-price-row .price-original {
-  font-size: 1rem;
+  font-family: var(--font-poppins);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--color-grey-400);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  font-variant-numeric: tabular-nums;
 }
 
 .quickview-description {

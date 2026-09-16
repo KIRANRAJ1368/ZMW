@@ -1,7 +1,6 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import { MEN_PRODUCTS, WOMEN_PRODUCTS, KIDS_PRODUCTS } from "../data/products";
 import ProductCard from "../components/ProductCard/ProductCard";
 import "./ProductDetail.css";
 
@@ -30,21 +29,16 @@ export default function ProductDetail() {
     wishlist,
     toggleWishlist,
     setIsCartOpen,
-    setIsCheckoutOpen
+    setIsCheckoutOpen,
+    allProducts,
+    findProduct,
+    recentlyViewed,
+    trackRecentlyViewed
   } = useShop();
 
-  // Combined catalog so product detail, related, and recently-viewed all
-  // resolve correctly regardless of which category page (Men, Women, or
-  // Kids) the person navigated from.
-  const ALL_PRODUCTS = useMemo(
-    () => [...MEN_PRODUCTS, ...WOMEN_PRODUCTS, ...KIDS_PRODUCTS],
-    []
-  );
-
-  // Find product from the combined catalog
   const product = useMemo(
-    () => ALL_PRODUCTS.find((p) => p.id === productId) || ALL_PRODUCTS[0],
-    [productId, ALL_PRODUCTS]
+    () => findProduct(productId),
+    [productId, findProduct]
   );
 
   const [selectedColor, setSelectedColor] = useState(null);
@@ -87,28 +81,27 @@ export default function ProductDetail() {
   // Related products (same subcategory, excluding current)
   const relatedProducts = useMemo(() => {
     if (!product) return [];
-    return ALL_PRODUCTS.filter(
+    return allProducts.filter(
       (p) => p.id !== product.id && p.subCategory === product.subCategory
     ).slice(0, 4);
-  }, [product, ALL_PRODUCTS]);
+  }, [product, allProducts]);
 
-  // Recently viewed / complementary products
-  const recentlyViewed = useMemo(() => {
-    if (!product) return [];
-    return ALL_PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
-  }, [product, ALL_PRODUCTS]);
+  const recentlyViewedProducts = useMemo(
+    () => recentlyViewed.filter((p) => p.id !== product?.id).slice(0, 8),
+    [recentlyViewed, product]
+  );
 
   // Reset selection states on product change
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (product) {
       setSelectedColor(product.colors?.[0]?.name ?? "Jet Black");
       setSelectedSize(product.sizes?.[1] || product.sizes?.[0] || "M");
       setQuantity(1);
       setAddedToCart(false);
       setPreviewImage(null);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      trackRecentlyViewed(product.id);
     }
-  }, [productId, product]);
+  }, [productId, product, trackRecentlyViewed]);
 
   if (!product) {
     return (
@@ -117,11 +110,11 @@ export default function ProductDetail() {
           <h2>Product Not Found</h2>
           <p>The product you are looking for is no longer available.</p>
           <div className="hero-cta-group" style={{ justifyContent: "center" }}>
-            <Link to="/men" className="btn btn-primary">
-              Browse Men's Collection
+            <Link to="/collection?category=mens" className="btn btn-primary">
+              Browse Mens' Collection
             </Link>
-            <Link to="/women" className="btn btn-secondary">
-              Browse Women's Collection
+            <Link to="/collection?category=girls" className="btn btn-secondary">
+              Browse Girls' Collection
             </Link>
           </div>
         </div>
@@ -136,15 +129,20 @@ export default function ProductDetail() {
 
   // Determine which category page this product belongs to, so the
   // breadcrumb and "back to collection" links point somewhere correct
-  // regardless of whether the person arrived via /men, /women, or /kids.
-  const isWomensProduct = WOMEN_PRODUCTS.some((p) => p.id === product.id);
-  const isKidsProduct = KIDS_PRODUCTS.some((p) => p.id === product.id);
-  const collectionPath = isKidsProduct ? "/kids" : isWomensProduct ? "/women" : "/men";
-  const collectionLabel = isKidsProduct
-    ? "Kids' Collection"
-    : isWomensProduct
-    ? "Women's Collection"
-    : "Men's Collection";
+  // regardless of how the person arrived.
+  const CATEGORY_COLLECTION = {
+    mens: { path: "/collection?category=mens", label: "Mens' Collection" },
+    boys: { path: "/collection?category=boys", label: "Boys' Collection" },
+    girls: { path: "/collection?category=girls", label: "Girls' Collection" },
+    babies: { path: "/collection?category=babies", label: "Babies' Collection" },
+    women: { path: "/collection?category=women", label: "Women's Collection" },
+    kids: { path: "/collection?category=kids", label: "Kids' Collection" },
+    men: { path: "/collection?category=mens", label: "Mens' Collection" }
+  };
+  const catKey = product.category || "mens";
+  const catMeta = CATEGORY_COLLECTION[catKey] || CATEGORY_COLLECTION.mens;
+  const collectionPath = catMeta.path;
+  const collectionLabel = catMeta.label;
 
   // Add to Cart handler
   const handleAddToCart = () => {
@@ -169,6 +167,8 @@ export default function ProductDetail() {
     setTimeout(() => setCopiedCoupon(null), 2000);
   };
 
+  const isWomensProduct = (product.category || "").toLowerCase() === "women";
+
   // Highlights table data
   const highlights = [
     { label: "Silhouette", value: product.subCategory?.includes("Oversized") ? "Oversized Boxy Fit" : "Relaxed Regular Fit" },
@@ -184,17 +184,21 @@ export default function ProductDetail() {
       {/* ── Breadcrumb Navigation ─────────────────────────────────── */}
       <div className="pd-breadcrumb-bar">
         <div className="container">
-          <nav className="pd-breadcrumb" aria-label="Breadcrumb">
-            <Link to="/">Home</Link>
-            <span className="pd-sep">/</span>
-            <Link to={collectionPath}>{collectionLabel}</Link>
-            <span className="pd-sep">/</span>
-            <Link to={`${collectionPath}?category=${encodeURIComponent(product.subCategory)}`}>
-              {product.subCategory}
-            </Link>
-            <span className="pd-sep">/</span>
-            <span aria-current="page" className="pd-crumb-current">{product.name}</span>
-          </nav>
+<nav className="pd-breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="pd-sep">/</span>
+              <Link to={collectionPath}>{collectionLabel}</Link>
+              {product.subCategory && (
+                <>
+                  <span className="pd-sep">/</span>
+                  <Link to={`/collection?category=${encodeURIComponent(catKey)}&type=${encodeURIComponent(product.subCategory.toLowerCase())}`}>
+                    {product.subCategory}
+                  </Link>
+                </>
+              )}
+              <span className="pd-sep">/</span>
+              <span aria-current="page" className="pd-crumb-current">{product.name}</span>
+            </nav>
         </div>
       </div>
 
@@ -625,7 +629,7 @@ export default function ProductDetail() {
       )}
 
       {/* ── Recently Viewed Products Section ──────────────────────── */}
-      {recentlyViewed.length > 0 && (
+      {recentlyViewedProducts.length > 0 && (
         <section className="section-padding pd-recently-viewed-section">
           <div className="container">
             <div className="section-header">
@@ -636,7 +640,7 @@ export default function ProductDetail() {
               </p>
             </div>
             <div className="product-grid">
-              {recentlyViewed.map((p) => (
+              {recentlyViewedProducts.map((p) => (
                 <ProductCard key={`recent-${p.id}`} product={p} />
               ))}
             </div>

@@ -1,0 +1,128 @@
+/* =========================================================
+   BestSellers.css
+   Page-specific styles for /best-sellers.
+   Reuses ALL filter/grid/drawer classes already defined in
+   Men.css — this file only adds the page hero and the
+   gender-tab pill row.
+   ========================================================= */
+
+/* ── 1. Page wrapper ─────────────────────────────────────── */
+.bs-page {
+  background-color: var(--color-cream);
+  min-height: 100vh;
+  color: var(--color-ink);
+}
+
+/* ── 2. Page Hero Banner ─────────────────────────────────── */
+.bs-hero {
+  background-color: var(--color-ink-deep);
+  color: var(--color-white);
+  padding: clamp(48px, 7vw, 88px) 0 clamp(36px, 5vw, 64px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle decorative gradient overlay */
+.bs-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 60% 0%, rgba(250, 167, 3, 0.18) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.bs-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.bs-hero .section-eyebrow {
+  display: inline-block;
+  background-color: rgba(250, 167, 3, 0.2);
+  color: var(--color-accent);
+  border: 1px solid rgba(250, 167, 3, 0.4);
+  margin-bottom: 14px;
+}
+
+.bs-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-white);
+  margin-bottom: 14px;
+  line-height: 1.1;
+}
+
+.bs-hero-subtitle {
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 540px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+
+/* Gender tab pills inside hero */
+.bs-gender-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bs-gender-tab {
+  padding: 9px 24px;
+  font-size: var(--text-small);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-smooth);
+}
+
+.bs-gender-tab:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: var(--color-white);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.bs-gender-tab.active {
+  background-color: var(--color-white);
+  color: var(--color-ink);
+  border-color: var(--color-white);
+}
+
+/* ── 3. Catalog section ──────────────────────────────────── */
+.bs-catalog-section {
+  background-color: var(--color-white);
+  border-top: 1px solid var(--color-grey-200);
+}
+
+/* ── 4. Responsive ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .bs-gender-tabs {
+    gap: 8px;
+  }
+
+  .bs-gender-tab {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .bs-hero-title {
+    font-size: 1.75rem;
+  }
+
+  .bs-gender-tab {
+    padding: 7px 12px;
+    font-size: 0.7rem;
+  }
+}

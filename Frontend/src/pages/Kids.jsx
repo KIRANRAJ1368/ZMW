@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import { KIDS_PRODUCTS, KIDS_SUBCATEGORIES } from "../data/products";
 import ProductCard from "../components/ProductCard/ProductCard";
+import RecentlyViewed from "../components/RecentlyViewed/RecentlyViewed";
 import TrustFeatures from "../components/TrustFeatures/TrustFeatures";
 import "../components/Hero/Hero.css";
 import "./Kids.css";
@@ -227,11 +228,6 @@ export default function Kids() {
     100,
     Math.round((displayedProducts.length / Math.max(1, filteredProducts.length)) * 100)
   );
-
-  // Recently Viewed sample
-  const recentlyViewed = useMemo(() => {
-    return KIDS_PRODUCTS.slice(0, 4);
-  }, []);
 
   // Shared Filters Form component (used in both desktop sidebar and mobile drawer)
   const renderFilterWidgets = () => (
@@ -824,24 +820,6 @@ export default function Kids() {
         </div>
       </div>
 
-      {/* Recently Viewed Products Section */}
-      <section className="section-padding m-recently-viewed-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-eyebrow">CURATED RECOMMENDATIONS</span>
-            <h2 className="section-title">Recently Viewed & Trending</h2>
-            <p className="section-subtitle">
-              Playful prints and comfy fits your little one will want to wear on repeat.
-            </p>
-          </div>
-          <div className="m-product-grid density-4">
-            {recentlyViewed.map((product) => (
-              <ProductCard key={`recent-${product.id}`} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Fabric & Comfort Guide & Editorial Section */}
       <section className="section-padding m-editorial-section">
         <div className="container">
@@ -901,6 +879,7 @@ export default function Kids() {
 
       {/* Shared Trust Strip from ZMW */}
       <TrustFeatures />
+      <RecentlyViewed />
     </div>
   );
 }

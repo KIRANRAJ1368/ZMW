@@ -1,55 +1,45 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
  * ScrollToTop
  *
- * When navigating with a hash (e.g. #most-loved-pieces, #whats-new-this-season),
- * smoothly scrolls directly to the target element.
- * When navigating between standard routes without a hash, instantly resets
- * scroll position to 0.
+ * New routes always start at the top. Same-page hash navigation keeps its
+ * existing anchor behavior.
  */
 export default function ScrollToTop() {
-  const { pathname, hash } = useLocation();
+  const { pathname, search, hash } = useLocation();
+  const previousRoute = useRef({ pathname, search });
 
   useEffect(() => {
-    if (hash) {
-      const id = hash.replace("#", "");
-      const scrollToSection = () => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-          return true;
-        }
-        return false;
-      };
-
-      if (!scrollToSection()) {
-        const timer1 = setTimeout(scrollToSection, 60);
-        const timer2 = setTimeout(scrollToSection, 180);
-        const timer3 = setTimeout(scrollToSection, 350);
-        return () => {
-          clearTimeout(timer1);
-          clearTimeout(timer2);
-          clearTimeout(timer3);
-        };
-      }
-      return;
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
     }
 
-    // Temporarily disable any CSS scroll-behavior so normal page reset is instant.
-    const html = document.documentElement;
-    const prev = html.style.scrollBehavior;
-    html.style.scrollBehavior = "auto";
+    return () => {
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "auto";
+      }
+    };
+  }, []);
 
-    window.scrollTo(0, 0);
+  useEffect(() => {
+    const routeChanged =
+      previousRoute.current.pathname !== pathname ||
+      previousRoute.current.search !== search;
 
-    const id = requestAnimationFrame(() => {
-      html.style.scrollBehavior = prev;
-    });
+    if (routeChanged) {
+      window.scrollTo(0, 0);
+    } else if (hash) {
+      const id = hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView();
+      }
+    }
 
-    return () => cancelAnimationFrame(id);
-  }, [pathname, hash]);
+    previousRoute.current = { pathname, search };
+  }, [pathname, search, hash]);
 
   return null;
-}
+}

@@ -10,7 +10,7 @@ import "./ProductCard.css";
  * markup so every product grid stays pixel-identical by construction
  * instead of by copy-pasted CSS that can drift out of sync.
  */
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, showMeta = false }) {
   const navigate = useNavigate();
   const { formatPrice, addToCart, wishlist, toggleWishlist, setQuickViewProduct } = useShop();
 
@@ -115,14 +115,16 @@ export default function ProductCard({ product }) {
       {/* Card Info */}
       <div className="product-info">
         {/* Category & Rating */}
-        <div className="product-meta">
-          <span className="product-category-label">{product.category}</span>
-          <div className="star-rating">
-            <span>★</span>
-            <span className="rating-num">{product.rating}</span>
-            <span className="review-count">({product.reviewCount})</span>
+        {showMeta && (
+          <div className="product-meta">
+            <span className="product-category-label">{product.category}</span>
+            <div className="star-rating">
+              <span>★</span>
+              <span className="rating-num">{product.rating}</span>
+              <span className="review-count">({product.reviewCount})</span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Title */}
         <h3 className="product-name" onClick={() => navigate(`/product/${product.id}`)}>
@@ -134,6 +136,11 @@ export default function ProductCard({ product }) {
           <span className="price-current">{formatPrice(product.price)}</span>
           {product.originalPrice && (
             <span className="price-original">{formatPrice(product.originalPrice)}</span>
+          )}
+          {product.originalPrice && product.originalPrice > product.price && (
+            <span className="price-discount">
+              {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% off
+            </span>
           )}
         </div>
 

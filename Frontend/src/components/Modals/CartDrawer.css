@@ -75,7 +75,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-rust) 0%, var(--color-gold) 100%);
+  background: linear-gradient(90deg, var(--color-rust) 0%, var(--color-accent) 100%);
   border-radius: var(--radius-pill);
   transition: width var(--dur-normal) var(--ease-smooth);
 }
@@ -284,7 +284,7 @@
 }
 
 .discount-row {
-  color: var(--color-forest);
+  color: var(--color-success);
   font-weight: 600;
 }
 

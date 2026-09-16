@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import {
   PRODUCTS,
   MEN_PRODUCTS,
   WOMEN_PRODUCTS,
   KIDS_PRODUCTS,
+  UNIFIED_PRODUCTS,
   INSTAGRAM_SHOWCASE
 } from "../data/products";
 
@@ -17,19 +18,24 @@ const CURRENCIES = {
 };
 
 const FREE_SHIPPING_THRESHOLD = 75; // in USD
+const RECENTLY_VIEWED_KEY = "zmw_recently_viewed";
+const MAX_RECENTLY_VIEWED = 5;
+
+const readRecentlyViewedIds = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]");
+    return Array.isArray(saved)
+      ? [...new Set(saved.filter((id) => typeof id === "string"))].slice(0, MAX_RECENTLY_VIEWED)
+      : [];
+  } catch {
+    return [];
+  }
+};
 
 export const ShopProvider = ({ children }) => {
   // Unified product lookup across all catalogs
   const allProducts = useMemo(() => {
-    const seen = new Set();
-    const list = [];
-    [...PRODUCTS, ...MEN_PRODUCTS, ...WOMEN_PRODUCTS, ...KIDS_PRODUCTS].forEach((p) => {
-      if (!seen.has(p.id)) {
-        seen.add(p.id);
-        list.push(p);
-      }
-    });
-    return list;
+    return UNIFIED_PRODUCTS;
   }, []);
 
   const allProductsMap = useMemo(() => {
@@ -41,6 +47,33 @@ export const ShopProvider = ({ children }) => {
   }, [allProducts]);
 
   const findProduct = (productId) => allProductsMap.get(productId) || null;
+
+  const [recentlyViewedIds, setRecentlyViewedIds] = useState(() => {
+    return readRecentlyViewedIds();
+  });
+
+  const recentlyViewed = useMemo(
+    () => recentlyViewedIds.map((id) => findProduct(id)).filter(Boolean),
+    [recentlyViewedIds, allProductsMap]
+  );
+
+  const trackRecentlyViewed = useCallback((productId) => {
+    if (!allProductsMap.has(productId)) return;
+    setRecentlyViewedIds((previous) => {
+      const next = [
+      productId,
+      ...previous.filter((id) => id !== productId)
+      ].slice(0, MAX_RECENTLY_VIEWED);
+
+      try {
+        localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
+      } catch (e) {
+        console.warn("Storage error", e);
+      }
+
+      return next;
+    });
+  }, [allProductsMap]);
 
   // Cart state
   const [cart, setCart] = useState(() => {
@@ -112,6 +145,14 @@ export const ShopProvider = ({ children }) => {
     }
   }, [wishlist]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewedIds));
+    } catch (e) {
+      console.warn("Storage error", e);
+    }
+  }, [recentlyViewedIds]);
+
   // Toast helper
   const addToast = (message, type = "success") => {
     const id = Date.now() + Math.random();
@@ -125,12 +166,12 @@ export const ShopProvider = ({ children }) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Format Price with selected Currency (Indian Rupee number grouping via Intl)
+  // Format all storefront prices consistently as Indian Rupees.
   const formatPrice = (amountInUsd) => {
     if (amountInUsd === null || amountInUsd === undefined) return "";
-    const curr = CURRENCIES[currency] || CURRENCIES.INR;
-    const converted = Math.round(amountInUsd * curr.rate);
-    return `${curr.symbol}${new Intl.NumberFormat(curr.locale).format(converted)}`;
+    const inr = CURRENCIES.INR;
+    const converted = Math.round(amountInUsd * inr.rate);
+    return `₹${new Intl.NumberFormat("en-IN").format(converted)}`;
   };
 
   // Cart operations
@@ -274,6 +315,8 @@ export const ShopProvider = ({ children }) => {
         products: PRODUCTS,
         allProducts,
         findProduct,
+        recentlyViewed,
+        trackRecentlyViewed,
         // Cart
         cart,
         cartItemCount,

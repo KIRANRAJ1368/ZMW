@@ -1,46 +1,68 @@
-/* Design Tokens for ZMW — Luxury Minimalist E-Commerce */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-/* Visual Rhythm: Alternating distinct section background treatments */
+/* Design Tokens for ZMW — Modern Streetwear & Luxury Apparel (CrazyMonk Aesthetic) */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   /* Section-by-Section Distinct Backgrounds */
-  --bg-hero:           #F9F7F2;
+  --bg-hero:           #0B0F19;   /* High-impact sleek obsidian dark */
   --bg-trust:          #FFFFFF;
-  --bg-category:       #F5F2EA;
+  --bg-category:       #F8FAFC;   /* Ultra-clean slate tinted neutral */
   --bg-whats-new:      #FFFFFF;
-  --bg-collections:    #EFECE5;
-  --bg-tabbed:         #F6F3EC;
-  --bg-split:          #161514;
-  --bg-testimonials:   #FAF8F4;
+  --bg-collections:    #F8FAFC;
+  --bg-tabbed:         #FFFFFF;
+  --bg-split:          #080C14;
+  --bg-testimonials:   #F8FAFC;
   --bg-instagram:      #FFFFFF;
-  --bg-footer:         #121110;
+  --bg-footer:         #070A10;
 
-  /* Core Palette */
-  --color-cream:       #F8F6F0;   /* main warm neutral */
-  --color-sand:        #F5F2EA;   /* secondary warm neutral */
-  --color-sand-light:  #FAF8F4;   /* soft off-white */
-  --color-sand-hover:  #E8E4D9;   /* hover state */
-  --color-white:       #FFFFFF;   /* pure white */
+  /* Core Palette (Crisp High-Contrast Modern D2C) */
+  --color-cream:       #FFFFFF;   /* Main background - crisp modern white */
+  --color-sand:        #F8FAFC;   /* Secondary light neutral */
+  --color-sand-light:  #FFFFFF;   /* Pure white */
+  --color-sand-hover:  #F1F5F9;   /* Hover state */
+  --color-white:       #FFFFFF;   /* Pure white */
 
-  /* Brand Accent — luxury warm champagne gold */
-  --color-accent:      #C89D3C;
-  --color-accent-hover:#B58B2E;  /* hover state */
-  --color-accent-soft: #FBF6EB;  /* light accent tint */
-  --color-accent-deep: #8E6B1D;  /* readable gold accent for text */
-  --color-accent-border: #DFBF73;
+  /* Brand Palette (ZMW New Identity: Primary #FAA703, Secondary #E7E7E7, Soft Background #F5F5F0) */
+  --color-primary-brand:   #FAA703; /* Primary accent: highlights, buttons, badges */
+  --color-secondary-brand: #E7E7E7; /* Secondary cool neutral section bg */
+  --color-soft-bg:         #F8FAFC; /* Clean modern slate neutral bg */
 
-  /* Legacy aliases for backwards compatibility */
-  --color-rust:        #C89D3C;
-  --color-rust-hover:  #B58B2E;
-  --color-rust-soft:   #FBF6EB;
-  --color-rust-deep:   #8E6B1D;
-  --color-ink-soft:    #5E5C56;
-  --color-paper:       #F8F6F0;
-  --color-linen:       #F8F6F0;
-  --color-linen-deep:  #ECE8DE;
-  --color-line:        #E5E2D9;
-  --color-off-white:   #FAF8F4;
-  --color-olive:       #8E6B1D;
+  /* Brand Accent */
+  --color-accent:        #FAA703; /* Vibrant warm golden amber */
+  --color-accent-hover:  #E09500; /* Rich gold hover */
+  --color-accent-soft:   #FFF8EC; /* Light golden tint */
+  --color-accent-deep:   #8C5500; /* High-contrast text */
+  --color-accent-border: #FAA703;
+  --color-accent-gradient: linear-gradient(135deg, #FFC043 0%, #FAA703 50%, #E09500 100%);
+
+  /* ZMW Logo Metallic Chrome & Silver */
+  --color-chrome:        #E2E8F0;
+  --color-chrome-silver: #CBD5E1;
+  --color-chrome-dark:   #475569;
+  --color-chrome-gradient: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 45%, #94A3B8 100%);
+
+  /* ZMW Logo Titanium Bronze */
+  --color-titanium-bronze: #C4A482;
+  --color-bronze-dark:     #9A7B58;
+
+  /* CrazyMonk High-Energy Badges & Signals */
+  --color-badge-hot:       #9A84C8; /* CrazyMonk Purple */
+  --color-badge-new:       #10B981; /* CrazyMonk Mint Green */
+  --color-badge-sale:      #DA3F3F; /* CrazyMonk Crimson Red */
+  --color-badge-sale-soft: #FDE8E8;
+  --color-badge-exclusive: #0284C7; /* Electric Cyan */
+
+  /* Backwards-compatibility aliases */
+  --color-rust:        #F59E0B;
+  --color-rust-hover:  #D97706;
+  --color-rust-soft:   #FFFBEB;
+  --color-rust-deep:   #92400E;
+  --color-ink-soft:    #475569;
+  --color-paper:       #FFFFFF;
+  --color-linen:       #F8FAFC;
+  --color-linen-deep:  #E2E8F0;
+  --color-line:        #E2E8F0;
+  --color-off-white:   #F8FAFC;
+  --color-olive:       #92400E;
 
   /* Step scale aliases */
   --step-small:  var(--text-small);
@@ -48,49 +70,43 @@
   --step-lead:   var(--text-lead);
 
   /* Neutrals */
-  --color-grey-50:  #FAFAF8;
-  --color-grey-100: #F4F2EB;
-  --color-grey-200: #E6E3DA;
-  --color-grey-300: #CCC8BC;
-  --color-grey-400: #9C988D;
-  --color-grey-600: #5E5C56;
-  --color-grey-800: #2C2B27;
+  --color-grey-50:  #F8FAFC;
+  --color-grey-100: #F1F5F9;
+  --color-grey-200: #E2E8F0;
+  --color-grey-300: #CBD5E1;
+  --color-grey-400: #94A3B8;
+  --color-grey-500: #64748B;
+  --color-grey-600: #475569;
+  --color-grey-800: #1E293B;
 
-  /* Ink */
-  --color-ink:      #181715;
-  --color-ink-deep: #0D0C0A;
-
-  /* Fashion Accents */
-  --color-gold:        #C29B4D;
-  --color-gold-deep:   #9C772F;
-  --color-gold-soft:   #F8F4EA;
-  --color-forest:      #264E3A;
-  --color-forest-soft: #E9F3EE;
-  --color-rose:        #C7655B;
+  /* Ink / Text */
+  --color-ink:      #0F172A; /* Deep cyber onyx */
+  --color-ink-deep: #020617; /* Pure near-black */
 
   /* Semantic */
-  --color-success:    #237848;
-  --color-success-bg: #E8F7EE;
-  --color-error:      #B83224;
-  --color-error-bg:   #FDF1F0;
-  --color-warning:    #C26B08;
-  --color-warning-bg: #FEF6E6;
+  --color-success:    #10B981;
+  --color-success-bg: #ECFDF5;
+  --color-error:      #DA3F3F;
+  --color-error-bg:   #FEF2F2;
+  --color-warning:    #F59E0B;
+  --color-warning-bg: #FFFBEB;
 
   /* Overlays & Glass */
-  --color-overlay-dark:   rgba(18, 17, 16, 0.65);
-  --color-overlay-glass:  rgba(255, 255, 255, 0.94);
-  --color-glass-border:   rgba(204, 200, 188, 0.5);
-  --color-glass-card:     rgba(255, 255, 255, 0.95);
+  --color-overlay-dark:   rgba(11, 15, 25, 0.75);
+  --color-overlay-glass:  rgba(255, 255, 255, 0.96);
+  --color-glass-border:   rgba(226, 232, 240, 0.8);
+  --color-glass-card:     rgba(255, 255, 255, 0.98);
 
-  /* Typography */
-  --font-primary:      "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display:      "Playfair Display", Georgia, serif;
+  /* Typography (Modern High-Energy Streetwear) */
+  --font-primary:      "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display:      "Outfit", "Plus Jakarta Sans", sans-serif;
   --font-body:         "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-serif-accent: "Playfair Display", Georgia, serif;
+  --font-poppins:      "Plus Jakarta Sans", sans-serif;
+  --font-serif-accent: "Outfit", sans-serif;
 
   /* Fluid Type Scale */
-  --text-hero: clamp(2.4rem, 4.8vw + 1rem, 4.5rem);
-  --text-h1:   clamp(1.9rem, 3.2vw + 0.8rem, 3.2rem);
+  --text-hero: clamp(2.4rem, 5vw + 1rem, 4.4rem);
+  --text-h1:   clamp(1.9rem, 3.4vw + 0.8rem, 3.2rem);
   --text-h2:   clamp(1.5rem, 2.4vw + 0.6rem, 2.35rem);
   --text-h3:   clamp(1.2rem, 1.4vw + 0.5rem, 1.6rem);
   --text-h4:   1.12rem;
@@ -115,30 +131,31 @@
   --container-max: 1380px;
   --container-pad: clamp(16px, 4vw, 48px);
 
-  /* Refined Modern Geometry (Smooth, subtle luxury look) */
+  /* Modern Streetwear Geometry */
   --radius-xs:  6px;
   --radius-sm:  8px;
-  --radius-md:  10px;
-  --radius-lg:  12px;
-  --radius-xl:  16px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
   --radius-pill: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(24, 23, 21, 0.05);
-  --shadow-md: 0 8px 24px rgba(24, 23, 21, 0.08);
-  --shadow-lg: 0 16px 40px rgba(24, 23, 21, 0.12);
-  --shadow-xl: 0 24px 60px rgba(24, 23, 21, 0.16);
-  --shadow-drawer: -10px 0 35px rgba(0, 0, 0, 0.15);
-  --shadow-accent: 0 4px 20px rgba(200, 157, 60, 0.35);
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.12);
+  --shadow-xl: 0 24px 60px rgba(15, 23, 42, 0.18);
+  --shadow-drawer: -10px 0 35px rgba(0, 0, 0, 0.25);
+  --shadow-accent: 0 6px 24px rgba(250, 167, 3, 0.38);
+  --shadow-glow-gold: 0 0 25px rgba(250, 167, 3, 0.3);
 
   /* Transitions */
-  --ease-smooth:    cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-smooth:    cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring:    cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
   --dur-instant:    150ms;
   --dur-fast:       250ms;
-  --dur-normal:     400ms;
-  --dur-slow:       700ms;
+  --dur-normal:     350ms;
+  --dur-slow:       600ms;
 
   /* Z-Index Hierarchy */
   --z-sticky-nav: 900;

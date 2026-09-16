@@ -13,7 +13,7 @@
 
 .testimonial-card {
   background-color: var(--color-white);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   padding: 30px 26px;
   display: flex;
   flex-direction: column;
@@ -24,8 +24,8 @@
 
 .testimonial-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-accent-deep);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.1);
+  border-color: var(--color-accent);
 }
 
 .testimonial-top {
@@ -41,8 +41,8 @@
   gap: 4px;
   font-size: var(--text-xs);
   font-weight: 700;
-  color: var(--color-forest);
-  background-color: var(--color-forest-soft);
+  color: var(--color-success);
+  background-color: var(--color-success-bg);
   padding: 3px 8px;
   border-radius: var(--radius-xs);
 }

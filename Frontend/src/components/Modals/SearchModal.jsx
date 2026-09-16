@@ -3,14 +3,34 @@ import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import "./SearchModal.css";
 
-const POPULAR_SEARCHES = ["Linen Shirt", "Silk Slip Dress", "T-Shirt", "Oversized", "Pants", "Blazer"];
+const POPULAR_SEARCHES = [
+  "Round Neck T-Shirts",
+  "Polo T-Shirts",
+  "Hoodies",
+  "Sweatshirts",
+  "Joggers",
+  "New Arrivals",
+  "Best Sellers"
+];
+
+// Map popular/chip terms to reliable match keys (handles plural/noise).
+const CHIP_QUERIES = {
+  "round neck t-shirts": "round neck",
+  "polo t-shirts": "polo",
+  "hoodies": "hoodie",
+  "sweatshirts": "sweatshirt",
+  "joggers": "joggers",
+  "new arrivals": "@new",
+  "best sellers": "@best"
+};
 
 export default function SearchModal() {
   const {
     isSearchOpen,
     setIsSearchOpen,
     allProducts,
-    products
+    products,
+    formatPrice
   } = useShop();
 
   const [query, setQuery] = useState("");
@@ -50,25 +70,44 @@ export default function SearchModal() {
 
   const trimmed = query.trim().toLowerCase();
 
-  const filteredProducts = trimmed
-    ? productCatalog
-        .filter((p) => {
-          const nameMatch = p.name?.toLowerCase().includes(trimmed);
-          const catMatch = p.category?.toLowerCase().includes(trimmed);
-          const descMatch = p.description?.toLowerCase().includes(trimmed);
-          const colorMatch = p.colors?.some((c) =>
-            c.name?.toLowerCase().includes(trimmed)
-          );
-          return nameMatch || catMatch || descMatch || colorMatch;
-        })
-        .slice(0, 8) // Keep compact & fast
-    : [];
+  // Resolve chip-friendly terms to reliable match keys
+  const searchTerm = CHIP_QUERIES[trimmed] || trimmed;
 
-  const formatINR = (amount) => {
-    if (amount === null || amount === undefined) return "";
-    const inr = Math.round(amount * 83);
-    return `₹${new Intl.NumberFormat("en-IN").format(inr)}`;
+  const matchesProduct = (p) => {
+    if (searchTerm === "@new") {
+      return (
+        p.isNew ||
+        p.badgeType === "new" ||
+        (p.badge || "").toLowerCase().includes("new")
+      );
+    }
+    if (searchTerm === "@best") {
+      return (
+        p.isBestSeller ||
+        p.badgeType === "hot" ||
+        (p.badge || "").toLowerCase().includes("best")
+      );
+    }
+
+    const text = [
+      p.name,
+      p.category,
+      p.subCategory,
+      p.description,
+      p.badge,
+      p.sku,
+      ...(p.colors || []).map((c) => c.name || "")
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return text.includes(searchTerm);
   };
+
+  const filteredProducts = trimmed
+    ? productCatalog.filter(matchesProduct).slice(0, 12)
+    : [];
 
   const handleSelectProduct = (productId) => {
     setIsSearchOpen(false);
@@ -106,10 +145,10 @@ export default function SearchModal() {
               ref={inputRef}
               type="text"
               className="search-input-field"
-              placeholder="Search products…"
+              placeholder="Search for products…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="Search products"
+              aria-label="Search for products"
               autoComplete="off"
             />
 
@@ -151,9 +190,15 @@ export default function SearchModal() {
                     key={term}
                     type="button"
                     className="search-chip-btn"
-                    onClick={() => setQuery(term)}
+                    onClick={() => {
+                      setQuery(term);
+                      if (inputRef.current) inputRef.current.focus();
+                    }}
                   >
-                    {term}
+                    <span>{term}</span>
+                    <span className="search-chip-arrow" aria-hidden="true">
+                      &rarr;
+                    </span>
                   </button>
                 ))}
               </div>
@@ -205,11 +250,11 @@ export default function SearchModal() {
                         <h4 className="search-item-name">{product.name}</h4>
                         <div className="search-item-price-row">
                           <span className="search-item-price">
-                            {formatINR(product.price)}
+                            {formatPrice(product.price)}
                           </span>
                           {product.originalPrice && (
                             <span className="search-item-original-price">
-                              {formatINR(product.originalPrice)}
+                              {formatPrice(product.originalPrice)}
                             </span>
                           )}
                         </div>

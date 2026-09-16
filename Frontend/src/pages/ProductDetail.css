@@ -123,7 +123,7 @@
   top: 12px;
   left: 12px;
   z-index: 3;
-  background: rgba(24, 23, 21, 0.92);
+  background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(8px);
   color: var(--color-white);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -260,34 +260,42 @@
 .pd-price-row {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 4px;
+  font-family: var(--font-poppins);
 }
 
 .pd-price-current {
-  font-size: 1.85rem;
-  font-weight: 800;
+  font-family: var(--font-poppins);
+  font-size: 1.5rem;
+  font-weight: 600;
   color: var(--color-ink);
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
 }
 
 .pd-price-original {
-  font-size: 1.15rem;
-  color: #7A766D;
+  font-family: var(--font-poppins);
+  font-size: 0.875rem;
+  color: var(--color-grey-500);
   text-decoration: line-through;
-  font-weight: 500;
+  text-decoration-thickness: 1px;
+  font-weight: 400;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
 }
 
 .pd-discount-chip {
-  font-size: 11px;
-  font-weight: 800;
-  color: #5C4310;
-  background-color: #F6ECC8;
-  border: 1px solid #DFBF73;
-  padding: 3px 10px;
-  border-radius: var(--radius-xs);
+  font-family: var(--font-poppins);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-error);
+  background: transparent;
+  border: none;
+  padding: 0;
+  letter-spacing: 0;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
 .pd-tax-caption {
@@ -320,7 +328,7 @@
 }
 
 .pd-offer-card {
-  background-color: #FAF8F4;
+  background-color: var(--color-accent-soft);
   border: 1px dashed var(--color-accent-border);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
@@ -817,8 +825,8 @@
   left: 0;
   right: 0;
   padding: 24px 16px 16px;
-  background: linear-gradient(to top, rgba(14, 13, 12, 0.96) 0%, rgba(14, 13, 12, 0.7) 65%, transparent 100%);
-  color: #ffffff;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.7) 65%, transparent 100%);
+  color: var(--color-white);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -838,12 +846,12 @@
   font-size: 13.5px;
   font-weight: 600;
   letter-spacing: -0.015em;
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .pd-insight-text {
   font-size: 11px;
-  color: #D8D4C8;
+  color: var(--color-grey-200);
   line-height: 1.45;
 }
 
@@ -875,18 +883,17 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: var(--color-white);
-  border: 1px solid var(--color-grey-200);
-  border-radius: var(--radius-xs);
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
-  transition: transform var(--dur-normal) var(--ease-smooth),
-              box-shadow var(--dur-normal) var(--ease-smooth);
+  transition: transform var(--dur-normal) var(--ease-smooth);
 }
 
 .pd-recommendations-section .product-card:hover,
 .pd-recently-viewed-section .product-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
+  box-shadow: none;
 }
 
 /* Image Box: strict 3:4 aspect ratio, flush with card edges */
@@ -924,6 +931,8 @@
   display: flex;
   flex-direction: column;
   padding: 12px 14px 14px;
+  border: 0;
+  background: transparent;
 }
 
 /* Meta row: category label + rating */
@@ -938,11 +947,12 @@
 /* Product name: 2-line clamp — prevents height variance across cards */
 .pd-recommendations-section .product-name,
 .pd-recently-viewed-section .product-name {
-  font-size: var(--text-body);
+  font-family: var(--font-poppins);
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-ink);
-  line-height: 1.35;
-  min-height: 2.7em;
+  line-height: 1.4;
+  min-height: 2.8em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1006,7 +1016,7 @@
 
 .pd-banner-desc {
   font-size: var(--text-lead);
-  color: #D6D2C4;
+  color: var(--color-grey-200);
   line-height: 1.6;
 }
 
@@ -1014,7 +1024,7 @@
 .pd-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(18, 17, 16, 0.65);
+  background-color: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(4px);
   z-index: var(--z-modal);
   display: flex;
@@ -1255,11 +1265,13 @@
   }
 
   .pd-price-current {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    font-weight: 600;
   }
 
   .pd-price-original {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
+    font-weight: 400;
   }
 
   .pd-wishlist-icon-btn {

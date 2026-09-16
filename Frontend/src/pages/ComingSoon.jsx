@@ -9,11 +9,11 @@ export default function ComingSoon({ title }) {
         <h1 className="coming-soon-title">{title}</h1>
         <p className="coming-soon-copy">
           We're putting the finishing touches on this collection. In the
-          meantime, explore our Men's edit or head back to the homepage.
+          meantime, explore our full collection or head back to the homepage.
         </p>
         <div className="coming-soon-actions">
-          <Link to="/men" className="btn btn-primary">
-            Shop Men
+          <Link to="/collection" className="btn btn-primary">
+            Shop Collection
           </Link>
           <Link to="/" className="btn btn-secondary">
             Back to Home

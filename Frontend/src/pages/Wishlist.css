@@ -166,7 +166,7 @@
 
 .wishlist-card-badge.badge-hot,
 .wishlist-card-badge.badge-sale {
-  background-color: #c0392b;
+  background-color: #da3f3f;
 }
 
 /* Remove ❤️ Button */
@@ -244,21 +244,31 @@
 /* Pricing */
 .wishlist-card-pricing {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-family: var(--font-poppins);
 }
 
 .wishlist-card-price {
-  font-size: 0.9375rem;
-  font-weight: 700;
+  font-family: var(--font-poppins);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--color-ink);
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
 }
 
 .wishlist-card-original {
-  font-size: 0.8125rem;
-  color: var(--color-grey-600);
+  font-family: var(--font-poppins);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-grey-500);
   text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Add to Bag Button */

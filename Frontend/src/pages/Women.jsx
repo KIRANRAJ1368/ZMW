@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import { WOMEN_PRODUCTS, WOMEN_SUBCATEGORIES } from "../data/products";
 import ProductCard from "../components/ProductCard/ProductCard";
+import RecentlyViewed from "../components/RecentlyViewed/RecentlyViewed";
 import TrustFeatures from "../components/TrustFeatures/TrustFeatures";
 import "../components/Hero/Hero.css";
 import "./Women.css";
@@ -227,11 +228,6 @@ export default function Women() {
     100,
     Math.round((displayedProducts.length / Math.max(1, filteredProducts.length)) * 100)
   );
-
-  // Recently Viewed sample
-  const recentlyViewed = useMemo(() => {
-    return WOMEN_PRODUCTS.slice(0, 4);
-  }, []);
 
   // Shared Filters Form component (used in both desktop sidebar and mobile drawer)
   const renderFilterWidgets = () => (
@@ -518,7 +514,7 @@ export default function Women() {
             <span className="section-eyebrow">WOMENSWEAR</span>
             <h2 className="section-title">Shop All Women's</h2>
             <p className="section-subtitle">
-              {WOMEN_PRODUCTS.length} pieces across printed tees and co-ords.
+              {WOMEN_PRODUCTS.length} pieces across women's tees.
             </p>
           </div>
 
@@ -825,24 +821,6 @@ export default function Women() {
         </div>
       </div>
 
-      {/* Recently Viewed Products Section */}
-      <section className="section-padding m-recently-viewed-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-eyebrow">CURATED RECOMMENDATIONS</span>
-            <h2 className="section-title">Recently Viewed & Trending</h2>
-            <p className="section-subtitle">
-              Complementary silhouettes and printed graphics chosen for your style.
-            </p>
-          </div>
-          <div className="m-product-grid density-4">
-            {recentlyViewed.map((product) => (
-              <ProductCard key={`recent-${product.id}`} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Fabric & Fit Guide & Editorial Section */}
       <section className="section-padding m-editorial-section">
         <div className="container">
@@ -902,6 +880,7 @@ export default function Women() {
 
       {/* Shared Trust Strip from ZMW */}
       <TrustFeatures />
+      <RecentlyViewed />
     </div>
   );
 }

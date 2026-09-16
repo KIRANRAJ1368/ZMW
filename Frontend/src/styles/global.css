@@ -11,12 +11,12 @@
 
 html {
   font-size: 16px;
-  /* scroll-behavior is intentionally NOT set globally here.
-     Setting it to "smooth" on html causes the browser to animate
-     window.scrollTo() calls — including the programmatic reset in
-     ScrollToTop — producing an unwanted bottom-to-top scroll on
-     every route change.  Smooth scrolling for anchor / hash links
-     is handled in ScrollToTop.jsx on a per-navigation basis. */
+  /* Enforce standard native browser scrolling on the root viewport */
+  scroll-behavior: auto !important;
+  scroll-snap-type: none !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -29,8 +29,11 @@ body {
   line-height: 1.6;
   color: var(--color-ink);
   background-color: var(--color-cream);
-  overflow-x: hidden;
   min-height: 100vh;
+  /* Prevent body from becoming a competing secondary scroll container */
+  overflow: visible;
+  scroll-behavior: auto !important;
+  scroll-snap-type: none !important;
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
@@ -41,7 +44,22 @@ img, video, canvas, svg, iframe {
 }
 
 #root {
-  overflow-x: clip;
+  /* Keep #root clean without any overflow or transform that establishes an independent scroller */
+  overflow: visible;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Global scroll-snap reset — ensure no element establishes scroll-jacking or snapping */
+*,
+*::before,
+*::after,
+#main-content,
+section {
+  scroll-snap-type: none !important;
+  scroll-snap-align: none !important;
+  scroll-snap-stop: normal !important;
 }
 
 @media (max-width: 425px) {
@@ -200,7 +218,7 @@ ul, ol {
 }
 
 /* ── Buttons ──────────────────────────────────────────────
-   IMPORTANT: --color-accent (#C89D3C) is a warm gold accent.
+   IMPORTANT: --color-accent (#FAA703) is the ZMW brand gold accent.
    All accent-colored buttons use dark ink text for contrast.
 ────────────────────────────────────────────────────────── */
 .btn {
@@ -331,22 +349,33 @@ ul, ol {
   border-radius: var(--radius-xs);
 }
 
-/* NEW — dark background for contrast */
+/* NEW — CrazyMonk Mint / Emerald */
 .badge-new {
-  background-color: var(--color-ink);
+  background-color: var(--color-badge-new);
   color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 
-/* HOT — gold accent with dark text for contrast */
+/* HOT — CrazyMonk Purple */
 .badge-hot {
-  background-color: var(--color-accent);
-  color: var(--color-ink);
+  background-color: var(--color-badge-hot);
+  color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(154, 132, 200, 0.25);
 }
 
-/* SALE — forest green */
+/* SALE — CrazyMonk Crimson Red */
 .badge-sale {
-  background-color: var(--color-forest);
+  background-color: var(--color-badge-sale);
   color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(218, 63, 63, 0.25);
+}
+
+/* GOLD / VIP — ZMW Logo Metallic Amber */
+.badge-gold {
+  background: var(--color-accent-gradient);
+  color: var(--color-ink-deep);
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
 }
 
 /* Count badge on nav icons */

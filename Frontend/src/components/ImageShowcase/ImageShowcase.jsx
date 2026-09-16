@@ -1,6 +1,6 @@
 import React from "react";
 import { useShop } from "../../context/ShopContext";
-import { INSTAGRAM_SHOWCASE, BRAND_LOGOS } from "../../data/products";
+import { INSTAGRAM_SHOWCASE } from "../../data/products";
 import "./ImageShowcase.css";
 
 export default function ImageShowcase() {
@@ -9,11 +9,14 @@ export default function ImageShowcase() {
   return (
     <section id="instagram" className="section-padding instagram-section">
       <div className="container">
-        {/* Section Header */}
-        <div className="section-header">
-          <span className="section-eyebrow">@ZMW</span>
-          <h2 className="section-title">ZMW on Instagram</h2>
-          <p className="section-subtitle">
+        {/* Left-Aligned Section Header */}
+        <div className="section-header-left">
+          <div className="section-eyebrow-badge">
+            <span className="eyebrow-dot" />
+            <span className="eyebrow-text">COMMUNITY LOOKBOOK</span>
+          </div>
+          <h2 className="section-heading-title">ZMW on Instagram</h2>
+          <p className="section-heading-subtitle">
             Tag #ZMWStyle and #ZMWSummer on Instagram for a chance to be featured in our seasonal editorial gallery.
           </p>
         </div>
@@ -48,18 +51,6 @@ export default function ImageShowcase() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Brand Partner Strip */}
-        <div className="brand-partners-strip">
-          <span className="partners-label">AS FEATURED IN & PARTNERED WITH:</span>
-          <div className="partners-list">
-            {BRAND_LOGOS.map((brand, i) => (
-              <span key={i} className="brand-logo-text">
-                {brand}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
     </section>

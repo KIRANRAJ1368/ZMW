@@ -1,26 +1,37 @@
 import Hero from "../components/Hero/Hero";
-import TrustFeatures from "../components/TrustFeatures/TrustFeatures";
-import CategoryShowcase from "../components/CategoryShowcase/CategoryShowcase";
-import WhatsNew from "../components/WhatsNew/WhatsNew";
-import ExploreCollections from "../components/ExploreCollections/ExploreCollections";
-import TabbedShowcase from "../components/TabbedShowcase/TabbedShowcase";
-import SplitBanner from "../components/SplitBanner/SplitBanner";
-import Testimonials from "../components/Testimonials/Testimonials";
+import CategoryVisuals from "../components/CategoryShowcase/CategoryVisuals";
+import { NewArrivalsSection, BestSellersSection } from "../components/CuratedShowcase/CuratedShowcase";
+import { MensCategoriesSection, WomensCategoriesSection } from "../components/CategoryShowcase/CategoryFeatureGrid";
+import Newsletter from "../components/Newsletter/Newsletter";
 import ImageShowcase from "../components/ImageShowcase/ImageShowcase";
-
 
 export default function Home() {
   return (
     <>
+      {/* 1. Hero Banner */}
       <Hero />
-      <TrustFeatures />
-      <CategoryShowcase />
-      <WhatsNew />
-      <ExploreCollections />
-      <TabbedShowcase />
-      <SplitBanner />
-      <Testimonials />
+
+      {/* 2. Explore by Department */}
+      <CategoryVisuals />
+
+      {/* 3. New Arrivals */}
+      <NewArrivalsSection />
+
+      {/* 4. Men's Categories */}
+      <MensCategoriesSection />
+
+      {/* 5. Women's Categories */}
+      <WomensCategoriesSection />
+
+      {/* 6. Best Sellers */}
+      <BestSellersSection />
+
+      {/* 7. Newsletter */}
+      <Newsletter />
+
+      {/* 8. ZMW on Instagram */}
       <ImageShowcase />
     </>
   );
 }
+
