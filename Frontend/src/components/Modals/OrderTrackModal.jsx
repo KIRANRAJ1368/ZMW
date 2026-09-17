@@ -18,8 +18,8 @@ export default function OrderTrackModal() {
       status: "In Transit — Express Air Freight",
       carrier: "DHL Express Global",
       estimatedDelivery: "September 05, 2026",
-      origin: "ZMW Master Atelier, Florence, Italy",
-      destination: "New York, USA",
+      origin: "ZMW Dispatch Hub, 123, Avinashi Road, Peelamedu, Coimbatore, Tamil Nadu, India",
+      destination: "Bengaluru, India",
       steps: [
         { label: "Order Confirmed & Payment Verified", date: "Sept 01, 10:30 AM", done: true },
         { label: "Hand-inspected & Packed in Linen Box", date: "Sept 01, 04:15 PM", done: true },

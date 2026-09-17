@@ -1,0 +1,329 @@
+/* ── Size Guide Modal & Table — Premium D2C Styling ─────────── */
+.sg-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(7, 10, 16, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: sgFadeIn 200ms ease-out;
+}
+
+@keyframes sgFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.sg-modal-card {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid #E2E8F0;
+  color: var(--color-ink, #0F172A);
+}
+
+/* Modal Header */
+.sg-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px;
+  border-bottom: 1px solid #E2E8F0;
+  background-color: #FFFFFF;
+}
+
+.sg-modal-eyebrow {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-primary-brand, #FAA703);
+  margin-bottom: 4px;
+}
+
+.sg-modal-title {
+  font-family: var(--font-display, "Outfit", sans-serif);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-ink, #0F172A);
+  margin: 0;
+}
+
+.sg-modal-close-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 16px;
+  color: #64748B;
+  background: #F1F5F9;
+  border: none;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.sg-modal-close-btn:hover {
+  background-color: #E2E8F0;
+  color: #0F172A;
+}
+
+/* Modal Body */
+.sg-modal-body {
+  padding: 24px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Fit Tip Banner */
+.sg-fit-banner {
+  background: #FFFDF8;
+  border: 1px solid rgba(250, 167, 3, 0.3);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 22px;
+}
+
+.sg-fit-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #111827;
+  background-color: #FFF8EC;
+  border: 1px solid rgba(250, 167, 3, 0.4);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.sg-fit-text {
+  font-size: 0.88rem;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.sg-fit-text strong {
+  color: #0F172A;
+}
+
+/* Controls Bar (Label + Unit Toggle) */
+.sg-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sg-table-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.sg-unit-toggle {
+  display: inline-flex;
+  background-color: #F1F5F9;
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.sg-unit-btn {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748B;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.sg-unit-btn.active {
+  background-color: #FFFFFF;
+  color: var(--color-ink, #0F172A);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Table Responsive Wrapper */
+.sg-table-responsive-wrapper {
+  overflow-x: auto;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sg-size-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.sg-size-table th {
+  background-color: #F8FAFC;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #475569;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.sg-size-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #334155;
+  font-weight: 500;
+}
+
+.sg-size-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sg-size-table tbody tr:hover td {
+  background-color: #FFFDF9;
+}
+
+.sg-size-table tbody tr.sg-row-active td {
+  background-color: #FFF8EC;
+  color: #0F172A;
+  font-weight: 700;
+}
+
+.sg-td-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sg-size-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 6px;
+  background-color: #0F172A;
+  color: #FFFFFF;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.sg-selected-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #111827;
+  background-color: #FAA703;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* How to Measure Grid */
+.sg-measure-section {
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.sg-measure-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 14px;
+}
+
+.sg-measure-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 560px) {
+  .sg-measure-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sg-measure-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.sg-measure-number {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #E2E8F0;
+  color: #0F172A;
+  font-size: 0.76rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sg-measure-item strong {
+  display: block;
+  font-size: 0.84rem;
+  color: #0F172A;
+  margin-bottom: 2px;
+}
+
+.sg-measure-item p {
+  font-size: 0.8rem;
+  color: #64748B;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Modal Footer */
+.sg-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-top: 1px solid #E2E8F0;
+  background-color: #FFFFFF;
+  gap: 16px;
+}
+
+.sg-footer-note {
+  font-size: 0.82rem;
+  color: #64748B;
+  margin: 0;
+}
+
+.sg-footer-note strong {
+  color: #0F172A;
+}

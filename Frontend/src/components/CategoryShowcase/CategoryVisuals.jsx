@@ -5,50 +5,50 @@ import "./CategoryVisuals.css";
 const CATEGORIES_DATA = [
   {
     id: "cat-men",
-    title: "Men",
+    badge: "⚡ TRENDING",
+    title: "MEN",
     subtitle: "Oversized Tees, Polos & Hoodies",
-    itemCount: "44+ Styles",
-    badge: "TRENDING",
+    cta: "Shop Men",
     image: "/images/dept-mens.jpg",
     imagePosition: "center 18%",
     link: "/men"
   },
   {
     id: "cat-women",
-    title: "Women",
+    badge: "🔥 HOT DROP",
+    title: "WOMEN",
     subtitle: "Crop Tops, Tees & Chic Fits",
-    itemCount: "58+ Styles",
-    badge: "HOT DROP",
+    cta: "Explore Women",
     image: "/images/dept-womens.jpg",
     imagePosition: "center 18%",
     link: "/women"
   },
   {
     id: "cat-boys",
-    title: "Boys",
+    badge: "✨ STREETWEAR",
+    title: "BOYS",
     subtitle: "Skate Tees, Sets & Shorts",
-    itemCount: "32+ Styles",
-    badge: "POPULAR",
+    cta: "Shop Boys",
     image: "/images/dept-boys.jpg",
     imagePosition: "center 10%",
     link: "/kids?category=Boys"
   },
   {
     id: "cat-girls",
-    title: "Girls",
+    badge: "🌸 NEW STYLES",
+    title: "GIRLS",
     subtitle: "Dresses, Sets & Pretty Tees",
-    itemCount: "30+ Styles",
-    badge: "NEW",
+    cta: "Shop Girls",
     image: "/images/dept-girls.jpg",
     imagePosition: "center 18%",
     link: "/kids?category=Girls"
   },
   {
     id: "cat-babies",
-    title: "Babies",
+    badge: "🍼 100% SOFT",
+    title: "BABIES",
     subtitle: "Rompers, Pyjamas & Soft Knits",
-    itemCount: "26+ Styles",
-    badge: "100% SOFT",
+    cta: "Shop Babies",
     image: "/images/dept-babies.jpg",
     imagePosition: "center 15%",
     link: "/kids?category=Babies"
@@ -71,37 +71,57 @@ export default function CategoryVisuals() {
           </p>
         </div>
 
-        {/* 5-Card Grid: Men, Women, Boys, Kids, Babies */}
-        <div className="category-visuals-grid">
-          {CATEGORIES_DATA.map((cat) => (
-            <Link key={cat.id} to={cat.link} className="category-visual-card">
-              <div className="visual-card-image-wrap">
-                <img
-                  src={cat.image}
-                  alt={`${cat.title} Clothing Collection`}
-                  className="visual-card-img"
-                  style={cat.imagePosition ? { objectPosition: cat.imagePosition } : undefined}
-                  loading="lazy"
+        {/* 2+3 Hero Banner Grid */}
+        <div className="category-hero-grid">
+          {/* Row 1 — 2 Flagship Cards (Men & Women) */}
+          <div className="cat-hero-row cat-hero-row-top">
+            {CATEGORIES_DATA.slice(0, 2).map((cat) => (
+              <Link key={cat.id} to={cat.link} className="cat-hero-card cat-hero-card--wide">
+                <div
+                  className="cat-hero-backdrop"
+                  style={{ backgroundImage: `url(${cat.image})`, backgroundPosition: cat.imagePosition }}
                 />
-                <div className="visual-card-gradient" />
-                <span className="visual-badge">{cat.badge}</span>
-              </div>
+                <div className="cat-hero-scrim" />
+                <div className="cat-hero-content">
+                  <span className="cat-hero-badge">{cat.badge}</span>
+                  <h3 className="cat-hero-title">{cat.title}</h3>
+                  <p className="cat-hero-desc">{cat.subtitle}</p>
+                  <span className="cat-hero-btn">
+                    {cat.cta}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
 
-              <div className="visual-card-info">
-                <div className="visual-card-text">
-                  <span className="visual-count">{cat.itemCount}</span>
-                  <h3 className="visual-dept-name">{cat.title}</h3>
-                  <p className="visual-dept-desc">{cat.subtitle}</p>
+          {/* Row 2 — 3 Featured Cards (Boys, Girls, Babies) */}
+          <div className="cat-hero-row cat-hero-row-bottom">
+            {CATEGORIES_DATA.slice(2).map((cat) => (
+              <Link key={cat.id} to={cat.link} className="cat-hero-card cat-hero-card--standard">
+                <div
+                  className="cat-hero-backdrop"
+                  style={{ backgroundImage: `url(${cat.image})`, backgroundPosition: cat.imagePosition }}
+                />
+                <div className="cat-hero-scrim" />
+                <div className="cat-hero-content">
+                  <span className="cat-hero-badge">{cat.badge}</span>
+                  <h3 className="cat-hero-title">{cat.title}</h3>
+                  <p className="cat-hero-desc">{cat.subtitle}</p>
+                  <span className="cat-hero-btn">
+                    {cat.cta}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
                 </div>
-                <div className="visual-arrow-circle">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8">
-                    <line x1="7" y1="17" x2="17" y2="7" />
-                    <polyline points="7 7 17 7 17 17" />
-                  </svg>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>

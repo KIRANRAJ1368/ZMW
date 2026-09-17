@@ -64,6 +64,111 @@ const WOMEN_CARDS = [
   }
 ];
 
+const BOYS_CARDS = [
+  {
+    id: "boys-round-neck",
+    title: "Round Neck",
+    tag: "100% COMBED COTTON",
+    image: "/images/cat-boys-round-neck.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=boys&type=round%20neck"
+  },
+  {
+    id: "boys-high-neck",
+    title: "High Neck",
+    tag: "WARM RIBBED COLLAR",
+    image: "/images/cat-boys-high-neck.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=boys&type=high%20neck"
+  },
+  {
+    id: "boys-shorts",
+    title: "Shorts",
+    tag: "ACTIVE ALL-DAY PLAY",
+    image: "/images/cat-boys-shorts.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=boys&type=shorts"
+  },
+  {
+    id: "boys-hoodies",
+    title: "Hoodies",
+    tag: "SUPER-SOFT FLEECE",
+    image: "/images/cat-boys-hoodie.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=boys&type=hoodies"
+  }
+];
+
+const GIRLS_CARDS = [
+  {
+    id: "girls-round-neck",
+    title: "Round Neck",
+    tag: "SOFT JERSEY FIT",
+    image: "/images/cat-girls-round-neck.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=girls&type=round%20neck"
+  },
+  {
+    id: "girls-high-neck",
+    title: "High Neck",
+    tag: "COZY ELEVATED LAYER",
+    image: "/images/cat-girls-high-neck.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=girls&type=high%20neck"
+  },
+  {
+    id: "girls-nightwear",
+    title: "Casual Wear",
+    tag: "BREATHABLE COMFORT",
+    image: "/images/cat-girls-nightwear.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=girls&type=night%20wear"
+  },
+  {
+    id: "girls-long-gown",
+    title: "Long Gown",
+    tag: "PARTY & OCCASION",
+    image: "/images/cat-girls-long-gown.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=girls&type=long%20gown"
+  }
+];
+
+const BABIES_CARDS = [
+  {
+    id: "babies-romper",
+    title: "Rompers",
+    tag: "SNAP-BUTTON SOFTNESS",
+    image: "/images/cat-babies-romper.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=babies&type=romper"
+  },
+  {
+    id: "babies-tshirt",
+    title: "Baby Tees",
+    tag: "ORGANIC COTTON",
+    image: "/images/cat-babies-tshirt.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=babies&type=t-shirt"
+  },
+  {
+    id: "babies-pyjama",
+    title: "Pyjamas",
+    tag: "GENTLE ELASTIC WAIST",
+    image: "/images/cat-babies-pyjama.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=babies&type=babies%20pyjama"
+  },
+  {
+    id: "babies-hoodies",
+    title: "Hoodies",
+    tag: "TINY WARM LAYERS",
+    image: "/images/cat-babies-hoodie.jpg",
+    imagePosition: "center top",
+    link: "/collection?category=babies&type=babies%20hoodies"
+  }
+];
+
 /* ── Section 3: Men's Categories Export ── */
 export function MensCategoriesSection() {
   return (
@@ -146,12 +251,138 @@ export function WomensCategoriesSection() {
   );
 }
 
+/* ── Section 5: Boys' Categories Export ── */
+export function BoysCategoriesSection() {
+  return (
+    <section className="category-feature-section boys-feature-section" aria-label="Boys' Categories">
+      <div className="container">
+        <div className="section-header-left">
+          <div className="section-eyebrow-badge">
+            <span className="eyebrow-dot" />
+            <span className="eyebrow-text">BOYS' ESSENTIALS</span>
+          </div>
+          <h2 className="section-heading-title">Boys' Categories</h2>
+          <p className="section-heading-subtitle">
+            Round necks, high necks, shorts, and fleece hoodies built for play and all-day comfort.
+          </p>
+        </div>
+
+        <div className="cat-feature-grid cat-feature-grid--four">
+          {BOYS_CARDS.map((card) => (
+            <Link key={card.id} to={card.link} className="cat-feature-card">
+              <div className="cat-feature-img-wrap">
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="cat-feature-img"
+                  loading="lazy"
+                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
+                />
+                <div className="cat-feature-overlay" />
+                <span className="cat-feature-tag">{card.tag}</span>
+              </div>
+              <div className="cat-feature-caption">
+                <h3 className="cat-feature-name">{card.title}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Section 6: Girls' Categories Export ── */
+export function GirlsCategoriesSection() {
+  return (
+    <section className="category-feature-section girls-feature-section" aria-label="Girls' Categories">
+      <div className="container">
+        <div className="section-header-left">
+          <div className="section-eyebrow-badge">
+            <span className="eyebrow-dot" />
+            <span className="eyebrow-text">GIRLS' ESSENTIALS</span>
+          </div>
+          <h2 className="section-heading-title">Girls' Categories</h2>
+          <p className="section-heading-subtitle">
+            Breathable tees, high necks, comfortable nightwear, and twirl-ready party gowns in soft cotton.
+          </p>
+        </div>
+
+        <div className="cat-feature-grid cat-feature-grid--four">
+          {GIRLS_CARDS.map((card) => (
+            <Link key={card.id} to={card.link} className="cat-feature-card">
+              <div className="cat-feature-img-wrap">
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="cat-feature-img"
+                  loading="lazy"
+                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
+                />
+                <div className="cat-feature-overlay" />
+                <span className="cat-feature-tag">{card.tag}</span>
+              </div>
+              <div className="cat-feature-caption">
+                <h3 className="cat-feature-name">{card.title}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Section 7: Babies' Categories Export ── */
+export function BabiesCategoriesSection() {
+  return (
+    <section className="category-feature-section babies-feature-section" aria-label="Babies' Categories">
+      <div className="container">
+        <div className="section-header-left">
+          <div className="section-eyebrow-badge">
+            <span className="eyebrow-dot" />
+            <span className="eyebrow-text">BABIES' ESSENTIALS</span>
+          </div>
+          <h2 className="section-heading-title">Babies' Categories</h2>
+          <p className="section-heading-subtitle">
+            Ultra-soft snap rompers, baby tees, elasticated pyjamas, and cozy tiny hoodies crafted with tender care.
+          </p>
+        </div>
+
+        <div className="cat-feature-grid cat-feature-grid--four">
+          {BABIES_CARDS.map((card) => (
+            <Link key={card.id} to={card.link} className="cat-feature-card">
+              <div className="cat-feature-img-wrap">
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="cat-feature-img"
+                  loading="lazy"
+                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
+                />
+                <div className="cat-feature-overlay" />
+                <span className="cat-feature-tag">{card.tag}</span>
+              </div>
+              <div className="cat-feature-caption">
+                <h3 className="cat-feature-name">{card.title}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ── Main CategoryFeatureGrid Export (Backwards Compatible) ── */
 export default function CategoryFeatureGrid() {
   return (
     <>
       <MensCategoriesSection />
       <WomensCategoriesSection />
+      <BoysCategoriesSection />
+      <GirlsCategoriesSection />
+      <BabiesCategoriesSection />
     </>
   );
 }

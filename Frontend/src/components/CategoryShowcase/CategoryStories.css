@@ -113,8 +113,8 @@
   height: clamp(74px, 9vw, 96px);
   border-radius: 50%;
   padding: 3px;
-  background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 50%, #D97706 100%);
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.22);
+  background: linear-gradient(135deg, #FFC043 0%, #FAA703 50%, #E09500 100%);
+  box-shadow: 0 4px 14px rgba(250, 167, 3, 0.22);
   transition: all var(--dur-fast) var(--ease-smooth);
 }
 
@@ -124,7 +124,7 @@
 }
 
 .story-item:hover .story-ring {
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+  box-shadow: 0 6px 20px rgba(250, 167, 3, 0.45);
   transform: scale(1.05);
 }
 

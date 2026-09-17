@@ -223,6 +223,11 @@
   min-width: 0;
 }
 
+.nav-links > li {
+  display: flex;
+  align-items: center;
+}
+
 .nav-link {
   font-family: "Poppins", var(--font-body);
   font-size: 0.82rem;
@@ -230,7 +235,11 @@
   text-transform: uppercase;
   color: var(--color-grey-600);
   position: relative;
-  padding: 10px 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  padding: 10px 14px;
   border-radius: 12px;
   transition: color var(--dur-fast) var(--ease-smooth),
               background-color var(--dur-fast) var(--ease-smooth),
@@ -283,10 +292,7 @@
 }
 
 .nav-item .nav-link {
-  display: inline-flex;
-  align-items: center;
   gap: 4px;
-  padding: 10px 14px;
 }
 
 .nav-item-row {
@@ -335,7 +341,7 @@
 /* --- Dropdown Container --- */
 .mega-dropdown {
   position: absolute;
-  top: calc(100% + 16px);
+  top: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -368,16 +374,6 @@
   border-left: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 2px 0 0 0;
   z-index: 1;
-}
-
-/* Override: Men dropdown aligns left because it has a flyout panel */
-.nav-item:nth-child(2) .mega-dropdown {
-  left: 0;
-  transform: none;
-}
-
-.nav-item:nth-child(2) .mega-dropdown::before {
-  left: 28px;
 }
 
 /* --- Dropdown Column (item list) --- */
@@ -612,22 +608,6 @@
   }
 }
 
-/* Men dropdown uses non-centered transform origin */
-.nav-item:nth-child(2) .mega-dropdown {
-  animation-name: dropdownOpenLeft;
-}
-
-@keyframes dropdownOpenLeft {
-  from {
-    opacity: 0;
-    transform: translateX(0) translateY(-8px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) translateY(0) scale(1);
-  }
-}
-
 @keyframes flyoutOpen {
   from {
     opacity: 0;
@@ -695,7 +675,7 @@
   font-weight: 700;
   line-height: 16px;
   text-align: center;
-  color: var(--color-white);
+  color: var(--color-ink, #111827);
   background-color: var(--color-accent);
   border-radius: var(--radius-pill);
   padding: 0 4px;

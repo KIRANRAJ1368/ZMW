@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import "./WhatsAppWidget.css";
 
+const WHATSAPP_PHONE = "919876543210";
+
 const QUICK_QUESTIONS = [
-  "Hi! Is sizing true to standard European fits?",
-  "What is the estimated delivery time to my country?",
-  "Can you assist me with custom linen styling?",
-  "How do I apply the WELCOME10 coupon code?"
+  "Hello ZWMStore! I need assistance with product sizing.",
+  "Hello ZWMStore! Is Cash on Delivery (COD) available for my area?",
+  "Hello ZWMStore! What are the delivery timelines across India?",
+  "Hello ZWMStore! How can I track my order status?"
 ];
 
 export default function WhatsAppWidget() {
@@ -13,9 +15,9 @@ export default function WhatsAppWidget() {
   const [message, setMessage] = useState("");
 
   const handleSend = (textToSend) => {
-    const text = textToSend || message;
+    const text = textToSend || message || "Hello ZWMStore / ZMW Support, I would like to inquire about your products.";
     if (!text.trim()) return;
-    const url = `https://api.whatsapp.com/send?phone=18005550199&text=${encodeURIComponent(text)}`;
+    const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
     setMessage("");
     setIsOpen(false);
@@ -29,12 +31,12 @@ export default function WhatsAppWidget() {
           <div className="whatsapp-popup-header">
             <div className="whatsapp-agent">
               <div className="agent-avatar">
-                <span>ZMW</span>
+                <span>ZWM</span>
                 <span className="online-dot" />
               </div>
               <div className="agent-info">
-                <span className="agent-name">ZMW Concierge</span>
-                <span className="agent-status">Online • Typically replies instantly</span>
+                <span className="agent-name">ZWMStore / ZMW Support</span>
+                <span className="agent-status">Online • Indian Standard Time</span>
               </div>
             </div>
             <button
@@ -49,7 +51,7 @@ export default function WhatsAppWidget() {
           <div className="whatsapp-popup-body">
             <div className="chat-bubble">
               <p>
-                Bonjour! 👋 Welcome to ZMW. How can our styling concierge assist your wardrobe selections today?
+                Hi! 👋 Welcome to ZWMStore / ZMW Customer Support. How can we help you today with product sizing, COD availability, delivery, or order tracking?
               </p>
               <span className="chat-time">Just now</span>
             </div>

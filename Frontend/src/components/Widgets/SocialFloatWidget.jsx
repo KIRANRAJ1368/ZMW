@@ -1,7 +1,7 @@
 import React from "react";
 import "./SocialFloatWidget.css";
 
-const WHATSAPP_NUMBER = "18005550199";
+const WHATSAPP_NUMBER = "919876543210";
 const INSTAGRAM_URL = "https://instagram.com";
 
 export default function SocialFloatWidget() {

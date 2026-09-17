@@ -1,6 +1,6 @@
 /* ============================================================
-   CategoryVisuals — Modern CrazyMonk Inspired Category Showcase
-   Featuring Men, Women, Boys, Kids, and Babies
+   CategoryVisuals — 2+3 Hero Banner Editorial Grid
+   ZMW Clothing · Explore by Department Section
    ============================================================ */
 
 .category-visuals-section {
@@ -9,7 +9,7 @@
   background-color: #FFFFFF;
 }
 
-/* ── Unified Left-Aligned Section Header ── */
+/* ── Section Header ── */
 .section-header-left {
   text-align: left;
   max-width: 720px;
@@ -58,215 +58,253 @@
   margin: 0;
 }
 
-/* ── Unified Primary Action CTA Button (#FAA703) ── */
-.zmw-primary-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 13px 30px;
-  background: #FAA703;
-  color: #111827;
-  font-family: var(--font-primary);
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border-radius: var(--radius-pill);
-  border: 1.5px solid #FAA703;
-  box-shadow: 0 4px 16px rgba(250, 167, 3, 0.28);
-  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.zmw-primary-cta:hover {
-  background: #111827;
-  border-color: #111827;
-  color: #FFFFFF;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.25);
-}
-
-.zmw-primary-cta svg {
-  transition: transform 250ms ease;
-}
-
-.zmw-primary-cta:hover svg {
-  transform: translateX(4px);
-}
-
-/* ── 5-Card Grid ── */
-.category-visuals-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: clamp(12px, 1.8vw, 22px);
-}
-
-.category-visual-card {
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-  background: #F3F4F6;
-  text-decoration: none;
+/* ── 2+3 Hero Grid Container ── */
+.category-hero-grid {
   display: flex;
   flex-direction: column;
-  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 350ms cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  gap: clamp(12px, 1.5vw, 18px);
 }
 
-.category-visual-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+/* ── Row Wrappers ── */
+.cat-hero-row {
+  display: grid;
+  gap: clamp(12px, 1.5vw, 18px);
 }
 
-.visual-card-image-wrap {
+.cat-hero-row-top {
+  grid-template-columns: 1fr 1fr;
+}
+
+.cat-hero-row-bottom {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* ── Individual Hero Card ── */
+.cat-hero-card {
   position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
+  display: block;
+  text-decoration: none;
+  border-radius: 18px;
   overflow: hidden;
+  background: #111827;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 380ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.visual-card-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+.cat-hero-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
+}
+
+/* Wide cards (Men & Women) — taller, cinematic aspect ratio */
+.cat-hero-card--wide {
+  aspect-ratio: 16 / 7;
+}
+
+/* Standard cards (Boys, Girls, Babies) — balanced portrait ratio */
+.cat-hero-card--standard {
+  aspect-ratio: 4 / 3;
+}
+
+/* ── Background Photo ── */
+.cat-hero-backdrop {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
   transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
-.category-visual-card:hover .visual-card-img {
-  transform: scale(1.08);
+.cat-hero-card:hover .cat-hero-backdrop {
+  transform: scale(1.04);
 }
 
-.visual-card-gradient {
+/* ── Gradient Scrim for text contrast ── */
+.cat-hero-scrim {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    180deg,
-    transparent 50%,
-    rgba(17, 24, 39, 0.25) 75%,
-    rgba(17, 24, 39, 0.85) 100%
+    135deg,
+    rgba(17, 24, 39, 0.72) 0%,
+    rgba(17, 24, 39, 0.40) 50%,
+    rgba(17, 24, 39, 0.10) 100%
   );
   transition: opacity 300ms ease;
 }
 
-.visual-badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  font-size: 0.62rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  padding: 4px 9px;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.95);
-  color: #111827;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  text-transform: uppercase;
+.cat-hero-card:hover .cat-hero-scrim {
+  opacity: 0.9;
 }
 
 /* ── Card Content ── */
-.visual-card-info {
-  padding: 16px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #FFFFFF;
-}
-
-.visual-card-text {
+.cat-hero-content {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(18px, 2.5vw, 32px);
+  gap: 8px;
 }
 
-.visual-count {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #6B7280;
+/* ── Eyebrow Badge ── */
+.cat-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-family: var(--font-primary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 2px;
-}
-
-.visual-dept-name {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 900;
   color: #111827;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  line-height: 1.1;
-  transition: color var(--dur-fast);
+  background: rgba(250, 167, 3, 0.96);
+  padding: 4px 10px;
+  border-radius: 100px;
+  margin-bottom: 2px;
+  box-shadow: 0 2px 8px rgba(250, 167, 3, 0.4);
 }
 
-.category-visual-card:hover .visual-dept-name {
+/* ── Category Title ── */
+.cat-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  transition: color 250ms ease;
+}
+
+.cat-hero-card:hover .cat-hero-title {
   color: #FAA703;
 }
 
-.visual-dept-desc {
-  font-size: 0.74rem;
-  color: #4B5563;
-  margin: 4px 0 0 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
+/* ── Subtitle ── */
+.cat-hero-desc {
+  font-family: var(--font-primary);
+  font-size: clamp(0.76rem, 1vw, 0.88rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0;
+  line-height: 1.45;
 }
 
-.visual-arrow-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #F3F4F6;
-  color: #111827;
-  display: flex;
+/* ── Gold CTA Button ── */
+.cat-hero-btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all var(--dur-fast) var(--ease-smooth);
-}
-
-.category-visual-card:hover .visual-arrow-circle {
+  gap: 8px;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 10px 22px;
   background: #FAA703;
   color: #111827;
-  transform: rotate(45deg);
+  font-family: var(--font-primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  border: none;
+  box-shadow: 0 4px 16px rgba(250, 167, 3, 0.35);
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Responsive ── */
-@media (max-width: 1200px) {
-  .category-visuals-grid {
-    grid-template-columns: repeat(3, 1fr);
+.cat-hero-card:hover .cat-hero-btn {
+  background: #111827;
+  color: #FFFFFF;
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.3);
+  transform: translateX(3px);
+}
+
+.cat-hero-btn svg {
+  transition: transform 250ms ease;
+}
+
+.cat-hero-card:hover .cat-hero-btn svg {
+  transform: translateX(4px);
+}
+
+/* ── Responsive: Tablet (641px–1024px) ── */
+@media (max-width: 1024px) {
+  .cat-hero-card--wide {
+    aspect-ratio: 16 / 8;
+  }
+
+  .cat-hero-card--standard {
+    aspect-ratio: 3 / 2;
+  }
+
+  .cat-hero-row-bottom {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .category-visuals-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  
-  .visual-dept-name {
-    font-size: 1.1rem;
+  .cat-hero-row-top {
+    grid-template-columns: 1fr 1fr;
   }
 
-  .visual-dept-desc {
-    display: none;
+  .cat-hero-row-bottom {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cat-hero-card--wide {
+    aspect-ratio: 4 / 3;
+  }
+
+  .cat-hero-card--standard {
+    aspect-ratio: 3 / 2;
+  }
+
+  /* Last card in bottom row spans full width on 2-col layout */
+  .cat-hero-row-bottom .cat-hero-card:last-child {
+    grid-column: span 2;
+    aspect-ratio: 16 / 7;
+  }
+
+  .cat-hero-title {
+    font-size: clamp(1.5rem, 4vw, 2rem);
   }
 }
 
-@media (max-width: 420px) {
-  .category-visuals-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+/* ── Mobile (<=640px) — Single column stacked banners ── */
+@media (max-width: 640px) {
+  .cat-hero-row-top,
+  .cat-hero-row-bottom {
+    grid-template-columns: 1fr;
   }
 
-  .visual-card-info {
-    padding: 12px 10px;
+  .cat-hero-card--wide,
+  .cat-hero-card--standard {
+    aspect-ratio: 4 / 3;
   }
-  
-  .visual-arrow-circle {
-    width: 26px;
-    height: 26px;
+
+  .cat-hero-row-bottom .cat-hero-card:last-child {
+    grid-column: span 1;
+    aspect-ratio: 4 / 3;
+  }
+
+  .cat-hero-content {
+    padding: 16px 18px;
+  }
+
+  .cat-hero-title {
+    font-size: clamp(1.6rem, 7vw, 2rem);
+  }
+
+  .cat-hero-desc {
+    display: none;
+  }
+
+  .cat-hero-btn {
+    padding: 8px 18px;
+    font-size: 0.74rem;
   }
 }

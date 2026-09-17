@@ -24,11 +24,18 @@ export default function ScrollToTop() {
   }, []);
 
   useEffect(() => {
-    const routeChanged =
-      previousRoute.current.pathname !== pathname ||
-      previousRoute.current.search !== search;
+    const prevParams = new URLSearchParams(previousRoute.current.search);
+    const currParams = new URLSearchParams(search);
 
-    if (routeChanged) {
+    const pathChanged = previousRoute.current.pathname !== pathname;
+    const categoryChanged = prevParams.get("category") !== currParams.get("category");
+    const collectionChanged = prevParams.get("collection") !== currParams.get("collection");
+
+    // Only scroll to top on actual page navigation or top-level category/collection link switch,
+    // NEVER on in-page filter changes (color, size, price, availability, sorting)
+    const shouldScrollToTop = pathChanged || categoryChanged || collectionChanged;
+
+    if (shouldScrollToTop) {
       window.scrollTo(0, 0);
     } else if (hash) {
       const id = hash.replace("#", "");

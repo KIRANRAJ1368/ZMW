@@ -1,0 +1,651 @@
+/* ============================================================
+   ABOUT US PAGE — Modern Fashion Brand Styling
+   Using the exact design tokens, typography & color system from Home.jsx
+   ============================================================ */
+
+.about-page {
+  background-color: #FFFFFF;
+  color: var(--color-ink, #0F172A);
+  overflow-x: hidden;
+}
+
+/* ── 1. Hero Banner (Consistent with Hero.css on Home) ──────── */
+.about-hero-clean {
+  position: relative;
+  width: 100%;
+  min-height: clamp(520px, calc(72vh - 60px), 740px);
+  background-color: #06090F;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  contain: layout size paint;
+}
+
+.about-hero-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.about-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 75% 20%;
+  transform: scale(1.0);
+  transition: transform 3000ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.about-hero-clean:hover .about-hero-img {
+  transform: scale(1.03);
+}
+
+/* Scrim Gradient matching Home page Hero.css */
+.about-hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    /* Top subtle header shadow */
+    linear-gradient(
+      180deg,
+      rgba(6, 9, 15, 0.5) 0%,
+      transparent 110px
+    ),
+    /* Left-to-right directional scrim keeping fashion model clear on right */
+    linear-gradient(
+      90deg,
+      rgba(6, 9, 15, 0.88) 0%,
+      rgba(6, 9, 15, 0.72) 35%,
+      rgba(6, 9, 15, 0.35) 62%,
+      rgba(6, 9, 15, 0.08) 82%,
+      transparent 100%
+    ),
+    /* Bottom soft blend */
+    linear-gradient(
+      0deg,
+      rgba(6, 9, 15, 0.6) 0%,
+      transparent 60px
+    );
+}
+
+.about-hero-container {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding-top: clamp(40px, 5vw, 64px);
+  padding-bottom: clamp(40px, 5vw, 64px);
+}
+
+.about-hero-content {
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tags in Hero Banner */
+.about-hero-tag-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.about-hero-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill, 999px);
+  text-transform: uppercase;
+}
+
+.about-hero-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #FAA703;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(250, 167, 3, 0.8);
+}
+
+.about-hero-promo-pill {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #FAA703 0%, #E09500 100%);
+  color: #111827;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 5px 13px;
+  border-radius: var(--radius-pill, 999px);
+  box-shadow: 0 2px 10px rgba(250, 167, 3, 0.35);
+  text-transform: uppercase;
+}
+
+.about-hero-headline {
+  font-family: var(--font-display, "Outfit", sans-serif);
+  font-size: clamp(2.4rem, 4.4vw, 3.8rem);
+  font-weight: 900;
+  color: #FFFFFF;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  margin: 0 0 16px 0;
+}
+
+.about-hero-subtext {
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: clamp(0.96rem, 1.3vw, 1.1rem);
+  color: #CBD5E1;
+  line-height: 1.65;
+  margin: 0 0 28px 0;
+  max-width: 580px;
+}
+
+.about-hero-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Secondary Hero Button */
+.about-hero-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--radius-pill, 999px);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  transition: all 250ms ease;
+}
+
+.about-hero-secondary-btn:hover {
+  background: #FFFFFF;
+  color: #111827;
+  border-color: #FFFFFF;
+}
+
+/* ── 2. Unified Primary CTA Button (#FAA703) ────────────────── */
+.zmw-primary-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 30px;
+  background: #FAA703;
+  color: #111827;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--radius-pill, 999px);
+  border: 1.5px solid #FAA703;
+  box-shadow: 0 4px 16px rgba(250, 167, 3, 0.28);
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.zmw-primary-cta:hover {
+  background: #E09500;
+  border-color: #E09500;
+  color: #111827;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(250, 167, 3, 0.38);
+}
+
+/* ── 3. Section Shells (Alternating #FFFFFF and #F8FAFC) ─────── */
+.about-section {
+  width: 100%;
+  padding: clamp(48px, 6vw, 76px) 0;
+}
+
+.about-section-white {
+  background-color: #FFFFFF;
+}
+
+.about-section-slate {
+  background-color: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+/* ── Unified Section Headers (Matching Home Page) ───────────── */
+.section-header-left {
+  text-align: left;
+  max-width: 720px;
+  margin-bottom: clamp(24px, 3.2vw, 36px);
+}
+
+.section-eyebrow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #111827;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.eyebrow-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #FAA703;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(250, 167, 3, 0.6);
+}
+
+.section-heading-title {
+  font-family: var(--font-display, "Outfit", sans-serif);
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-weight: 900;
+  color: #111827;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.section-heading-subtitle {
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #4B5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── 4. 2-Column Content Grid ───────────────────────────────── */
+.about-grid-2col {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: clamp(36px, 5vw, 68px);
+  align-items: center;
+}
+
+.about-grid-reverse {
+  grid-template-columns: 0.85fr 1.15fr;
+}
+
+.about-grid-reverse .about-col-text {
+  order: 2;
+}
+
+.about-grid-reverse .about-col-media {
+  order: 1;
+}
+
+.about-col-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-lead-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1E293B;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.about-body-text {
+  font-size: 0.94rem;
+  color: #475569;
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+.about-body-text:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Media Cards */
+.about-col-media {
+  display: flex;
+  justify-content: center;
+}
+
+.about-image-card {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  border: 1px solid #E2E8F0;
+  background-color: #F1F5F9;
+  aspect-ratio: 4 / 3.4;
+}
+
+.about-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.about-image-card:hover .about-card-img {
+  transform: scale(1.04);
+}
+
+.about-card-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ── 5. Quality Pillars List ────────────────────────────────── */
+.about-pillars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.about-pillar-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 18px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid #E2E8F0;
+  transition: all 200ms ease;
+}
+
+.about-pillar-item:hover {
+  border-color: #FAA703;
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(250, 167, 3, 0.08);
+}
+
+.about-pillar-number {
+  font-family: var(--font-display, "Outfit", sans-serif);
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #FAA703;
+  background: #FFF8EC;
+  border: 1px solid rgba(250, 167, 3, 0.25);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-pillar-body h4 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.about-pillar-body p {
+  font-size: 0.88rem;
+  color: #4B5563;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Features Chips Inline */
+.about-features-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.about-feature-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-pill, 999px);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.chip-check {
+  color: #10B981;
+  font-weight: 900;
+}
+
+/* ── 6. Factory & Company Information Section ───────────────── */
+.about-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.about-info-tile {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 22px;
+  background-color: #F8FAFC;
+  border-radius: 14px;
+  border: 1px solid #E2E8F0;
+  transition: all 200ms ease;
+}
+
+.about-info-tile:hover {
+  background-color: #FFFFFF;
+  border-color: #FAA703;
+  box-shadow: 0 6px 20px rgba(250, 167, 3, 0.08);
+  transform: translateY(-2px);
+}
+
+.about-tile-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #FFF8EC;
+  color: #FAA703;
+  border: 1px solid rgba(250, 167, 3, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-tile-tag {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748B;
+  margin-bottom: 4px;
+}
+
+.about-tile-main {
+  font-size: 0.94rem;
+  color: #111827;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.about-tile-link {
+  text-decoration: none;
+  color: #111827;
+  transition: color 150ms ease;
+}
+
+.about-tile-link:hover {
+  color: #FAA703;
+}
+
+/* ── 7. Final CTA Section (Matching Home Page Newsletter) ───── */
+.about-cta-wrapper {
+  padding: clamp(40px, 5vw, 64px) 0;
+  background-color: #FFFFFF;
+}
+
+.about-cta-banner {
+  background: #0F172A;
+  color: #FFFFFF;
+  border-radius: 20px;
+  padding: clamp(32px, 5vw, 48px) clamp(24px, 5vw, 56px);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: clamp(24px, 3.5vw, 44px);
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+}
+
+.about-cta-banner::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(250, 167, 3, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.about-cta-title {
+  font-family: var(--font-display, "Outfit", sans-serif);
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 10px 0 8px 0;
+}
+
+.about-cta-desc {
+  color: #94A3B8;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.about-cta-action-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.about-cta-secondary-link {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #CBD5E1;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.about-cta-secondary-link:hover {
+  color: #FAA703;
+}
+
+/* ── 8. Responsive Breakpoints ──────────────────────────────── */
+@media (max-width: 960px) {
+  .about-grid-2col,
+  .about-grid-reverse {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .about-grid-reverse .about-col-text {
+    order: 1;
+  }
+
+  .about-grid-reverse .about-col-media {
+    order: 2;
+  }
+
+  .about-info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .about-cta-banner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-hero-clean {
+    min-height: 460px;
+  }
+
+  .about-hero-img {
+    object-position: 70% center;
+  }
+
+  .about-hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .about-hero-actions .zmw-primary-cta,
+  .about-hero-actions .about-hero-secondary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .about-cta-action-wrap {
+    width: 100%;
+  }
+
+  .about-cta-action-wrap .zmw-primary-cta {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

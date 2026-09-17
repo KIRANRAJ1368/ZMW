@@ -468,6 +468,7 @@ export default function Kids() {
             src="/images/cat-banner-kids.jpg"
             alt="Happy stylish kids wearing colorful modern graphic T-shirts"
             className="hero-backdrop-img kids-hero-backdrop-img"
+            style={{ objectPosition: "right 20%" }}
             loading="eager"
           />
           <div className="hero-backdrop-scrim" />
@@ -491,7 +492,7 @@ export default function Kids() {
             </p>
             <div className="hero-cta-group">
               <a href="#kids-catalog" className="btn btn-hero-primary btn-lg">
-                Shop the Collection
+                Explore Kids
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                   <polyline points="12 5 19 12 12 19"></polyline>

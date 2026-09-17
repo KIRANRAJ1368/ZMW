@@ -4,8 +4,6 @@ import { useShop } from "../context/ShopContext";
 import { UNIFIED_PRODUCTS } from "../data/products";
 import ProductCard from "../components/ProductCard/ProductCard";
 import RecentlyViewed from "../components/RecentlyViewed/RecentlyViewed";
-import TrustFeatures from "../components/TrustFeatures/TrustFeatures";
-import "../components/Hero/Hero.css";
 import "./Collection.css";
 
 const SORT_OPTIONS = [
@@ -25,114 +23,245 @@ const INITIAL_PAGE_SIZE = 12;
 
 const CATEGORY_ALIASES = { men: "mens" };
 
+function renderHeroIcon(name) {
+  switch (name) {
+    case "bolt":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      );
+    case "sparkle":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l2.4 7.2h7.6l-6.1 4.5 2.3 7.3-6.2-4.6-6.2 4.6 2.3-7.3-6.1-4.5h7.6z" />
+        </svg>
+      );
+    case "flame":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 23c-4.97 0-9-4.03-9-9 0-3.5 2-6.5 4.5-8.5.5-.4 1.2-.1 1.3.5.3 1.8 1.4 3.3 3 4 0-2.5 1.5-5.5 4-7.5.5-.4 1.2-.1 1.3.5.4 3 2.5 5.5 3.9 8.5 1.2 2.5 1 5.5-1 7.5-2 2-4.5 4-8 4z" />
+        </svg>
+      );
+    case "truck":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="1" y="3" width="15" height="13" />
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      );
+    case "tag":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+          <line x1="7" y1="7" x2="7.01" y2="7" />
+        </svg>
+      );
+    case "heart":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+      );
+    case "star":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#FAA703" stroke="#FAA703" strokeWidth="1" aria-hidden="true">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+const HERO_CATEGORY_TABS = [
+  { id: "all", label: "All Styles", key: "default" },
+  { id: "mens", label: "Men", key: "mens" },
+  { id: "women", label: "Women", key: "women" },
+  { id: "boys", label: "Boys", key: "boys" },
+  { id: "girls", label: "Girls", key: "girls" },
+  { id: "babies", label: "Babies", key: "babies" }
+];
+
 const BANNER_CONFIG = {
   mens: {
-    image: "/images/banner-mens.jpg",
-    imagePosition: "center center",
-    tag: "MENS' EDIT · EVERYDAY ESSENTIALS",
-    badgePromo: "STARTING AT ₹899 · CODE ZMW200",
-    title: "Round Necks, Polos & Hoodies.",
-    subtitle: "Heavyweight cotton tees, crisp polos, and premium hoodies cut for a clean, modern everyday fit.",
-    primaryText: "Shop the Collection",
+    categoryName: "Men",
+    badge: "Men's Collection",
+    badgeIcon: "bolt",
+    subBadge: "Heavyweight Streetwear",
+    offer: "MEN",
+    offerTag: "PREMIUM ESSENTIALS",
+    title: "Oversized Graphics, Deliberately Cut.",
+    subtitle: "Heavyweight 280 GSM cotton, relaxed drop-shoulder silhouettes, and modern street aesthetics.",
+    perks: [
+      { icon: "shield", label: "280 GSM Heavyweight" },
+      { icon: "bolt", label: "Drop-Shoulder Fit" },
+      { icon: "tag", label: "100% Combed Cotton" }
+    ],
+    ctaText: "Explore Men",
     primaryHash: "#collection-catalog",
-    secondaryText: "Shop Best Sellers",
-    secondaryLink: "/collection?collection=best-sellers"
-  },
-  boys: {
-    image: "/images/banner-boys.jpg",
-    imagePosition: "center center",
-    tag: "BOYS' EDIT · PLAYFUL ESSENTIALS",
-    badgePromo: "STARTING AT ₹599 · FREE SHIPPING",
-    title: "Built For Play, Made To Last.",
-    subtitle: "Round necks, high necks, shorts, sweatshirts and hoodies in super-soft organic cotton.",
-    primaryText: "Shop the Collection",
-    primaryHash: "#collection-catalog",
-    secondaryText: "Shop Girl's Edit",
-    secondaryLink: "/collection?category=girls"
-  },
-  girls: {
-    image: "/images/banner-girls.jpg",
-    imagePosition: "center center",
-    tag: "GIRLS' EDIT · SWEET ESSENTIALS",
-    badgePromo: "STARTING AT ₹599 · FLAT ₹200 OFF",
-    title: "Fresh & Playful, Comfort First.",
-    subtitle: "Round necks, high necks, shorts, nightwear and long gowns in breathable soft cotton.",
-    primaryText: "Shop the Collection",
-    primaryHash: "#collection-catalog",
-    secondaryText: "Shop Boys' Edit",
-    secondaryLink: "/collection?category=boys"
-  },
-  babies: {
-    image: "/images/banner-babies.jpg",
-    imagePosition: "center center",
-    tag: "BABIES' EDIT · TINY & SOFT",
-    badgePromo: "STARTING AT ₹449 · CODE ZMW10",
-    title: "Gentle Layers, Made For Baby.",
-    subtitle: "Rompers, tees, pyjamas, sweatshirts, hoodies and bottoms in buttery-soft baby-safe cotton.",
-    primaryText: "Shop the Collection",
-    primaryHash: "#collection-catalog",
-    secondaryText: "Shop Girl's Edit",
-    secondaryLink: "/collection?category=girls"
+    image: "/images/cat-banner-mens.jpg",
+    imagePosition: "80% 18%"
   },
   women: {
-    image: "/images/banner-womens.jpg",
-    imagePosition: "center center",
-    tag: "WOMEN'S EDIT · CONTEMPORARY TEES",
-    badgePromo: "STARTING AT ₹799 · FLAT 10% OFF",
+    categoryName: "Women",
+    badge: "Women's Collection",
+    badgeIcon: "sparkle",
+    subBadge: "Contemporary Chic",
+    offer: "WOMEN",
+    offerTag: "ELEGANT ESSENTIALS",
     title: "Artistic Prints, Deliberately Styled.",
-    subtitle: "Chic relaxed fits, breathable combed cotton, and modern minimalist artwork.",
-    primaryText: "Shop the Collection",
+    subtitle: "Chic relaxed silhouettes, ultra-soft breathable combed cotton, and modern minimalist graphics.",
+    perks: [
+      { icon: "sparkle", label: "Artistic Minimalist Prints" },
+      { icon: "tag", label: "Breathable Combed Cotton" },
+      { icon: "heart", label: "Relaxed Chic Fit" }
+    ],
+    ctaText: "Explore Women",
     primaryHash: "#collection-catalog",
-    secondaryText: "Shop Best Sellers",
-    secondaryLink: "/collection?collection=best-sellers"
+    image: "/images/cat-banner-womens.jpg",
+    imagePosition: "78% 16%"
+  },
+  boys: {
+    categoryName: "Boys",
+    badge: "Boys' Collection",
+    badgeIcon: "bolt",
+    subBadge: "Active Playwear",
+    offer: "BOYS",
+    offerTag: "BUILT FOR PLAY",
+    title: "High-Energy Graphics, Made To Last.",
+    subtitle: "Durable reinforced seams, super-soft bio-washed cotton, and high-energy street styles.",
+    perks: [
+      { icon: "shield", label: "Reinforced Durability" },
+      { icon: "truck", label: "Super-Soft Bio-Washed" },
+      { icon: "tag", label: "100% Pure Cotton" }
+    ],
+    ctaText: "Explore Boys",
+    primaryHash: "#collection-catalog",
+    image: "/images/banner-boys.jpg",
+    imagePosition: "75% 16%"
+  },
+  girls: {
+    categoryName: "Girls",
+    badge: "Girls' Collection",
+    badgeIcon: "sparkle",
+    subBadge: "Sweet & Playful",
+    offer: "GIRLS",
+    offerTag: "FRESH & PLAYFUL",
+    title: "Fresh & Playful, Comfort First.",
+    subtitle: "Cheerful dresses, high-necks, trendy matching sets, and gentle skin-friendly cotton.",
+    perks: [
+      { icon: "heart", label: "Ultra-Gentle on Skin" },
+      { icon: "sparkle", label: "Colorfast Vibrant Dyes" },
+      { icon: "tag", label: "Comfort-Stretch Fit" }
+    ],
+    ctaText: "Explore Girls",
+    primaryHash: "#collection-catalog",
+    image: "/images/banner-girls.jpg",
+    imagePosition: "75% 16%"
+  },
+  babies: {
+    categoryName: "Babies",
+    badge: "Babies' Collection",
+    badgeIcon: "heart",
+    subBadge: "100% Baby-Safe",
+    offer: "BABIES",
+    offerTag: "HYPOALLERGENIC COTTON",
+    title: "Gentle Layers, Made For Baby.",
+    subtitle: "Cozy rompers, buttery-soft pyjamas, tiny hoodies, and stretch bottoms in pure gentle cotton.",
+    perks: [
+      { icon: "heart", label: "Hypoallergenic Pure Cotton" },
+      { icon: "shield", label: "Zero Harsh Chemicals" },
+      { icon: "tag", label: "Easy Snap Fastening" }
+    ],
+    ctaText: "Explore Babies",
+    primaryHash: "#collection-catalog",
+    image: "/images/banner-babies.jpg",
+    imagePosition: "75% 16%"
   },
   kids: {
-    image: "/images/banner-kids.jpg",
-    imagePosition: "center center",
-    tag: "KIDS' EDIT · PLAYFUL ESSENTIALS",
-    badgePromo: "STARTING AT ₹499 · FREE SHIPPING",
+    categoryName: "Kids",
+    badge: "Kids' Collection",
+    badgeIcon: "sparkle",
+    subBadge: "Playful Essentials",
+    offer: "KIDS",
+    offerTag: "BUILT FOR PLAY",
     title: "Built For Play, Made To Last.",
-    subtitle: "Super-soft 100% organic cotton, cheerful artwork, and all-day comfort.",
-    primaryText: "Shop the Collection",
+    subtitle: "Super-soft organic cotton, cheerful artwork, and all-day durability for growing kids.",
+    perks: [
+      { icon: "heart", label: "100% Bio-Wash Cotton" },
+      { icon: "shield", label: "All-Day Play Comfort" },
+      { icon: "truck", label: "Free Shipping ₹499+" }
+    ],
+    ctaText: "Explore Kids",
     primaryHash: "#collection-catalog",
-    secondaryText: "Shop Best Sellers",
-    secondaryLink: "/collection?collection=best-sellers"
+    image: "/images/cat-banner-kids.jpg",
+    imagePosition: "80% 18%"
   },
   "best-sellers": {
-    image: "/images/hero-mens-tshirt-banner-2.jpg",
-    imagePosition: "center 20%",
-    tag: "HAND-PICKED FAVOURITES · COMMUNITY TOP PICKS",
-    badgePromo: "TOP RATED · BEST LOVED",
+    categoryName: "Best Sellers",
+    badge: "Top Rated",
+    badgeIcon: "star",
+    subBadge: "Community Favourites",
+    offer: "BEST SELLERS",
+    offerTag: "4.9★ HIGHLY RATED",
     title: "The Ones Everyone's Talking About.",
-    subtitle: "Curated from real reviews, real wears, and real bestselling data across our full catalogue.",
-    primaryText: "Shop Best Sellers",
+    subtitle: "Curated from real reviews, real wears, and verified bestselling data across our catalogue.",
+    perks: [
+      { icon: "star", label: "4.9★ Verified Reviews" },
+      { icon: "bolt", label: "Fast Express Dispatch" },
+      { icon: "shield", label: "Guaranteed Satisfaction" }
+    ],
+    ctaText: "Explore Best Sellers",
     primaryHash: "#collection-catalog",
-    secondaryText: "Explore New Arrivals",
-    secondaryLink: "/collection?collection=new-arrivals"
+    image: "/images/hero-mens-tshirt-banner-2.jpg",
+    imagePosition: "center 20%"
   },
   "new-arrivals": {
-    image: "/images/hero-mens-tshirt-banner-3.jpg",
-    imagePosition: "center 20%",
-    tag: "FRESH DROP · JUST LANDED",
-    badgePromo: "NEW SEASON · NEW DROPS",
+    categoryName: "New Arrivals",
+    badge: "Fresh Drop",
+    badgeIcon: "sparkle",
+    subBadge: "Season 2026",
+    offer: "NEW ARRIVALS",
+    offerTag: "JUST LANDED IN STORE",
     title: "New Season, New Drops.",
-    subtitle: "First to the edit — our latest styles, just off the press and into your wardrobe.",
-    primaryText: "Shop New Arrivals",
+    subtitle: "First to the edit — our newest limited-run streetwear styles, fresh off the printing press.",
+    perks: [
+      { icon: "sparkle", label: "Limited Run Quantities" },
+      { icon: "tag", label: "Modern Street Silhouettes" },
+      { icon: "truck", label: "Fast Track Delivery" }
+    ],
+    ctaText: "Explore New Arrivals",
     primaryHash: "#collection-catalog",
-    secondaryText: "Explore Best Sellers",
-    secondaryLink: "/collection?collection=best-sellers"
+    image: "/images/hero-mens-tshirt-banner-3.jpg",
+    imagePosition: "center 20%"
   },
   default: {
-    image: "/images/hero-mens-oversized-tee.jpg",
-    imagePosition: "center 20%",
-    tag: "ZMW STORE · ALL COLLECTIONS",
-    badgePromo: "ONE STORE · EVERY STYLE",
+    categoryName: "Collection",
+    badge: "ZMW Wardrobe",
+    badgeIcon: "bolt",
+    subBadge: "All Collections",
+    offer: "ALL STYLES",
+    offerTag: "EVERY STYLE UNDER ONE ROOF",
     title: "One Store, Every Style.",
-    subtitle: "Mens, Boys, Girls, Babies — all of ZMW's finest essentials in one unified catalogue.",
-    primaryText: "Explore All",
+    subtitle: "Men, Women, Boys, Girls, and Babies — explore our unified catalogue of premium wardrobe essentials.",
+    perks: [
+      { icon: "truck", label: "Free Shipping ₹499+" },
+      { icon: "shield", label: "7-Day Easy Returns" },
+      { icon: "tag", label: "100% Quality Checked" }
+    ],
+    ctaText: "Explore Collection",
     primaryHash: "#collection-catalog",
-    secondaryText: "Best Sellers",
-    secondaryLink: "/collection?collection=best-sellers"
+    image: "/images/dept-family-banner.jpg",
+    imagePosition: "75% 25%"
   }
 };
 
@@ -184,6 +313,7 @@ export default function Collection() {
   const sortParam = searchParams.get("sort") || (collectionParam === "best-sellers" ? "best-selling" : collectionParam === "new-arrivals" ? "newest" : "featured");
 
   const [openSections, setOpenSections] = useState({ price: true, color: true, size: true, availability: true });
+  const [showAllColors, setShowAllColors] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -230,6 +360,9 @@ export default function Collection() {
   const bannerKey = collectionParam !== "all" ? collectionParam : categoryParam !== "all" ? categoryParam : "default";
   const banner = BANNER_CONFIG[bannerKey] || BANNER_CONFIG.default;
 
+  const currentCategoryKey = categoryParam === "all" ? "all" : categoryParam;
+  const activeCategoryLabel = HERO_CATEGORY_TABS.find((t) => t.id === currentCategoryKey)?.label || "Collection";
+
   const updateParams = (updates) => {
     const next = new URLSearchParams(searchParams);
     Object.entries(updates).forEach(([key, val]) => {
@@ -242,7 +375,7 @@ export default function Collection() {
         next.set(key, val);
       }
     });
-    setSearchParams(next);
+    setSearchParams(next, { preventScrollReset: true });
   };
 
   const toggleArrayParam = (key, item) => {
@@ -263,7 +396,16 @@ export default function Collection() {
   const matchesCategory = (p) => {
     if (categoryParam === "all") return true;
     if (categoryParam === "kids") return p.category === "boys" || p.category === "girls";
-    return p.category === categoryParam;
+    if (p.category === categoryParam) return true;
+
+    // Support preserved subcategory/style query parameters (e.g. ?category=Oversized%20T-Shirts)
+    const sub = (p.subCategory || "").toLowerCase();
+    const type = (p.productType || "").toLowerCase();
+    const name = (p.name || "").toLowerCase();
+    if (sub && (sub === categoryParam || sub.includes(categoryParam) || categoryParam.includes(sub))) return true;
+    if (type && (type === categoryParam || type.includes(categoryParam) || categoryParam.includes(type))) return true;
+    if (name && name.includes(categoryParam)) return true;
+    return false;
   };
 
   const baseCategoryProducts = useMemo(() => {
@@ -502,7 +644,7 @@ export default function Collection() {
         )}
       </div>
 
-      {/* 2. Color */}
+      {/* 2. Color (Compact Swatch Grid with Show More/Less) */}
       {availableColors.length > 0 && (
         <div className="coll-sidebar-section">
           <button type="button" className="coll-sidebar-heading" onClick={() => toggleSection("color")}>
@@ -513,35 +655,49 @@ export default function Collection() {
             </div>
           </button>
           {openSections.color && (
-            <ul className="coll-ref-list coll-color-list" role="group" aria-label="Filter by color">
-              {availableColors.map((c) => {
-                const isActive = colorParam.some((cp) => cp.toLowerCase() === c.name.toLowerCase());
-                const isWhite = c.hex && (c.hex.toLowerCase() === "#ffffff" || c.hex.toLowerCase() === "#fff");
-                return (
-                  <li key={c.name}>
-                    <button
-                      type="button"
-                      className={"coll-ref-row" + (isActive ? " active" : "")}
-                      onClick={() => toggleArrayParam("color", c.name)}
-                      aria-pressed={isActive}
-                    >
-                      <span
-                        className={"coll-ref-color-circle" + (isWhite ? " is-white" : "")}
-                        style={{ backgroundColor: c.hex || "#ccc" }}
+            <div className="coll-color-filter-container">
+              <div className="coll-color-scroll-wrap">
+                <div className="coll-color-grid" role="group" aria-label="Filter by color">
+                  {(showAllColors ? availableColors : availableColors.slice(0, 8)).map((c) => {
+                    const isActive = colorParam.some((cp) => cp.toLowerCase() === c.name.toLowerCase());
+                    const isWhite = c.hex && (c.hex.toLowerCase() === "#ffffff" || c.hex.toLowerCase() === "#fff");
+                    return (
+                      <button
+                        key={c.name}
+                        type="button"
+                        className={"coll-color-chip" + (isActive ? " active" : "")}
+                        onClick={() => toggleArrayParam("color", c.name)}
+                        aria-pressed={isActive}
+                        title={`${c.name} (${c.count} items)`}
                       >
-              {isActive && (
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    )}
-                  </span>
-                  <span className="coll-ref-label">{c.name}</span>
-                      <span className="coll-ref-count">({c.count})</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+                        <span
+                          className={"coll-color-dot" + (isWhite ? " is-white" : "")}
+                          style={{ backgroundColor: c.hex || "#ccc" }}
+                        >
+                          {isActive && (
+                            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                        <span className="coll-color-name">{c.name}</span>
+                        <span className="coll-color-count">({c.count})</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {availableColors.length > 8 && (
+                <button
+                  type="button"
+                  className="coll-color-toggle-btn"
+                  onClick={() => setShowAllColors((prev) => !prev)}
+                  aria-expanded={showAllColors}
+                >
+                  {showAllColors ? "Show Less" : `+ Show More (${availableColors.length - 8})`}
+                </button>
+              )}
+            </div>
           )}
         </div>
       )}
@@ -557,31 +713,24 @@ export default function Collection() {
             </div>
           </button>
           {openSections.size && (
-            <ul className="coll-ref-list coll-size-list" role="group" aria-label="Filter by size">
+            <div className="coll-size-grid" role="group" aria-label="Filter by size">
               {availableSizes.map((item) => {
                 const isActive = sizeParam.includes(item.name);
                 return (
-                  <li key={item.name}>
-                    <button
-                      type="button"
-                      className={"coll-ref-row" + (isActive ? " active" : "")}
-                      onClick={() => toggleArrayParam("size", item.name)}
-                      aria-pressed={isActive}
-                    >
-                      <span className={"coll-ref-checkbox" + (isActive ? " checked" : "")}>
-                        {isActive && (
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
-                      </span>
-                      <span className="coll-ref-label">{item.name}</span>
-                      <span className="coll-ref-count">({item.count})</span>
-                    </button>
-                  </li>
+                  <button
+                    key={item.name}
+                    type="button"
+                    className={"coll-size-chip" + (isActive ? " active" : "")}
+                    onClick={() => toggleArrayParam("size", item.name)}
+                    aria-pressed={isActive}
+                    title={`${item.name} (${item.count} items)`}
+                  >
+                    <span className="coll-size-chip-name">{item.name}</span>
+                    <span className="coll-size-chip-count">{item.count}</span>
+                  </button>
                 );
               })}
-            </ul>
+            </div>
           )}
         </div>
       )}
@@ -642,36 +791,102 @@ export default function Collection() {
   return (
     <div className="collection-page">
 
-      <section className="hero-section hero-clean-banner" aria-label="Collection Banner">
-        <div className="hero-backdrop">
-          <img
-            src={banner.image}
-            alt={banner.tag}
-            className="hero-backdrop-img"
-            style={{ objectPosition: banner.imagePosition }}
-            loading="eager"
-          />
-          <div className="hero-backdrop-scrim" />
-        </div>
-        <div className="container hero-container">
-          <div className="hero-content-box">
-            <div className="hero-tag-wrap">
-              <span className="hero-tag-badge">{banner.tag}</span>
-              <span className="hero-promo-pill">{banner.badgePromo}</span>
-            </div>
-            <h1 className="hero-headline">{banner.title}</h1>
-            <p className="hero-subtitle">{banner.subtitle}</p>
-            <div className="hero-cta-group">
-              <a href={banner.primaryHash} className="hero-btn-primary">
-                {banner.primaryText}
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="7" y1="17" x2="17" y2="7" />
-                  <polyline points="7 7 17 7 17 17" />
-                </svg>
-              </a>
-              <Link to={banner.secondaryLink} className="hero-btn-secondary">
-                {banner.secondaryText}
-              </Link>
+      {/* ── Collection Page Hero-Style Category Banner (Matching Home Hero Visuals & Proportions) ── */}
+      <section
+        id="collection-hero"
+        className="coll-hero-banner hero-clean-banner"
+        aria-label="Featured Collection Category Banner"
+      >
+        <div className="hero-slides-wrapper coll-hero-wrapper">
+          {/* Full-Bleed Backdrop Image with per-category positioning */}
+          <div className="hero-backdrop coll-hero-backdrop">
+            <img
+              src={banner.image}
+              alt={banner.title || "ZMW Apparel Collection"}
+              className="hero-backdrop-img coll-hero-backdrop-img"
+              style={{ objectPosition: banner.imagePosition || "75% 20%" }}
+            />
+            {/* Subtle balanced scrim: preserves bright, sharp model on right while text on left is ultra-crisp */}
+            <div className="hero-backdrop-scrim coll-hero-backdrop-scrim" />
+          </div>
+
+          {/* Visually rich ecommerce content container on the LEFT */}
+          <div className="container coll-hero-container">
+            {/* Breadcrumb Navigation */}
+            <nav className="coll-hero-breadcrumbs" aria-label="Breadcrumb">
+              <Link to="/" className="coll-hero-breadcrumb-link">Home</Link>
+              <span className="coll-hero-breadcrumb-sep">/</span>
+              <Link to="/collection" className="coll-hero-breadcrumb-link" onClick={clearAllFilters}>Collection</Link>
+              {categoryParam !== "all" && (
+                <>
+                  <span className="coll-hero-breadcrumb-sep">/</span>
+                  <span className="coll-hero-breadcrumb-active">{activeCategoryLabel}</span>
+                </>
+              )}
+            </nav>
+
+            <div className="hero-content-box coll-hero-content-box">
+              {/* Top Eyebrow Badges Row */}
+              <div className="hero-tag-wrap coll-hero-tag-wrap">
+                <span className="hero-tag-badge gold">
+                  {renderHeroIcon(banner.badgeIcon)}
+                  {banner.badge}
+                </span>
+                <span className="hero-tag-subbadge">
+                  {banner.subBadge}
+                </span>
+              </div>
+
+              {/* 1. PRIMARY OFFER HEADING (Strong Visual Hierarchy) */}
+              <div className="hero-offer-block coll-hero-offer-block">
+                <div className="hero-offer-heading coll-hero-offer-heading">
+                  {banner.offer}
+                </div>
+                {banner.offerTag && (
+                  <span className="hero-offer-tag coll-hero-offer-tag">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                      <circle cx="7" cy="7" r="1.5" />
+                    </svg>
+                    {banner.offerTag}
+                  </span>
+                )}
+              </div>
+
+              {/* 2. SUPPORTING TEXT & CAMPAIGN HEADLINE */}
+              <div className="hero-campaign-info coll-hero-campaign-info">
+                <h2 className="hero-campaign-headline coll-hero-campaign-headline">
+                  {banner.title}
+                </h2>
+                <p className="hero-subtitle coll-hero-subtitle">
+                  {banner.subtitle}
+                </p>
+              </div>
+
+              {/* ECOMMERCE MICRO-PERKS BAR */}
+              {banner.perks && banner.perks.length > 0 && (
+                <div className="hero-perks-bar coll-hero-perks-bar">
+                  {banner.perks.map((perk, pIdx) => (
+                    <div key={pIdx} className="hero-perk-item coll-hero-perk-item">
+                      <span className="hero-perk-icon">
+                        {renderHeroIcon(perk.icon)}
+                      </span>
+                      <span className="hero-perk-label">{perk.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* 3. CALL TO ACTION — Clean, simple, no product count */}
+              <div className="hero-cta-group coll-hero-cta-group">
+                <a href="#collection-catalog" className="hero-btn-primary coll-hero-btn-primary">
+                  <span>{banner.ctaText || `Explore ${banner.categoryName || activeCategoryLabel}`}</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <polyline points="19 12 12 19 5 12" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -874,7 +1089,6 @@ export default function Collection() {
         </div>
       </div>
 
-      <TrustFeatures />
       <RecentlyViewed />
     </div>
   );

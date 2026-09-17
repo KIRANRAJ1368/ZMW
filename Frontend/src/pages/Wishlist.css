@@ -290,8 +290,9 @@
 }
 
 .wishlist-card-add-btn:hover {
-  background-color: var(--color-accent-deep);
-  border-color: var(--color-accent-deep);
+  background-color: var(--color-accent, #FAA703);
+  border-color: var(--color-accent, #FAA703);
+  color: var(--color-ink, #111827);
   transform: translateY(-1px);
 }
 
@@ -379,8 +380,9 @@
 }
 
 .wishlist-empty-btn:hover {
-  background-color: var(--color-accent-deep);
-  border-color: var(--color-accent-deep);
+  background-color: var(--color-accent, #FAA703);
+  border-color: var(--color-accent, #FAA703);
+  color: var(--color-ink, #111827);
   transform: translateY(-1px);
 }
 

@@ -2,57 +2,131 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./Hero.css";
 
+function renderHeroIcon(name) {
+  switch (name) {
+    case "bolt":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      );
+    case "sparkle":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l2.4 7.2h7.6l-6.1 4.5 2.3 7.3-6.2-4.6-6.2 4.6 2.3-7.3-6.1-4.5h7.6z" />
+        </svg>
+      );
+    case "flame":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 23c-4.97 0-9-4.03-9-9 0-3.5 2-6.5 4.5-8.5.5-.4 1.2-.1 1.3.5.3 1.8 1.4 3.3 3 4 0-2.5 1.5-5.5 4-7.5.5-.4 1.2-.1 1.3.5.4 3 2.5 5.5 3.9 8.5 1.2 2.5 1 5.5-1 7.5-2 2-4.5 4-8 4z" />
+        </svg>
+      );
+    case "truck":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="1" y="3" width="15" height="13" />
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+        </svg>
+      );
+    case "refresh":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      );
+    case "tag":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+          <line x1="7" y1="7" x2="7.01" y2="7" />
+        </svg>
+      );
+    case "star":
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#FAA703" stroke="#FAA703" strokeWidth="1" aria-hidden="true">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
 const HERO_BANNERS = [
   {
     id: 1,
-    tag: "NEW STREETWEAR DROP · 240+ GSM COTTON",
-    title: "Oversized Streetwear Tees",
-    subtitle: "Architectural boxy cuts, drop shoulder seams, and breathable bio-washed combed cotton.",
-    badgePromo: "STARTING AT ₹899 · BIO-WASHED",
-    primaryBtn: {
-      text: "Shop Oversized",
-      link: "/men?category=Oversized%20T-Shirts"
-    },
-    secondaryBtn: {
-      text: "Explore Men",
-      link: "/men"
-    },
+    badge: "Limited Time",
+    badgeIcon: "bolt",
+    subBadge: "Mega Drop",
+    offer: "UP TO 50% OFF",
+    offerTag: "CODE: ZMW50",
+    headline: "Mega Fashion Sale",
+    support: "Premium streetwear drops & oversized graphic tees marked down. Pure cotton essentials with zero compromise.",
+    cta: "Shop Now",
+    link: "/collection",
+    urgencyTag: "⚡ Selling Out Fast",
+    perks: [
+      { icon: "truck", label: "Free Shipping ₹499+" },
+      { icon: "refresh", label: "7-Day Easy Returns" },
+      { icon: "shield", label: "100% Quality Checked" }
+    ],
     image: "/images/hero-mens-oversized-tee.jpg",
-    alt: "ZMW oversized streetwear graphic tee model"
+    alt: "ZMW oversized streetwear graphic tee model",
+    slideLabel: "Up to 50% Off",
+    themeClass: "hero-theme-sale"
   },
   {
     id: 2,
-    tag: "LIMITED DROP · ARCHITECTONICS SERIES",
-    title: "Heavyweight Graphic Drops",
-    subtitle: "Precision high-density screen prints on 240 GSM combed cotton jersey for effortless everyday presence.",
-    badgePromo: "FLAT ₹1,199 · LIMITED DROP",
-    primaryBtn: {
-      text: "Shop Graphic Tees",
-      link: "/men?category=T-Shirts"
-    },
-    secondaryBtn: {
-      text: "New Arrivals",
-      link: "/collection?collection=new-arrivals"
-    },
+    badge: "New Arrivals",
+    badgeIcon: "sparkle",
+    subBadge: "Season 2026",
+    offer: "FLAT 25% OFF",
+    offerTag: "AUTO-APPLIED AT CHECKOUT",
+    headline: "New Season Styles",
+    support: "Heavyweight 240 GSM drops with relaxed silhouettes, modern street aesthetics, and all-day comfort.",
+    cta: "Explore Now",
+    link: "/collection?collection=new-arrivals",
+    urgencyTag: "✨ Fresh Drop",
+    perks: [
+      { icon: "shield", label: "240 GSM Heavyweight" },
+      { icon: "star", label: "4.9★ Customer Rating" },
+      { icon: "tag", label: "100% Combed Cotton" }
+    ],
     image: "/images/hero-mens-tshirt-banner-2.jpg",
-    alt: "ZMW heavyweight graphic streetwear drop model"
+    alt: "ZMW heavyweight graphic streetwear drop model",
+    slideLabel: "Flat 25% Off",
+    themeClass: "hero-theme-season"
   },
   {
     id: 3,
-    tag: "SIGNATURE CAPSULE · MINIMALIST SILHOUETTES",
-    title: "Fluid Cuts & Modern Drapes",
-    subtitle: "Pure combed cotton separates, relaxed drop shoulders, and effortless contemporary aesthetics.",
-    badgePromo: "NEW SEASON · EDITORIAL EDIT",
-    primaryBtn: {
-      text: "Shop Women",
-      link: "/women"
-    },
-    secondaryBtn: {
-      text: "Explore Collection",
-      link: "/collection?category=women"
-    },
+    badge: "Best Deals",
+    badgeIcon: "flame",
+    subBadge: "Winter Special",
+    offer: "WINTER SALE",
+    offerTag: "STYLES STARTING ₹999",
+    headline: "Styles Starting ₹999",
+    support: "Brushed fleece hoodies, ribbed high-necks & signature winter layering essentials built for the cold.",
+    cta: "Shop Now",
+    link: "/collection",
+    urgencyTag: "🔥 Limited Winter Stock",
+    perks: [
+      { icon: "shield", label: "Fleece Lined Comfort" },
+      { icon: "truck", label: "Cash on Delivery Available" },
+      { icon: "bolt", label: "Same-Day Dispatch" }
+    ],
     image: "/images/cat-banner-womens.jpg",
-    alt: "ZMW women's signature oversized graphic tee fashion model"
+    alt: "ZMW women's signature oversized graphic tee fashion model",
+    slideLabel: "Winter Sale",
+    themeClass: "hero-theme-winter"
   }
 ];
 
@@ -70,7 +144,7 @@ export default function Hero() {
     setCurrentSlide((prev) => (prev - 1 + HERO_BANNERS.length) % HERO_BANNERS.length);
   }, []);
 
-  // 5-second clean automatic slide transition without layout jump
+  // 5-second automatic slide transition
   useEffect(() => {
     if (isPaused) return;
     const interval = setInterval(() => {
@@ -115,7 +189,7 @@ export default function Hero() {
           return (
             <div
               key={banner.id}
-              className={`hero-slide-item ${isActive ? "active" : ""} hero-slide-${banner.id}`}
+              className={`hero-slide-item ${isActive ? "active" : ""} hero-slide-${banner.id} ${banner.themeClass}`}
               aria-hidden={!isActive}
             >
               {/* Full-bleed background image with clear model visibility */}
@@ -126,37 +200,77 @@ export default function Hero() {
                   className="hero-backdrop-img"
                   loading={index === 0 ? "eager" : "lazy"}
                 />
-                {/* Subtle scrim ensuring clothing details stay bright and text is crisp */}
+                {/* Subtle scrim ensuring clothing & model details stay bright and text is crisp */}
                 <div className="hero-backdrop-scrim" />
               </div>
 
-              {/* Clean, balanced content container */}
+              {/* Visually rich ecommerce content container on the LEFT */}
               <div className="container hero-container">
                 <div className="hero-content-box">
-                  {/* Category / Collection Tag & Promo Pill */}
+                  {/* Top Badge Row: Small supporting elements */}
                   <div className="hero-tag-wrap">
-                    <span className="hero-tag-badge">{banner.tag}</span>
-                    <span className="hero-promo-pill">{banner.badgePromo}</span>
+                    <span className="hero-tag-badge gold">
+                      {renderHeroIcon(banner.badgeIcon)}
+                      {banner.badge}
+                    </span>
+                    <span className="hero-tag-subbadge">
+                      {banner.subBadge}
+                    </span>
                   </div>
 
-                  {/* Clean, bold product headline */}
-                  <h1 className="hero-headline">{banner.title}</h1>
+                  {/* 1. PRIMARY OFFER (Strong Visual Hierarchy) */}
+                  <div className="hero-offer-block">
+                    <div className="hero-offer-heading">
+                      {banner.offer}
+                    </div>
+                    {banner.offerTag && (
+                      <span className="hero-offer-tag">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                          <circle cx="7" cy="7" r="1.5" />
+                        </svg>
+                        {banner.offerTag}
+                      </span>
+                    )}
+                  </div>
 
-                  {/* Short product description */}
-                  <p className="hero-subtitle">{banner.subtitle}</p>
+                  {/* 2. SUPPORTING TEXT & CAMPAIGN HEADLINE */}
+                  <div className="hero-campaign-info">
+                    <h2 className="hero-campaign-headline">
+                      {banner.headline}
+                    </h2>
+                    <p className="hero-subtitle">
+                      {banner.support}
+                    </p>
+                  </div>
 
-                  {/* Clean, professional CTA buttons */}
+                  {/* ECOMMERCE MICRO-PERKS BAR */}
+                  <div className="hero-perks-bar">
+                    {banner.perks.map((perk, pIdx) => (
+                      <div key={pIdx} className="hero-perk-item">
+                        <span className="hero-perk-icon">
+                          {renderHeroIcon(perk.icon)}
+                        </span>
+                        <span className="hero-perk-label">{perk.label}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 3. CALL TO ACTION & SOCIAL PROOF */}
                   <div className="hero-cta-group">
-                    <Link to={banner.primaryBtn.link} className="hero-btn-primary">
-                      {banner.primaryBtn.text}
+                    <Link to={banner.link} className="hero-btn-primary">
+                      <span>{banner.cta}</span>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="7" y1="17" x2="17" y2="7" />
-                        <polyline points="7 7 17 7 17 17" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
                       </svg>
                     </Link>
-                    <Link to={banner.secondaryBtn.link} className="hero-btn-secondary">
-                      {banner.secondaryBtn.text}
-                    </Link>
+
+                    {banner.urgencyTag && (
+                      <span className="hero-urgency-pill">
+                        {banner.urgencyTag}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -165,7 +279,7 @@ export default function Hero() {
         })}
       </div>
 
-      {/* Slide Navigation Arrows — vertically centered, one on each side */}
+      {/* Slide Navigation Arrows */}
       <button
         type="button"
         className="hero-nav-arrow hero-nav-arrow-prev"
@@ -203,7 +317,7 @@ export default function Hero() {
             type="button"
             role="tab"
             aria-selected={index === currentSlide}
-            aria-label={`Go to slide ${index + 1}: ${banner.title}`}
+            aria-label={`Go to slide ${index + 1}: ${banner.slideLabel}`}
             className={`hero-dot-btn ${index === currentSlide ? "active" : ""}`}
             onClick={() => setCurrentSlide(index)}
           />

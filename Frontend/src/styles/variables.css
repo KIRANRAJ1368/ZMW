@@ -21,7 +21,7 @@
   --color-sand-hover:  #F1F5F9;   /* Hover state */
   --color-white:       #FFFFFF;   /* Pure white */
 
-  /* Brand Palette (ZMW New Identity: Primary #FAA703, Secondary #E7E7E7, Soft Background #F5F5F0) */
+  /* Brand Palette (ZMW Identity: Primary #FAA703, Secondary #E7E7E7, Soft Background #F8FAFC) */
   --color-primary-brand:   #FAA703; /* Primary accent: highlights, buttons, badges */
   --color-secondary-brand: #E7E7E7; /* Secondary cool neutral section bg */
   --color-soft-bg:         #F8FAFC; /* Clean modern slate neutral bg */
@@ -30,7 +30,7 @@
   --color-accent:        #FAA703; /* Vibrant warm golden amber */
   --color-accent-hover:  #E09500; /* Rich gold hover */
   --color-accent-soft:   #FFF8EC; /* Light golden tint */
-  --color-accent-deep:   #8C5500; /* High-contrast text */
+  --color-accent-deep:   #111827; /* High-contrast dark text */
   --color-accent-border: #FAA703;
   --color-accent-gradient: linear-gradient(135deg, #FFC043 0%, #FAA703 50%, #E09500 100%);
 
@@ -40,10 +40,6 @@
   --color-chrome-dark:   #475569;
   --color-chrome-gradient: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 45%, #94A3B8 100%);
 
-  /* ZMW Logo Titanium Bronze */
-  --color-titanium-bronze: #C4A482;
-  --color-bronze-dark:     #9A7B58;
-
   /* CrazyMonk High-Energy Badges & Signals */
   --color-badge-hot:       #9A84C8; /* CrazyMonk Purple */
   --color-badge-new:       #10B981; /* CrazyMonk Mint Green */
@@ -52,17 +48,17 @@
   --color-badge-exclusive: #0284C7; /* Electric Cyan */
 
   /* Backwards-compatibility aliases */
-  --color-rust:        #F59E0B;
-  --color-rust-hover:  #D97706;
-  --color-rust-soft:   #FFFBEB;
-  --color-rust-deep:   #92400E;
+  --color-rust:        #FAA703;
+  --color-rust-hover:  #E09500;
+  --color-rust-soft:   #FFF8EC;
+  --color-rust-deep:   #111827;
   --color-ink-soft:    #475569;
   --color-paper:       #FFFFFF;
   --color-linen:       #F8FAFC;
   --color-linen-deep:  #E2E8F0;
   --color-line:        #E2E8F0;
   --color-off-white:   #F8FAFC;
-  --color-olive:       #92400E;
+  --color-olive:       #111827;
 
   /* Step scale aliases */
   --step-small:  var(--text-small);
@@ -88,8 +84,8 @@
   --color-success-bg: #ECFDF5;
   --color-error:      #DA3F3F;
   --color-error-bg:   #FEF2F2;
-  --color-warning:    #F59E0B;
-  --color-warning-bg: #FFFBEB;
+  --color-warning:    #FAA703;
+  --color-warning-bg: #FFF8EC;
 
   /* Overlays & Glass */
   --color-overlay-dark:   rgba(11, 15, 25, 0.75);

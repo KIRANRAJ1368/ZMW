@@ -1,39 +1,37 @@
-/* Shared Product Grid & Card — used by WhatsNew (Home) and the Men's
-   category page (and any future category grid). Moved out of WhatsNew.css
-   so every product grid in the app renders identically by construction. */
+/* Product Card — Architectural Minimal Luxury & Modern Streetwear */
 
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 28px 22px;
-}
-
-/* Product Card — Architectural minimal luxury */
 .product-card {
   display: flex;
   flex-direction: column;
-  font-family: var(--font-poppins);
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
   background-color: transparent;
   border: 0;
-  transition: transform var(--dur-normal) var(--ease-smooth);
+  position: relative;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
 .product-card:hover {
   transform: translateY(-4px);
-  border: 0;
-  box-shadow: none;
 }
 
-/* Image Box */
+/* ── Image Container ── */
 .product-image-box {
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
-  background-color: var(--color-grey-100);
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--color-grey-200);
+  background-color: #F8FAFC;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
   overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: border-color 250ms ease, box-shadow 300ms ease;
+}
+
+.product-card:hover .product-image-box {
+  border-color: #CBD5E1;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
 }
 
 .product-img-primary,
@@ -44,8 +42,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity var(--dur-normal) var(--ease-smooth),
-              transform 600ms var(--ease-smooth);
+  transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 550ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-img-secondary {
@@ -53,245 +51,232 @@
 }
 
 .product-card:hover .product-img-primary {
-  transform: scale(1.04);
+  transform: scale(1.045);
 }
 
 .product-card:hover .product-img-secondary {
   opacity: 1;
-  transform: scale(1.04);
+  transform: scale(1.045);
 }
 
-/* Badge */
+/* ── Tasteful Brand Badges (ZMW Brand Palette) ── */
 .product-badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 10px;
+  left: 10px;
   z-index: 3;
-  padding: 4px 10px;
-  font-family: var(--font-poppins);
-  font-size: var(--text-badge);
+  padding: 3px 8px;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border-radius: var(--radius-xs);
-  box-shadow: var(--shadow-sm);
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  line-height: 1.3;
+  pointer-events: none;
 }
 
-/* Card Actions Hover Bar */
-.product-card-actions {
+/* 1. NEW DROP — Modern Emerald */
+.product-badge.badge-newdrop {
+  background-color: #059669;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 2. LIMITED — Modern Electric Indigo */
+.product-badge.badge-limited {
+  background-color: #4F46E5;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 3. TRENDING — ZMW Brand Amber */
+.product-badge.badge-trending {
+  background-color: #FAA703;
+  color: #0F172A;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* 4. BEST SELLER — Obsidian with Gold Accent */
+.product-badge.badge-bestseller {
+  background-color: #0F172A;
+  color: #FAA703;
+  border: 1px solid rgba(250, 167, 3, 0.4);
+}
+
+/* 5. SALE — Sleek Crimson */
+.product-badge.badge-sale {
+  background-color: #DC2626;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ── Vertical Action Stack (Matching Reference Image: Eye, Heart, Bag) ── */
+.product-card-actions-stack {
   position: absolute;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  opacity: 0;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  padding: 6px 10px;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--color-grey-200);
-  box-shadow: var(--shadow-md);
-  z-index: 4;
-  transition: all var(--dur-normal) var(--ease-smooth);
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.product-card:hover .product-card-actions {
+.product-card:hover .product-card-actions-stack,
+.product-card:focus-within .product-card-actions-stack {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(0);
 }
 
-.card-action-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-xs);
+/* ── Small Elegant Rounded-Square Action Buttons ── */
+.card-action-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.09);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-ink);
-  transition: all var(--dur-fast);
+  cursor: pointer;
+  color: #0F172A;
+  padding: 0;
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.card-action-btn:hover {
-  background-color: var(--color-ink);
-  color: var(--color-white);
+.card-action-icon-btn:hover {
+  background-color: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
 }
 
-.card-action-btn.saved {
-  color: var(--color-accent-deep);
+/* Cart Icon Button hover with ZMW Amber */
+.card-cart-icon-btn:hover {
+  background-color: #FAA703;
+  color: #0F172A;
+  border-color: #FAA703;
 }
 
-/* Product Info */
+/* Wishlist Icon Button */
+.card-wishlist-icon-btn.saved {
+  color: #DC2626;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.card-wishlist-icon-btn:hover {
+  background-color: #DC2626;
+  color: #FFFFFF;
+  border-color: #DC2626;
+}
+
+.card-wishlist-icon-btn.saved:hover {
+  background-color: #B91C1C;
+  color: #FFFFFF;
+  border-color: #B91C1C;
+}
+
+/* ── Product Info ── */
 .product-info {
   display: flex;
   flex-direction: column;
-  padding: 0 2px 2px;
-  border: 0;
+  padding: 0 2px;
   background: transparent;
 }
 
-.product-card .product-category-label,
-.product-card .rating-num,
-.product-card .review-count,
-.product-card .product-name,
-.product-card .product-pricing,
-.product-card .price-current,
-.product-card .price-original,
-.product-card .price-discount {
-  font-family: var(--font-poppins);
-}
-
-.product-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-
-.product-category-label {
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-grey-600);
-  font-weight: 600;
-}
-
-.rating-num {
-  font-weight: 700;
-  color: var(--color-ink);
-  margin-left: 2px;
-}
-
 .product-name {
-  font-family: var(--font-poppins);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.4;
-  min-height: 2.8em;
-  color: var(--color-ink);
-  margin-bottom: 8px;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #0F172A;
+  margin: 0 0 6px 0;
   cursor: pointer;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
-  transition: color var(--dur-fast);
+  transition: color 180ms ease;
+  min-height: 2.7em;
 }
 
 .product-name:hover {
-  color: var(--color-accent-deep);
+  color: #FAA703;
 }
 
 .product-pricing {
   display: flex;
   align-items: baseline;
-  gap: 6px;
-  min-height: 20px;
-  margin: 0 0 4px;
+  gap: 8px;
+  margin: 0;
   padding: 0;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-  outline: none;
-  flex-wrap: wrap;
 }
 
 .price-current {
-  font-family: var(--font-poppins);
-  font-size: 18px;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 15.5px;
   font-weight: 600;
-  letter-spacing: 0;
-  color: var(--color-ink);
-  line-height: 1.3;
+  color: #0F172A;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 
 .price-original {
-  font-family: var(--font-poppins);
-  font-size: 14px;
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 13px;
   font-weight: 400;
-  color: var(--color-grey-500);
+  color: #94A3B8;
   text-decoration: line-through;
   text-decoration-thickness: 1px;
-  line-height: 1.3;
   font-variant-numeric: tabular-nums;
 }
 
-.price-discount {
-  font-family: var(--font-poppins);
-  color: #A33B31;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0;
-  line-height: 1.3;
-}
-
-/* Color Swatches */
-.product-swatches {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.color-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1px solid var(--color-grey-300);
-  display: inline-block;
-  cursor: pointer;
-  transition: transform var(--dur-fast);
-}
-
-.color-dot:hover {
-  transform: scale(1.3);
-}
-
-@media (max-width: 1100px) {
-  .product-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px 18px;
-  }
-}
-
+/* ── Responsiveness ── */
 @media (max-width: 768px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px 14px;
+  .product-image-box {
+    border-radius: 6px;
+    margin-bottom: 10px;
   }
-}
 
-@media (max-width: 340px) {
-  .product-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-}
-
-@media (max-width: 425px) {
   .product-name {
-    font-size: 15px;
-    min-height: 2.8em;
-  }
-
-  .product-pricing {
-    gap: 5px;
-    min-height: 18px;
+    font-size: 13.5px;
+    min-height: 2.7em;
+    margin-bottom: 4px;
   }
 
   .price-current {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 14.5px;
   }
 
   .price-original {
-    font-size: 14px;
+    font-size: 12px;
   }
 
-  .price-discount {
-    font-size: 14px;
+  .product-card-actions-stack {
+    opacity: 1;
+    transform: translateX(0);
+    top: 8px;
+    right: 8px;
+    gap: 5px;
+  }
+
+  .card-action-icon-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  }
+
+  .card-action-icon-btn svg {
+    width: 14px;
+    height: 14px;
   }
 }

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useLayoutEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import ProductCard from "../components/ProductCard/ProductCard";
+import SizeGuideModal from "../components/Modals/SizeGuideModal";
 import "./ProductDetail.css";
 
 // Supplementary high-res detail images to ensure 4 distinct angles per garment
@@ -12,14 +13,6 @@ const DETAIL_FALLBACK_ANGLES = [
   "/images/photo-1622470953794-aa9c70b0fb9d.jpg"
 ];
 
-// Size guide data
-const SIZE_CHART = [
-  { size: "S", chest: "42 in", length: "28.5 in", shoulder: "21.5 in", sleeve: "9.0 in" },
-  { size: "M", chest: "44 in", length: "29.5 in", shoulder: "22.5 in", sleeve: "9.5 in" },
-  { size: "L", chest: "46 in", length: "30.5 in", shoulder: "23.5 in", sleeve: "10.0 in" },
-  { size: "XL", chest: "48 in", length: "31.5 in", shoulder: "24.5 in", sleeve: "10.5 in" },
-  { size: "XXL", chest: "50 in", length: "32.5 in", shoulder: "25.5 in", sleeve: "11.0 in" }
-];
 
 export default function ProductDetail() {
   const { productId } = useParams();
@@ -660,56 +653,11 @@ export default function ProductDetail() {
       </section>
 
       {/* ── Interactive Size Guide Modal ────────────────────────────── */}
-      {isSizeGuideOpen && (
-        <div className="pd-modal-overlay" onClick={() => setIsSizeGuideOpen(false)}>
-          <div className="pd-size-guide-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="pd-modal-header">
-              <h3>Size & Fit Guide</h3>
-              <button
-                type="button"
-                className="pd-modal-close"
-                onClick={() => setIsSizeGuideOpen(false)}
-                aria-label="Close size guide"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="pd-modal-body">
-              <p className="pd-modal-sub">
-                Measurements are garment dimensions in inches. For an intentional oversized streetwear drape,
-                order your standard size. For a standard tailored fit, order one size down.
-              </p>
-              <table className="pd-size-table">
-                <thead>
-                  <tr>
-                    <th>Size</th>
-                    <th>Chest</th>
-                    <th>Length</th>
-                    <th>Shoulder</th>
-                    <th>Sleeve</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {SIZE_CHART.map((row) => (
-                    <tr key={row.size} className={selectedSize === row.size ? "active-row" : ""}>
-                      <td><strong>{row.size}</strong></td>
-                      <td>{row.chest}</td>
-                      <td>{row.length}</td>
-                      <td>{row.shoulder}</td>
-                      <td>{row.sleeve}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="pd-measure-tips">
-                <strong>How to Measure:</strong>
-                <p>• <strong>Chest:</strong> Measure across the garment 1 inch below armholes.</p>
-                <p>• <strong>Length:</strong> Measure from highest point of shoulder to bottom hem.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <SizeGuideModal
+        isOpen={isSizeGuideOpen}
+        onClose={() => setIsSizeGuideOpen(false)}
+        selectedSize={selectedSize}
+      />
 
       {/* ── Interactive Image Preview Modal (Lightbox) ─────────────── */}
       {previewImage && (

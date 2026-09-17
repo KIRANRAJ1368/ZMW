@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import { MEN_SUBCATEGORIES, WOMEN_SUBCATEGORIES, BOYS_SUBCATEGORIES, GIRLS_SUBCATEGORIES, BABIES_SUBCATEGORIES } from "../../data/products";
 import "./Navbar.css";
@@ -122,13 +122,8 @@ export default function Navbar() {
     setOpenFlyout(null);
   };
 
-  const handleCategoryNameClick = (e, menu) => {
-    if (openDesktopMenu === menu) {
-      closeAllMenus();
-    } else {
-      e.preventDefault();
-      toggleDesktopMenu(menu);
-    }
+  const handleCategoryNameClick = (_e, menu) => {
+    toggleDesktopMenu(menu);
   };
 
   return (

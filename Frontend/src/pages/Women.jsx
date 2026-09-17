@@ -468,7 +468,7 @@ export default function Women() {
             src="/images/cat-banner-womens.jpg"
             alt="Stylish female model wearing a modern graphic T-shirt"
             className="hero-backdrop-img"
-            style={{ objectPosition: "80% 20%" }}
+            style={{ objectPosition: "right 15%" }}
             loading="eager"
           />
           <div className="hero-backdrop-scrim" />
@@ -492,7 +492,7 @@ export default function Women() {
             </p>
             <div className="hero-cta-group">
               <a href="#women-catalog" className="btn btn-hero-primary btn-lg">
-                Shop the Collection
+                Explore Women
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                   <polyline points="12 5 19 12 12 19"></polyline>

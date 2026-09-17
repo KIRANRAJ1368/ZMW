@@ -577,7 +577,7 @@
 .pd-buy-now-btn:hover {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
-  color: var(--color-white);
+  color: var(--color-ink, #111827);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }

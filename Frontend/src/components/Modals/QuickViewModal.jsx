@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useShop } from "../../context/ShopContext";
+import SizeGuideModal from "./SizeGuideModal";
 import "./QuickViewModal.css";
 
 export default function QuickViewModal() {
@@ -16,6 +17,7 @@ export default function QuickViewModal() {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   // Initialize defaults when product changes
   useEffect(() => {
@@ -134,7 +136,13 @@ export default function QuickViewModal() {
                   <span className="variant-label">
                     Size: <strong>{selectedSize}</strong>
                   </span>
-                  <button className="size-guide-btn" type="button">Size Guide</button>
+                  <button
+                    className="size-guide-btn"
+                    type="button"
+                    onClick={() => setIsSizeGuideOpen(true)}
+                  >
+                    Size Guide
+                  </button>
                 </div>
                 <div className="size-pill-list">
                   {quickViewProduct.sizes.map((s) => (
@@ -195,6 +203,13 @@ export default function QuickViewModal() {
           </div>
         </div>
       </div>
+
+      {/* Embedded Size Guide Modal */}
+      <SizeGuideModal
+        isOpen={isSizeGuideOpen}
+        onClose={() => setIsSizeGuideOpen(false)}
+        selectedSize={selectedSize}
+      />
     </div>
   );
 }
