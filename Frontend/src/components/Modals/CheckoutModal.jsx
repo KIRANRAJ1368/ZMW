@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useShop } from "../../context/ShopContext";
+import { storefrontApi } from "../../services/storefrontApi";
 import "./CheckoutModal.css";
 
 const PAYMENT_METHODS = [
@@ -42,6 +43,8 @@ export default function CheckoutModal() {
 
   const [isOrdered, setIsOrdered] = useState(false);
   const [orderRef, setOrderRef] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   if (!isCheckoutOpen) return null;
 
@@ -49,18 +52,55 @@ export default function CheckoutModal() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handlePlaceOrder = (e) => {
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    const generatedOrder = "ZMW-" + Math.floor(10000 + Math.random() * 90000);
-    setOrderRef(generatedOrder);
-    setIsOrdered(true);
-    clearCart();
-    addToast(`Order ${generatedOrder} confirmed! Thank you for choosing ZMW.`, "success");
+    if (!cart.length || isSubmitting) return;
+
+    const canSubmitToApi = cart.every((item) => Number.isInteger(Number(item.id)));
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      let orderNumber;
+      if (canSubmitToApi) {
+        const order = await storefrontApi.createOrder({
+          customer_name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email,
+          phone: formData.phone,
+          shipping_address: formData.address,
+          city: formData.city,
+          pincode: formData.postalCode,
+          payment_method: paymentMethod === "cod" ? "COD" : "PREPAID",
+          discount_amount: discountAmount,
+          shipping_fee: shippingCost,
+          items: cart.map((item) => ({
+            product_id: Number(item.id),
+            quantity: item.quantity,
+            size: item.size,
+            color: item.color
+          }))
+        });
+        orderNumber = order.order_number;
+      } else {
+        // Static fallback data has non-database IDs, so it cannot be posted.
+        orderNumber = "ZMW-" + Math.floor(10000 + Math.random() * 90000);
+      }
+
+      setOrderRef(orderNumber);
+      setIsOrdered(true);
+      clearCart();
+      addToast(`Order ${orderNumber} confirmed! Thank you for choosing ZMW.`, "success");
+    } catch (error) {
+      setSubmitError(error.message || "We could not place your order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
     setIsCheckoutOpen(false);
     setIsOrdered(false);
+    setSubmitError("");
   };
 
   return (
@@ -319,9 +359,12 @@ export default function CheckoutModal() {
                 form="checkout-form"
                 className="btn btn-primary btn-lg"
                 style={{ width: "100%", marginTop: "20px" }}
+                disabled={isSubmitting || !cart.length}
               >
                 Complete Order • {formatPrice(cartTotal)}
               </button>
+
+              {submitError && <p role="alert" className="auth-error">{submitError}</p>}
 
               <div className="checkout-trust-icons">
                 <span>🔒 Encrypted 256-bit SSL</span>

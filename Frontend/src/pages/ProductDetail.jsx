@@ -225,6 +225,7 @@ export default function ProductDetail() {
                       alt={`${product.name} angle ${idx + 1}`}
                       className="pd-grid-img"
                       loading={idx < 2 ? "eager" : "lazy"}
+                      onError={(event) => { event.currentTarget.src = "/images/zmw-logo-transparent.png"; }}
                     />
                     <div className="pd-zoom-hint">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

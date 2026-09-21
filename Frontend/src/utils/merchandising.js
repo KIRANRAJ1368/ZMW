@@ -27,7 +27,7 @@ export function formatRelativeTime(dateString) {
  * Uses deterministic hashing based on product ID to keep data consistent between renders.
  */
 export function enrichProductMetrics(product, index = 0) {
-  const seed = (product.id || `p-${index}`)
+  const seed = String(product.id ?? `p-${index}`)
     .split("")
     .reduce((acc, char) => acc + char.charCodeAt(0), 0);
 

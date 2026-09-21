@@ -1,0 +1,79 @@
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const TOKEN_KEY = "zmw_admin_token";
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token) {
+  if (token) localStorage.setItem(TOKEN_KEY, token);
+  else localStorage.removeItem(TOKEN_KEY);
+}
+
+/**
+ * Thrown for any non-2xx response. Carries the backend's error code/message
+ * and, for validation failures, the field-level details array so forms can
+ * highlight the right inputs.
+ */
+export class ApiError extends Error {
+  constructor(message, { status, code, details } = {}) {
+    super(message);
+    this.status = status;
+    this.code = code;
+    this.details = details || [];
+  }
+}
+
+async function request(path, { method = "GET", body, isFormData = false, params } = {}) {
+  const url = new URL(`${API_URL}/api${path}`);
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === "") return;
+      url.searchParams.set(key, value);
+    });
+  }
+
+  const headers = {};
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (!isFormData && body !== undefined) headers["Content-Type"] = "application/json";
+
+  let res;
+  try {
+    res = await fetch(url.toString(), {
+      method,
+      headers,
+      body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body)
+    });
+  } catch (err) {
+    throw new ApiError("Could not reach the server. Is the backend running?", { status: 0 });
+  }
+
+  let payload = null;
+  try {
+    payload = await res.json();
+  } catch {
+    // Empty/non-JSON body (e.g. some 204s) — fine, payload stays null.
+  }
+
+  if (!res.ok) {
+    const err = payload?.error || {};
+    if (res.status === 401) setToken(null);
+    throw new ApiError(err.message || `Request failed (${res.status})`, {
+      status: res.status,
+      code: err.code,
+      details: err.details
+    });
+  }
+
+  return payload;
+}
+
+export const api = {
+  get: (path, params) => request(path, { method: "GET", params }),
+  post: (path, body) => request(path, { method: "POST", body }),
+  put: (path, body) => request(path, { method: "PUT", body }),
+  patch: (path, body) => request(path, { method: "PATCH", body }),
+  delete: (path) => request(path, { method: "DELETE" }),
+  upload: (path, formData) => request(path, { method: "POST", body: formData, isFormData: true })
+};

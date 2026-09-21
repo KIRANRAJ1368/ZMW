@@ -1,0 +1,4384 @@
+{
+  "categories": [
+    {
+      "name": "Men",
+      "slug": "mens",
+      "sort_order": 0,
+      "subcategories": [
+        {
+          "name": "Round Neck T-shirt",
+          "slug": "round-neck-t-shirt",
+          "sort_order": 0
+        },
+        {
+          "name": "Polo T-shirt",
+          "slug": "polo-t-shirt",
+          "sort_order": 1
+        },
+        {
+          "name": "Mens Hoodies",
+          "slug": "mens-hoodies",
+          "sort_order": 2
+        }
+      ]
+    },
+    {
+      "name": "Women",
+      "slug": "women",
+      "sort_order": 1,
+      "subcategories": [
+        {
+          "name": "Round Neck",
+          "slug": "round-neck",
+          "sort_order": 0
+        },
+        {
+          "name": "V Neck",
+          "slug": "v-neck",
+          "sort_order": 1
+        },
+        {
+          "name": "Women's Hoodies",
+          "slug": "women-s-hoodies",
+          "sort_order": 2
+        },
+        {
+          "name": "Women's Tees",
+          "slug": "women-s-tees",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "name": "Boys",
+      "slug": "boys",
+      "sort_order": 2,
+      "subcategories": [
+        {
+          "name": "Round Neck",
+          "slug": "round-neck",
+          "sort_order": 0
+        },
+        {
+          "name": "High Neck",
+          "slug": "high-neck",
+          "sort_order": 1
+        },
+        {
+          "name": "Shorts",
+          "slug": "shorts",
+          "sort_order": 2
+        },
+        {
+          "name": "Sweatshirts",
+          "slug": "sweatshirts",
+          "sort_order": 3
+        },
+        {
+          "name": "Hoodies",
+          "slug": "hoodies",
+          "sort_order": 4
+        }
+      ]
+    },
+    {
+      "name": "Girls",
+      "slug": "girls",
+      "sort_order": 3,
+      "subcategories": [
+        {
+          "name": "Round Neck",
+          "slug": "round-neck",
+          "sort_order": 0
+        },
+        {
+          "name": "High Neck",
+          "slug": "high-neck",
+          "sort_order": 1
+        },
+        {
+          "name": "Shorts",
+          "slug": "shorts",
+          "sort_order": 2
+        },
+        {
+          "name": "Sweatshirts",
+          "slug": "sweatshirts",
+          "sort_order": 3
+        },
+        {
+          "name": "Hoodies",
+          "slug": "hoodies",
+          "sort_order": 4
+        },
+        {
+          "name": "Casual Wear",
+          "slug": "casual-wear",
+          "sort_order": 5
+        },
+        {
+          "name": "Long Gown",
+          "slug": "long-gown",
+          "sort_order": 6
+        }
+      ]
+    },
+    {
+      "name": "Babies",
+      "slug": "babies",
+      "sort_order": 4,
+      "subcategories": [
+        {
+          "name": "Romper",
+          "slug": "romper",
+          "sort_order": 0
+        },
+        {
+          "name": "T-shirt",
+          "slug": "t-shirt",
+          "sort_order": 1
+        },
+        {
+          "name": "Babies Pyjama",
+          "slug": "babies-pyjama",
+          "sort_order": 2
+        },
+        {
+          "name": "Sweatshirts",
+          "slug": "sweatshirts",
+          "sort_order": 3
+        },
+        {
+          "name": "Babies Hoodies",
+          "slug": "babies-hoodies",
+          "sort_order": 4
+        },
+        {
+          "name": "Babies Bottoms",
+          "slug": "babies-bottoms",
+          "sort_order": 5
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "legacy_id": "zmw-m01",
+      "name": "CM Original Oversized Graphic Tee",
+      "slug": "cm-original-oversized-graphic-tee",
+      "sku": "ZMW-MEN-OS-01",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Heavyweight 240 GSM cotton jersey, boxy drop-shoulder cut with a front graphic print. Garment-washed for a broken-in feel from the first wear.",
+      "price": 42,
+      "original_price": 58,
+      "rating": 4.8,
+      "review_count": 231,
+      "in_stock": true,
+      "stock_count": 24,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1521572163474-6864f9cf17ab.jpg",
+        "/images/photo-1503341504253-dff4815485f1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        },
+        {
+          "name": "Military Green",
+          "hex": "#4B5A3F"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m02",
+      "name": "Racer Stripe Oversized Tee",
+      "slug": "racer-stripe-oversized-tee",
+      "sku": "ZMW-MEN-OS-02",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Motorsport-inspired racer stripe across the chest on a relaxed, drop-shoulder oversized silhouette. Ribbed crew neck for shape retention.",
+      "price": 45,
+      "original_price": null,
+      "rating": 4.7,
+      "review_count": 88,
+      "in_stock": true,
+      "stock_count": 16,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1516257984-b1b4d707412e.jpg",
+        "/images/photo-1521572163474-6864f9cf17ab.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        },
+        {
+          "name": "Rust",
+          "hex": "#B85D38"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m03",
+      "name": "UnderRated Script Oversized Tee",
+      "slug": "underrated-script-oversized-tee",
+      "sku": "ZMW-MEN-OS-03",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Embroidered script chest logo on brushed cotton fleece-jersey. Dropped shoulder seams and a slightly cropped body length for an oversized fit.",
+      "price": 40,
+      "original_price": 52,
+      "rating": 4.9,
+      "review_count": 164,
+      "in_stock": true,
+      "stock_count": 30,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1583743814966-8936f5b7be1a.jpg",
+        "/images/photo-1521572163474-6864f9cf17ab.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sage Green",
+          "hex": "#6E7A67"
+        },
+        {
+          "name": "Stone Beige",
+          "hex": "#D8CDBC"
+        }
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m04",
+      "name": "Street Calm Zipper Oversized Tee",
+      "slug": "street-calm-zipper-oversized-tee",
+      "sku": "ZMW-MEN-OS-04",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Zip-neck placket on a heavyweight oversized tee, cut long with side vents. A quieter alternative to a full graphic print.",
+      "price": 44,
+      "original_price": null,
+      "rating": 4.6,
+      "review_count": 52,
+      "in_stock": true,
+      "stock_count": 12,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": null,
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1618354691373-d851c5c3a990.jpg",
+        "/images/photo-1602810318383-e386cc2a3ccf.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ivory",
+          "hex": "#FAF8F2"
+        },
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m05",
+      "name": "Initial D Oversized Racing Tee",
+      "slug": "initial-d-oversized-racing-tee",
+      "sku": "ZMW-MEN-OS-05",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Motorsport graphic print wraps the front and sleeve on a boxy oversized cut. Limited run, numbered inner label.",
+      "price": 46,
+      "original_price": 60,
+      "rating": 4.9,
+      "review_count": 97,
+      "in_stock": true,
+      "stock_count": 9,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Limited",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1576566588028-4147f3842f27.jpg",
+        "/images/photo-1503341504253-dff4815485f1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Racing Red",
+          "hex": "#B3271D"
+        },
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        }
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m06",
+      "name": "Original 99 Oversized Tee",
+      "slug": "original-99-oversized-tee",
+      "sku": "ZMW-MEN-OS-06",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "A clean numeral graphic on heavyweight cotton, cut boxy through the body with dropped shoulders for an easy oversized fit.",
+      "price": 43,
+      "original_price": null,
+      "rating": 4.7,
+      "review_count": 61,
+      "in_stock": true,
+      "stock_count": 20,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1622470953794-aa9c70b0fb9d.jpg",
+        "/images/photo-1618354691792-d1d42acfd860.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Olive",
+          "hex": "#4B5A3F"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        },
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m07",
+      "name": "Mono Line Zipper Regular Polo",
+      "slug": "mono-line-zipper-regular-polo",
+      "sku": "ZMW-MEN-PL-01",
+      "category_slug": "mens",
+      "subcategory_name": "Polo T-shirt",
+      "product_type": "Polos",
+      "description": "Pique cotton polo with a zip placket in place of buttons, regular fit through the body with a ribbed collar and cuffs.",
+      "price": 39,
+      "original_price": 50,
+      "rating": 4.8,
+      "review_count": 178,
+      "in_stock": true,
+      "stock_count": 27,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1581655353564-df123a1eb820.jpg",
+        "/images/photo-1562157873-818bc0726f68.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ivory",
+          "hex": "#FAF8F2"
+        },
+        {
+          "name": "Navy",
+          "hex": "#1D2B3A"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m08",
+      "name": "Shadow Hunter Oversized Polo",
+      "slug": "shadow-hunter-oversized-polo",
+      "sku": "ZMW-MEN-PL-02",
+      "category_slug": "mens",
+      "subcategory_name": "Polo T-shirt",
+      "product_type": "Polos",
+      "description": "Oversized pique polo with a tonal chest graphic. Dropped shoulders and a slightly extended hem for a modern streetwear proportion.",
+      "price": 41,
+      "original_price": null,
+      "rating": 4.6,
+      "review_count": 44,
+      "in_stock": true,
+      "stock_count": 15,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1586790170083-2f9ceadc732d.jpg",
+        "/images/photo-1578587018452-892bacefd3f2.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Maroon",
+          "hex": "#5C1F26"
+        },
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        }
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m09",
+      "name": "Spartans High-Density Oversized Polo",
+      "slug": "spartans-high-density-oversized-polo",
+      "sku": "ZMW-MEN-PL-03",
+      "category_slug": "mens",
+      "subcategory_name": "Polo T-shirt",
+      "product_type": "Polos",
+      "description": "High-density heavyweight pique polo with a bold collegiate-style chest print, cut oversized with a ribbed placket collar.",
+      "price": 44,
+      "original_price": 55,
+      "rating": 4.9,
+      "review_count": 132,
+      "in_stock": true,
+      "stock_count": 18,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1534030347209-467a5b0ad3e6.jpg",
+        "/images/photo-1521572267360-ee0c2909d518.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Espresso Brown",
+          "hex": "#3A2A1E"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m10",
+      "name": "Detroit High-Neck Oversized Polo",
+      "slug": "detroit-high-neck-oversized-polo",
+      "sku": "ZMW-MEN-PL-04",
+      "category_slug": "mens",
+      "subcategory_name": "Polo T-shirt",
+      "product_type": "Polos",
+      "description": "High-neck placket polo in brushed pique cotton with contrast trim at the cuffs and collar. Currently out of stock â€” restocking soon.",
+      "price": 42,
+      "original_price": null,
+      "rating": 4.5,
+      "review_count": 29,
+      "in_stock": false,
+      "stock_count": 0,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": null,
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1507679799987-c73779587ccf.jpg",
+        "/images/photo-1534030347209-467a5b0ad3e6.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Mustard Gold",
+          "hex": "#C89D3C"
+        },
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        }
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m11",
+      "name": "Neutral Wave Regular Polo",
+      "slug": "neutral-wave-regular-polo",
+      "sku": "ZMW-MEN-PL-05",
+      "category_slug": "mens",
+      "subcategory_name": "Polo T-shirt",
+      "product_type": "Polos",
+      "description": "A quiet, regular-fit pique polo built for everyday rotation. Soft-washed finish with a two-button placket and side vents.",
+      "price": 38,
+      "original_price": 48,
+      "rating": 4.7,
+      "review_count": 71,
+      "in_stock": true,
+      "stock_count": 22,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": true,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1617127365659-c47fa864d8bc.jpg",
+        "/images/photo-1521572267360-ee0c2909d518.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sand Beige",
+          "hex": "#D8CDBC"
+        },
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m12",
+      "name": "Relaxed Boxy Oxford Weave Shirt",
+      "slug": "relaxed-boxy-oxford-weave-shirt",
+      "sku": "ZMW-MEN-01-2",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "Shirts",
+      "description": "Oxford-weave cotton in a relaxed boxy cut, no branding â€” a wardrobe staple built to layer under a shirt or blazer.",
+      "price": 46,
+      "original_price": 58,
+      "rating": 4.8,
+      "review_count": 96,
+      "in_stock": true,
+      "stock_count": 19,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1602810318383-e386cc2a3ccf.jpg",
+        "/images/photo-1618354691373-d851c5c3a990.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Crisp White",
+          "hex": "#F7F5EF"
+        },
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        },
+        {
+          "name": "Charcoal Twill",
+          "hex": "#3B3B3B"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m13",
+      "name": "Beige Atelier Regular Long Sleeve",
+      "slug": "beige-atelier-regular-long-sleeve",
+      "sku": "ZMW-MEN-PT-02",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Fine-gauge cotton long sleeve with a mock-neck placket. Regular fit, minimal branding â€” an easy layering piece.",
+      "price": 37,
+      "original_price": null,
+      "rating": 4.6,
+      "review_count": 33,
+      "in_stock": true,
+      "stock_count": 14,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": null,
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1622470953794-aa9c70b0fb9d.jpg",
+        "/images/photo-1602810318383-e386cc2a3ccf.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Beige",
+          "hex": "#D8CDBC"
+        },
+        {
+          "name": "Ivory",
+          "hex": "#FAF8F2"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m14",
+      "name": "Dark Dimension Full Sleeve Tee",
+      "slug": "dark-dimension-full-sleeve-tee",
+      "sku": "ZMW-MEN-PT-03",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Heavyweight cotton full-sleeve tee with a clean crew neck. Solid black, garment-dyed for a deep, even tone.",
+      "price": 39,
+      "original_price": 49,
+      "rating": 4.7,
+      "review_count": 58,
+      "in_stock": true,
+      "stock_count": 21,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1618354691792-d1d42acfd860.jpg",
+        "/images/photo-1622470953794-aa9c70b0fb9d.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m19",
+      "name": "Originals 88 Oversized T-Shirt - Navy & White",
+      "slug": "originals-88-oversized-t-shirt-navy-white",
+      "sku": "ZMW-MEN-OS-07",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Iconic dual-tone Originals 88 graphic with drop-shoulder boxy fit. Spun from 240 GSM combed cotton for a heavy drape.",
+      "price": 44,
+      "original_price": 60,
+      "rating": 4.9,
+      "review_count": 198,
+      "in_stock": true,
+      "stock_count": 22,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1576566588028-4147f3842f27.jpg",
+        "/images/photo-1521572267360-ee0c2909d518.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy Blue",
+          "hex": "#1A2B4C"
+        },
+        {
+          "name": "White",
+          "hex": "#F5F5F5"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m20",
+      "name": "Fast Lane Full Sleeve Oversized Tee - Off White & Red",
+      "slug": "fast-lane-full-sleeve-oversized-tee-off-white-red",
+      "sku": "ZMW-MEN-OS-08",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Street motorsport graphics on an off-white full-sleeve drop-shoulder tee. High-density contrast chest and sleeve prints.",
+      "price": 48,
+      "original_price": 65,
+      "rating": 4.8,
+      "review_count": 84,
+      "in_stock": true,
+      "stock_count": 16,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": true,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1562157873-818bc0726f68.jpg",
+        "/images/photo-1618354691373-d851c5c3a990.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        },
+        {
+          "name": "Crimson Red",
+          "hex": "#A82B2B"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m21",
+      "name": "Riders Life Acid Wash Oversized Tee - Black & Denim",
+      "slug": "riders-life-acid-wash-oversized-tee-black-denim",
+      "sku": "ZMW-MEN-OS-09",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Mineral acid-washed heavyweight tee with retro motorcycle typography print. Every piece boasts a unique faded vintage patina.",
+      "price": 46,
+      "original_price": 62,
+      "rating": 4.9,
+      "review_count": 142,
+      "in_stock": true,
+      "stock_count": 19,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1578587018452-892bacefd3f2.jpg",
+        "/images/photo-1503341504253-dff4815485f1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Acid Black",
+          "hex": "#222224"
+        },
+        {
+          "name": "Denim Blue",
+          "hex": "#3A506B"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m22",
+      "name": "Sprint Club Oversized Tee - Contrast 5 Thread Black",
+      "slug": "sprint-club-oversized-tee-contrast-5-thread-black",
+      "sku": "ZMW-MEN-OS-10",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "5-thread contrast lockstitch detail on seams with back racing typography graphic. Super combed heavyweight jersey.",
+      "price": 42,
+      "original_price": 56,
+      "rating": 4.7,
+      "review_count": 95,
+      "in_stock": true,
+      "stock_count": 28,
+      "is_best_seller": false,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Sale",
+      "badge_type": "sale",
+      "images": [
+        "/images/photo-1521572267360-ee0c2909d518.jpg",
+        "/images/photo-1516257984-b1b4d707412e.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Light Grey",
+          "hex": "#D4D2CD"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m23",
+      "name": "Madrid Oversized Graphic Tee - White & Navy",
+      "slug": "madrid-oversized-graphic-tee-white-navy",
+      "sku": "ZMW-MEN-OS-11",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "European football culture meets modern streetwear. Screen-printed back emblem with minimal front chest badge.",
+      "price": 45,
+      "original_price": 58,
+      "rating": 4.8,
+      "review_count": 176,
+      "in_stock": true,
+      "stock_count": 15,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1581655353564-df123a1eb820.jpg",
+        "/images/photo-1503341504253-dff4815485f1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ivory White",
+          "hex": "#FDFDFD"
+        },
+        {
+          "name": "Navy Blue",
+          "hex": "#1A2B4C"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m24",
+      "name": "Eternal Khepri Oversized Tee - Black & Hazelnut",
+      "slug": "eternal-khepri-oversized-tee-black-hazelnut",
+      "sku": "ZMW-MEN-OS-12",
+      "category_slug": "mens",
+      "subcategory_name": "Round Neck T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Mythological scarab artwork printed in warm hazelnut metallic ink on jet black combed cotton. Seamless side seams for pure boxy drape.",
+      "price": 47,
+      "original_price": null,
+      "rating": 4.9,
+      "review_count": 63,
+      "in_stock": true,
+      "stock_count": 12,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1618354691373-d851c5c3a990.jpg",
+        "/images/photo-1622470953794-aa9c70b0fb9d.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Hazelnut",
+          "hex": "#8A6D4B"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m25",
+      "name": "Urban Cargo Joggers - Olive",
+      "slug": "urban-cargo-joggers-olive",
+      "sku": "ZMW-MEN-JG-01",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Joggers",
+      "description": "Heavyweight cotton twill joggers with utility cargo pockets. Elasticated waist with drawstring and tapered ankle cuffs for a clean streetwear silhouette.",
+      "price": 52,
+      "original_price": 68,
+      "rating": 4.8,
+      "review_count": 167,
+      "in_stock": true,
+      "stock_count": 25,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1509319117193-57bab727e09d.jpg",
+        "/images/photo-1506152983158-b4a74a01c721.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Olive Green",
+          "hex": "#4B5A3F"
+        },
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Sand Beige",
+          "hex": "#D8CDBC"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m26",
+      "name": "Slim Fit Tech Joggers - Black",
+      "slug": "slim-fit-tech-joggers-black",
+      "sku": "ZMW-MEN-JG-02",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Joggers",
+      "description": "Four-way stretch tech fabric joggers with a tapered slim fit. Moisture-wicking finish with zip pockets and reflective detailing for night runs.",
+      "price": 48,
+      "original_price": null,
+      "rating": 4.7,
+      "review_count": 89,
+      "in_stock": true,
+      "stock_count": 18,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1516257984-b1b4d707412e.jpg",
+        "/images/photo-1507679799987-c73779587ccf.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m27",
+      "name": "Relaxed French Terry Joggers - Sand",
+      "slug": "relaxed-french-terry-joggers-sand",
+      "sku": "ZMW-MEN-JG-03",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Joggers",
+      "description": "Brushed French terry joggers with a relaxed straight-leg cut. Ribbed cuffs and a soft elastic waistband for all-day comfort and premium drape.",
+      "price": 46,
+      "original_price": 58,
+      "rating": 4.9,
+      "review_count": 134,
+      "in_stock": true,
+      "stock_count": 22,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1503341504253-dff4815485f1.jpg",
+        "/images/photo-1509319117193-57bab727e09d.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sand Beige",
+          "hex": "#D8CDBC"
+        },
+        {
+          "name": "Oatmeal",
+          "hex": "#ECE6DA"
+        },
+        {
+          "name": "Slate Grey",
+          "hex": "#5C5C5C"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m28",
+      "name": "Track Joggers with Side Stripes",
+      "slug": "track-joggers-with-side-stripes",
+      "sku": "ZMW-MEN-JG-04",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Joggers",
+      "description": "Classic track joggers with contrast side stripes. Lightweight poly-cotton blend with zip pockets and elasticated hem.",
+      "price": 42,
+      "original_price": 55,
+      "rating": 4.6,
+      "review_count": 72,
+      "in_stock": true,
+      "stock_count": 15,
+      "is_best_seller": false,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Sale",
+      "badge_type": "sale",
+      "images": [
+        "/images/photo-1521572163474-6864f9cf17ab.jpg",
+        "/images/photo-1516257984-b1b4d707412e.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Navy",
+          "hex": "#1D2B3A"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m29",
+      "name": "Heavyweight Zip-Up Hoodie - Charcoal",
+      "slug": "heavyweight-zip-up-hoodie-charcoal",
+      "sku": "ZMW-MEN-HD-01",
+      "category_slug": "mens",
+      "subcategory_name": "Mens Hoodies",
+      "product_type": "Hoodies",
+      "description": "400 GSM heavyweight cotton fleece zip hoodie with YKK metal zippers. Kangaroo pocket, ribbed cuffs and hem, and a structured hood with drawstring.",
+      "price": 68,
+      "original_price": 88,
+      "rating": 4.9,
+      "review_count": 203,
+      "in_stock": true,
+      "stock_count": 20,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1583743814966-8936f5b7be1a.jpg",
+        "/images/photo-1578587018452-892bacefd3f2.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Charcoal Slate",
+          "hex": "#2C2B27"
+        },
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Oatmeal",
+          "hex": "#ECE6DA"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m30",
+      "name": "Oversized Pullover Hoodie - Forest",
+      "slug": "oversized-pullover-hoodie-forest",
+      "sku": "ZMW-MEN-HD-02",
+      "category_slug": "mens",
+      "subcategory_name": "Mens Hoodies",
+      "product_type": "Hoodies",
+      "description": "Oversized pullover hoodie in 380 GSM brushed fleece. Drop-shoulder construction, ribbed hem and cuffs, with a deep kangaroo pocket.",
+      "price": 72,
+      "original_price": null,
+      "rating": 4.8,
+      "review_count": 112,
+      "in_stock": true,
+      "stock_count": 16,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1576566588028-4147f3842f27.jpg",
+        "/images/photo-1583743814966-8936f5b7be1a.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Forest Olive",
+          "hex": "#2F4A37"
+        },
+        {
+          "name": "Stone Beige",
+          "hex": "#D8CDBC"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m31",
+      "name": "Graphic Logo Hoodie - Vintage Wash",
+      "slug": "graphic-logo-hoodie-vintage-wash",
+      "sku": "ZMW-MEN-HD-03",
+      "category_slug": "mens",
+      "subcategory_name": "Mens Hoodies",
+      "product_type": "Hoodies",
+      "description": "Vintage acid-washed pullover hoodie with high-density embroidered logo. Soft brushed fleece interior with a relaxed, boxy fit.",
+      "price": 65,
+      "original_price": 82,
+      "rating": 4.7,
+      "review_count": 98,
+      "in_stock": true,
+      "stock_count": 14,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1618354691373-d851c5c3a990.jpg",
+        "/images/photo-1576566588028-4147f3842f27.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Washed Grey",
+          "hex": "#8A8680"
+        },
+        {
+          "name": "Washed Black",
+          "hex": "#2E2C2A"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m32",
+      "name": "Oversized Zip Hoodie - Ink Black",
+      "slug": "oversized-zip-hoodie-ink-black",
+      "sku": "ZMW-MEN-HD-04",
+      "category_slug": "mens",
+      "subcategory_name": "Mens Hoodies",
+      "product_type": "Hoodies",
+      "description": "Premium oversized zip hoodie in garment-dyed heavyweight cotton. Dropped shoulders, two-way zip, and hidden media pocket.",
+      "price": 70,
+      "original_price": null,
+      "rating": 4.6,
+      "review_count": 45,
+      "in_stock": true,
+      "stock_count": 12,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": null,
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1622470953794-aa9c70b0fb9d.jpg",
+        "/images/photo-1618354691792-d1d42acfd860.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ink Black",
+          "hex": "#161514"
+        },
+        {
+          "name": "Slate Grey",
+          "hex": "#5C5C5C"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m33",
+      "name": "Heavyweight Crewneck Sweatshirt - Navy",
+      "slug": "heavyweight-crewneck-sweatshirt-navy",
+      "sku": "ZMW-MEN-SS-01",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Sweatshirts",
+      "description": "420 GSM heavyweight French terry crewneck sweatshirt. Ribbed collar, cuffs, and hem with a clean, logo-free design for versatile layering.",
+      "price": 58,
+      "original_price": 72,
+      "rating": 4.9,
+      "review_count": 187,
+      "in_stock": true,
+      "stock_count": 24,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1602810318383-e386cc2a3ccf.jpg",
+        "/images/photo-1521572163474-6864f9cf17ab.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy",
+          "hex": "#1D2B3A"
+        },
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m34",
+      "name": "Half-Zip Sweatshirt - Stone",
+      "slug": "half-zip-sweatshirt-stone",
+      "sku": "ZMW-MEN-SS-02",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Sweatshirts",
+      "description": "Half-zip sweatshirt in brushed French terry with a stand collar. Raglan sleeves and a relaxed fit for a sporty-luxe silhouette.",
+      "price": 62,
+      "original_price": null,
+      "rating": 4.7,
+      "review_count": 76,
+      "in_stock": true,
+      "stock_count": 17,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1622470953794-aa9c70b0fb9d.jpg",
+        "/images/photo-1602810318383-e386cc2a3ccf.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Stone Beige",
+          "hex": "#D8CDBC"
+        },
+        {
+          "name": "Forest Olive",
+          "hex": "#2F4A37"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m35",
+      "name": "Oversized Logo Crewneck Sweatshirt",
+      "slug": "oversized-logo-crewneck-sweatshirt",
+      "sku": "ZMW-MEN-SS-03",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Sweatshirts",
+      "description": "Oversized crewneck sweatshirt with tonal embroidered logo across the chest. 360 GSM brushed fleece with drop-shoulder seams.",
+      "price": 56,
+      "original_price": 70,
+      "rating": 4.8,
+      "review_count": 143,
+      "in_stock": true,
+      "stock_count": 20,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1521572267360-ee0c2909d518.jpg",
+        "/images/photo-1622470953794-aa9c70b0fb9d.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-m36",
+      "name": "Striped Crewneck Sweatshirt - Retro",
+      "slug": "striped-crewneck-sweatshirt-retro",
+      "sku": "ZMW-MEN-SS-04",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Sweatshirts",
+      "description": "Retro-inspired horizontal stripe crewneck in soft-brushed French terry. Relaxed fit with a ribbed collar, cuffs, and hem.",
+      "price": 48,
+      "original_price": 62,
+      "rating": 4.6,
+      "review_count": 62,
+      "in_stock": true,
+      "stock_count": 11,
+      "is_best_seller": false,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Sale",
+      "badge_type": "sale",
+      "images": [
+        "/images/photo-1503341504253-dff4815485f1.jpg",
+        "/images/photo-1516257984-b1b4d707412e.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy Stripe",
+          "hex": "#1D2B3A"
+        },
+        {
+          "name": "Burgundy Stripe",
+          "hex": "#6B1D2A"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w01",
+      "name": "Star League Varsity Printed Tee",
+      "slug": "star-league-varsity-printed-tee",
+      "sku": "ZMW-WOM-PT-01",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "Collegiate varsity graphic on a relaxed boxy tee, garment-washed cotton jersey with dropped shoulders for an easy, oversized fit.",
+      "price": 38,
+      "original_price": 50,
+      "rating": 4.8,
+      "review_count": 204,
+      "in_stock": true,
+      "stock_count": 26,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1594633312681-425c7b97ccd1.jpg",
+        "/images/photo-1539109136881-3be0616acf4b.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sunflower Yellow",
+          "hex": "#E8B93C"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        },
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w02",
+      "name": "Retro Script Printed Tee",
+      "slug": "retro-script-printed-tee",
+      "sku": "ZMW-WOM-PT-02",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "Retro cursive script across the chest on soft-washed single jersey. Cropped-through-regular length for easy layering over co-ords.",
+      "price": 36,
+      "original_price": null,
+      "rating": 4.6,
+      "review_count": 61,
+      "in_stock": true,
+      "stock_count": 18,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1515372039744-b8f02a3ae446.jpg",
+        "/images/photo-1756483492198-8ca91227489b.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Sage Green",
+          "hex": "#6E7A67"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w03",
+      "name": "Floral Graphic Boxy Tee",
+      "slug": "floral-graphic-boxy-tee",
+      "sku": "ZMW-WOM-PT-03",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "Hand-drawn floral print on a boxy, relaxed silhouette. Ribbed crew neck and a slightly cropped hem for high-waist styling.",
+      "price": 39,
+      "original_price": 48,
+      "rating": 4.9,
+      "review_count": 132,
+      "in_stock": true,
+      "stock_count": 21,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1742677143629-b9784beab2e1.jpg",
+        "/images/photo-1594633312681-425c7b97ccd1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ivory",
+          "hex": "#FAF8F2"
+        },
+        {
+          "name": "Blush Pink",
+          "hex": "#E3B9B0"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w04",
+      "name": "Motorsport Graphic Tee",
+      "slug": "motorsport-graphic-tee",
+      "sku": "ZMW-WOM-PT-04",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "Motorsport-inspired chest graphic on breathable cotton jersey, cut with a relaxed body and short dropped sleeves.",
+      "price": 37,
+      "original_price": null,
+      "rating": 4.5,
+      "review_count": 39,
+      "in_stock": true,
+      "stock_count": 15,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": null,
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1509319117193-57bab727e09d.jpg",
+        "/images/photo-1756483492198-8ca91227489b.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Racing Red",
+          "hex": "#B3271D"
+        },
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w05",
+      "name": "Star League University Tee",
+      "slug": "star-league-university-tee",
+      "sku": "ZMW-WOM-PT-05",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "Collegiate university crest print in a relaxed, colorblocked boxy tee â€” pairs easily with joggers or a midi skirt.",
+      "price": 40,
+      "original_price": 52,
+      "rating": 4.8,
+      "review_count": 176,
+      "in_stock": true,
+      "stock_count": 23,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1746386914795-83d2febc9a96.jpg",
+        "/images/photo-1763089402370-fb496fefdbb0.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sunflower Yellow",
+          "hex": "#E8B93C"
+        },
+        {
+          "name": "Ivory",
+          "hex": "#FAF8F2"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w06",
+      "name": "Minimal Line-Art Graphic Tee",
+      "slug": "minimal-line-art-graphic-tee",
+      "sku": "ZMW-WOM-PT-06",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "Delicate single-line art print on lightweight combed cotton. Currently out of stock â€” restocking soon.",
+      "price": 35,
+      "original_price": null,
+      "rating": 4.6,
+      "review_count": 47,
+      "in_stock": false,
+      "stock_count": 0,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1515886657613-9f3515b0c78f.jpg",
+        "/images/photo-1524504388940-b1c1722653e1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Stone Beige",
+          "hex": "#D8CDBC"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w19",
+      "name": "City Skyline Oversized Tee - Downtown",
+      "slug": "city-skyline-oversized-tee-downtown",
+      "sku": "ZMW-WOM-PT-05-2",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "Oversized drop-shoulder tee with a high-density downtown skyline print. 240 GSM combed cotton with a soft, boxy drape.",
+      "price": 38,
+      "original_price": 50,
+      "rating": 4.8,
+      "review_count": 88,
+      "in_stock": true,
+      "stock_count": 18,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1583496661160-fb5886a0aaaa.jpg",
+        "/images/photo-1741250782029-2770cfaf666c.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Graphite",
+          "hex": "#333138"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w20",
+      "name": "Sunset Palm Graphic Tee",
+      "slug": "sunset-palm-graphic-tee",
+      "sku": "ZMW-WOM-PT-06-2",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "Sets",
+      "description": "Retro sunset-and-palm screen print on a relaxed-fit tee, garment-washed for a vintage feel and natural softness.",
+      "price": 34,
+      "original_price": null,
+      "rating": 4.6,
+      "review_count": 41,
+      "in_stock": true,
+      "stock_count": 21,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1591047139829-d91aecb6caea.jpg",
+        "/images/photo-1496217590455-aa63a8350eea.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sand",
+          "hex": "#E6D5BE"
+        },
+        {
+          "name": "Terracotta",
+          "hex": "#C25A38"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w21",
+      "name": "Abstract Muse Artist Tee",
+      "slug": "abstract-muse-artist-tee",
+      "sku": "ZMW-WOM-PT-07",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "Freehand abstract line-art print on lightweight slub cotton with a slightly cropped, modern silhouette.",
+      "price": 32,
+      "original_price": 42,
+      "rating": 4.7,
+      "review_count": 55,
+      "in_stock": true,
+      "stock_count": 14,
+      "is_best_seller": false,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Sale",
+      "badge_type": "sale",
+      "images": [
+        "/images/photo-1594938298603-c8148c4dae35.jpg",
+        "/images/photo-1524504388940-b1c1722653e1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ivory",
+          "hex": "#FAF8F2"
+        },
+        {
+          "name": "Clay",
+          "hex": "#A96A44"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w22",
+      "name": "Total Eclipse Crop Graphic Tee",
+      "slug": "total-eclipse-crop-graphic-tee",
+      "sku": "ZMW-WOM-PT-08",
+      "category_slug": "women",
+      "subcategory_name": "Women's Tees",
+      "product_type": "T-Shirts",
+      "description": "High-contrast celestial print on a cropped boxy tee, cut from heavyweight cotton with ribbed neckline.",
+      "price": 36,
+      "original_price": 46,
+      "rating": 4.7,
+      "review_count": 63,
+      "in_stock": true,
+      "stock_count": 16,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": true,
+      "badge_label": null,
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1756483492198-8ca91227489b.jpg",
+        "/images/photo-1515372039744-b8f02a3ae446.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Onyx",
+          "hex": "#232226"
+        },
+        {
+          "name": "Moon Grey",
+          "hex": "#C9C7C2"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w23",
+      "name": "Linen Blend Co-ord Set - Sage",
+      "slug": "linen-blend-co-ord-set-sage",
+      "sku": "ZMW-WOM-CO-01",
+      "category_slug": "women",
+      "subcategory_name": null,
+      "product_type": "Co-ords",
+      "description": "Matching linen-blend crop top and wide-leg trouser set. Breathable weave with a relaxed drape, perfect for effortless summer styling.",
+      "price": 88,
+      "original_price": 115,
+      "rating": 4.9,
+      "review_count": 156,
+      "in_stock": true,
+      "stock_count": 18,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1539109136881-3be0616acf4b.jpg",
+        "/images/photo-1515372039744-b8f02a3ae446.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sage Green",
+          "hex": "#6E7A67"
+        },
+        {
+          "name": "Oat Milk",
+          "hex": "#F3EDE3"
+        },
+        {
+          "name": "Terracotta",
+          "hex": "#C25A38"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w24",
+      "name": "Ribbed Knit Co-ord - Espresso",
+      "slug": "ribbed-knit-co-ord-espresso",
+      "sku": "ZMW-WOM-CO-02",
+      "category_slug": "women",
+      "subcategory_name": null,
+      "product_type": "Co-ords",
+      "description": "Form-fitting ribbed knit co-ord with a mock-neck crop top and high-waisted midi skirt. Stretchy, soft, and endlessly versatile.",
+      "price": 76,
+      "original_price": null,
+      "rating": 4.7,
+      "review_count": 88,
+      "in_stock": true,
+      "stock_count": 14,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1742677143629-b9784beab2e1.jpg",
+        "/images/photo-1756483492198-8ca91227489b.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Espresso Brown",
+          "hex": "#3A2A1E"
+        },
+        {
+          "name": "Cream",
+          "hex": "#FAF8F2"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w25",
+      "name": "Cotton Poplin Co-ord Set - White",
+      "slug": "cotton-poplin-co-ord-set-white",
+      "sku": "ZMW-WOM-CO-03",
+      "category_slug": "women",
+      "subcategory_name": null,
+      "product_type": "Co-ords",
+      "description": "Structured cotton poplin co-ord with a relaxed button-front shirt and tailored high-waisted trousers. Clean lines for polished ease.",
+      "price": 82,
+      "original_price": 105,
+      "rating": 4.8,
+      "review_count": 132,
+      "in_stock": true,
+      "stock_count": 20,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1524504388940-b1c1722653e1.jpg",
+        "/images/photo-1515886657613-9f3515b0c78f.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Crisp White",
+          "hex": "#F7F5EF"
+        },
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-w26",
+      "name": "Oversized Tee & Mini Skirt Co-ord - Noir",
+      "slug": "oversized-tee-mini-skirt-co-ord-noir",
+      "sku": "ZMW-WOM-CO-04",
+      "category_slug": "women",
+      "subcategory_name": null,
+      "product_type": "Co-ords",
+      "description": "Drop-shoulder oversized tee paired with a matching A-line mini skirt. Heavyweight combed cotton with a relaxed, coordinated streetwear look.",
+      "price": 68,
+      "original_price": null,
+      "rating": 4.6,
+      "review_count": 44,
+      "in_stock": true,
+      "stock_count": 12,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": null,
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1509319117193-57bab727e09d.jpg",
+        "/images/photo-1594938298603-c8148c4dae35.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b01",
+      "name": "Wave Runner Round Neck Tee",
+      "slug": "wave-runner-round-neck-tee",
+      "sku": "ZMW-BOY-TS-01",
+      "category_slug": "boys",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Soft-washed combed cotton tee with a bold wave graphic. Ribbed crew neck and reinforced seams for daily play.",
+      "price": 15,
+      "original_price": 20,
+      "rating": 4.9,
+      "review_count": 156,
+      "in_stock": true,
+      "stock_count": 38,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1596870230751-ebdfce98ec42.jpg",
+        "/images/photo-1519238263530-99bdd11df2ea.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy Blue",
+          "hex": "#28344A"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        },
+        {
+          "name": "Brick Red",
+          "hex": "#A83A26"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b02",
+      "name": "Surf Stripe Round Neck Tee",
+      "slug": "surf-stripe-round-neck-tee",
+      "sku": "ZMW-BOY-TS-02",
+      "category_slug": "boys",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Nautical stripe tee in breathable single jersey with a tagless neck and pre-shrunk cotton finish.",
+      "price": 16,
+      "original_price": 21,
+      "rating": 4.8,
+      "review_count": 98,
+      "in_stock": true,
+      "stock_count": 31,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1519238263530-99bdd11df2ea.jpg",
+        "/images/photo-1509631179647-0177331693ae.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        },
+        {
+          "name": "Crisp White",
+          "hex": "#F7F5EF"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b03",
+      "name": "Cozy Fleece High Neck Top",
+      "slug": "cozy-fleece-high-neck-top",
+      "sku": "ZMW-BOY-HN-01",
+      "category_slug": "boys",
+      "subcategory_name": "High Neck",
+      "product_type": "T-Shirts",
+      "description": "Brushed fleece high-neck top with a covered mock neckline. Warm, soft and easy to layer under hoodies.",
+      "price": 19,
+      "original_price": 24,
+      "rating": 4.7,
+      "review_count": 74,
+      "in_stock": true,
+      "stock_count": 26,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1503342217505-b0a15ec3261c.jpg",
+        "/images/photo-1507679799987-c73779587ccf.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Forest Olive",
+          "hex": "#2F4A37"
+        },
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b04",
+      "name": "Contrast Zip High Neck Top",
+      "slug": "contrast-zip-high-neck-top",
+      "sku": "ZMW-BOY-HN-02",
+      "category_slug": "boys",
+      "subcategory_name": "High Neck",
+      "product_type": "T-Shirts",
+      "description": "Sporty zip-neck high top with contrast trim. Lightweight French terry with soft-brushed interior.",
+      "price": 20,
+      "original_price": 26,
+      "rating": 4.8,
+      "review_count": 67,
+      "in_stock": true,
+      "stock_count": 19,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1507679799987-c73779587ccf.jpg",
+        "/images/photo-1503341504253-dff4815485f1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy",
+          "hex": "#1D2B3A"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b05",
+      "name": "Cargo Pocket Play Shorts",
+      "slug": "cargo-pocket-play-shorts",
+      "sku": "ZMW-BOY-SH-01",
+      "category_slug": "boys",
+      "subcategory_name": "Shorts",
+      "product_type": "T-Shirts",
+      "description": "Sturdy cotton twill shorts with utility cargo pockets and an elasticated waist for easy on-off.",
+      "price": 16,
+      "original_price": 21,
+      "rating": 4.8,
+      "review_count": 143,
+      "in_stock": true,
+      "stock_count": 34,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1590480598135-3be152c87913.jpg",
+        "/images/photo-1445205170230-053b83016050.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Olive",
+          "hex": "#4B5A3F"
+        },
+        {
+          "name": "Khaki",
+          "hex": "#C2A878"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b06",
+      "name": "Cuffed Fleece Jogger Shorts",
+      "slug": "cuffed-fleece-jogger-shorts",
+      "sku": "ZMW-BOY-SH-02",
+      "category_slug": "boys",
+      "subcategory_name": "Shorts",
+      "product_type": "Joggers",
+      "description": "Brushed fleece jogger shorts with ribbed cuffs and a drawstring waist for a snug, comfy fit.",
+      "price": 15,
+      "original_price": 20,
+      "rating": 4.7,
+      "review_count": 88,
+      "in_stock": true,
+      "stock_count": 27,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1445205170230-053b83016050.jpg",
+        "/images/photo-1490481651871-ab68de25d43d.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b07",
+      "name": "Heavyweight Crew Sweatshirt",
+      "slug": "heavyweight-crew-sweatshirt",
+      "sku": "ZMW-BOY-SW-01",
+      "category_slug": "boys",
+      "subcategory_name": "Sweatshirts",
+      "product_type": "Sweatshirts",
+      "description": "Heavyweight French terry crewneck with a ribbed collar, cuffs and hem. Built for rough-and-tumble days.",
+      "price": 22,
+      "original_price": 28,
+      "rating": 4.8,
+      "review_count": 121,
+      "in_stock": true,
+      "stock_count": 24,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1509631179647-0177331693ae.jpg",
+        "/images/photo-1503342217505-b0a15ec3261c.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy",
+          "hex": "#1D2B3A"
+        },
+        {
+          "name": "Heather Grey",
+          "hex": "#8A8680"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y",
+        "8-9Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b08",
+      "name": "Color-Block Sweatshirt",
+      "slug": "color-block-sweatshirt",
+      "sku": "ZMW-BOY-SW-02",
+      "category_slug": "boys",
+      "subcategory_name": "Sweatshirts",
+      "product_type": "Sweatshirts",
+      "description": "Sporty color-block sweatshirt in soft brushed fleece with a bold contrast chest panel.",
+      "price": 21,
+      "original_price": 27,
+      "rating": 4.7,
+      "review_count": 66,
+      "in_stock": true,
+      "stock_count": 20,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1503342217505-b0a15ec3261c.jpg",
+        "/images/photo-1503919545889-aef636e10ad4.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Red & White",
+          "hex": "#B3271D"
+        },
+        {
+          "name": "Navy & White",
+          "hex": "#1D2B3A"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b09",
+      "name": "Kangaroo Pocket Zip Hoodie",
+      "slug": "kangaroo-pocket-zip-hoodie",
+      "sku": "ZMW-BOY-HD-01",
+      "category_slug": "boys",
+      "subcategory_name": "Hoodies",
+      "product_type": "Hoodies",
+      "description": "Zip-up hoodie in brushed cotton rich fleece with a kangaroo pocket and drawcord hood.",
+      "price": 25,
+      "original_price": 32,
+      "rating": 4.9,
+      "review_count": 132,
+      "in_stock": true,
+      "stock_count": 22,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1506152983158-b4a74a01c721.jpg",
+        "/images/photo-1496217590455-aa63a8350eea.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        },
+        {
+          "name": "Olive",
+          "hex": "#4B5A3F"
+        },
+        {
+          "name": "Navy",
+          "hex": "#1D2B3A"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y",
+        "8-9Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-b10",
+      "name": "Over-Head Fleece Hoodie",
+      "slug": "over-head-fleece-hoodie",
+      "sku": "ZMW-BOY-HD-02",
+      "category_slug": "boys",
+      "subcategory_name": "Hoodies",
+      "product_type": "Hoodies",
+      "description": "Easy pullover hoodie in soft brushed fleece with a roomy hood and ribbed trims.",
+      "price": 24,
+      "original_price": 30,
+      "rating": 4.8,
+      "review_count": 79,
+      "in_stock": true,
+      "stock_count": 18,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1496217590455-aa63a8350eea.jpg",
+        "/images/photo-1503919545889-aef636e10ad4.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g01",
+      "name": "Buttercup Round Neck Tee",
+      "slug": "buttercup-round-neck-tee",
+      "sku": "ZMW-GIR-TS-01",
+      "category_slug": "girls",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Buttercup print tee in soft-washed cotton with flutter-sleeve detail and a gentle rounded hem.",
+      "price": 14,
+      "original_price": 19,
+      "rating": 4.9,
+      "review_count": 165,
+      "in_stock": true,
+      "stock_count": 36,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1519457431-44ccd64a579b.jpg",
+        "/images/photo-1758782213532-bbb5fd89885e.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Blush Pink",
+          "hex": "#D99A9A"
+        },
+        {
+          "name": "Lilac",
+          "hex": "#B7A6D9"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g02",
+      "name": "Heart Pop Round Neck Tee",
+      "slug": "heart-pop-round-neck-tee",
+      "sku": "ZMW-GIR-TS-02",
+      "category_slug": "girls",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Charming heart print tee in breathable single jersey, garment-washed for softness from the first wear.",
+      "price": 15,
+      "original_price": 20,
+      "rating": 4.8,
+      "review_count": 104,
+      "in_stock": true,
+      "stock_count": 29,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1758782213532-bbb5fd89885e.jpg",
+        "/images/photo-1519457431-44ccd64a579b.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Peony",
+          "hex": "#E87BA0"
+        },
+        {
+          "name": "Vanilla",
+          "hex": "#F5EFE0"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g03",
+      "name": "Flutter Sleeve High Neck Top",
+      "slug": "flutter-sleeve-high-neck-top",
+      "sku": "ZMW-GIR-HN-01",
+      "category_slug": "girls",
+      "subcategory_name": "High Neck",
+      "product_type": "T-Shirts",
+      "description": "Pretty high-neck top with airy flutter sleeves and soft ruffle trims in lightweight cotton.",
+      "price": 19,
+      "original_price": 25,
+      "rating": 4.8,
+      "review_count": 87,
+      "in_stock": true,
+      "stock_count": 24,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1544441893-675973e31985.jpg",
+        "/images/photo-1560243563-062bfc001d68.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Coral",
+          "hex": "#E5816A"
+        },
+        {
+          "name": "Cream",
+          "hex": "#F5EFE0"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g04",
+      "name": "Ribbed High Neck Long Sleeve",
+      "slug": "ribbed-high-neck-long-sleeve",
+      "sku": "ZMW-GIR-HN-02",
+      "category_slug": "girls",
+      "subcategory_name": "High Neck",
+      "product_type": "T-Shirts",
+      "description": "Stretchy ribbed knit long sleeve with a snug high neck for cozy warmth on cooler days.",
+      "price": 18,
+      "original_price": 23,
+      "rating": 4.7,
+      "review_count": 62,
+      "in_stock": true,
+      "stock_count": 21,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1560243563-062bfc001d68.jpg",
+        "/images/photo-1487222477894-8943e31ef7b2.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Blush Pink",
+          "hex": "#D99A9A"
+        },
+        {
+          "name": "Crisp White",
+          "hex": "#F7F5EF"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g05",
+      "name": "Tiered Ruffle Play Shorts",
+      "slug": "tiered-ruffle-play-shorts",
+      "sku": "ZMW-GIR-SH-01",
+      "category_slug": "girls",
+      "subcategory_name": "Shorts",
+      "product_type": "T-Shirts",
+      "description": "Tiered ruffle shorts in soft woven cotton with an elasticated waist and full cotton lining.",
+      "price": 16,
+      "original_price": 21,
+      "rating": 4.8,
+      "review_count": 118,
+      "in_stock": true,
+      "stock_count": 30,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1503919545889-aef636e10ad4.jpg",
+        "/images/photo-1490481651871-ab68de25d43d.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Dusky Peach",
+          "hex": "#E8B2A2"
+        },
+        {
+          "name": "Sage Mint",
+          "hex": "#9EB69E"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g06",
+      "name": "Tulip Waist Cotton Shorts",
+      "slug": "tulip-waist-cotton-shorts",
+      "sku": "ZMW-GIR-SH-02",
+      "category_slug": "girls",
+      "subcategory_name": "Shorts",
+      "product_type": "T-Shirts",
+      "description": "Tulip-waist shorts with a sweet bow detail, cut from breathable cotton twill for all-day comfort.",
+      "price": 15,
+      "original_price": 20,
+      "rating": 4.7,
+      "review_count": 73,
+      "in_stock": true,
+      "stock_count": 26,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1490481651871-ab68de25d43d.jpg",
+        "/images/photo-1567401893414-76b7b1e5a7a5.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Lavender",
+          "hex": "#B7A6D9"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g07",
+      "name": "Cozy Heart Crew Sweatshirt",
+      "slug": "cozy-heart-crew-sweatshirt",
+      "sku": "ZMW-GIR-SW-01",
+      "category_slug": "girls",
+      "subcategory_name": "Sweatshirts",
+      "product_type": "Sweatshirts",
+      "description": "Snuggly crewneck with a tonal heart embroidery, cut from brushed cotton fleece with ribbed trims.",
+      "price": 22,
+      "original_price": 28,
+      "rating": 4.9,
+      "review_count": 139,
+      "in_stock": true,
+      "stock_count": 23,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1544441893-675973e31985.jpg",
+        "/images/photo-1519457431-44ccd64a579b.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Blush Pink",
+          "hex": "#D99A9A"
+        },
+        {
+          "name": "Stone Beige",
+          "hex": "#D8CDBC"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g08",
+      "name": "Rainbow Stripe Sweatshirt",
+      "slug": "rainbow-stripe-sweatshirt",
+      "sku": "ZMW-GIR-SW-02",
+      "category_slug": "girls",
+      "subcategory_name": "Sweatshirts",
+      "product_type": "Sweatshirts",
+      "description": "Cheerful rainbow-stripe sweatshirt in soft French terry with a relaxed, comfy fit.",
+      "price": 21,
+      "original_price": 27,
+      "rating": 4.8,
+      "review_count": 91,
+      "in_stock": true,
+      "stock_count": 19,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1560243563-062bfc001d68.jpg",
+        "/images/photo-1503919545889-aef636e10ad4.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Rainbow Cream",
+          "hex": "#F2E3E0"
+        },
+        {
+          "name": "Pastel Mix",
+          "hex": "#DDC6E0"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g09",
+      "name": "Hooded Cloud Zip Hoodie",
+      "slug": "hooded-cloud-zip-hoodie",
+      "sku": "ZMW-GIR-HD-01",
+      "category_slug": "girls",
+      "subcategory_name": "Hoodies",
+      "product_type": "Hoodies",
+      "description": "Cloud-print zip hoodie in brushed fleece with a drawcord hood and cozy kangaroo pocket.",
+      "price": 24,
+      "original_price": 31,
+      "rating": 4.8,
+      "review_count": 96,
+      "in_stock": true,
+      "stock_count": 21,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1519457431-44ccd64a579b.jpg",
+        "/images/photo-1544441893-675973e31985.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Lilac",
+          "hex": "#B7A6D9"
+        },
+        {
+          "name": "Cream",
+          "hex": "#F5EFE0"
+        },
+        {
+          "name": "Blush",
+          "hex": "#D99A9A"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g10",
+      "name": "Softest Oversized Hoodie",
+      "slug": "softest-oversized-hoodie",
+      "sku": "ZMW-GIR-HD-02",
+      "category_slug": "girls",
+      "subcategory_name": "Hoodies",
+      "product_type": "Hoodies",
+      "description": "Ultra-soft oversized pullover hoodie in plush brushed fleece with dropped shoulders for a relaxed drape.",
+      "price": 25,
+      "original_price": 32,
+      "rating": 4.9,
+      "review_count": 84,
+      "in_stock": true,
+      "stock_count": 17,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1758782213532-bbb5fd89885e.jpg",
+        "/images/photo-1746386914795-83d2febc9a96.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Blush Pink",
+          "hex": "#D99A9A"
+        },
+        {
+          "name": "Powder Blue",
+          "hex": "#A9C4D8"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y",
+        "8-9Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g11",
+      "name": "Satin Trim Pyjama Set",
+      "slug": "satin-trim-pyjama-set",
+      "sku": "ZMW-GIR-NW-01",
+      "category_slug": "girls",
+      "subcategory_name": "Casual Wear",
+      "product_type": "Sets",
+      "description": "Sweet two-piece pyjama set with satin piped trim and flutter sleeves. Buttery-soft cotton for dreamy sleep.",
+      "price": 26,
+      "original_price": 34,
+      "rating": 4.9,
+      "review_count": 127,
+      "in_stock": true,
+      "stock_count": 25,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1746386914795-83d2febc9a96.jpg",
+        "/images/photo-1763089402370-fb496fefdbb0.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ice Pink",
+          "hex": "#E8C4D0"
+        },
+        {
+          "name": "Mint",
+          "hex": "#B9D6C4"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y",
+        "8-9Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g12",
+      "name": "Sweet Dream Sleep Set",
+      "slug": "sweet-dream-sleep-set",
+      "sku": "ZMW-GIR-NW-02",
+      "category_slug": "girls",
+      "subcategory_name": "Casual Wear",
+      "product_type": "Sets",
+      "description": "Cozy nightwear set with a relaxed tee and cuffed pants, garment-washed for cloud-soft comfort.",
+      "price": 24,
+      "original_price": 30,
+      "rating": 4.8,
+      "review_count": 88,
+      "in_stock": true,
+      "stock_count": 22,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1763089402370-fb496fefdbb0.jpg",
+        "/images/photo-1758782213532-bbb5fd89885e.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Oatmeal",
+          "hex": "#ECE6DA"
+        },
+        {
+          "name": "Dusty Grey",
+          "hex": "#9B978F"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g13",
+      "name": "Lace Collar Long Gown",
+      "slug": "lace-collar-long-gown",
+      "sku": "ZMW-GIR-LG-01",
+      "category_slug": "girls",
+      "subcategory_name": "Long Gown",
+      "product_type": "T-Shirts",
+      "description": "Elegant long gown with a delicate lace collar, smocked back and gently flared floor-sweeping skirt.",
+      "price": 38,
+      "original_price": 48,
+      "rating": 4.9,
+      "review_count": 76,
+      "in_stock": true,
+      "stock_count": 14,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Limited",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1544441893-675973e31985.jpg",
+        "/images/photo-1756483492198-8ca91227489b.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ivory",
+          "hex": "#FAF8F2"
+        },
+        {
+          "name": "Dusty Pink",
+          "hex": "#D9B4AC"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y",
+        "8-9Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-g14",
+      "name": "Tulle Party Long Gown",
+      "slug": "tulle-party-long-gown",
+      "sku": "ZMW-GIR-LG-02",
+      "category_slug": "girls",
+      "subcategory_name": "Long Gown",
+      "product_type": "T-Shirts",
+      "description": "Party-ready tulle gown with a satin bodice, full twirl skirt and hidden soft cotton lining.",
+      "price": 42,
+      "original_price": 54,
+      "rating": 4.8,
+      "review_count": 69,
+      "in_stock": true,
+      "stock_count": 12,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1758782213532-bbb5fd89885e.jpg",
+        "/images/photo-1519457431-44ccd64a579b.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Blush",
+          "hex": "#D99A9A"
+        },
+        {
+          "name": "Champagne",
+          "hex": "#E8DFC8"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k01",
+      "name": "Dino Explorer Graphic Tee & Shorts Set",
+      "slug": "dino-explorer-graphic-tee-shorts-set",
+      "sku": "ZMW-KID-BY-01",
+      "category_slug": "kids",
+      "subcategory_name": "Shorts",
+      "product_type": "Sets",
+      "description": "Soft-washed cotton tee with a playful dino print, paired with elastic-waist shorts for easy on-off. Built for a full day of play.",
+      "price": 22,
+      "original_price": 30,
+      "rating": 4.9,
+      "review_count": 178,
+      "in_stock": true,
+      "stock_count": 34,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1596870230751-ebdfce98ec42.jpg",
+        "/images/photo-1519238263530-99bdd11df2ea.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jungle Green",
+          "hex": "#4B5A3F"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        },
+        {
+          "name": "Navy",
+          "hex": "#28344A"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k03",
+      "name": "Space Mission Graphic Tee",
+      "slug": "space-mission-graphic-tee",
+      "sku": "ZMW-KID-BY-03",
+      "category_slug": "kids",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Glow-in-the-dark rocket graphic on breathable single jersey cotton. Reinforced neckline stitching for wear after wear.",
+      "price": 16,
+      "original_price": 22,
+      "rating": 4.8,
+      "review_count": 112,
+      "in_stock": true,
+      "stock_count": 40,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1519238263530-99bdd11df2ea.jpg",
+        "/images/photo-1590480598135-3be152c87913.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Jet Black",
+          "hex": "#181715"
+        },
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k07",
+      "name": "Ruffle Sleeve Graphic Tee",
+      "slug": "ruffle-sleeve-graphic-tee",
+      "sku": "ZMW-KID-GL-03",
+      "category_slug": "kids",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Ruffle-sleeve tee with a glitter-free heart print, soft-washed for a broken-in feel from the first wear.",
+      "price": 15,
+      "original_price": 20,
+      "rating": 4.8,
+      "review_count": 91,
+      "in_stock": true,
+      "stock_count": 33,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1519457431-44ccd64a579b.jpg",
+        "/images/photo-1758782213532-bbb5fd89885e.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Blush Pink",
+          "hex": "#D99A9A"
+        },
+        {
+          "name": "Lilac",
+          "hex": "#B7A6D9"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k13",
+      "name": "Varsity Stripe Polo & Shorts Set",
+      "slug": "varsity-stripe-polo-shorts-set",
+      "sku": "ZMW-KID-BY-05",
+      "category_slug": "kids",
+      "subcategory_name": "Shorts",
+      "product_type": "Polos",
+      "description": "Pique polo with contrast stripe collar, paired with matching shorts. Breathable and easy to layer for school or play.",
+      "price": 25,
+      "original_price": 33,
+      "rating": 4.8,
+      "review_count": 88,
+      "in_stock": true,
+      "stock_count": 24,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1758782213532-bbb5fd89885e.jpg",
+        "/images/photo-1590480598135-3be152c87913.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy",
+          "hex": "#28344A"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y",
+        "8-9Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k17",
+      "name": "Shark Attack Graphic Tee",
+      "slug": "shark-attack-graphic-tee",
+      "sku": "ZMW-KID-BY-07",
+      "category_slug": "kids",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Playful shark graphic on breathable single-jersey cotton with reinforced neckline stitching and a tagless back.",
+      "price": 15,
+      "original_price": 20,
+      "rating": 4.8,
+      "review_count": 73,
+      "in_stock": true,
+      "stock_count": 26,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1445205170230-053b83016050.jpg",
+        "/images/photo-1503342217505-b0a15ec3261c.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Ocean Blue",
+          "hex": "#2F5E9E"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y",
+        "8-9Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k18",
+      "name": "Rainbow Hearts Graphic Tee",
+      "slug": "rainbow-hearts-graphic-tee",
+      "sku": "ZMW-KID-GL-07",
+      "category_slug": "kids",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Rainbow heart print on a soft-washed tee with flutter sleeves â€” breathable and comfortable for all-day play.",
+      "price": 14,
+      "original_price": 19,
+      "rating": 4.7,
+      "review_count": 58,
+      "in_stock": true,
+      "stock_count": 31,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1487222477894-8943e31ef7b2.jpg",
+        "/images/photo-1509631179647-0177331693ae.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Blush Pink",
+          "hex": "#D99A9A"
+        },
+        {
+          "name": "Lilac",
+          "hex": "#B7A6D9"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k19",
+      "name": "Construction Crew Graphic Tee",
+      "slug": "construction-crew-graphic-tee",
+      "sku": "ZMW-KID-BY-08",
+      "category_slug": "kids",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Construction-truck print in high-density inks on a sturdy everyday tee, made to survive the sandbox and the slide.",
+      "price": 16,
+      "original_price": 22,
+      "rating": 4.6,
+      "review_count": 44,
+      "in_stock": true,
+      "stock_count": 19,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1490481651871-ab68de25d43d.jpg",
+        "/images/photo-1539533018447-63fcce2678e3.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Hard Hat Yellow",
+          "hex": "#E8BE3C"
+        },
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k20",
+      "name": "Butterfly Garden Print Tee",
+      "slug": "butterfly-garden-print-tee",
+      "sku": "ZMW-KID-GL-08",
+      "category_slug": "kids",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Butterfly garden print with soft watercolor-style inks on combed cotton, cut for easy on-off wear.",
+      "price": 15,
+      "original_price": 20,
+      "rating": 4.8,
+      "review_count": 67,
+      "in_stock": true,
+      "stock_count": 28,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1544441893-675973e31985.jpg",
+        "/images/photo-1560243563-062bfc001d68.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Meadow Green",
+          "hex": "#6E8E5F"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k21",
+      "name": "Astro Rocket Friend Tee",
+      "slug": "astro-rocket-friend-tee",
+      "sku": "ZMW-KID-BY-09",
+      "category_slug": "kids",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Friendly cartoon rocket print with glow-in-the-dark accents. Soft single-jersey cotton in a relaxed play fit.",
+      "price": 16,
+      "original_price": null,
+      "rating": 4.5,
+      "review_count": 29,
+      "in_stock": true,
+      "stock_count": 17,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1567401893414-76b7b1e5a7a5.jpg",
+        "/images/photo-1617137968427-85924c800a22.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy",
+          "hex": "#28344A"
+        },
+        {
+          "name": "Ivory",
+          "hex": "#FAF8F2"
+        }
+      ],
+      "sizes": [
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-k22",
+      "name": "Sweet Treats Hearts Tee",
+      "slug": "sweet-treats-hearts-tee",
+      "sku": "ZMW-KID-GL-09",
+      "category_slug": "kids",
+      "subcategory_name": "Round Neck",
+      "product_type": "T-Shirts",
+      "description": "Cupcake-and-heart print on a supersoft washed tee with a gently rounded hem â€” a sweet everyday favorite.",
+      "price": 14,
+      "original_price": 19,
+      "rating": 4.7,
+      "review_count": 52,
+      "in_stock": true,
+      "stock_count": 23,
+      "is_best_seller": false,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Sale",
+      "badge_type": "sale",
+      "images": [
+        "/images/photo-1590480598135-3be152c87913.jpg",
+        "/images/photo-1758782213532-bbb5fd89885e.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Strawberry",
+          "hex": "#D96A7C"
+        },
+        {
+          "name": "Vanilla",
+          "hex": "#F5EFE0"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "6-7Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab01",
+      "name": "Snap Button Cotton Romper",
+      "slug": "snap-button-cotton-romper",
+      "sku": "ZMW-BAB-RM-01",
+      "category_slug": "babies",
+      "subcategory_name": "Romper",
+      "product_type": "Sets",
+      "description": "Snap-button cotton romper with reinforced poppers and roomy cuffs for wriggly little ones.",
+      "price": 18,
+      "original_price": 24,
+      "rating": 4.9,
+      "review_count": 158,
+      "in_stock": true,
+      "stock_count": 42,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1567401893414-76b7b1e5a7a5.jpg",
+        "/images/photo-1617137968427-85924c800a22.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sage",
+          "hex": "#9EB69E"
+        },
+        {
+          "name": "Oatmeal",
+          "hex": "#ECE6DA"
+        },
+        {
+          "name": "Peach",
+          "hex": "#E8B2A2"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab02",
+      "name": "Terry Knit Baby Romper",
+      "slug": "terry-knit-baby-romper",
+      "sku": "ZMW-BAB-RM-02",
+      "category_slug": "babies",
+      "subcategory_name": "Romper",
+      "product_type": "Sets",
+      "description": "Plush terry knit romper with a snug hood and front pocket. Extreme softness for naptime and playtime.",
+      "price": 19,
+      "original_price": 25,
+      "rating": 4.8,
+      "review_count": 112,
+      "in_stock": true,
+      "stock_count": 35,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1617137968427-85924c800a22.jpg",
+        "/images/photo-1567401893414-76b7b1e5a7a5.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Mustard",
+          "hex": "#C89D3C"
+        },
+        {
+          "name": "Off White",
+          "hex": "#F3EFE4"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab03",
+      "name": "Organic Cotton Baby T-Shirt",
+      "slug": "organic-cotton-baby-t-shirt",
+      "sku": "ZMW-BAB-TS-01",
+      "category_slug": "babies",
+      "subcategory_name": "T-shirt",
+      "product_type": "T-Shirts",
+      "description": "GOTS-certified organic cotton tee with a tagless neck and flat-locked seams that never rub.",
+      "price": 12,
+      "original_price": 16,
+      "rating": 4.9,
+      "review_count": 174,
+      "in_stock": true,
+      "stock_count": 48,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1519238263530-99bdd11df2ea.jpg",
+        "/images/photo-1509631179647-0177331693ae.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        },
+        {
+          "name": "Crisp White",
+          "hex": "#F7F5EF"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab04",
+      "name": "Tiny Hearts Baby Tee",
+      "slug": "tiny-hearts-baby-tee",
+      "sku": "ZMW-BAB-TS-02",
+      "category_slug": "babies",
+      "subcategory_name": "T-shirt",
+      "product_type": "T-Shirts",
+      "description": "Sweet heart-print baby tee in supersoft washed cotton, cut generously for easy on-off dressing.",
+      "price": 13,
+      "original_price": 17,
+      "rating": 4.8,
+      "review_count": 101,
+      "in_stock": true,
+      "stock_count": 39,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1503342217505-b0a15ec3261c.jpg",
+        "/images/photo-1487222477894-8943e31ef7b2.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Blush",
+          "hex": "#D99A9A"
+        },
+        {
+          "name": "Cream",
+          "hex": "#F5EFE0"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab05",
+      "name": "Footed Fleece Pyjama",
+      "slug": "footed-fleece-pyjama",
+      "sku": "ZMW-BAB-PJ-01",
+      "category_slug": "babies",
+      "subcategory_name": "Babies Pyjama",
+      "product_type": "T-Shirts",
+      "description": "One-piece footed fleece pyjama with a front zip and snap-free design for safe, easy night changes.",
+      "price": 22,
+      "original_price": 28,
+      "rating": 4.8,
+      "review_count": 96,
+      "in_stock": true,
+      "stock_count": 27,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1507679799987-c73779587ccf.jpg",
+        "/images/photo-1503919545889-aef636e10ad4.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Grey Stripe",
+          "hex": "#9B978F"
+        },
+        {
+          "name": "Blue Stripe",
+          "hex": "#6E8CA4"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab06",
+      "name": "One-Piece Sleep Pyjama",
+      "slug": "one-piece-sleep-pyjama",
+      "sku": "ZMW-BAB-PJ-02",
+      "category_slug": "babies",
+      "subcategory_name": "Babies Pyjama",
+      "product_type": "T-Shirts",
+      "description": "Cozy one-piece sleep sack pyjama in breathable cotton knit with gentle elasticated cuffs.",
+      "price": 24,
+      "original_price": 30,
+      "rating": 4.9,
+      "review_count": 88,
+      "in_stock": true,
+      "stock_count": 24,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1503919545889-aef636e10ad4.jpg",
+        "/images/photo-1503342217505-b0a15ec3261c.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sage",
+          "hex": "#9EB69E"
+        },
+        {
+          "name": "Mint Stripe",
+          "hex": "#B9D6C4"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab07",
+      "name": "Quilted Baby Sweatshirt",
+      "slug": "quilted-baby-sweatshirt",
+      "sku": "ZMW-BAB-SW-01",
+      "category_slug": "babies",
+      "subcategory_name": "Sweatshirts",
+      "product_type": "Sweatshirts",
+      "description": "Quilted-style sweatshirt in double-brushed fleece with a fold-over mitt-free cuff and snap shoulder.",
+      "price": 21,
+      "original_price": 27,
+      "rating": 4.8,
+      "review_count": 84,
+      "in_stock": true,
+      "stock_count": 26,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1503341504253-dff4815485f1.jpg",
+        "/images/photo-1445205170230-053b83016050.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Oatmeal",
+          "hex": "#ECE6DA"
+        },
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab08",
+      "name": "Plush Hooded Baby Hoodie",
+      "slug": "plush-hooded-baby-hoodie",
+      "sku": "ZMW-BAB-HD-01",
+      "category_slug": "babies",
+      "subcategory_name": "Babies Hoodies",
+      "product_type": "Hoodies",
+      "description": "Plush teddy-fleece hoodie with a soft-lining hood, snap-front closure and cozy ribbed trims.",
+      "price": 25,
+      "original_price": 32,
+      "rating": 4.8,
+      "review_count": 92,
+      "in_stock": true,
+      "stock_count": 21,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1567401893414-76b7b1e5a7a5.jpg",
+        "/images/photo-1617137968427-85924c800a22.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Teddy Brown",
+          "hex": "#B98C62"
+        },
+        {
+          "name": "Blush",
+          "hex": "#D99A9A"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab09",
+      "name": "Zip Front Baby Hoodie",
+      "slug": "zip-front-baby-hoodie",
+      "sku": "ZMW-BAB-HD-02",
+      "category_slug": "babies",
+      "subcategory_name": "Babies Hoodies",
+      "product_type": "Hoodies",
+      "description": "Easy zip-front baby hoodie in brushed French terry with a cozy hood and chunky safe zipper.",
+      "price": 24,
+      "original_price": 30,
+      "rating": 4.7,
+      "review_count": 76,
+      "in_stock": true,
+      "stock_count": 23,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Trending",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1617137968427-85924c800a22.jpg",
+        "/images/photo-1503342217505-b0a15ec3261c.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Navy",
+          "hex": "#1D2B3A"
+        },
+        {
+          "name": "Charcoal",
+          "hex": "#2C2B27"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab10",
+      "name": "Elastic Waist Baby Bottoms",
+      "slug": "elastic-waist-baby-bottoms",
+      "sku": "ZMW-BAB-BT-01",
+      "category_slug": "babies",
+      "subcategory_name": "Babies Bottoms",
+      "product_type": "T-Shirts",
+      "description": "Soft pull-on bottoms with a gentle elastic waist and ribbed ankle cuffs for a secure, comfy fit.",
+      "price": 14,
+      "original_price": 18,
+      "rating": 4.8,
+      "review_count": 121,
+      "in_stock": true,
+      "stock_count": 44,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1445205170230-053b83016050.jpg",
+        "/images/photo-1503341504253-dff4815485f1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Beige",
+          "hex": "#D8CDBC"
+        },
+        {
+          "name": "Heather Grey",
+          "hex": "#8A8680"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-bab11",
+      "name": "Cuffed Knit Pants Bottoms",
+      "slug": "cuffed-knit-pants-bottoms",
+      "sku": "ZMW-BAB-BT-02",
+      "category_slug": "babies",
+      "subcategory_name": "Babies Bottoms",
+      "product_type": "T-Shirts",
+      "description": "Brushed knit pants with cuffed ankles and a soft wide waistband — made for crawling and first steps.",
+      "price": 15,
+      "original_price": 19,
+      "rating": 4.8,
+      "review_count": 87,
+      "in_stock": true,
+      "stock_count": 31,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1503341504253-dff4815485f1.jpg",
+        "/images/photo-1490481651871-ab68de25d43d.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Oatmeal",
+          "hex": "#ECE6DA"
+        },
+        {
+          "name": "Olive",
+          "hex": "#4B5A3F"
+        }
+      ],
+      "sizes": [
+        "0-6M",
+        "6-12M",
+        "12-18M",
+        "18-24M"
+      ]
+    },
+    {
+      "legacy_id": "zmw-001",
+      "name": "French Linen Tailored Oversized Shirt",
+      "slug": "french-linen-tailored-oversized-shirt",
+      "sku": "ZMW-MEN-01",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Shirts",
+      "description": "Tailored from 100% Normandy flax linen with natural slub texture, pre-washed for effortless drape. Features a crisp spread collar and natural horn buttons.",
+      "price": 88,
+      "original_price": 110,
+      "rating": 4.9,
+      "review_count": 142,
+      "in_stock": true,
+      "stock_count": 18,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1617127365659-c47fa864d8bc.jpg",
+        "/images/photo-1594633312681-425c7b97ccd1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Terracotta Earth",
+          "hex": "#B85D38"
+        },
+        {
+          "name": "Raw Sand Linen",
+          "hex": "#E4DCB8"
+        },
+        {
+          "name": "Charcoal Slate",
+          "hex": "#2C2B27"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-002",
+      "name": "Liquid Silk Bias-Cut Slip Dress",
+      "slug": "liquid-silk-bias-cut-slip-dress",
+      "sku": "ZMW-DRS-02",
+      "category_slug": "women",
+      "subcategory_name": null,
+      "product_type": "Dresses",
+      "description": "Liquid silk-crepe woven in Como, Italy. Cut precisely on the bias to skim the silhouette with fluid elegance. Hand-finished delicate rouleau straps.",
+      "price": 215,
+      "original_price": null,
+      "rating": 5,
+      "review_count": 56,
+      "in_stock": true,
+      "stock_count": 12,
+      "is_best_seller": true,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "New Drop",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1539109136881-3be0616acf4b.jpg",
+        "/images/photo-1515372039744-b8f02a3ae446.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Champagne Cream",
+          "hex": "#F2EBE0"
+        },
+        {
+          "name": "Olive Earth",
+          "hex": "#6E7A67"
+        },
+        {
+          "name": "Obsidian Black",
+          "hex": "#161514"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ]
+    },
+    {
+      "legacy_id": "zmw-003",
+      "name": "Emerald Silk Couture Saree Ensemble",
+      "slug": "emerald-silk-couture-saree-ensemble",
+      "sku": "ZMW-ETH-03",
+      "category_slug": "women",
+      "subcategory_name": null,
+      "product_type": "Dresses",
+      "description": "Bespoke pure mulberry silk saree gown featuring intricate zardozi hand embroidery along the borders and pallu. A timeless fusion of heritage craftsmanship and modern runway silhouette.",
+      "price": 340,
+      "original_price": 420,
+      "rating": 5,
+      "review_count": 39,
+      "in_stock": true,
+      "stock_count": 6,
+      "is_best_seller": true,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "Limited Edition",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1756483492198-8ca91227489b.jpg",
+        "/images/photo-1742677143629-b9784beab2e1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Emerald Gold",
+          "hex": "#1C5E40"
+        },
+        {
+          "name": "Royal Garnet",
+          "hex": "#781C26"
+        },
+        {
+          "name": "Midnight Navy",
+          "hex": "#121F36"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-004",
+      "name": "Bespoke Sand Linen Tailored Blazer",
+      "slug": "bespoke-sand-linen-tailored-blazer",
+      "sku": "ZMW-BLZ-04",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Blazers",
+      "description": "Lightweight unstructured single-breasted blazer woven from Italian flax linen. Notch lapel, patch pockets, and unlined interior for effortless breathability.",
+      "price": 295,
+      "original_price": 360,
+      "rating": 4.9,
+      "review_count": 78,
+      "in_stock": true,
+      "stock_count": 10,
+      "is_best_seller": true,
+      "is_new_arrival": true,
+      "is_sale": true,
+      "badge_label": "Runway",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1509319117193-57bab727e09d.jpg",
+        "/images/photo-1516257984-b1b4d707412e.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sand Beige",
+          "hex": "#D8CDBC"
+        },
+        {
+          "name": "Charcoal Ink",
+          "hex": "#22211F"
+        },
+        {
+          "name": "Navy Twill",
+          "hex": "#1D2B3A"
+        }
+      ],
+      "sizes": [
+        "38R",
+        "40R",
+        "42R",
+        "44R"
+      ]
+    },
+    {
+      "legacy_id": "zmw-005",
+      "name": "Sculpted Ribbed Merino Mockneck",
+      "slug": "sculpted-ribbed-merino-mockneck",
+      "sku": "ZMW-TOP-05",
+      "category_slug": "women",
+      "subcategory_name": null,
+      "product_type": "T-Shirts",
+      "description": "Extra-fine Australian merino wool with architectural compact ribbing. Designed to sculpt the frame while delivering supreme cloud-soft thermal comfort.",
+      "price": 110,
+      "original_price": 138,
+      "rating": 4.8,
+      "review_count": 94,
+      "in_stock": true,
+      "stock_count": 15,
+      "is_best_seller": false,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Sale -20%",
+      "badge_type": "sale",
+      "images": [
+        "/images/photo-1521572163474-6864f9cf17ab.jpg",
+        "/images/photo-1617137968427-85924c800a22.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Warm Terracotta",
+          "hex": "#B85D38"
+        },
+        {
+          "name": "Ivory Cream",
+          "hex": "#FAF8F2"
+        },
+        {
+          "name": "Forest Olive",
+          "hex": "#2F4A37"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    },
+    {
+      "legacy_id": "zmw-006",
+      "name": "Kids' Organic Linen Pastel Romper",
+      "slug": "kids-organic-linen-pastel-romper",
+      "sku": "ZMW-KID-06",
+      "category_slug": "kids",
+      "subcategory_name": null,
+      "product_type": "Dresses",
+      "description": "GOTS-certified organic cotton and linen weave. Ultra-soft on delicate skin, reinforced wooden button closures, and roomy silhouette for effortless movement.",
+      "price": 64,
+      "original_price": 80,
+      "rating": 4.9,
+      "review_count": 88,
+      "in_stock": true,
+      "stock_count": 22,
+      "is_best_seller": true,
+      "is_new_arrival": true,
+      "is_sale": true,
+      "badge_label": "Boutique Kids",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1746386914795-83d2febc9a96.jpg",
+        "/images/photo-1763089402370-fb496fefdbb0.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Sage Mint",
+          "hex": "#9EB69E"
+        },
+        {
+          "name": "Oatmeal Cream",
+          "hex": "#ECE6DA"
+        },
+        {
+          "name": "Dusky Peach",
+          "hex": "#E8B2A2"
+        }
+      ],
+      "sizes": [
+        "2-3Y",
+        "3-4Y",
+        "4-5Y",
+        "5-6Y",
+        "7-8Y"
+      ]
+    },
+    {
+      "legacy_id": "zmw-007",
+      "name": "Liquid Charmeuse Pleated Maxi Skirt",
+      "slug": "liquid-charmeuse-pleated-maxi-skirt",
+      "sku": "ZMW-SKT-07",
+      "category_slug": "women",
+      "subcategory_name": null,
+      "product_type": "Skirts",
+      "description": "Weightless charmeuse skirt with finely gathered knife pleats that move fluidly with every step. Finished with a concealed side zip and a silky smooth inner slip for effortless drape.",
+      "price": 168,
+      "original_price": null,
+      "rating": 5,
+      "review_count": 61,
+      "in_stock": true,
+      "stock_count": 16,
+      "is_best_seller": true,
+      "is_new_arrival": true,
+      "is_sale": false,
+      "badge_label": "Handcrafted",
+      "badge_type": "new",
+      "images": [
+        "/images/photo-1515886657613-9f3515b0c78f.jpg",
+        "/images/photo-1524504388940-b1c1722653e1.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Oat Milk",
+          "hex": "#F3EDE3"
+        },
+        {
+          "name": "Terracotta Dusk",
+          "hex": "#C2703A"
+        },
+        {
+          "name": "Deep Espresso",
+          "hex": "#3A2A1E"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ]
+    },
+    {
+      "legacy_id": "zmw-008",
+      "name": "Relaxed Boxy Oxford Weave Shirt",
+      "slug": "relaxed-boxy-oxford-weave-shirt-zmw-008",
+      "sku": "ZMW-OXD-08",
+      "category_slug": "mens",
+      "subcategory_name": null,
+      "product_type": "Shirts",
+      "description": "A relaxed, boxy-cut oxford woven from dense cotton twill with a soft garment wash. Mother-of-pearl buttons and a curved hem deliver easy, modern polish that layers or stands alone.",
+      "price": 96,
+      "original_price": 120,
+      "rating": 4.8,
+      "review_count": 129,
+      "in_stock": true,
+      "stock_count": 21,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_sale": true,
+      "badge_label": "Best Seller",
+      "badge_type": "hot",
+      "images": [
+        "/images/photo-1489987707025-afc232f7ea0f.jpg",
+        "/images/photo-1618354691373-d851c5c3a990.jpg"
+      ],
+      "colors": [
+        {
+          "name": "Crisp White",
+          "hex": "#F7F5EF"
+        },
+        {
+          "name": "Sky Blue",
+          "hex": "#9BB8CC"
+        },
+        {
+          "name": "Charcoal Twill",
+          "hex": "#3B3B3B"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    }
+  ]
+}

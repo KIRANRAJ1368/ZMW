@@ -169,6 +169,25 @@ const BABIES_CARDS = [
   }
 ];
 
+function CategoryCards({ cards }) {
+  return cards.map((card) => (
+    <Link key={card.id} to={card.link} className="cat-feature-card">
+      <div className="cat-feature-img-wrap">
+        <img
+          src={card.image}
+          alt={card.title}
+          className="cat-feature-img"
+          loading="lazy"
+          style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
+        />
+        <div className="cat-feature-overlay" />
+        <span className="cat-feature-tag">{card.tag}</span>
+      </div>
+      <div className="cat-feature-caption"><h3 className="cat-feature-name">{card.title}</h3></div>
+    </Link>
+  ));
+}
+
 /* ── Section 3: Men's Categories Export ── */
 export function MensCategoriesSection() {
   return (
@@ -186,24 +205,7 @@ export function MensCategoriesSection() {
         </div>
 
         <div className="cat-feature-grid">
-          {MEN_CARDS.map((card) => (
-            <Link key={card.id} to={card.link} className="cat-feature-card">
-              <div className="cat-feature-img-wrap">
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="cat-feature-img"
-                  loading="lazy"
-                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
-                />
-                <div className="cat-feature-overlay" />
-                <span className="cat-feature-tag">{card.tag}</span>
-              </div>
-              <div className="cat-feature-caption">
-                <h3 className="cat-feature-name">{card.title}</h3>
-              </div>
-            </Link>
-          ))}
+          <CategoryCards cards={MEN_CARDS} />
         </div>
       </div>
     </section>
@@ -227,24 +229,7 @@ export function WomensCategoriesSection() {
         </div>
 
         <div className="cat-feature-grid cat-feature-grid--four">
-          {WOMEN_CARDS.map((card) => (
-            <Link key={card.id} to={card.link} className="cat-feature-card">
-              <div className="cat-feature-img-wrap">
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="cat-feature-img"
-                  loading="lazy"
-                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
-                />
-                <div className="cat-feature-overlay" />
-                <span className="cat-feature-tag">{card.tag}</span>
-              </div>
-              <div className="cat-feature-caption">
-                <h3 className="cat-feature-name">{card.title}</h3>
-              </div>
-            </Link>
-          ))}
+          <CategoryCards cards={WOMEN_CARDS} />
         </div>
       </div>
     </section>
@@ -268,24 +253,7 @@ export function BoysCategoriesSection() {
         </div>
 
         <div className="cat-feature-grid cat-feature-grid--four">
-          {BOYS_CARDS.map((card) => (
-            <Link key={card.id} to={card.link} className="cat-feature-card">
-              <div className="cat-feature-img-wrap">
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="cat-feature-img"
-                  loading="lazy"
-                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
-                />
-                <div className="cat-feature-overlay" />
-                <span className="cat-feature-tag">{card.tag}</span>
-              </div>
-              <div className="cat-feature-caption">
-                <h3 className="cat-feature-name">{card.title}</h3>
-              </div>
-            </Link>
-          ))}
+          <CategoryCards cards={BOYS_CARDS} />
         </div>
       </div>
     </section>
@@ -309,24 +277,7 @@ export function GirlsCategoriesSection() {
         </div>
 
         <div className="cat-feature-grid cat-feature-grid--four">
-          {GIRLS_CARDS.map((card) => (
-            <Link key={card.id} to={card.link} className="cat-feature-card">
-              <div className="cat-feature-img-wrap">
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="cat-feature-img"
-                  loading="lazy"
-                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
-                />
-                <div className="cat-feature-overlay" />
-                <span className="cat-feature-tag">{card.tag}</span>
-              </div>
-              <div className="cat-feature-caption">
-                <h3 className="cat-feature-name">{card.title}</h3>
-              </div>
-            </Link>
-          ))}
+          <CategoryCards cards={GIRLS_CARDS} />
         </div>
       </div>
     </section>
@@ -350,24 +301,7 @@ export function BabiesCategoriesSection() {
         </div>
 
         <div className="cat-feature-grid cat-feature-grid--four">
-          {BABIES_CARDS.map((card) => (
-            <Link key={card.id} to={card.link} className="cat-feature-card">
-              <div className="cat-feature-img-wrap">
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="cat-feature-img"
-                  loading="lazy"
-                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
-                />
-                <div className="cat-feature-overlay" />
-                <span className="cat-feature-tag">{card.tag}</span>
-              </div>
-              <div className="cat-feature-caption">
-                <h3 className="cat-feature-name">{card.title}</h3>
-              </div>
-            </Link>
-          ))}
+          <CategoryCards cards={BABIES_CARDS} />
         </div>
       </div>
     </section>

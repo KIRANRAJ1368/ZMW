@@ -52,10 +52,11 @@ export default function ProductCard({ product }) {
 
         {/* Primary & Secondary Images */}
         <img
-          src={product.images[0]}
+          src={product.images?.[0] || "/images/zmw-logo-transparent.png"}
           alt={product.name}
           className="product-img-primary"
           loading="lazy"
+          onError={(event) => { event.currentTarget.src = "/images/zmw-logo-transparent.png"; }}
         />
         {hasSecondaryImg && (
           <img
@@ -63,6 +64,7 @@ export default function ProductCard({ product }) {
             alt={`${product.name} alternate angle`}
             className="product-img-secondary"
             loading="lazy"
+            onError={(event) => { event.currentTarget.src = "/images/zmw-logo-transparent.png"; }}
           />
         )}
 

@@ -7,6 +7,7 @@ import {
   UNIFIED_PRODUCTS,
   INSTAGRAM_SHOWCASE
 } from "../data/products";
+import { storefrontApi } from "../services/storefrontApi";
 
 const ShopContext = createContext();
 
@@ -33,20 +34,37 @@ const readRecentlyViewedIds = () => {
 };
 
 export const ShopProvider = ({ children }) => {
-  // Unified product lookup across all catalogs
-  const allProducts = useMemo(() => {
-    return UNIFIED_PRODUCTS;
+  // Keep the local catalogue as a resilient first-render fallback, then replace
+  // it with the admin-managed API catalogue as soon as it is available.
+  const [allProducts, setAllProducts] = useState(UNIFIED_PRODUCTS);
+  const [homeData, setHomeData] = useState(null);
+  const [storefrontStatus, setStorefrontStatus] = useState("loading");
+
+  useEffect(() => {
+    let mounted = true;
+    Promise.all([storefrontApi.home(), storefrontApi.products()])
+      .then(([home, productPayload]) => {
+        if (!mounted) return;
+        setHomeData(home);
+        if (Array.isArray(productPayload) && productPayload.length) setAllProducts(productPayload);
+        setStorefrontStatus("ready");
+      })
+      .catch(() => {
+        // The existing local data remains visible if the API is temporarily unavailable.
+        if (mounted) setStorefrontStatus("fallback");
+      });
+    return () => { mounted = false; };
   }, []);
 
   const allProductsMap = useMemo(() => {
     const map = new Map();
     allProducts.forEach((p) => {
-      map.set(p.id, p);
+      map.set(String(p.id), p);
     });
     return map;
   }, [allProducts]);
 
-  const findProduct = (productId) => allProductsMap.get(productId) || null;
+  const findProduct = (productId) => allProductsMap.get(String(productId)) || null;
 
   const [recentlyViewedIds, setRecentlyViewedIds] = useState(() => {
     return readRecentlyViewedIds();
@@ -58,11 +76,12 @@ export const ShopProvider = ({ children }) => {
   );
 
   const trackRecentlyViewed = useCallback((productId) => {
-    if (!allProductsMap.has(productId)) return;
+    const normalizedId = String(productId);
+    if (!allProductsMap.has(normalizedId)) return;
     setRecentlyViewedIds((previous) => {
       const next = [
-      productId,
-      ...previous.filter((id) => id !== productId)
+      normalizedId,
+      ...previous.filter((id) => id !== normalizedId)
       ].slice(0, MAX_RECENTLY_VIEWED);
 
       try {
@@ -312,9 +331,11 @@ export const ShopProvider = ({ children }) => {
     <ShopContext.Provider
       value={{
         // Catalog
-        products: PRODUCTS,
+        products: allProducts.length ? allProducts : PRODUCTS,
         allProducts,
         findProduct,
+        homeData,
+        storefrontStatus,
         recentlyViewed,
         trackRecentlyViewed,
         // Cart

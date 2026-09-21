@@ -10,37 +10,41 @@ import {
 } from "../components/CategoryShowcase/CategoryFeatureGrid";
 import Newsletter from "../components/Newsletter/Newsletter";
 import ImageShowcase from "../components/ImageShowcase/ImageShowcase";
+import { useShop } from "../context/ShopContext";
 import "./Home.css";
 
 export default function Home() {
+  const { homeData } = useShop();
+  // Until the public payload loads, preserve the existing complete homepage.
+  const enabled = (key) => !homeData || homeData.sections?.some((section) => section.section_key === key);
   return (
     <>
       {/* 1. Hero Banner */}
-      <Hero />
+      {enabled("hero") && <Hero />}
 
       {/* 2. Explore by Department */}
-      <CategoryVisuals />
+      {enabled("category_visuals") && <CategoryVisuals />}
 
       {/* 3. New Arrivals */}
-      <NewArrivalsSection />
+      {enabled("new_arrivals") && <NewArrivalsSection />}
 
       {/* 4. Men's Categories */}
-      <MensCategoriesSection />
+      {enabled("mens_categories") && <MensCategoriesSection />}
 
       {/* 5. Women's Categories */}
-      <WomensCategoriesSection />
+      {enabled("womens_categories") && <WomensCategoriesSection />}
 
       {/* 6. Boys' Categories */}
-      <BoysCategoriesSection />
+      {enabled("boys_categories") && <BoysCategoriesSection />}
 
       {/* 7. Girls' Categories */}
-      <GirlsCategoriesSection />
+      {enabled("girls_categories") && <GirlsCategoriesSection />}
 
       {/* 8. Babies' Categories */}
-      <BabiesCategoriesSection />
+      {enabled("babies_categories") && <BabiesCategoriesSection />}
 
       {/* 9. Best Sellers */}
-      <BestSellersSection />
+      {enabled("best_sellers") && <BestSellersSection />}
 
       {/* 10. Promotional Benefits Section */}
       <section className="home-benefits-section" aria-label="Shopping Benefits">
@@ -111,4 +115,3 @@ export default function Home() {
     </>
   );
 }
-

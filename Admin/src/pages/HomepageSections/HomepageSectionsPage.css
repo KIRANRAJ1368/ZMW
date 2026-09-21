@@ -1,0 +1,165 @@
+/* ==========================================================================
+   ZMW CLOTHING — HOMEPAGE SECTIONS BUILDER
+   ========================================================================== */
+
+.homepage-sections-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.section-row-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 20px 26px;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.section-row-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+.section-row-card.is-active {
+  border-left: 4px solid var(--primary);
+}
+
+.section-row-card.is-inactive {
+  background: var(--surface-alt);
+  opacity: 0.7;
+  border-left: 4px solid #cbd5e1;
+}
+
+/* Toggle col */
+.section-toggle-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.section-status-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.tag-live {
+  color: var(--success);
+}
+
+.tag-off {
+  color: var(--text-subtle);
+}
+
+/* Inputs col */
+.section-inputs-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.section-badge-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.section-key-chip {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dark);
+  background: var(--surface-alt);
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--border);
+}
+
+.section-sub-label {
+  font-size: 11.5px;
+  color: var(--text-subtle);
+}
+
+.section-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.section-fields-grid input {
+  padding: 8px 12px;
+  font-size: 13px;
+  background: var(--surface);
+}
+
+/* Order Col */
+.section-order-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.section-order-col label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.order-number-input {
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-main);
+  background: var(--surface);
+}
+
+.order-number-input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* Action Col */
+.section-action-col {
+  flex-shrink: 0;
+  min-width: 90px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 960px) {
+  .section-row-card {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .section-inputs-col {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .section-fields-grid {
+    grid-template-columns: 1fr;
+  }
+  .section-action-col {
+    order: 2;
+    margin-left: auto;
+  }
+}

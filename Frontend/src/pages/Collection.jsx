@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import { UNIFIED_PRODUCTS } from "../data/products";
 import ProductCard from "../components/ProductCard/ProductCard";
 import RecentlyViewed from "../components/RecentlyViewed/RecentlyViewed";
 import "./Collection.css";
@@ -291,14 +290,15 @@ function GridIcon({ columns }) {
 export default function Collection() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { currency, currencies } = useShop();
+  const { currency, currencies, allProducts, homeData } = useShop();
+  const catalog = allProducts || [];
 
   const rate = (currencies && currencies[currency]?.rate) || 83;
   const currencySymbol = (currencies && currencies[currency]?.symbol) || "₹";
 
   const priceCeiling = useMemo(
-    () => Math.ceil(Math.max(...UNIFIED_PRODUCTS.map((p) => p.price * rate)) / 100) * 100,
-    [rate]
+    () => Math.ceil(Math.max(1, ...catalog.map((p) => p.price * rate)) / 100) * 100,
+    [catalog, rate]
   );
 
   const rawCategoryParam = (searchParams.get("category") || "all").toLowerCase();
@@ -358,7 +358,21 @@ export default function Collection() {
   }, [searchParams]);
 
   const bannerKey = collectionParam !== "all" ? collectionParam : categoryParam !== "all" ? categoryParam : "default";
-  const banner = BANNER_CONFIG[bannerKey] || BANNER_CONFIG.default;
+  const managedBanner = homeData?.banners?.[bannerKey]?.[0];
+  const banner = managedBanner
+    ? {
+        image: managedBanner.image_url,
+        imagePosition: managedBanner.image_position || "center center",
+        tag: managedBanner.tag,
+        badge: managedBanner.badge_promo,
+        title: managedBanner.title,
+        subtitle: managedBanner.subtitle,
+        primaryCta: managedBanner.primary_cta_text,
+        primaryLink: managedBanner.primary_cta_link,
+        secondaryCta: managedBanner.secondary_cta_text,
+        secondaryLink: managedBanner.secondary_cta_link
+      }
+    : BANNER_CONFIG[bannerKey] || BANNER_CONFIG.default;
 
   const currentCategoryKey = categoryParam === "all" ? "all" : categoryParam;
   const activeCategoryLabel = HERO_CATEGORY_TABS.find((t) => t.id === currentCategoryKey)?.label || "Collection";
@@ -409,8 +423,8 @@ export default function Collection() {
   };
 
   const baseCategoryProducts = useMemo(() => {
-    return UNIFIED_PRODUCTS.filter(matchesCategory);
-  }, [categoryParam]);
+    return catalog.filter(matchesCategory);
+  }, [catalog, categoryParam]);
 
   const availableColors = useMemo(() => {
     const map = new Map();
@@ -453,7 +467,7 @@ export default function Collection() {
   const outOfStockCount = baseCategoryProducts.length - inStockCount;
 
   const filteredProducts = useMemo(() => {
-    let list = UNIFIED_PRODUCTS.filter((p) => {
+    let list = catalog.filter((p) => {
       if (categoryParam !== "all" && !matchesCategory(p)) return false;
       if (collectionParam === "best-sellers" && !p.isBestSeller) return false;
       if (collectionParam === "new-arrivals" && !p.isNewArrival) return false;
@@ -527,7 +541,7 @@ export default function Collection() {
         break;
     }
     return list;
-  }, [categoryParam, collectionParam, typeParam, colorParam, sizeParam, availabilityParam, minPriceParam, maxPriceParam, sortParam, rate]);
+  }, [catalog, categoryParam, collectionParam, typeParam, colorParam, sizeParam, availabilityParam, minPriceParam, maxPriceParam, sortParam, rate]);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -805,6 +819,7 @@ export default function Collection() {
               alt={banner.title || "ZMW Apparel Collection"}
               className="hero-backdrop-img coll-hero-backdrop-img"
               style={{ objectPosition: banner.imagePosition || "75% 20%" }}
+              onError={(event) => { event.currentTarget.src = "/images/hero-family-banner.jpg"; }}
             />
             {/* Subtle balanced scrim: preserves bright, sharp model on right while text on left is ultra-crisp */}
             <div className="hero-backdrop-scrim coll-hero-backdrop-scrim" />

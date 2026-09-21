@@ -189,7 +189,7 @@ function ProductCarousel({
 
 /* ── Individual Section 2: New Arrivals Export ── */
 export function NewArrivalsSection() {
-  const { allProducts, products } = useShop();
+  const { allProducts, products, homeData } = useShop();
 
   const catalog = useMemo(() => {
     return allProducts && allProducts.length > 0 ? allProducts : products;
@@ -204,8 +204,12 @@ export function NewArrivalsSection() {
   }, [bestSellers]);
 
   const newArrivals = useMemo(() => {
-    return getNewArrivals(catalog, bestSellerIds, { limit: 12 });
-  }, [catalog, bestSellerIds]);
+    return homeData?.newArrivals?.length
+      ? homeData.newArrivals
+      : getNewArrivals(catalog, bestSellerIds, { limit: 12 });
+  }, [catalog, bestSellerIds, homeData]);
+
+  const section = homeData?.sections?.find((item) => item.section_key === "new_arrivals");
 
   const [selectedDept, setSelectedDept] = useState("all");
 
@@ -255,8 +259,8 @@ export function NewArrivalsSection() {
         badgeTone="new"
         sectionId="whats-new-this-season"
         eyebrow="JUST RELEASED 2026"
-        title="New Arrivals"
-        subtitle="Directly from our design atelier. Freshly dropped silhouettes with zero overlap with our best-seller lineup."
+        title={section?.title || "New Arrivals"}
+        subtitle={section?.subtitle || "Directly from our design atelier. Freshly dropped silhouettes with zero overlap with our best-seller lineup."}
         viewAllTo="/collection?collection=new-arrivals"
         viewAllLabel="Explore All New Arrivals"
         bgClass="new-arrivals-section"
@@ -270,15 +274,19 @@ export function NewArrivalsSection() {
 
 /* ── Individual Section 5: Best Sellers Export ── */
 export function BestSellersSection() {
-  const { allProducts, products } = useShop();
+  const { allProducts, products, homeData } = useShop();
 
   const catalog = useMemo(() => {
     return allProducts && allProducts.length > 0 ? allProducts : products;
   }, [allProducts, products]);
 
   const bestSellers = useMemo(() => {
-    return getBestSellers(catalog, { limit: 12, period: "30d" });
-  }, [catalog]);
+    return homeData?.bestSellers?.length
+      ? homeData.bestSellers
+      : getBestSellers(catalog, { limit: 12, period: "30d" });
+  }, [catalog, homeData]);
+
+  const section = homeData?.sections?.find((item) => item.section_key === "best_sellers");
 
   const bestSellersJsonLd = useMemo(() => {
     return generateCatalogJsonLd(bestSellers, "ZMW Best Sellers Collection");
@@ -297,8 +305,8 @@ export function BestSellersSection() {
         badgeTone="hot"
         sectionId="most-loved-pieces"
         eyebrow="MOST COVETED PIECES"
-        title="Best Sellers"
-        subtitle="Data-backed essentials: garments with peak sales volume, stellar verified reviews, and enduring customer demand."
+        title={section?.title || "Best Sellers"}
+        subtitle={section?.subtitle || "Data-backed essentials: garments with peak sales volume, stellar verified reviews, and enduring customer demand."}
         viewAllTo="/collection?collection=best-sellers"
         viewAllLabel="View All Best Sellers"
         bgClass="best-sellers-section"
