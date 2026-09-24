@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useShop } from "../../context/ShopContext";
+import { imageUrl } from "../../utils/imageUrl";
 import "./Hero.css";
 
 function renderHeroIcon(name) {
@@ -80,6 +82,7 @@ const HERO_BANNERS = [
       { icon: "shield", label: "100% Quality Checked" }
     ],
     image: "/images/hero-mens-oversized-tee.jpg",
+    imagePosition: "72% 10%",
     alt: "ZMW oversized streetwear graphic tee model",
     slideLabel: "Up to 50% Off",
     themeClass: "hero-theme-sale"
@@ -102,6 +105,7 @@ const HERO_BANNERS = [
       { icon: "tag", label: "100% Combed Cotton" }
     ],
     image: "/images/hero-mens-tshirt-banner-2.jpg",
+    imagePosition: "80% 10%",
     alt: "ZMW heavyweight graphic streetwear drop model",
     slideLabel: "Flat 25% Off",
     themeClass: "hero-theme-season"
@@ -124,6 +128,7 @@ const HERO_BANNERS = [
       { icon: "bolt", label: "Same-Day Dispatch" }
     ],
     image: "/images/cat-banner-womens.jpg",
+    imagePosition: "75% 8%",
     alt: "ZMW women's signature oversized graphic tee fashion model",
     slideLabel: "Winter Sale",
     themeClass: "hero-theme-winter"
@@ -131,18 +136,43 @@ const HERO_BANNERS = [
 ];
 
 export default function Hero() {
+  const { homeData } = useShop();
+  const managedBanners = homeData?.banners?.hero || [];
+  const banners = managedBanners.length
+    ? managedBanners.map((banner, index) => ({
+        id: banner.id,
+        badge: banner.tag || "ZMW",
+        badgeIcon: "sparkle",
+        subBadge: banner.badge_promo || "",
+        offer: banner.title,
+        offerTag: "",
+        headline: banner.title,
+        support: banner.subtitle || "",
+        cta: banner.primary_cta_text || "Shop Now",
+        link: banner.primary_cta_link || "/collection",
+        urgencyTag: banner.secondary_cta_text || "",
+        perks: [],
+        image: banner.image_url,
+        imagePosition: banner.image_position || "75% 10%",
+        alt: banner.title,
+        slideLabel: banner.title,
+        themeClass: `hero-theme-${(index % 3) + 1}`
+      }))
+    : HERO_BANNERS;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
 
   const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % HERO_BANNERS.length);
-  }, []);
+    setCurrentSlide((prev) => (prev + 1) % banners.length);
+  }, [banners.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + HERO_BANNERS.length) % HERO_BANNERS.length);
-  }, []);
+    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
+  }, [banners.length]);
+
+  useEffect(() => setCurrentSlide(0), [banners.length]);
 
   // 5-second automatic slide transition
   useEffect(() => {
@@ -184,7 +214,7 @@ export default function Hero() {
       onTouchEnd={handleTouchEnd}
     >
       <div className="hero-slides-wrapper">
-        {HERO_BANNERS.map((banner, index) => {
+        {banners.map((banner, index) => {
           const isActive = index === currentSlide;
           return (
             <div
@@ -195,10 +225,15 @@ export default function Hero() {
               {/* Full-bleed background image with clear model visibility */}
               <div className="hero-backdrop">
                 <img
-                  src={banner.image}
+                  src={imageUrl(banner.image)}
                   alt={banner.alt}
                   className="hero-backdrop-img"
                   loading={index === 0 ? "eager" : "lazy"}
+                  style={banner.imagePosition ? { objectPosition: banner.imagePosition } : undefined}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/images/hero-mens-oversized-tee.jpg";
+                  }}
                 />
                 {/* Subtle scrim ensuring clothing & model details stay bright and text is crisp */}
                 <div className="hero-backdrop-scrim" />
@@ -311,7 +346,7 @@ export default function Hero() {
 
       {/* Slide Dot Indicators */}
       <div className="hero-dots-wrap" role="tablist" aria-label="Hero slide indicators">
-        {HERO_BANNERS.map((banner, index) => (
+        {banners.map((banner, index) => (
           <button
             key={banner.id}
             type="button"

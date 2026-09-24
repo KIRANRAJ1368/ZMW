@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, Image as ImageIcon, Filter, Tags } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, Image as ImageIcon, Filter, Tags } from "lucide-react";
 import { subcategoriesApi, categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../components/ConfirmDialog/ConfirmDialog";
 import DataTable from "../../components/DataTable/DataTable";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import SubcategoryFormModal from "./SubcategoryFormModal";
+import SubcategoryViewModal from "../../components/EntityViewModal/SubcategoryViewModal";
 
 export default function SubcategoriesPage() {
   const [subcategories, setSubcategories] = useState([]);
@@ -13,6 +14,7 @@ export default function SubcategoriesPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const [viewing, setViewing] = useState(null);
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
 
@@ -215,9 +217,20 @@ export default function SubcategoriesPage() {
             },
             {
               key: "actions",
-              label: "",
+              label: "Actions",
+              width: "230px",
+              align: "right",
               render: (row) => (
                 <div className="table-actions">
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setViewing(row)}
+                    title="View subcategory details"
+                  >
+                    <Eye size={13} />
+                    <span>View</span>
+                  </button>
                   <button
                     type="button"
                     className="btn btn-secondary btn-sm"
@@ -254,6 +267,7 @@ export default function SubcategoriesPage() {
           }}
         />
       )}
+      {viewing && <SubcategoryViewModal subcategory={viewing} onClose={() => setViewing(null)} />}
       <ConfirmModal />
     </div>
   );

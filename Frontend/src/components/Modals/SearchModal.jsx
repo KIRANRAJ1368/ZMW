@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
+import { imageUrl } from "../../utils/imageUrl";
 import "./SearchModal.css";
 
 const POPULAR_SEARCHES = [
@@ -236,7 +237,7 @@ export default function SearchModal() {
                     >
                       <div className="search-item-img-wrap">
                         <img
-                          src={product.images && product.images[0]}
+                          src={imageUrl(product.images?.[0])}
                           alt={product.name}
                           className="search-item-img"
                           loading="lazy"

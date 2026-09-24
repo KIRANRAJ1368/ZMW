@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const env = require("../config/env");
 const ApiError = require("../utils/ApiError");
-const { AdminUser } = require("../models");
+const { AdminUser, User } = require("../models");
 
 /**
  * Verifies the Bearer token, loads the admin user fresh from the DB (so a
@@ -47,4 +47,56 @@ function requireRole(...allowedRoles) {
   };
 }
 
-module.exports = { requireAuth, requireRole };
+/**
+ * Verifies customer Bearer token and attaches User instance to req.user.
+ */
+async function requireCustomerAuth(req, res, next) {
+  const header = req.headers.authorization || "";
+  const [scheme, token] = header.split(" ");
+
+  if (scheme !== "Bearer" || !token) {
+    throw ApiError.unauthorized("Please sign in to proceed");
+  }
+
+  let payload;
+  try {
+    payload = jwt.verify(token, env.jwt.secret);
+  } catch (err) {
+    throw err;
+  }
+
+  const user = await User.findByPk(payload.sub);
+  if (!user || !user.is_active) {
+    throw ApiError.unauthorized("Customer account not found or deactivated");
+  }
+
+  req.user = user;
+  next();
+}
+
+/**
+ * Optionally extracts customer Bearer token if present.
+ * If missing or invalid, proceeds without error with req.user = null.
+ */
+async function optionalCustomerAuth(req, res, next) {
+  const header = req.headers.authorization || "";
+  const [scheme, token] = header.split(" ");
+
+  req.user = null;
+
+  if (scheme === "Bearer" && token) {
+    try {
+      const payload = jwt.verify(token, env.jwt.secret);
+      const user = await User.findByPk(payload.sub);
+      if (user && user.is_active) {
+        req.user = user;
+      }
+    } catch {
+      // Ignored for guest checkout
+    }
+  }
+
+  next();
+}
+
+module.exports = { requireAuth, requireRole, requireCustomerAuth, optionalCustomerAuth };

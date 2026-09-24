@@ -3,7 +3,7 @@ import EmptyState from "../EmptyState/EmptyState";
 import "./DataTable.css";
 
 /**
- * columns: [{ key, label, render?(row), width? }]
+ * columns: [{ key, label, render?(row), width?, align? }]
  * rows: array of data objects
  * rowKey: (row) => string|number
  */
@@ -27,7 +27,14 @@ export default function DataTable({
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.key} style={col.width ? { width: col.width } : undefined}>
+              <th
+                key={col.key}
+                style={
+                  col.width || col.align
+                    ? { ...(col.width ? { width: col.width } : {}), ...(col.align ? { textAlign: col.align } : {}) }
+                    : undefined
+                }
+              >
                 {col.label}
               </th>
             ))}
@@ -37,7 +44,9 @@ export default function DataTable({
           {rows.map((row, idx) => (
             <tr key={rowKey(row)}>
               {columns.map((col) => (
-                <td key={col.key}>{col.render ? col.render(row, idx) : row[col.key]}</td>
+                <td key={col.key} style={col.align ? { textAlign: col.align } : undefined}>
+                  {col.render ? col.render(row, idx) : row[col.key]}
+                </td>
               ))}
             </tr>
           ))}

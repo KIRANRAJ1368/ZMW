@@ -6,7 +6,7 @@ export const authApi = {
 };
 
 export const dashboardApi = {
-  summary: () => api.get("/admin/dashboard/summary")
+  summary: (params) => api.get("/admin/dashboard/summary", params)
 };
 
 export const categoriesApi = {
@@ -59,6 +59,11 @@ export const contactApi = {
   remove: (id) => api.delete(`/contact/${id}`)
 };
 
+export const customersApi = {
+  list: (params) => api.get("/customers", params),
+  getById: (id) => api.get(`/customers/${id}`)
+};
+
 export const uploadApi = {
   upload: (folder, files) => {
     const formData = new FormData();
@@ -66,3 +71,18 @@ export const uploadApi = {
     return api.upload(`/admin/uploads/${folder}`, formData);
   }
 };
+
+export const couponsApi = {
+  list: (params) => api.get("/coupons", params),
+  getById: (id) => api.get(`/coupons/${id}`),
+  create: (data) => api.post("/coupons", data),
+  update: (id, data) => api.put(`/coupons/${id}`, data),
+  remove: (id) => api.delete(`/coupons/${id}`)
+};
+
+export const reportsApi = {
+  sales: (params) => api.get("/admin/reports/sales", params),
+  products: (params) => api.get("/admin/reports/products", params),
+  orders: (params) => api.get("/admin/reports/orders", params)
+};
+

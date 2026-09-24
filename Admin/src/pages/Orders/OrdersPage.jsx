@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Eye, Filter, IndianRupee, Clock, CheckCircle2 } from "lucide-react";
+import { ShoppingBag, Eye, Filter, IndianRupee, Clock, CheckCircle2, UserCheck, UserX } from "lucide-react";
 import { ordersApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import DataTable from "../../components/DataTable/DataTable";
@@ -13,6 +13,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [meta, setMeta] = useState({ page: 1, totalPages: 1, total: 0 });
   const [status, setStatus] = useState("");
+  const [customerType, setCustomerType] = useState(""); // "" | "registered" | "guest"
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
@@ -20,7 +21,15 @@ export default function OrdersPage() {
   async function load() {
     setIsLoading(true);
     try {
-      const { data, meta } = await ordersApi.list({ status: status || undefined, page, limit: 15 });
+      const isGuestParam =
+        customerType === "guest" ? true : customerType === "registered" ? false : undefined;
+
+      const { data, meta } = await ordersApi.list({
+        status: status || undefined,
+        is_guest: isGuestParam,
+        page,
+        limit: 15
+      });
       setOrders(data || []);
       setMeta(meta || { page: 1, totalPages: 1, total: 0 });
     } catch (err) {
@@ -33,7 +42,7 @@ export default function OrdersPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, page]);
+  }, [status, customerType, page]);
 
   return (
     <div>
@@ -63,33 +72,60 @@ export default function OrdersPage() {
             background: "var(--surface)"
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Filter size={15} style={{ color: "var(--text-muted)" }} />
-            <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-main)" }}>Filter Status:</span>
-            <select
-              value={status}
-              onChange={(e) => {
-                setPage(1);
-                setStatus(e.target.value);
-              }}
-              style={{
-                minWidth: 190,
-                padding: "8px 12px",
-                border: "1.5px solid var(--border)",
-                borderRadius: "var(--radius-sm)",
-                background: "var(--surface)",
-                fontSize: "13px",
-                fontWeight: 500
-              }}
-            >
-              <option value="">All Fulfillment Statuses</option>
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </option>
-              ))}
-            </select>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Filter size={15} style={{ color: "var(--text-muted)" }} />
+              <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-main)" }}>Status:</span>
+              <select
+                value={status}
+                onChange={(e) => {
+                  setPage(1);
+                  setStatus(e.target.value);
+                }}
+                style={{
+                  minWidth: 170,
+                  padding: "7px 10px",
+                  border: "1.5px solid var(--border)",
+                  borderRadius: "var(--radius-sm)",
+                  background: "var(--surface)",
+                  fontSize: "13px",
+                  fontWeight: 500
+                }}
+              >
+                <option value="">All Fulfillment Statuses</option>
+                {STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-main)" }}>Checkout Type:</span>
+              <select
+                value={customerType}
+                onChange={(e) => {
+                  setPage(1);
+                  setCustomerType(e.target.value);
+                }}
+                style={{
+                  minWidth: 170,
+                  padding: "7px 10px",
+                  border: "1.5px solid var(--border)",
+                  borderRadius: "var(--radius-sm)",
+                  background: "var(--surface)",
+                  fontSize: "13px",
+                  fontWeight: 500
+                }}
+              >
+                <option value="">All Orders</option>
+                <option value="registered">Registered Customers Only</option>
+                <option value="guest">Guest Checkouts Only</option>
+              </select>
+            </div>
           </div>
+
           <span className="hint">
             Page {meta.page} of {meta.totalPages || 1}
           </span>
@@ -127,12 +163,36 @@ export default function OrdersPage() {
               label: "Customer & Destination",
               render: (row) => (
                 <div>
-                  <span className="cell-title">{row.customer_name}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span className="cell-title">{row.customer_name}</span>
+                  </div>
                   <div className="cell-muted" style={{ fontSize: 11.5 }}>
                     {row.city ? `${row.city}, ` : ""}{row.state || "India"}
                   </div>
                 </div>
               )
+            },
+            {
+              key: "customer_type",
+              label: "Account Type",
+              render: (row) =>
+                row.is_guest ? (
+                  <span
+                    className="pill-badge"
+                    style={{
+                      background: "var(--surface-alt)",
+                      color: "var(--text-muted)",
+                      border: "1px solid var(--border)",
+                      fontSize: 11
+                    }}
+                  >
+                    Guest Checkout
+                  </span>
+                ) : (
+                  <span className="pill-badge badge-gold" style={{ fontSize: 11 }}>
+                    Registered Client
+                  </span>
+                )
             },
             {
               key: "email",
@@ -178,12 +238,20 @@ export default function OrdersPage() {
             },
             {
               key: "actions",
-              label: "",
+              label: "Actions",
+              width: "120px",
+              align: "right",
               render: (row) => (
-                <Link to={`/orders/${row.id}`} className="btn btn-secondary btn-sm" title="View Order Details">
-                  <Eye size={13} />
-                  <span>Inspect</span>
-                </Link>
+                <div className="table-actions">
+                  <Link
+                    to={`/orders/${row.id}`}
+                    className="btn btn-secondary btn-sm"
+                    title="View Order Details"
+                  >
+                    <Eye size={13} />
+                    <span>View</span>
+                  </Link>
+                </div>
               )
             }
           ]}

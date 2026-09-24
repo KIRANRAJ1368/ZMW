@@ -422,6 +422,13 @@ export default function Collection() {
     return false;
   };
 
+  const matchesType = (value, type) => {
+    const normalize = (input) => (input || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const needle = normalize(type);
+    const candidate = normalize(value);
+    return candidate.includes(needle) || needle.includes(candidate);
+  };
+
   const baseCategoryProducts = useMemo(() => {
     return catalog.filter(matchesCategory);
   }, [catalog, categoryParam]);
@@ -472,8 +479,7 @@ export default function Collection() {
       if (collectionParam === "best-sellers" && !p.isBestSeller) return false;
       if (collectionParam === "new-arrivals" && !p.isNewArrival) return false;
       if (typeParam !== "all") {
-        const sub = (p.subCategory || "").toLowerCase();
-        if (!(p.productType || "").toLowerCase().includes(typeParam) && !sub.includes(typeParam)) return false;
+        if (!matchesType(p.productType, typeParam) && !matchesType(p.subCategory, typeParam)) return false;
       }
       if (colorParam.length > 0) {
         const pColors = (p.colors || p.color || []).map((c) => c.name.toLowerCase());

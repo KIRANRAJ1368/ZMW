@@ -14,7 +14,10 @@ import BannersPage from "./pages/Banners/BannersPage";
 import HomepageSectionsPage from "./pages/HomepageSections/HomepageSectionsPage";
 import OrdersPage from "./pages/Orders/OrdersPage";
 import OrderDetailPage from "./pages/Orders/OrderDetailPage";
+import CustomersPage from "./pages/Customers/CustomersPage";
 import ContactPage from "./pages/Contact/ContactPage";
+import CouponsPage from "./pages/Coupons/CouponsPage";
+import ReportsPage from "./pages/Reports/ReportsPage";
 
 export default function App() {
   return (
@@ -41,6 +44,9 @@ export default function App() {
             <Route path="homepage-sections" element={<HomepageSectionsPage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="orders/:id" element={<OrderDetailPage />} />
+            <Route path="coupons" element={<CouponsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="customers" element={<CustomersPage />} />
             <Route path="contact" element={<ContactPage />} />
           </Route>
         </Routes>

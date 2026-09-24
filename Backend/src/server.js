@@ -1,3 +1,8 @@
+const dns = require("node:dns");
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder("ipv4first");
+}
+
 const env = require("./config/env");
 const app = require("./app");
 const { sequelize } = require("./models");

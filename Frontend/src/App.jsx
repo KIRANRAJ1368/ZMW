@@ -11,6 +11,8 @@ import SocialFloatWidget from "./components/Widgets/SocialFloatWidget";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection";
 import Wishlist from "./pages/Wishlist";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import ComingSoon from "./pages/ComingSoon";
 import ProductDetail from "./pages/ProductDetail";
 
@@ -22,6 +24,7 @@ import TermsConditions from "./pages/TermsConditions";
 import ReturnRefundPolicy from "./pages/ReturnRefundPolicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import SizeGuide from "./pages/SizeGuide";
+import CustomerProfile from "./pages/CustomerProfile";
 
 // Modals & Drawers (lazy-loaded for performance) — these only render on
 // demand, so lazy-loading does not cause any navigation/route flash.
@@ -31,7 +34,6 @@ const QuickViewModal = lazy(() => import("./components/Modals/QuickViewModal"));
 const SearchModal = lazy(() => import("./components/Modals/SearchModal"));
 const AuthModal = lazy(() => import("./components/Modals/AuthModal"));
 const OrderTrackModal = lazy(() => import("./components/Modals/OrderTrackModal"));
-const CheckoutModal = lazy(() => import("./components/Modals/CheckoutModal"));
 const LightboxModal = lazy(() => import("./components/Modals/LightboxModal"));
 const ToastContainer = lazy(() => import("./components/Widgets/ToastContainer"));
 
@@ -64,7 +66,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/collection" element={<Collection />} />
-          
+
           {/* Query-preserving category redirects */}
           <Route path="/men" element={<CategoryRedirect defaultCategory="mens" />} />
           <Route path="/mens" element={<CategoryRedirect defaultCategory="mens" />} />
@@ -97,7 +99,12 @@ export default function App() {
           <Route path="/size-chart" element={<SizeGuide />} />
 
           <Route path="/product/:productId" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/account" element={<CustomerProfile />} />
+          <Route path="/profile" element={<CustomerProfile />} />
+          <Route path="/my-orders" element={<CustomerProfile />} />
           <Route path="*" element={<ComingSoon title="Page Not Found" />} />
         </Routes>
       </main>
@@ -114,7 +121,6 @@ export default function App() {
         <SearchModal />
         <AuthModal />
         <OrderTrackModal />
-        <CheckoutModal />
         <LightboxModal />
         <ToastContainer />
       </Suspense>

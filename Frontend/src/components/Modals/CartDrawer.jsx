@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import "./CartDrawer.css";
 
 export default function CartDrawer() {
+  const navigate = useNavigate();
+
   const {
     isCartOpen,
     setIsCartOpen,
@@ -22,7 +25,8 @@ export default function CartDrawer() {
     updateQuantity,
     removeFromCart,
     formatPrice,
-    setIsCheckoutOpen
+    setIsCheckoutOpen,
+    proceedToCheckout
   } = useShop();
 
   const [couponInput, setCouponInput] = useState("");
@@ -39,7 +43,7 @@ export default function CartDrawer() {
 
   const handleProceedCheckout = () => {
     setIsCartOpen(false);
-    setIsCheckoutOpen(true);
+    navigate("/checkout");
   };
 
   return (

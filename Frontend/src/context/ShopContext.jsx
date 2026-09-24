@@ -146,6 +146,128 @@ export const ShopProvider = ({ children }) => {
   // Toast notifications
   const [toasts, setToasts] = useState([]);
 
+  // Customer Authentication state
+  const [customerToken, setCustomerToken] = useState(() => {
+    try {
+      return localStorage.getItem("zmw_customer_token") || null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [customerUser, setCustomerUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem("zmw_customer_user");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [pendingCheckout, setPendingCheckout] = useState(false);
+
+  // Validate customer token on mount
+  useEffect(() => {
+    if (!customerToken) return;
+    storefrontApi
+      .getCustomerProfile(customerToken)
+      .then((data) => {
+        if (data?.user) {
+          setCustomerUser(data.user);
+          try {
+            localStorage.setItem("zmw_customer_user", JSON.stringify(data.user));
+          } catch (e) {
+            console.warn("Storage error", e);
+          }
+        }
+      })
+      .catch(() => {
+        setCustomerToken(null);
+        setCustomerUser(null);
+        try {
+          localStorage.removeItem("zmw_customer_token");
+          localStorage.removeItem("zmw_customer_user");
+        } catch (e) {
+          console.warn("Storage error", e);
+        }
+      });
+  }, [customerToken]);
+
+  const loginCustomer = async (email, password) => {
+    setIsAuthLoading(true);
+    try {
+      const res = await storefrontApi.loginCustomer({ email, password });
+      const { token, user } = res;
+      setCustomerToken(token);
+      setCustomerUser(user);
+      try {
+        localStorage.setItem("zmw_customer_token", token);
+        localStorage.setItem("zmw_customer_user", JSON.stringify(user));
+      } catch (e) {
+        console.warn("Storage error", e);
+      }
+      addToast(`Welcome back, ${user.name}! ✨`, "success");
+      return user;
+    } finally {
+      setIsAuthLoading(false);
+    }
+  };
+
+  const registerCustomer = async ({ name, email, phone, password, confirmPassword }) => {
+    setIsAuthLoading(true);
+    try {
+      const res = await storefrontApi.registerCustomer({ name, email, phone, password, confirmPassword });
+      const { token, user } = res;
+      setCustomerToken(token);
+      setCustomerUser(user);
+      try {
+        localStorage.setItem("zmw_customer_token", token);
+        localStorage.setItem("zmw_customer_user", JSON.stringify(user));
+      } catch (e) {
+        console.warn("Storage error", e);
+      }
+      addToast(`Welcome to ZMW Clothing, ${user.name}! ✨`, "success");
+      return user;
+    } finally {
+      setIsAuthLoading(false);
+    }
+  };
+
+  const logoutCustomer = () => {
+    setCustomerToken(null);
+    setCustomerUser(null);
+    try {
+      localStorage.removeItem("zmw_customer_token");
+      localStorage.removeItem("zmw_customer_user");
+    } catch (e) {
+      console.warn("Storage error", e);
+    }
+    addToast("You have been signed out.", "info");
+  };
+
+  const forgotPassword = async (email) => {
+    return storefrontApi.forgotPassword(email);
+  };
+
+  const verifyOtp = async (payload) => {
+    return storefrontApi.verifyOtp(payload);
+  };
+
+  const resetPassword = async (payload) => {
+    return storefrontApi.resetPassword(payload);
+  };
+
+  const proceedToCheckout = (navigateFn) => {
+    setIsCartOpen(false);
+    setIsCheckoutOpen(false);
+    if (typeof navigateFn === "function") {
+      navigateFn("/checkout");
+    } else if (typeof window !== "undefined" && window.location.pathname !== "/checkout") {
+      window.location.href = "/checkout";
+    }
+  };
+
   // Save Cart to LocalStorage
   useEffect(() => {
     try {
@@ -201,7 +323,7 @@ export const ShopProvider = ({ children }) => {
 
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
-        (item) => item.id === product.id && item.color === color && item.size === size
+        (item) => String(item.id) === String(product.id) && item.color === color && item.size === size
       );
 
       if (existingIndex > -1) {
@@ -233,7 +355,7 @@ export const ShopProvider = ({ children }) => {
     setCart((prev) =>
       prev
         .map((item) => {
-          if (item.id === id && item.color === color && item.size === size) {
+          if (String(item.id) === String(id) && item.color === color && item.size === size) {
             const newQty = item.quantity + delta;
             return newQty > 0 ? { ...item, quantity: newQty } : null;
           }
@@ -245,7 +367,7 @@ export const ShopProvider = ({ children }) => {
 
   const removeFromCart = (id, color, size) => {
     setCart((prev) =>
-      prev.filter((item) => !(item.id === id && item.color === color && item.size === size))
+      prev.filter((item) => !(String(item.id) === String(id) && item.color === color && item.size === size))
     );
     addToast("Item removed from bag.", "info");
   };
@@ -279,20 +401,37 @@ export const ShopProvider = ({ children }) => {
   };
 
   // Coupon code
-  const applyCoupon = (code) => {
-    const cleanCode = code.trim().toUpperCase();
-    if (cleanCode === "WELCOME10") {
-      setAppliedCoupon({ code: "WELCOME10", discountPercent: 10 });
-      setCouponError("");
-      addToast("✨ Coupon WELCOME10 applied! 10% discount added.", "success");
-      return true;
-    } else if (cleanCode === "LUXURY20") {
-      setAppliedCoupon({ code: "LUXURY20", discountPercent: 20 });
-      setCouponError("");
-      addToast("✨ VIP Coupon LUXURY20 applied! 20% discount added.", "success");
-      return true;
-    } else {
-      setCouponError("Invalid coupon code. Try WELCOME10 for 10% off!");
+  const applyCoupon = async (code) => {
+    const cleanCode = (code || "").trim().toUpperCase();
+    if (!cleanCode) return false;
+
+    try {
+      const res = await storefrontApi.validateCoupon(cleanCode, cartSubtotal);
+      if (res?.valid) {
+        setAppliedCoupon({
+          code: res.code,
+          discountType: res.discount_type,
+          discountValue: res.discount_value,
+          discountAmount: res.discount_amount,
+          discountPercent: res.discount_type === "percentage" ? res.discount_value : null
+        });
+        setCouponError("");
+        addToast(`✨ Coupon ${res.code} applied!`, "success");
+        return true;
+      }
+    } catch (err) {
+      if (cleanCode === "WELCOME10") {
+        setAppliedCoupon({ code: "WELCOME10", discountPercent: 10, discountType: "percentage" });
+        setCouponError("");
+        addToast("✨ Coupon WELCOME10 applied! 10% discount added.", "success");
+        return true;
+      } else if (cleanCode === "LUXURY20") {
+        setAppliedCoupon({ code: "LUXURY20", discountPercent: 20, discountType: "percentage" });
+        setCouponError("");
+        addToast("✨ VIP Coupon LUXURY20 applied! 20% discount added.", "success");
+        return true;
+      }
+      setCouponError(err.message || "Invalid coupon code.");
       return false;
     }
   };
@@ -306,7 +445,11 @@ export const ShopProvider = ({ children }) => {
   // Cart Calculations
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const discountAmount = appliedCoupon ? (cartSubtotal * appliedCoupon.discountPercent) / 100 : 0;
+  const discountAmount = appliedCoupon
+    ? appliedCoupon.discountAmount !== undefined
+      ? appliedCoupon.discountAmount
+      : (cartSubtotal * (appliedCoupon.discountPercent || 0)) / 100
+    : 0;
   const isFreeShipping = cartSubtotal >= FREE_SHIPPING_THRESHOLD;
   const shippingCost = cartSubtotal === 0 || isFreeShipping ? 0 : 15;
   const cartTotal = Math.max(0, cartSubtotal - discountAmount + shippingCost);
@@ -382,6 +525,19 @@ export const ShopProvider = ({ children }) => {
         // Auth
         authModalState,
         setAuthModalState,
+        customerToken,
+        customerUser,
+        isCustomerAuthenticated: Boolean(customerUser),
+        isAuthLoading,
+        pendingCheckout,
+        setPendingCheckout,
+        loginCustomer,
+        registerCustomer,
+        logoutCustomer,
+        forgotPassword,
+        verifyOtp,
+        resetPassword,
+        proceedToCheckout,
         // Order track
         isOrderTrackOpen,
         setIsOrderTrackOpen,

@@ -1,16 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
-import { Plus, Edit2, Trash2, Image as ImageIcon, Sparkles, Layout, ExternalLink } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, Image as ImageIcon, Sparkles, Layout, ExternalLink } from "lucide-react";
 import { bannersApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../components/ConfirmDialog/ConfirmDialog";
 import DataTable from "../../components/DataTable/DataTable";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import BannerFormModal from "./BannerFormModal";
+import BannerViewModal from "../../components/EntityViewModal/BannerViewModal";
 
 export default function BannersPage() {
   const [banners, setBanners] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const [viewing, setViewing] = useState(null);
   const [activeTab, setActiveTab] = useState("all"); // 'all' | 'hero' | 'collection'
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
@@ -254,9 +256,20 @@ export default function BannersPage() {
             },
             {
               key: "actions",
-              label: "",
+              label: "Actions",
+              width: "230px",
+              align: "right",
               render: (row) => (
                 <div className="table-actions">
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setViewing(row)}
+                    title="View banner details"
+                  >
+                    <Eye size={13} />
+                    <span>View</span>
+                  </button>
                   <button
                     type="button"
                     className="btn btn-secondary btn-sm"
@@ -292,6 +305,7 @@ export default function BannersPage() {
           }}
         />
       )}
+      {viewing && <BannerViewModal banner={viewing} onClose={() => setViewing(null)} />}
       <ConfirmModal />
     </div>
   );

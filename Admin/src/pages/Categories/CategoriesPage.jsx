@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, Image as ImageIcon, FolderTree } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, Image as ImageIcon, FolderTree } from "lucide-react";
 import { categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../components/ConfirmDialog/ConfirmDialog";
 import DataTable from "../../components/DataTable/DataTable";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import CategoryFormModal from "./CategoryFormModal";
+import CategoryViewModal from "../../components/EntityViewModal/CategoryViewModal";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(null); // null = closed, {} = new, {...} = edit
+  const [viewing, setViewing] = useState(null);
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
 
@@ -152,9 +154,20 @@ export default function CategoriesPage() {
             },
             {
               key: "actions",
-              label: "",
+              label: "Actions",
+              width: "230px",
+              align: "right",
               render: (row) => (
                 <div className="table-actions">
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setViewing(row)}
+                    title="View category details"
+                  >
+                    <Eye size={13} />
+                    <span>View</span>
+                  </button>
                   <button
                     type="button"
                     className="btn btn-secondary btn-sm"
@@ -190,6 +203,7 @@ export default function CategoriesPage() {
           }}
         />
       )}
+      {viewing && <CategoryViewModal category={viewing} onClose={() => setViewing(null)} />}
       <ConfirmModal />
     </div>
   );

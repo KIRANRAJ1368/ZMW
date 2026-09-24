@@ -1,8 +1,14 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
+import { imageUrl } from "../../utils/imageUrl";
 import "./ProductCard.css";
 
 function getProductBadge(product) {
+  if (product.badge) {
+    const typeMap = { hot: "trending", new: "newdrop", sale: "sale" };
+    return { text: product.badge, type: typeMap[product.badgeType] || "trending" };
+  }
   const raw = (product.badge || "").trim().toUpperCase();
   if (raw.includes("BEST")) return { text: "BEST SELLER", type: "bestseller" };
   if (raw.includes("DROP") || raw === "NEW" || raw.includes("NEW")) return { text: "NEW DROP", type: "newdrop" };
@@ -26,6 +32,9 @@ export default function ProductCard({ product }) {
   const handleCardClick = () => {
     navigate(`/product/${product.id}`);
   };
+
+  const primaryImg = (product.images && product.images[0]) || product.image || "/images/photo-1521572163474-6864f9cf17ab.jpg";
+  const secondaryImg = (product.images && product.images[1]) || null;
 
   return (
     <div className="product-card">
@@ -52,19 +61,24 @@ export default function ProductCard({ product }) {
 
         {/* Primary & Secondary Images */}
         <img
-          src={product.images?.[0] || "/images/zmw-logo-transparent.png"}
+          src={imageUrl(primaryImg)}
           alt={product.name}
           className="product-img-primary"
           loading="lazy"
-          onError={(event) => { event.currentTarget.src = "/images/zmw-logo-transparent.png"; }}
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = "/images/photo-1521572163474-6864f9cf17ab.jpg";
+          }}
         />
         {hasSecondaryImg && (
           <img
-            src={product.images[1]}
+            src={imageUrl(secondaryImg)}
             alt={`${product.name} alternate angle`}
             className="product-img-secondary"
             loading="lazy"
-            onError={(event) => { event.currentTarget.src = "/images/zmw-logo-transparent.png"; }}
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
           />
         )}
 

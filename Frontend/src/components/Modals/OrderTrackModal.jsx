@@ -1,33 +1,42 @@
 import React, { useState } from "react";
 import { useShop } from "../../context/ShopContext";
+import { storefrontApi } from "../../services/storefrontApi";
 import "./OrderTrackModal.css";
 
 export default function OrderTrackModal() {
   const { isOrderTrackOpen, setIsOrderTrackOpen } = useShop();
 
-  const [orderId, setOrderId] = useState("ZMW-89421");
-  const [email, setEmail] = useState("customer@domain.com");
+  const [orderId, setOrderId] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [trackingResult, setTrackingResult] = useState(null);
 
   if (!isOrderTrackOpen) return null;
 
-  const handleTrackSubmit = (e) => {
+  const handleTrackSubmit = async (e) => {
     e.preventDefault();
-    setTrackingResult({
-      orderId: orderId.toUpperCase(),
-      status: "In Transit — Express Air Freight",
-      carrier: "DHL Express Global",
-      estimatedDelivery: "September 05, 2026",
-      origin: "ZMW Dispatch Hub, 123, Avinashi Road, Peelamedu, Coimbatore, Tamil Nadu, India",
-      destination: "Bengaluru, India",
-      steps: [
-        { label: "Order Confirmed & Payment Verified", date: "Sept 01, 10:30 AM", done: true },
-        { label: "Hand-inspected & Packed in Linen Box", date: "Sept 01, 04:15 PM", done: true },
-        { label: "Dispatched via Express Courier", date: "Sept 02, 08:45 AM", done: true },
-        { label: "Customs Clearance Completed", date: "In Progress", done: false, active: true },
-        { label: "Delivered to Doorstep", date: "Estimated Sept 05", done: false }
-      ]
-    });
+    if (!orderId.trim()) return;
+    setLoading(true);
+    setError("");
+    setTrackingResult(null);
+
+    try {
+      const data = await storefrontApi.trackOrder(orderId.trim(), email.trim());
+      setTrackingResult({
+        orderId: data.orderNumber,
+        status: data.status ? data.status.toUpperCase() : "PROCESSING",
+        carrier: data.trackingCarrier || "DHL Express Global",
+        trackingNumber: data.trackingNumber,
+        estimatedDelivery: data.estimatedDelivery ? new Date(data.estimatedDelivery).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "In 3-5 Business Days",
+        destination: data.destination || "Customer Address",
+        steps: data.steps || []
+      });
+    } catch (err) {
+      setError(err.message || "Order not found. Please verify your Order Number and Email.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,8 +86,9 @@ export default function OrderTrackModal() {
               />
             </div>
           </div>
-          <button type="submit" className="btn btn-primary btn-sm">
-            Search Order Status
+          {error && <div style={{ color: "#d9534f", fontSize: "0.85rem", marginBottom: "1rem" }}>{error}</div>}
+          <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
+            {loading ? "Searching Dispatch Records..." : "Search Order Status"}
           </button>
         </form>
 

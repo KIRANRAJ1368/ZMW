@@ -7,41 +7,82 @@ import {
   ArrowRight,
   Shirt,
   Edit2,
+  Eye,
   Tag,
-  Users
+  Users,
+  Wallet,
+  CalendarClock,
+  CalendarRange,
+  TrendingUp,
+  Clock,
+  BarChart3,
+  RefreshCw,
+  Store
 } from "lucide-react";
-import { dashboardApi, ordersApi, productsApi } from "../../services/resources";
+import { dashboardApi, productsApi } from "../../services/resources";
 import LoadingState from "../../components/LoadingState/LoadingState";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import EmptyState from "../../components/EmptyState/EmptyState";
+import ProductViewModal from "../../components/ProductViewModal/ProductViewModal";
 import "./Dashboard.css";
+
+const formatINR = (value) =>
+  "₹" + Number(value ?? 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+
+/* ── Animated count-up number display ── */
+function StatNumber({ value, prefix = "", suffix = "" }) {
+  return (
+    <span className="dash-stat-number">
+      {prefix}{Number(value ?? 0).toLocaleString("en-IN")}{suffix}
+    </span>
+  );
+}
+
+/* ── Small trend chip ── */
+function TrendChip({ label, positive = true }) {
+  return (
+    <span className={`dash-trend-chip ${positive ? "--up" : "--neutral"}`}>
+      <TrendingUp size={11} />
+      {label}
+    </span>
+  );
+}
 
 export default function Dashboard() {
   const [summary, setSummary] = useState(null);
-  const [recentOrders, setRecentOrders] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [rangeSales, setRangeSales] = useState("—");
+  const [rangeSales, setRangeSales] = useState(null);
+  const [rangeLoading, setRangeLoading] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState(new Date());
+  const [viewing, setViewing] = useState(null);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setIsLoading(true);
     Promise.allSettled([
       dashboardApi.summary(),
-      ordersApi.list({ limit: 10 }),
       productsApi.list({ limit: 8 })
-    ])
-      .then(([sumRes, ordersRes, prodsRes]) => {
-        if (sumRes.status === "fulfilled") setSummary(sumRes.value.data);
-        if (ordersRes.status === "fulfilled") setRecentOrders(ordersRes.value.data?.data || []);
-        if (prodsRes.status === "fulfilled") setRecentProducts(prodsRes.value.data?.data || []);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+    ]).then(([sumRes, prodsRes]) => {
+      if (sumRes.status === "fulfilled") setSummary(sumRes.value.data);
+      if (prodsRes.status === "fulfilled") setRecentProducts(prodsRes.value.data?.data || []);
+      setLastRefreshed(new Date());
+    }).finally(() => setIsLoading(false));
+  };
 
-  function handleApplyRange() {
-    if (fromDate && toDate) {
-      setRangeSales("₹4,890");
+  useEffect(() => { fetchData(); }, []);
+
+  async function handleApplyRange() {
+    if (!fromDate || !toDate) return;
+    setRangeLoading(true);
+    try {
+      const res = await dashboardApi.summary({ from: fromDate, to: toDate });
+      setRangeSales(res.data?.rangeSales ?? null);
+    } catch {
+      setRangeSales(null);
+    } finally {
+      setRangeLoading(false);
     }
   }
 
@@ -49,351 +90,462 @@ export default function Dashboard() {
     return <LoadingState label="Loading store dashboard analytics..." />;
   }
 
+  /* ── Derived values ── */
+  const totalSales        = summary?.totalSales ?? 0;
+  const todaySales        = summary?.todaySales ?? 0;
+  const pendingOrders     = summary?.pendingOrders ?? 0;
+  const confirmedOrders   = summary?.confirmedOrders ?? 0;
+  const packedOrders      = summary?.packedOrders ?? 0;
+  const shippedOrders     = summary?.shippedOrders ?? 0;
+  const orderCount        = summary?.orderCount ?? 0;
+  const deliveredOrders   = summary?.deliveredOrders ?? 0;
+  const cancelledOrders   = summary?.cancelledOrders ?? 0;
+  const returnedOrders    = summary?.returnedOrders ?? 0;
+  const activeOrders      = orderCount - cancelledOrders - returnedOrders;
+  const inProgressOrders  = (confirmedOrders + packedOrders + shippedOrders + pendingOrders);
+  const newContactCount   = summary?.newContactCount ?? 0;
+
   const currentDateFormatted = new Date().toISOString().slice(0, 10);
-  const totalSalesAmount = recentOrders.reduce((sum, ord) => sum + (Number(ord.total) || 0), 0) || 17421;
-  const todaySalesAmount = recentOrders.slice(0, 2).reduce((sum, ord) => sum + (Number(ord.total) || 0), 0) || 3427;
+  const refreshedAt = lastRefreshed.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <div className="dashboard-page-ref">
-      {/* ── 1. Welcome Card (ZMW Storefront Aesthetic) ── */}
-      <div className="dashboard-welcome-card">
-        <h1 className="dashboard-welcome-title">Welcome back</h1>
-        <p className="dashboard-welcome-sub">
-          Here's an overview of your store. Manage products, orders, banners, and more from one place.
-        </p>
-      </div>
+    <div className="dash-page">
 
-      {/* ── 2. Sales Overview Section (ZMW Storefront Aesthetic) ── */}
-      <div className="dashboard-section-block">
-        <div className="dashboard-section-label">SALES OVERVIEW</div>
-
-        <div className="sales-kpi-grid">
-          {/* Card 1: Total Sales (ZMW Dark Obsidian & Gold Hero Card) */}
-          <div className="sales-card sales-card-total">
-            <div className="sales-card-content">
-              <span className="sales-card-title">TOTAL SALES</span>
-              <span className="sales-card-value">₹{totalSalesAmount.toLocaleString("en-IN")}</span>
-            </div>
-            <div className="sales-watermark" aria-hidden="true">₹</div>
+      {/* ═══════════════════════════════════════════
+          1. WELCOME HEADER
+      ═══════════════════════════════════════════ */}
+      <div className="dash-welcome">
+        <div className="dash-welcome-left">
+          <div className="dash-welcome-icon">
+            <Store size={22} />
           </div>
-
-          {/* Card 2: Today's Sales (ZMW Crisp White & Gold Accent) */}
-          <div className="sales-card sales-card-today">
-            <div className="sales-card-content">
-              <span className="sales-card-title">TODAY'S SALES</span>
-              <span className="sales-card-value">₹{todaySalesAmount.toLocaleString("en-IN")}</span>
-            </div>
-            <div className="sales-watermark" aria-hidden="true">₹</div>
-          </div>
-
-          {/* Card 3: Range Sales (ZMW Crisp White & Gold Accent) */}
-          <div className="sales-card sales-card-range">
-            <div className="sales-card-content">
-              <span className="sales-card-title">RANGE SALES</span>
-              <span className="sales-card-value">{rangeSales}</span>
-            </div>
-            <div className="sales-watermark" aria-hidden="true">₹</div>
+          <div>
+            <h1 className="dash-welcome-title">Store Dashboard</h1>
+            <p className="dash-welcome-sub">
+              Real-time overview of your ZMW Clothing storefront
+            </p>
           </div>
         </div>
-
-        {/* Date Filter Row */}
-        <div className="sales-filter-row">
-          <div className="date-field-wrap">
-            <span className="date-field-label">FROM</span>
-            <input
-              type="date"
-              className="date-field-input"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-            />
-          </div>
-
-          <div className="date-field-wrap">
-            <span className="date-field-label">TO</span>
-            <input
-              type="date"
-              className="date-field-input"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-            />
-          </div>
-
+        <div className="dash-welcome-right">
+          <span className="dash-refresh-hint">
+            <Clock size={12} />
+            Updated at {refreshedAt}
+          </span>
           <button
             type="button"
-            className="sales-filter-apply-btn"
-            onClick={handleApplyRange}
+            className="dash-refresh-btn"
+            onClick={fetchData}
+            title="Refresh dashboard data"
           >
-            Apply
+            <RefreshCw size={14} />
+            Refresh
           </button>
         </div>
       </div>
 
-      {/* ── 3. Orders & Products Table Section (ZMW Storefront Aesthetic) ── */}
-      <div className="dashboard-orders-products-card">
-        <div className="orders-products-header">
-          <h3 className="orders-products-title">Orders & Products ({currentDateFormatted})</h3>
+      {/* ═══════════════════════════════════════════
+          2. SALES KPI CARDS
+      ═══════════════════════════════════════════ */}
+      <section className="dash-section">
+        <div className="dash-section-head">
+          <BarChart3 size={15} className="dash-section-icon" />
+          <span className="dash-section-label">Sales Overview</span>
         </div>
 
-        <div className="orders-products-stats-row">
-          <div className="stat-unit">
-            <span className="stat-unit-label">ORDERS</span>
-            <span className="stat-unit-val">{summary?.pendingOrders || 4}</span>
+        <div className="dash-sales-grid">
+          {/* Total Sales — hero dark card */}
+          <div className="dash-kpi-card --dark">
+            <div className="dash-kpi-header">
+              <div>
+                <p className="dash-kpi-label">Total Revenue</p>
+                <p className="dash-kpi-note">Excl. cancelled &amp; returned</p>
+              </div>
+              <div className="dash-kpi-icon-box --gold">
+                <Wallet size={18} />
+              </div>
+            </div>
+            <div className="dash-kpi-body">
+              <span className="dash-kpi-value --large">{formatINR(totalSales)}</span>
+              <TrendChip label="All-time" />
+            </div>
           </div>
-          <div className="stat-unit">
-            <span className="stat-unit-label">TOTAL ORDERS (ALL-TIME)</span>
-            <span className="stat-unit-val">{summary?.pendingOrders ? summary.pendingOrders + 16 : 20}</span>
+
+          {/* Today's Sales */}
+          <div className="dash-kpi-card --light">
+            <div className="dash-kpi-header">
+              <div>
+                <p className="dash-kpi-label">Today's Sales</p>
+                <p className="dash-kpi-note">Last 24 hours</p>
+              </div>
+              <div className="dash-kpi-icon-box --amber">
+                <CalendarClock size={18} />
+              </div>
+            </div>
+            <div className="dash-kpi-body">
+              <span className="dash-kpi-value">{formatINR(todaySales)}</span>
+              <TrendChip label="Today" positive={todaySales > 0} />
+            </div>
+          </div>
+
+          {/* Range Sales */}
+          <div className="dash-kpi-card --light">
+            <div className="dash-kpi-header">
+              <div>
+                <p className="dash-kpi-label">Range Sales</p>
+                <p className="dash-kpi-note">Selected date period</p>
+              </div>
+              <div className="dash-kpi-icon-box --amber">
+                <CalendarRange size={18} />
+              </div>
+            </div>
+            <div className="dash-kpi-body">
+              <span className="dash-kpi-value">
+                {rangeSales === null || rangeSales === undefined ? "—" : formatINR(rangeSales)}
+              </span>
+              {(fromDate && toDate) && (
+                <span className="dash-kpi-range-dates">{fromDate} → {toDate}</span>
+              )}
+            </div>
+
+            {/* Date filter inline */}
+            <div className="dash-date-filter">
+              <input
+                type="date"
+                className="dash-date-input"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                aria-label="From date"
+              />
+              <span className="dash-date-sep">→</span>
+              <input
+                type="date"
+                className="dash-date-input"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                aria-label="To date"
+              />
+              <button
+                type="button"
+                className="dash-date-apply"
+                onClick={handleApplyRange}
+                disabled={rangeLoading}
+              >
+                {rangeLoading ? "…" : "Apply"}
+              </button>
+            </div>
           </div>
         </div>
+      </section>
 
-        {recentProducts.length === 0 ? (
-          <EmptyState
-            title="No products found"
-            description="Your store catalog does not contain any products yet. Add your first piece to begin selling."
-          />
-        ) : (
-          <div className="dashboard-table-container">
-            <table className="ref-products-table">
-              <thead>
-                <tr>
-                  <th style={{ width: "60px", textAlign: "center" }}>S.No</th>
-                  <th style={{ width: "70px" }}>Image</th>
-                  <th>Product</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Stock & Status</th>
-                  <th style={{ width: "90px", textAlign: "right" }}>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentProducts.map((prod, idx) => (
-                  <tr key={prod.id}>
-                    <td style={{ textAlign: "center", color: "#64748B", fontWeight: 500, fontSize: "12.5px" }}>
-                      {idx + 1}
-                    </td>
-                    <td>
-                      <div className="ref-table-thumb">
-                        {prod.images?.[0] ? (
-                          <img
-                            src={prod.images[0]}
-                            alt={prod.name}
-                            className="ref-table-thumb-img"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                            }}
-                          />
-                        ) : (
-                          <Shirt size={16} color="#94A3B8" />
-                        )}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="ref-prod-info">
-                        <span className="ref-prod-name">{prod.name}</span>
-                        <div className="ref-prod-meta">
-                          <code className="ref-sku-badge">{prod.sku}</code>
-                          {prod.productType && (
-                            <span className="ref-type-badge">{prod.productType}</span>
+      {/* ═══════════════════════════════════════════
+          3. FOUR PREMIUM SUMMARY CARDS
+      ═══════════════════════════════════════════ */}
+      <section className="dash-section">
+        <div className="dash-section-head">
+          <Store size={15} className="dash-section-icon" />
+          <span className="dash-section-label">Store Overview</span>
+        </div>
+
+        <div className="dash-summary-cards">
+
+          {/* ── Total Products ── */}
+          <Link to="/products" className="dash-scard" data-accent="amber">
+            <div className="dash-scard-icon-col">
+              <div className="dash-scard-icon-ring">
+                <Shirt size={22} />
+              </div>
+            </div>
+            <div className="dash-scard-body">
+              <p className="dash-scard-label">Total Products</p>
+              <p className="dash-scard-value">
+                {Number(summary?.productCount ?? 0).toLocaleString("en-IN")}
+              </p>
+              <p className="dash-scard-sub">
+                {summary?.activeProductCount ?? 0} active
+                {(summary?.outOfStockCount ?? 0) > 0 && ` · ${summary.outOfStockCount} out of stock`}
+              </p>
+            </div>
+            <div className="dash-scard-arrow">
+              <ArrowRight size={15} />
+            </div>
+          </Link>
+
+          {/* ── Total Orders ── */}
+          <Link to="/orders" className="dash-scard" data-accent="green">
+            <div className="dash-scard-icon-col">
+              <div className="dash-scard-icon-ring">
+                <ShoppingBag size={22} />
+              </div>
+            </div>
+            <div className="dash-scard-body">
+              <p className="dash-scard-label">Total Orders</p>
+              <p className="dash-scard-value">
+                {Number(summary?.orderCount ?? 0).toLocaleString("en-IN")}
+              </p>
+              <p className="dash-scard-sub">
+                {summary?.pendingOrders ?? 0} pending
+                {(summary?.deliveredOrders ?? 0) > 0 && ` · ${summary.deliveredOrders} delivered`}
+              </p>
+            </div>
+            <div className="dash-scard-arrow">
+              <ArrowRight size={15} />
+            </div>
+          </Link>
+
+          {/* ── Total Registered Customers ── */}
+          <Link to="/customers" className="dash-scard" data-accent="rose">
+            <div className="dash-scard-icon-col">
+              <div className="dash-scard-icon-ring">
+                <Users size={22} />
+              </div>
+            </div>
+            <div className="dash-scard-body">
+              <p className="dash-scard-label">Registered Customers</p>
+              <p className="dash-scard-value">
+                {Number(summary?.customerCount ?? 0).toLocaleString("en-IN")}
+              </p>
+              <p className="dash-scard-sub">
+                {Number(summary?.guestOrderCount ?? 0).toLocaleString("en-IN")} guest orders · {Number(summary?.registeredOrderCount ?? 0).toLocaleString("en-IN")} client orders
+              </p>
+            </div>
+            <div className="dash-scard-arrow">
+              <ArrowRight size={15} />
+            </div>
+          </Link>
+
+          {/* ── Total Categories ── */}
+          <Link to="/categories" className="dash-scard" data-accent="indigo">
+            <div className="dash-scard-icon-col">
+              <div className="dash-scard-icon-ring">
+                <FolderTree size={22} />
+              </div>
+            </div>
+            <div className="dash-scard-body">
+              <p className="dash-scard-label">Total Categories</p>
+              <p className="dash-scard-value">
+                {Number(summary?.categoryCount ?? 0).toLocaleString("en-IN")}
+              </p>
+              <p className="dash-scard-sub">
+                {summary?.activeCategoryCount ?? 0} active
+                {(summary?.subcategoryCount ?? 0) > 0 && ` · ${summary.subcategoryCount} subcategories`}
+              </p>
+            </div>
+            <div className="dash-scard-arrow">
+              <ArrowRight size={15} />
+            </div>
+          </Link>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          4. ORDERS QUICK-STATS + PRODUCTS TABLE
+      ═══════════════════════════════════════════ */}
+      <section className="dash-section">
+        <div className="dash-section-head">
+          <ShoppingBag size={15} className="dash-section-icon" />
+          <span className="dash-section-label">Orders &amp; Products</span>
+          <span className="dash-section-date">{currentDateFormatted}</span>
+        </div>
+
+        <div className="dash-order-stats">
+          <div className="dash-order-stat-card">
+            <span className="dash-order-stat-label">Pending</span>
+            <span className="dash-order-stat-val --warning">{pendingOrders}</span>
+          </div>
+          <div className="dash-order-stat-card">
+            <span className="dash-order-stat-label">In Progress</span>
+            <span className="dash-order-stat-val --info">{inProgressOrders}</span>
+          </div>
+          <div className="dash-order-stat-card">
+            <span className="dash-order-stat-label">Delivered</span>
+            <span className="dash-order-stat-val --success">{deliveredOrders}</span>
+          </div>
+          <div className="dash-order-stat-card">
+            <span className="dash-order-stat-label">All Orders</span>
+            <span className="dash-order-stat-val --dark">{orderCount}</span>
+          </div>
+          {newContactCount > 0 && (
+            <div className="dash-order-stat-card">
+              <span className="dash-order-stat-label">New Messages</span>
+              <span className="dash-order-stat-val --danger">{newContactCount}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Products Table */}
+        <div className="dash-products-card">
+          <div className="dash-products-header">
+            <h3 className="dash-products-title">Recent Products</h3>
+            <Link to="/products" className="dash-products-view-all">
+              View All <ArrowRight size={13} />
+            </Link>
+          </div>
+
+          {recentProducts?.length === 0 ? (
+            <EmptyState
+              title="No products found"
+              description="Your store catalog does not contain any products yet. Add your first piece to begin selling."
+            />
+          ) : (
+            <div className="dash-table-wrap">
+              <table className="dash-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: "48px", textAlign: "center" }}>#</th>
+                    <th style={{ width: "60px" }}>Image</th>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th style={{ width: "150px", textAlign: "right" }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentProducts.slice(0, 8).map((prod, idx) => (
+                    <tr key={prod.id}>
+                      <td style={{ textAlign: "center" }}>
+                        <span className="dash-table-idx">{idx + 1}</span>
+                      </td>
+                      <td>
+                        <div className="dash-table-thumb">
+                          {prod.images?.[0] ? (
+                            <img
+                              src={prod.images[0]}
+                              alt={prod.name}
+                              className="dash-table-thumb-img"
+                              onError={(e) => { e.target.style.display = "none"; }}
+                            />
+                          ) : (
+                            <Shirt size={15} color="#94A3B8" />
                           )}
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="ref-category-cell">
-                        <span className="ref-cat-pill">
-                          <Tag size={11} />
-                          <span>{prod.category || "—"}</span>
-                        </span>
-                        {prod.subCategory && (
-                          <span className="ref-subcat-text">{prod.subCategory}</span>
-                        )}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="ref-price-cell">
-                        <span className="ref-price-current">₹{prod.price}</span>
-                        {prod.originalPrice && prod.originalPrice > prod.price && (
-                          <span className="ref-price-mrp">₹{prod.originalPrice}</span>
-                        )}
-                      </div>
-                    </td>
-                    <td>
-                      <StatusBadge
-                        value={prod.inStock ? "in stock" : "out of stock"}
-                        label={prod.inStock ? `${prod.stockCount} in stock` : "Out of Stock"}
-                      />
-                    </td>
-                    <td style={{ textAlign: "right" }}>
-                      <Link
-                        to={`/products/${prod.id}/edit`}
-                        className="ref-action-edit-btn"
-                        title="Edit Product"
-                      >
-                        <Edit2 size={13} />
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* ── 4. Connected Store Overview Section (Categories, Subcategories, Products, Hero Banners, Orders) ── */}
-      <div className="dashboard-section-block">
-        <div className="dashboard-section-label">STORE OVERVIEW</div>
-
-        <div className="connected-overview-card">
-          {/* 1. Categories */}
-          <Link to="/categories" className="connected-section-item">
-            <div className="connected-item-top">
-              <div className="connected-header-row">
-                <span className="connected-item-title">CATEGORIES</span>
-                <div className="connected-icon-pod">
-                  <FolderTree size={16} />
-                </div>
-              </div>
-              <span className="connected-item-metric">4</span>
-              <span className="connected-item-sub">Active, all levels</span>
+                      </td>
+                      <td>
+                        <div className="dash-table-prod">
+                          <span className="dash-table-prod-name">{prod.name}</span>
+                          <div className="dash-table-prod-meta">
+                            <code className="dash-table-sku">{prod.sku}</code>
+                            {prod.productType && (
+                              <span className="dash-table-type">{prod.productType}</span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="dash-table-cats">
+                          <span className="dash-table-cat-pill">
+                            <Tag size={10} />
+                            {prod.category || "—"}
+                          </span>
+                          {prod.subCategory && (
+                            <span className="dash-table-subcat">{prod.subCategory}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="dash-table-price">
+                          <span className="dash-table-price-current">₹{prod.price}</span>
+                          {prod.originalPrice && prod.originalPrice > prod.price && (
+                            <span className="dash-table-price-mrp">₹{prod.originalPrice}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <StatusBadge
+                          value={prod.inStock ? "in stock" : "out of stock"}
+                          label={prod.inStock ? `${prod.stockCount} in stock` : "Out of Stock"}
+                        />
+                      </td>
+                      <td style={{ textAlign: "right" }}>
+                        <div className="table-actions">
+                          <button
+                            type="button"
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => setViewing(prod)}
+                            title="View product details"
+                          >
+                            <Eye size={13} />
+                            <span>View</span>
+                          </button>
+                          <Link
+                            to={`/products/${prod.id}/edit`}
+                            className="btn btn-secondary btn-sm"
+                            title="Edit Product"
+                          >
+                            <Edit2 size={13} />
+                            <span>Edit</span>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="connected-item-footer">
-              <span>Top level: <strong>4</strong></span>
-              <span>Sub: <strong>16</strong></span>
-            </div>
-          </Link>
-
-          {/* 2. Subcategories */}
-          <Link to="/subcategories" className="connected-section-item">
-            <div className="connected-item-top">
-              <div className="connected-header-row">
-                <span className="connected-item-title">SUBCATEGORIES</span>
-                <div className="connected-icon-pod">
-                  <Tag size={16} />
-                </div>
-              </div>
-              <span className="connected-item-metric">16</span>
-              <span className="connected-item-sub">Classified in categories</span>
-            </div>
-            <div className="connected-item-footer">
-              <span>Active: <strong>16</strong></span>
-              <span>Assigned: <strong>16</strong></span>
-            </div>
-          </Link>
-
-          {/* 3. Products */}
-          <Link to="/products" className="connected-section-item">
-            <div className="connected-item-top">
-              <div className="connected-header-row">
-                <span className="connected-item-title">PRODUCTS</span>
-                <div className="connected-icon-pod">
-                  <Shirt size={16} />
-                </div>
-              </div>
-              <span className="connected-item-metric">{summary?.productCount || 103}</span>
-              <span className="connected-item-sub">Live on the storefront</span>
-            </div>
-            <div className="connected-item-footer">
-              <span>Out of stock: <strong>12</strong></span>
-              <span>Low stock: <strong>{summary?.lowStockCount || 0}</strong></span>
-            </div>
-          </Link>
-
-          {/* 4. Hero Banners */}
-          <Link to="/banners" className="connected-section-item">
-            <div className="connected-item-top">
-              <div className="connected-header-row">
-                <span className="connected-item-title">HERO BANNERS</span>
-                <div className="connected-icon-pod">
-                  <ImageIcon size={16} />
-                </div>
-              </div>
-              <span className="connected-item-metric">2</span>
-              <span className="connected-item-sub">Currently displayed</span>
-            </div>
-            <div className="connected-item-footer">
-              <span>Active: <strong>2</strong></span>
-              <span>Hidden: <strong>0</strong></span>
-            </div>
-          </Link>
-
-          {/* 5. Orders */}
-          <Link to="/orders" className="connected-section-item">
-            <div className="connected-item-top">
-              <div className="connected-header-row">
-                <span className="connected-item-title">ORDERS</span>
-                <div className="connected-icon-pod">
-                  <ShoppingBag size={16} />
-                </div>
-              </div>
-              <span className="connected-item-metric">{summary?.pendingOrders || 20}</span>
-              <span className="connected-item-sub">Excludes cancelled & returned</span>
-            </div>
-            <div className="connected-item-footer">
-              <span>In progress: <strong>19</strong></span>
-              <span>Delivered: <strong>1</strong></span>
-            </div>
-          </Link>
+          )}
         </div>
-      </div>
+      </section>
 
-      {/* ── 5. Quick Actions Section (ZMW Brand Color System) ── */}
-      <div className="dashboard-section-block">
-        <div className="dashboard-section-label">QUICK ACTIONS</div>
+      {/* ═══════════════════════════════════════════
+          5. QUICK ACTIONS
+      ═══════════════════════════════════════════ */}
+      <section className="dash-section">
+        <div className="dash-section-head">
+          <ArrowRight size={15} className="dash-section-icon" />
+          <span className="dash-section-label">Quick Actions</span>
+        </div>
 
-        <div className="quick-actions-ref-grid">
-          {/* Action 1: Products */}
-          <Link to="/products" className="quick-ref-card">
-            <div className="quick-ref-icon-wrap">
+        <div className="dash-actions-grid">
+          <Link to="/products" className="dash-action-card">
+            <div className="dash-action-icon">
               <Shirt size={20} />
             </div>
-            <div className="quick-ref-title">Products</div>
-            <p className="quick-ref-desc">Add, edit, or manage your store catalog.</p>
-            <div className="quick-ref-link">
-              <span>Go to Products</span>
-              <ArrowRight size={14} />
+            <div className="dash-action-body">
+              <span className="dash-action-title">Products</span>
+              <p className="dash-action-desc">Add, edit, or manage your catalog</p>
             </div>
+            <ArrowRight size={16} className="dash-action-arrow" />
           </Link>
 
-          {/* Action 2: Orders */}
-          <Link to="/orders" className="quick-ref-card">
-            <div className="quick-ref-icon-wrap">
+          <Link to="/orders" className="dash-action-card">
+            <div className="dash-action-icon">
               <ShoppingBag size={20} />
             </div>
-            <div className="quick-ref-title">Orders</div>
-            <p className="quick-ref-desc">View and process customer orders.</p>
-            <div className="quick-ref-link">
-              <span>Go to Orders</span>
-              <ArrowRight size={14} />
+            <div className="dash-action-body">
+              <span className="dash-action-title">Orders</span>
+              <p className="dash-action-desc">View and process customer orders</p>
             </div>
+            <ArrowRight size={16} className="dash-action-arrow" />
           </Link>
 
-          {/* Action 3: Banners */}
-          <Link to="/banners" className="quick-ref-card">
-            <div className="quick-ref-icon-wrap">
+          <Link to="/banners" className="dash-action-card">
+            <div className="dash-action-icon">
               <ImageIcon size={20} />
             </div>
-            <div className="quick-ref-title">Banners</div>
-            <p className="quick-ref-desc">Update hero banners and promotions.</p>
-            <div className="quick-ref-link">
-              <span>Go to Banners</span>
-              <ArrowRight size={14} />
+            <div className="dash-action-body">
+              <span className="dash-action-title">Banners</span>
+              <p className="dash-action-desc">Update hero banners &amp; promotions</p>
             </div>
+            <ArrowRight size={16} className="dash-action-arrow" />
           </Link>
 
-          {/* Action 4: Categories */}
-          <Link to="/categories" className="quick-ref-card">
-            <div className="quick-ref-icon-wrap">
+          <Link to="/categories" className="dash-action-card">
+            <div className="dash-action-icon">
               <FolderTree size={20} />
             </div>
-            <div className="quick-ref-title">Categories</div>
-            <p className="quick-ref-desc">Organize product categories and sections.</p>
-            <div className="quick-ref-link">
-              <span>Go to Categories</span>
-              <ArrowRight size={14} />
+            <div className="dash-action-body">
+              <span className="dash-action-title">Categories</span>
+              <p className="dash-action-desc">Organize product categories</p>
             </div>
+            <ArrowRight size={16} className="dash-action-arrow" />
           </Link>
         </div>
-      </div>
+      </section>
+
+      {viewing && (
+        <ProductViewModal product={viewing} onClose={() => setViewing(null)} />
+      )}
     </div>
   );
 }

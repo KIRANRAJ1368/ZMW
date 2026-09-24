@@ -4,6 +4,7 @@ import {
   Plus,
   Edit2,
   Trash2,
+  Eye,
   Filter,
   Image as ImageIcon,
   RotateCcw,
@@ -18,6 +19,7 @@ import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import Pagination from "../../components/Pagination/Pagination";
 import EmptyState from "../../components/EmptyState/EmptyState";
 import LoadingState from "../../components/LoadingState/LoadingState";
+import ProductViewModal from "../../components/ProductViewModal/ProductViewModal";
 import "./ProductsPage.css";
 
 export default function ProductsPage() {
@@ -27,6 +29,7 @@ export default function ProductsPage() {
   const [filters, setFilters] = useState({ category: "", availability: "", sort: "newest" });
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [viewing, setViewing] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
@@ -357,23 +360,35 @@ export default function ProductsPage() {
               {
                 key: "actions",
                 label: "Actions",
-                width: "90px",
+                width: "230px",
+                align: "right",
                 render: (row) => (
-                  <div className="table-actions-ref">
+                  <div className="table-actions">
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => setViewing(row)}
+                      title="View product details"
+                    >
+                      <Eye size={13} />
+                      <span>View</span>
+                    </button>
                     <Link
                       to={`/products/${row.id}/edit`}
-                      className="action-btn-ref action-edit-ref"
+                      className="btn btn-secondary btn-sm"
                       title="Edit Product"
                     >
                       <Edit2 size={13} />
+                      <span>Edit</span>
                     </Link>
                     <button
                       type="button"
-                      className="action-btn-ref action-delete-ref"
+                      className="btn btn-danger btn-sm"
                       onClick={() => handleDelete(row)}
                       title="Delete Product"
                     >
                       <Trash2 size={13} />
+                      <span>Delete</span>
                     </button>
                   </div>
                 )
@@ -389,6 +404,10 @@ export default function ProductsPage() {
       </div>
 
       <ConfirmModal />
+
+      {viewing && (
+        <ProductViewModal product={viewing} onClose={() => setViewing(null)} />
+      )}
     </div>
   );
 }

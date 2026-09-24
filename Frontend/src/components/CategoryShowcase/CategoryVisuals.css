@@ -5,7 +5,7 @@
 
 .category-visuals-section {
   width: 100%;
-  padding: clamp(34px, 4vw, 50px) 0;
+  padding: clamp(22px, 2.6vw, 34px) 0;
   background-color: #FFFFFF;
 }
 
@@ -13,7 +13,7 @@
 .section-header-left {
   text-align: left;
   max-width: 720px;
-  margin-bottom: clamp(20px, 2.8vw, 32px);
+  margin-bottom: clamp(14px, 1.8vw, 22px);
 }
 
 .section-eyebrow-badge {
@@ -62,13 +62,13 @@
 .category-hero-grid {
   display: flex;
   flex-direction: column;
-  gap: clamp(12px, 1.5vw, 18px);
+  gap: clamp(10px, 1.2vw, 14px);
 }
 
 /* ── Row Wrappers ── */
 .cat-hero-row {
   display: grid;
-  gap: clamp(12px, 1.5vw, 18px);
+  gap: clamp(10px, 1.2vw, 14px);
 }
 
 .cat-hero-row-top {
@@ -97,22 +97,24 @@
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
 }
 
-/* Wide cards (Men & Women) — taller, cinematic aspect ratio */
+/* Wide cards (Men & Women) — shorter, cinematic banner ratio */
 .cat-hero-card--wide {
-  aspect-ratio: 16 / 7;
+  aspect-ratio: 2 / 1;
 }
 
-/* Standard cards (Boys, Girls, Babies) — balanced portrait ratio */
+/* Standard cards (Boys, Girls, Babies) — compact portrait ratio */
 .cat-hero-card--standard {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
 }
 
 /* ── Background Photo ── */
 .cat-hero-backdrop {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 8%;
   transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
@@ -234,11 +236,11 @@
 /* ── Responsive: Tablet (641px–1024px) ── */
 @media (max-width: 1024px) {
   .cat-hero-card--wide {
-    aspect-ratio: 16 / 8;
+    aspect-ratio: 2 / 1;
   }
 
   .cat-hero-card--standard {
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 1 / 1;
   }
 
   .cat-hero-row-bottom {
@@ -256,17 +258,17 @@
   }
 
   .cat-hero-card--wide {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4 / 5;
   }
 
   .cat-hero-card--standard {
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 4 / 5;
   }
 
   /* Last card in bottom row spans full width on 2-col layout */
   .cat-hero-row-bottom .cat-hero-card:last-child {
     grid-column: span 2;
-    aspect-ratio: 16 / 7;
+    aspect-ratio: 16 / 9;
   }
 
   .cat-hero-title {
@@ -283,12 +285,12 @@
 
   .cat-hero-card--wide,
   .cat-hero-card--standard {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4 / 5;
   }
 
   .cat-hero-row-bottom .cat-hero-card:last-child {
     grid-column: span 1;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4 / 5;
   }
 
   .cat-hero-content {

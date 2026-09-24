@@ -30,9 +30,6 @@ export default function Wishlist() {
           <div className="wishlist-title-row">
             <div className="wishlist-heading-wrap">
               <h1 className="wishlist-title">My Wishlist</h1>
-              <span className="wishlist-count-badge">
-                {wishlistProducts.length} {wishlistProducts.length === 1 ? "item" : "items"}
-              </span>
             </div>
 
             {wishlistProducts.length > 0 && (

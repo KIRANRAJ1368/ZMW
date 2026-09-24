@@ -6,15 +6,15 @@ import {
   FolderTree,
   Tags,
   Image as ImageIcon,
-  SlidersHorizontal,
   ShoppingBag,
   Mail,
+  Users,
   LogOut,
   Menu,
   X,
   ChevronRight,
-  ExternalLink,
-  Sparkles
+  Tag,
+  TrendingUp
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import "./AdminLayout.css";
@@ -25,13 +25,15 @@ const NAV_ITEMS = [
   { to: "/categories", label: "Categories", icon: FolderTree },
   { to: "/subcategories", label: "Subcategories", icon: Tags },
   { to: "/banners", label: "Hero & Banners", icon: ImageIcon },
-  { to: "/homepage-sections", label: "Home Layout", icon: SlidersHorizontal },
   { to: "/orders", label: "Orders & Shipping", icon: ShoppingBag },
+  { to: "/coupons", label: "Coupons & Discounts", icon: Tag },
+  { to: "/reports", label: "Reports & Analytics", icon: TrendingUp },
+  { to: "/customers", label: "Customers", icon: Users },
   { to: "/contact", label: "Customer Inquiries", icon: Mail }
 ];
 
 export default function AdminLayout() {
-  const { admin, logout } = useAuth();
+  const { logout } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
 
@@ -71,10 +73,6 @@ export default function AdminLayout() {
                 }}
               />
             </div>
-            <div className="admin-badge-atelier">
-              <Sparkles size={10} />
-              <span>CONSOLE</span>
-            </div>
           </div>
           <button
             type="button"
@@ -110,24 +108,6 @@ export default function AdminLayout() {
           })}
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className="admin-sidebar-footer">
-          <a
-            href="http://localhost:5173"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="admin-storefront-link"
-            title="Launch storefront in new window"
-          >
-            <span>Live Storefront</span>
-            <ExternalLink size={13} className="admin-storefront-ext" />
-          </a>
-
-          <div className="admin-system-status">
-            <span className="admin-status-dot" />
-            <span>Store Online &bull; Syncing</span>
-          </div>
-        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -150,21 +130,6 @@ export default function AdminLayout() {
           </div>
 
           <div className="admin-header-user">
-            <div className="admin-live-badge" title="Fulfillment engine active">
-              <span className="admin-status-dot" />
-              <span>Production Live</span>
-            </div>
-
-            <div className="admin-user-pill">
-              <div className="admin-avatar">
-                {admin?.name?.[0]?.toUpperCase() || "A"}
-              </div>
-              <div className="admin-header-info">
-                <span className="admin-header-name">{admin?.name || "Store Admin"}</span>
-                <span className="admin-header-role">{admin?.role || "Administrator"}</span>
-              </div>
-            </div>
-
             <button
               type="button"
               className="btn btn-secondary btn-sm admin-logout-btn"

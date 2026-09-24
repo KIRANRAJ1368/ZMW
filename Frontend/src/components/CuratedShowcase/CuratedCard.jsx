@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
+import { imageUrl } from "../../utils/imageUrl";
 
 export default function CuratedCard({ product, badgeLabel, badgeTone = "hot" }) {
   const navigate = useNavigate();
@@ -69,17 +70,24 @@ export default function CuratedCard({ product, badgeLabel, badgeTone = "hot" }) 
 
         {/* Primary & Secondary Hover Images */}
         <img
-          src={primaryImg}
+          src={imageUrl(primaryImg)}
           alt={product.name}
           className="curated-img primary"
           loading="eager"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/images/photo-1521572163474-6864f9cf17ab.jpg";
+          }}
         />
         {secondaryImg && (
           <img
-            src={secondaryImg}
+            src={imageUrl(secondaryImg)}
             alt={`${product.name} alternate view`}
             className="curated-img secondary"
             loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
           />
         )}
 

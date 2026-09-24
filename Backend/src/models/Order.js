@@ -21,16 +21,19 @@ module.exports = (sequelize, DataTypes) => {
       discount_amount: { type: DataTypes.DECIMAL(10, 2), allowNull: false, defaultValue: 0 },
       shipping_fee: { type: DataTypes.DECIMAL(10, 2), allowNull: false, defaultValue: 0 },
       total: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-      notes: { type: DataTypes.TEXT, allowNull: true }
+      notes: { type: DataTypes.TEXT, allowNull: true },
+      user_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
+      is_guest: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }
     },
     {
       tableName: "orders",
-      indexes: [{ fields: ["status"] }, { fields: ["email"] }]
+      indexes: [{ fields: ["status"] }, { fields: ["email"] }, { fields: ["user_id"] }, { fields: ["is_guest"] }]
     }
   );
 
   Order.associate = (db) => {
     Order.hasMany(db.OrderItem, { foreignKey: "order_id", as: "items", onDelete: "CASCADE" });
+    Order.belongsTo(db.User, { foreignKey: "user_id", as: "user", onDelete: "SET NULL" });
   };
 
   return Order;

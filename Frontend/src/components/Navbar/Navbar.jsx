@@ -26,13 +26,16 @@ export default function Navbar() {
     currencies,
     language,
     setLanguage,
-    formatPrice
+    formatPrice,
+    customerUser,
+    logoutCustomer
   } = useShop();
 
   const [promoIndex, setPromoIndex] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDesktopMenu, setOpenDesktopMenu] = useState(null);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [openFlyout, setOpenFlyout] = useState(null);
   const [mobileMenExpanded, setMobileMenExpanded] = useState(false);
   const [mobileWomenExpanded, setMobileWomenExpanded] = useState(false);
@@ -469,17 +472,99 @@ export default function Navbar() {
               </svg>
             </button>
 
-            <button
-              className="action-btn"
-              onClick={() => setAuthModalState("login")}
-              aria-label="Account Login"
-              title="Customer Login / Register"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </button>
+            <div style={{ position: "relative" }}>
+              <button
+                className="action-btn"
+                onClick={() => {
+                  if (customerUser) {
+                    setUserDropdownOpen((prev) => !prev);
+                  } else {
+                    setAuthModalState("login");
+                  }
+                }}
+                aria-label={customerUser ? `Account: ${customerUser.name}` : "Account Login"}
+                title={customerUser ? `Logged in as ${customerUser.name}` : "Customer Login / Register"}
+              >
+                {customerUser ? (
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 26,
+                      height: 26,
+                      borderRadius: "50%",
+                      background: "var(--color-accent, #FAA703)",
+                      color: "#111",
+                      fontSize: 12,
+                      fontWeight: 700
+                    }}
+                  >
+                    {customerUser.name ? customerUser.name.charAt(0).toUpperCase() : "U"}
+                  </span>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                )}
+              </button>
+
+              {customerUser && userDropdownOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    right: 0,
+                    marginTop: 8,
+                    background: "var(--color-white, #fff)",
+                    border: "1px solid var(--color-grey-200, #e5e7eb)",
+                    borderRadius: "8px",
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.12)",
+                    width: 220,
+                    padding: "14px",
+                    zIndex: 100,
+                    textAlign: "left"
+                  }}
+                >
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--color-ink, #111)" }}>
+                    {customerUser.name}
+                  </div>
+                  <div style={{ fontSize: 11, color: "var(--color-grey-600, #666)", marginBottom: 10, wordBreak: "break-all" }}>
+                    {customerUser.email}
+                  </div>
+                  <div style={{ borderTop: "1px solid var(--color-grey-100, #f3f4f6)", paddingTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+                    <Link
+                      to="/account"
+                      style={{ textDecoration: "none", fontSize: 12, textAlign: "left", cursor: "pointer", padding: "4px 0", color: "var(--color-ink, #111)", fontWeight: 600, display: "block" }}
+                      onClick={() => setUserDropdownOpen(false)}
+                    >
+                      📦 My Account & Orders
+                    </Link>
+                    <button
+                      type="button"
+                      style={{ background: "none", border: "none", fontSize: 12, textAlign: "left", cursor: "pointer", padding: "4px 0", color: "var(--color-ink, #111)" }}
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        setIsOrderTrackOpen(true);
+                      }}
+                    >
+                      Track My Order
+                    </button>
+                    <button
+                      type="button"
+                      style={{ background: "none", border: "none", fontSize: 12, textAlign: "left", cursor: "pointer", padding: "4px 0", color: "#dc2626", fontWeight: 600 }}
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        logoutCustomer();
+                      }}
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <Link
               to="/wishlist"
@@ -495,11 +580,11 @@ export default function Navbar() {
               )}
             </Link>
 
-            <button
+            <Link
+              to="/cart"
               className="action-btn cart-btn"
-              onClick={() => setIsCartOpen(true)}
-              aria-label="Shopping Bag"
-              title="View Bag"
+              aria-label={`Shopping Bag (${cartItemCount} items)`}
+              title="View Cart"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
@@ -509,10 +594,7 @@ export default function Navbar() {
               {cartItemCount > 0 && (
                 <span className="badge-count">{cartItemCount}</span>
               )}
-              <span className="cart-preview-price hide-mobile">
-                {formatPrice(cartSubtotal)}
-              </span>
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -802,17 +884,46 @@ export default function Navbar() {
         </ul>
 
         <div className="mobile-nav-footer">
+          {customerUser ? (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink)", marginBottom: 8 }}>
+                Signed in as <strong>{customerUser.name}</strong>
+              </div>
+              <Link
+                to="/account"
+                className="btn btn-secondary btn-sm"
+                style={{ width: "100%", marginBottom: "8px", display: "block", textAlign: "center", textDecoration: "none" }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                📦 My Account & Orders
+              </Link>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                style={{ width: "100%", marginBottom: "8px" }}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  logoutCustomer();
+                }}
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              style={{ width: "100%", marginBottom: "12px" }}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setAuthModalState("login");
+              }}
+            >
+              Sign In / Register
+            </button>
+          )}
           <button
-            className="btn btn-primary btn-sm"
-            style={{ width: "100%", marginBottom: "12px" }}
-            onClick={() => {
-              setMobileMenuOpen(false);
-              setAuthModalState("login");
-            }}
-          >
-            Sign In / Register
-          </button>
-          <button
+            type="button"
             className="btn btn-secondary btn-sm"
             style={{ width: "100%" }}
             onClick={() => {

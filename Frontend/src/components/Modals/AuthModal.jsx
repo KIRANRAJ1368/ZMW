@@ -1,48 +1,272 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import "./AuthModal.css";
 
+const INITIAL_FORM_DATA = {
+  name: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+  newPassword: "",
+  otp: ""
+};
+
 export default function AuthModal() {
-  const { authModalState, setAuthModalState, addToast } = useShop();
+  const navigate = useNavigate();
+  const {
+    authModalState,
+    setAuthModalState,
+    loginCustomer,
+    registerCustomer,
+    forgotPassword,
+    verifyOtp,
+    resetPassword,
+    setIsCheckoutOpen,
+    pendingCheckout,
+    setPendingCheckout,
+    addToast
+  } = useShop();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
-  });
+  const [activeTab, setActiveTab] = useState("login"); // 'login' | 'register' | 'forgot'
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
+  // Forgot Password 3-step flow: 'request' (email) -> 'otp' (verify code) -> 'new_password' (set password)
+  const [forgotStep, setForgotStep] = useState("request");
+  const [resetToken, setResetToken] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [forgotSubmitted, setForgotSubmitted] = useState(false);
+
+  // Countdown timer for OTP resend button
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  // Auto-detect resetToken from URL query if user clicked an external link
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token") || params.get("resetToken");
+      if (token) {
+        setResetToken(token);
+        setForgotStep("new_password");
+        setActiveTab("forgot");
+        setAuthModalState("forgot");
+      }
+    } catch (e) {
+      // Ignored in non-browser context
+    }
+  }, [setAuthModalState]);
+
+  useEffect(() => {
+    if (authModalState === "register") {
+      setActiveTab("register");
+    } else if (authModalState === "forgot") {
+      setActiveTab("forgot");
+    } else {
+      setActiveTab("login");
+    }
+    setErrorMessage("");
+    setForgotSubmitted(false);
+    setForgotStep("request");
+    setResetToken("");
+    setResetEmail("");
+    setResendCooldown(0);
+    setFormData(INITIAL_FORM_DATA);
+  }, [authModalState]);
 
   if (!authModalState) return null;
 
   const handleChange = (e) => {
+    setErrorMessage("");
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (authModalState === "login") {
-      addToast(`Welcome back, ${formData.email || "valued customer"}! ✨`, "success");
-      setAuthModalState(null);
-    } else if (authModalState === "register") {
-      addToast(`Welcome to ZMW Studio, ${formData.name || "friend"}! 🎁 10% coupon WELCOME10 unlocked.`, "success");
-      setAuthModalState(null);
-    } else if (authModalState === "forgot") {
-      // Step 2: Show confirmation screen
-      setForgotSubmitted(true);
-      addToast(`Password reset link sent to ${formData.email || "your email"}.`, "info");
-    }
-  };
-
-  const handleReturnToSignIn = () => {
-    setForgotSubmitted(false);
-    setAuthModalState("login");
   };
 
   const handleClose = () => {
     setForgotSubmitted(false);
+    setForgotStep("request");
+    setResetToken("");
+    setResetEmail("");
+    setResendCooldown(0);
+    setErrorMessage("");
     setAuthModalState(null);
+    setPendingCheckout(false);
+    setFormData(INITIAL_FORM_DATA);
+  };
+
+  const handleContinueAsGuest = () => {
+    setAuthModalState(null);
+    setPendingCheckout(false);
+    setFormData(INITIAL_FORM_DATA);
+    navigate("/checkout");
+    addToast("Continuing as Guest. No account required.", "info");
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCooldown > 0 || !resetEmail || isSubmitting) return;
+    setIsSubmitting(true);
+    setErrorMessage("");
+    try {
+      await forgotPassword(resetEmail);
+      setResendCooldown(30);
+      addToast("A fresh 6-digit verification code has been dispatched to your email.", "info");
+    } catch (err) {
+      setErrorMessage(err.message || "Failed to resend verification code. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage("");
+
+    if (activeTab === "register") {
+      if (formData.password.length < 6) {
+        setErrorMessage("Password must be at least 6 characters long.");
+        return;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        setErrorMessage("Passwords do not match. Please verify and try again.");
+        return;
+      }
+      if (!formData.phone || formData.phone.trim().length < 7) {
+        setErrorMessage("Please enter a valid mobile number.");
+        return;
+      }
+
+      setIsSubmitting(true);
+      try {
+        await registerCustomer({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          password: formData.password,
+          confirmPassword: formData.confirmPassword
+        });
+
+        // Reset the form state only after a successful API response
+        setFormData(INITIAL_FORM_DATA);
+        setAuthModalState(null);
+        if (pendingCheckout) {
+          setPendingCheckout(false);
+          navigate("/checkout");
+        }
+      } catch (err) {
+        setErrorMessage(err.message || "Failed to create account. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else if (activeTab === "login") {
+      setIsSubmitting(true);
+      try {
+        await loginCustomer(formData.email.trim(), formData.password);
+
+        // Reset the form state only after a successful API response
+        setFormData(INITIAL_FORM_DATA);
+        setAuthModalState(null);
+        if (pendingCheckout) {
+          setPendingCheckout(false);
+          navigate("/checkout");
+        }
+      } catch (err) {
+        setErrorMessage(err.message || "Invalid email or password.");
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else if (activeTab === "forgot") {
+      if (forgotStep === "request") {
+        const emailToVerify = (formData.email || "").trim();
+        if (!emailToVerify) {
+          setErrorMessage("Please enter your registered email address.");
+          return;
+        }
+
+        setIsSubmitting(true);
+        try {
+          const res = await forgotPassword(emailToVerify);
+          const targetEmail = res?.email || emailToVerify;
+          setResetEmail(targetEmail);
+          setForgotStep("otp");
+          setResendCooldown(30);
+          setErrorMessage("");
+          addToast("Verification code (OTP) sent to your email! Please check your inbox.", "success");
+        } catch (err) {
+          setErrorMessage(err.message || "Failed to send verification code. Please try again.");
+        } finally {
+          setIsSubmitting(false);
+        }
+      } else if (forgotStep === "otp") {
+        const otpCode = (formData.otp || "").trim();
+        if (!otpCode || otpCode.length !== 6) {
+          setErrorMessage("Please enter the 6-digit verification code (OTP) sent to your email.");
+          return;
+        }
+
+        setIsSubmitting(true);
+        try {
+          const verifyRes = await verifyOtp({
+            email: resetEmail,
+            otp: otpCode
+          });
+
+          if (verifyRes?.resetToken) {
+            setResetToken(verifyRes.resetToken);
+          }
+          setForgotStep("new_password");
+          setErrorMessage("");
+          addToast("Code verified successfully! Now set your new password below.", "success");
+        } catch (err) {
+          setErrorMessage(err.message || "Invalid or expired verification code. Please try again.");
+        } finally {
+          setIsSubmitting(false);
+        }
+      } else if (forgotStep === "new_password") {
+        const newPwd = formData.newPassword || formData.password;
+        if (!newPwd || newPwd.length < 6) {
+          setErrorMessage("New password must be at least 6 characters long.");
+          return;
+        }
+        if (newPwd !== formData.confirmPassword) {
+          setErrorMessage("Passwords do not match. Please verify and try again.");
+          return;
+        }
+
+        setIsSubmitting(true);
+        try {
+          await resetPassword({
+            email: resetEmail,
+            token: resetToken || undefined,
+            newPassword: newPwd,
+            confirmPassword: formData.confirmPassword
+          });
+
+          // Reset the form state only after a successful API response
+          setFormData(INITIAL_FORM_DATA);
+          setResetToken("");
+          setResetEmail("");
+          setForgotStep("request");
+          setForgotSubmitted(false);
+          setResendCooldown(0);
+          setErrorMessage("");
+          setActiveTab("login");
+          addToast("Password reset successfully! Please sign in with your new password.", "success");
+        } catch (err) {
+          setErrorMessage(err.message || "Failed to reset password. Please try again.");
+        } finally {
+          setIsSubmitting(false);
+        }
+      }
+    }
   };
 
   return (
@@ -53,124 +277,228 @@ export default function AuthModal() {
           className="auth-close-btn"
           onClick={handleClose}
           aria-label="Close"
+          type="button"
         >
           ✕
         </button>
 
-        {/* Forgot Password Confirmation Screen */}
-        {authModalState === "forgot" && forgotSubmitted ? (
-          <div className="auth-confirmation-view" style={{ textAlign: "center", padding: "12px 0" }}>
-            <div
-              style={{
-                width: "56px",
-                height: "56px",
-                borderRadius: "50%",
-                background: "#ECFDF5",
-                color: "#10B981",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 18px auto"
-              }}
-            >
+        {/* Forgot Password Unregistered Notification Screen */}
+        {activeTab === "forgot" && forgotSubmitted ? (
+          <div className="auth-confirmation-view">
+            <div className="auth-confirm-icon">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <h2 className="auth-title">Reset Link Sent</h2>
-            <p className="auth-desc" style={{ marginBottom: "24px" }}>
-              We've dispatched password reset instructions to{" "}
-              <strong>{formData.email || "your email address"}</strong>. Please check your inbox and spam folder.
+            <h2 className="auth-title">Instructions Dispatched</h2>
+            <p className="auth-desc" style={{ marginBottom: "20px" }}>
+              If an account with <strong>{formData.email || "that email address"}</strong> exists in our system, password reset instructions have been generated.
             </p>
             <button
               type="button"
               className="btn btn-primary auth-submit-btn"
-              onClick={handleReturnToSignIn}
-              style={{ width: "100%", marginBottom: "12px" }}
+              onClick={() => {
+                setForgotSubmitted(false);
+                setForgotStep("request");
+                setActiveTab("login");
+                setErrorMessage("");
+                setFormData(INITIAL_FORM_DATA);
+              }}
+              style={{ width: "100%", marginBottom: "10px" }}
             >
               Return to Sign In
             </button>
             <button
               type="button"
               className="forgot-link-btn"
-              onClick={() => setForgotSubmitted(false)}
+              onClick={() => {
+                setForgotSubmitted(false);
+                setForgotStep("request");
+              }}
               style={{ background: "none", border: "none", cursor: "pointer", fontSize: "0.85rem" }}
             >
-              Change email or resend link
+              Change email or try again
             </button>
           </div>
         ) : (
-          <>
+          <div className="auth-modal-inner">
             {/* Modal Header */}
             <div className="auth-header">
-              <span className="auth-kicker">ZMW</span>
+              <span className="auth-kicker">ZMW CLOTHING</span>
               <h2 className="auth-title">
-                {authModalState === "login" && "Customer Sign In"}
-                {authModalState === "register" && "Create An Account"}
-                {authModalState === "forgot" && "Reset Your Password"}
+                {activeTab === "login" && "Customer Sign In"}
+                {activeTab === "register" && "Create An Account"}
+                {activeTab === "forgot" && (
+                  forgotStep === "request"
+                    ? "Reset Your Password"
+                    : forgotStep === "otp"
+                    ? "Enter Verification Code"
+                    : "Set New Password"
+                )}
               </h2>
               <p className="auth-desc">
-                {authModalState === "login" && "Access your saved wishlists, express checkout, and order history."}
-                {authModalState === "register" && "Join our private client circle for early drops and VIP offers."}
-                {authModalState === "forgot" && "Enter your registered email address to receive password reset instructions."}
+                {pendingCheckout && (
+                  <span className="auth-checkout-hint">
+                    ✦ Sign in, register, or continue as guest to complete checkout
+                  </span>
+                )}
+                {activeTab === "login" && "Sign in for express checkout, saved delivery details, and order tracking."}
+                {activeTab === "register" && "Join ZMW to save delivery addresses, view order history, and unlock member perks."}
+                {activeTab === "forgot" && (
+                  forgotStep === "request"
+                    ? "Enter your registered email address to receive a 6-digit verification code (OTP)."
+                    : forgotStep === "otp"
+                    ? `Enter the 6-digit verification code sent to ${resetEmail || "your email"}.`
+                    : `Create a new secure password for ${resetEmail || "your account"}.`
+                )}
               </p>
             </div>
 
+            {/* Tab Selector */}
+            {activeTab !== "forgot" && (
+              <div className="auth-tab-switch">
+                <button
+                  type="button"
+                  className={`auth-tab-btn ${activeTab === "login" ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveTab("login");
+                    setErrorMessage("");
+                    setFormData(INITIAL_FORM_DATA);
+                  }}
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  className={`auth-tab-btn ${activeTab === "register" ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveTab("register");
+                    setErrorMessage("");
+                    setFormData(INITIAL_FORM_DATA);
+                  }}
+                >
+                  Create Account
+                </button>
+              </div>
+            )}
+
+            {/* Error Message Alert */}
+            {errorMessage && (
+              <div className="auth-error-banner" role="alert">
+                <span>⚠️ {errorMessage}</span>
+              </div>
+            )}
+
             {/* Auth Form */}
             <form className="auth-form" onSubmit={handleSubmit}>
-              {authModalState === "register" && (
+              {/* Register Extra Fields: Name & Mobile */}
+              {activeTab === "register" && (
+                <div className="auth-form-row">
+                  <div className="form-group">
+                    <label htmlFor="reg-name">Full Name</label>
+                    <input
+                      id="reg-name"
+                      name="name"
+                      type="text"
+                      required
+                      placeholder="e.g. Liam Sterling"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="auth-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="reg-phone">Mobile Number</label>
+                    <input
+                      id="reg-phone"
+                      name="phone"
+                      type="tel"
+                      required
+                      placeholder="e.g. 9876543210"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="auth-input"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Email Address Field (for login, register, and forgot-request) */}
+              {(activeTab !== "forgot" || forgotStep === "request") && (
                 <div className="form-group">
-                  <label htmlFor="name">Full Name</label>
+                  <label htmlFor="auth-email">Email Address</label>
                   <input
-                    id="name"
-                    name="name"
-                    type="text"
+                    id="auth-email"
+                    name="email"
+                    type="email"
                     required
-                    placeholder="Enter your name"
-                    value={formData.name}
+                    placeholder="name@example.com"
+                    value={formData.email}
                     onChange={handleChange}
                     className="auth-input"
+                    autoComplete="email"
                   />
                 </div>
               )}
 
-              <div className="form-group">
-                <label htmlFor="email">Email Address</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="name@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="auth-input"
-                />
-              </div>
+              {/* Register Password & Confirm */}
+              {activeTab === "register" && (
+                <div className="auth-form-row">
+                  <div className="form-group">
+                    <label htmlFor="auth-password">Password</label>
+                    <input
+                      id="auth-password"
+                      name="password"
+                      type="password"
+                      required
+                      placeholder="Min 6 characters"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="auth-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="reg-confirmPassword">Confirm Password</label>
+                    <input
+                      id="reg-confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      required
+                      placeholder="Re-enter password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="auth-input"
+                    />
+                  </div>
+                </div>
+              )}
 
-              {authModalState !== "forgot" && (
+              {/* Login Password */}
+              {activeTab === "login" && (
                 <div className="form-group">
                   <div className="password-label-row">
-                    <label htmlFor="password">Password</label>
-                    {authModalState === "login" && (
-                      <button
-                        type="button"
-                        className="forgot-link-btn"
-                        onClick={() => {
-                          setForgotSubmitted(false);
-                          setAuthModalState("forgot");
-                        }}
-                      >
-                        Forgot?
-                      </button>
-                    )}
+                    <label htmlFor="auth-password">Password</label>
+                    <button
+                      type="button"
+                      className="forgot-link-btn"
+                      onClick={() => {
+                        setForgotSubmitted(false);
+                        setForgotStep("request");
+                        setActiveTab("forgot");
+                        setErrorMessage("");
+                        setFormData(INITIAL_FORM_DATA);
+                      }}
+                    >
+                      Forgot?
+                    </button>
                   </div>
                   <input
-                    id="password"
+                    id="auth-password"
                     name="password"
                     type="password"
                     required
-                    placeholder="••••••••"
+                    placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
                     className="auth-input"
@@ -178,75 +506,187 @@ export default function AuthModal() {
                 </div>
               )}
 
-              {authModalState === "register" && (
-                <div className="form-group">
-                  <label htmlFor="confirmPassword">Confirm Password</label>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className="auth-input"
-                  />
-                </div>
+              {/* Step 2: OTP Verification Only */}
+              {activeTab === "forgot" && forgotStep === "otp" && (
+                <>
+                  <div className="auth-otp-badge-row">
+                    <span>Code sent to: <strong>{resetEmail || formData.email}</strong></span>
+                    <button
+                      type="button"
+                      className="auth-change-email-btn"
+                      onClick={() => {
+                        setForgotStep("request");
+                        setErrorMessage("");
+                        setFormData((prev) => ({ ...prev, otp: "" }));
+                      }}
+                    >
+                      Change
+                    </button>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="auth-otp">6-Digit Verification Code (OTP)</label>
+                    <input
+                      id="auth-otp"
+                      name="otp"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={6}
+                      required
+                      placeholder="• • • • • •"
+                      value={formData.otp}
+                      onChange={handleChange}
+                      className="auth-input auth-otp-input"
+                      autoFocus
+                      autoComplete="one-time-code"
+                    />
+                  </div>
+
+                  <div className="auth-resend-row">
+                    <button
+                      type="button"
+                      className="auth-resend-btn"
+                      onClick={handleResendOtp}
+                      disabled={resendCooldown > 0 || isSubmitting}
+                    >
+                      {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : "Didn't receive code? Resend OTP"}
+                    </button>
+                  </div>
+                </>
               )}
 
-              <button type="submit" className="btn btn-primary auth-submit-btn">
-                {authModalState === "login" && "Sign In"}
-                {authModalState === "register" && "Create Account"}
-                {authModalState === "forgot" && "Send Reset Link"}
+              {/* Step 3: Set New Password Only (Appears ONLY AFTER OTP is verified) */}
+              {activeTab === "forgot" && forgotStep === "new_password" && (
+                <>
+                  <div className="auth-otp-badge-row">
+                    <span>Resetting password for: <strong>{resetEmail}</strong></span>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="auth-newPassword">New Password</label>
+                    <input
+                      id="auth-newPassword"
+                      name="newPassword"
+                      type="password"
+                      required
+                      placeholder="Min 6 characters"
+                      value={formData.newPassword}
+                      onChange={handleChange}
+                      className="auth-input"
+                      autoComplete="new-password"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="auth-confirmPassword">Confirm New Password</label>
+                    <input
+                      id="auth-confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      required
+                      placeholder="Re-enter new password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="auth-input"
+                      autoComplete="new-password"
+                    />
+                  </div>
+                </>
+              )}
+
+              <button
+                type="submit"
+                className="btn btn-primary auth-submit-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  "Processing..."
+                ) : activeTab === "login" ? (
+                  "Sign In"
+                ) : activeTab === "register" ? (
+                  "Create Account & Proceed"
+                ) : forgotStep === "request" ? (
+                  "Send Verification Code (OTP) →"
+                ) : forgotStep === "otp" ? (
+                  "Verify Code →"
+                ) : (
+                  "Save New Password & Sign In →"
+                )}
               </button>
             </form>
 
+            {/* Guest Checkout Option (only for login/register) */}
+            {activeTab !== "forgot" && (
+              <>
+                <div className="auth-guest-divider">
+                  <span>OR CONTINUE WITHOUT ACCOUNT</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-secondary auth-guest-btn"
+                  onClick={handleContinueAsGuest}
+                >
+                  Continue as Guest →
+                </button>
+              </>
+            )}
+
             {/* Tab Switcher Footer */}
             <div className="auth-footer">
-              {authModalState === "login" && (
+              {activeTab === "login" && (
                 <p>
                   Don't have an account?{" "}
                   <button
                     type="button"
                     className="switch-tab-btn"
                     onClick={() => {
-                      setForgotSubmitted(false);
-                      setAuthModalState("register");
+                      setErrorMessage("");
+                      setActiveTab("register");
+                      setFormData(INITIAL_FORM_DATA);
                     }}
                   >
                     Sign Up
                   </button>
                 </p>
               )}
-              {authModalState === "register" && (
+              {activeTab === "register" && (
                 <p>
                   Already have an account?{" "}
                   <button
                     type="button"
                     className="switch-tab-btn"
                     onClick={() => {
-                      setForgotSubmitted(false);
-                      setAuthModalState("login");
+                      setErrorMessage("");
+                      setActiveTab("login");
+                      setFormData(INITIAL_FORM_DATA);
                     }}
                   >
                     Sign In
                   </button>
                 </p>
               )}
-              {authModalState === "forgot" && (
+              {activeTab === "forgot" && (
                 <p>
                   Remember your password?{" "}
                   <button
                     type="button"
                     className="switch-tab-btn"
-                    onClick={handleReturnToSignIn}
+                    onClick={() => {
+                      setErrorMessage("");
+                      setForgotStep("request");
+                      setActiveTab("login");
+                      setFormData(INITIAL_FORM_DATA);
+                    }}
                   >
-                    Sign In
+                    Back to Sign In
                   </button>
                 </p>
               )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

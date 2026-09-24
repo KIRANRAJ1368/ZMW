@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useLayoutEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import ProductCard from "../components/ProductCard/ProductCard";
 import SizeGuideModal from "../components/Modals/SizeGuideModal";
@@ -16,6 +16,7 @@ const DETAIL_FALLBACK_ANGLES = [
 
 export default function ProductDetail() {
   const { productId } = useParams();
+  const navigate = useNavigate();
   const {
     formatPrice,
     addToCart,
@@ -23,6 +24,7 @@ export default function ProductDetail() {
     toggleWishlist,
     setIsCartOpen,
     setIsCheckoutOpen,
+    proceedToCheckout,
     allProducts,
     findProduct,
     recentlyViewed,
@@ -150,7 +152,7 @@ export default function ProductDetail() {
   // Instant Buy Now handler
   const handleBuyNow = () => {
     addToCart(product, selectedColor, selectedSize, quantity);
-    setIsCheckoutOpen(true);
+    navigate("/checkout");
   };
 
   // Copy coupon handler

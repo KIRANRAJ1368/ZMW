@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useShop } from "../../context/ShopContext";
 import { storefrontApi } from "../../services/storefrontApi";
 import "./CheckoutModal.css";
 
 const PAYMENT_METHODS = [
-  { id: "card", name: "Credit / Debit Card", icon: "💳", desc: "Visa, Mastercard, Amex" },
+  { id: "cod", name: "Cash on Delivery", icon: "📦", desc: "Pay upon physical receipt" },
+  { id: "card", name: "Credit / Debit Card", icon: "💳", desc: "Visa, Mastercard, RuPay" },
   { id: "upi", name: "UPI / QR Payment", icon: "⚡", desc: "Google Pay, PhonePe, Paytm" },
-  { id: "applepay", name: "Apple Pay / Wallet", icon: "", desc: "Express 1-Click biometric" },
-  { id: "netbanking", name: "Net Banking", icon: "🏦", desc: "All major international banks" },
-  { id: "cod", name: "Cash on Delivery", icon: "📦", desc: "Pay upon physical receipt" }
+  { id: "netbanking", name: "Net Banking", icon: "🏦", desc: "All major Indian banks" }
 ];
 
 export default function CheckoutModal() {
@@ -23,19 +22,24 @@ export default function CheckoutModal() {
     appliedCoupon,
     formatPrice,
     clearCart,
-    addToast
+    addToast,
+    customerUser,
+    customerToken,
+    setAuthModalState,
+    logoutCustomer
   } = useShop();
 
-  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const [formData, setFormData] = useState({
-    firstName: "Elena",
-    lastName: "Rostova",
-    email: "elena.rostova@atelier.com",
-    address: "740 Park Avenue, Apt 14B",
-    city: "New York",
-    postalCode: "10021",
-    country: "United States",
-    phone: "+1 (555) 234-8901",
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "India",
+    phone: "",
     cardNumber: "•••• •••• •••• 4242",
     cardExp: "12/28",
     cardCvc: "888"
@@ -45,6 +49,22 @@ export default function CheckoutModal() {
   const [orderRef, setOrderRef] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  // Auto-populate customer fields when authenticated user is present
+  useEffect(() => {
+    if (customerUser) {
+      const parts = (customerUser.name || "").trim().split(" ");
+      const first = parts[0] || "";
+      const last = parts.slice(1).join(" ") || "";
+      setFormData((prev) => ({
+        ...prev,
+        firstName: first || prev.firstName,
+        lastName: last || prev.lastName,
+        email: customerUser.email || prev.email,
+        phone: customerUser.phone || prev.phone
+      }));
+    }
+  }, [customerUser]);
 
   if (!isCheckoutOpen) return null;
 
@@ -63,33 +83,37 @@ export default function CheckoutModal() {
     try {
       let orderNumber;
       if (canSubmitToApi) {
-        const order = await storefrontApi.createOrder({
-          customer_name: `${formData.firstName} ${formData.lastName}`.trim(),
-          email: formData.email,
-          phone: formData.phone,
-          shipping_address: formData.address,
-          city: formData.city,
-          pincode: formData.postalCode,
-          payment_method: paymentMethod === "cod" ? "COD" : "PREPAID",
-          discount_amount: discountAmount,
-          shipping_fee: shippingCost,
-          items: cart.map((item) => ({
-            product_id: Number(item.id),
-            quantity: item.quantity,
-            size: item.size,
-            color: item.color
-          }))
-        });
+        const order = await storefrontApi.createOrder(
+          {
+            customer_name: `${formData.firstName} ${formData.lastName}`.trim(),
+            email: formData.email,
+            phone: formData.phone,
+            shipping_address: formData.address,
+            city: formData.city,
+            state: formData.state || null,
+            pincode: formData.postalCode,
+            payment_method: paymentMethod === "cod" ? "COD" : "PREPAID",
+            discount_amount: discountAmount,
+            shipping_fee: shippingCost,
+            items: cart.map((item) => ({
+              product_id: Number(item.id),
+              quantity: item.quantity,
+              size: item.size,
+              color: item.color
+            }))
+          },
+          customerToken
+        );
         orderNumber = order.order_number;
       } else {
-        // Static fallback data has non-database IDs, so it cannot be posted.
+        // Static fallback data
         orderNumber = "ZMW-" + Math.floor(10000 + Math.random() * 90000);
       }
 
       setOrderRef(orderNumber);
       setIsOrdered(true);
       clearCart();
-      addToast(`Order ${orderNumber} confirmed! Thank you for choosing ZMW.`, "success");
+      addToast(`Order ${orderNumber} confirmed! Thank you for choosing ZMW Clothing.`, "success");
     } catch (error) {
       setSubmitError(error.message || "We could not place your order. Please try again.");
     } finally {
@@ -113,27 +137,27 @@ export default function CheckoutModal() {
         {isOrdered ? (
           <div className="checkout-success-view">
             <div className="success-check-icon">✓</div>
-            <span className="success-kicker">PAYMENT CONFIRMED</span>
+            <span className="success-kicker">ORDER CONFIRMED</span>
             <h2 className="success-title">Thank You For Your Order</h2>
             <p className="success-desc">
-              Your order <strong>{orderRef}</strong> has been successfully placed and routed to our master atelier for hand packaging.
+              Your order <strong>{orderRef}</strong> has been successfully placed and routed to our dispatch hub for packaging.
             </p>
 
             <div className="order-receipt-box">
               <div className="receipt-row">
-                <span>Confirmation Sent To</span>
+                <span>Confirmation Dispatched To</span>
                 <strong>{formData.email}</strong>
               </div>
               <div className="receipt-row">
                 <span>Shipping Address</span>
-                <strong>{formData.address}, {formData.city}</strong>
+                <strong>{formData.address}, {formData.city} {formData.postalCode}</strong>
               </div>
               <div className="receipt-row">
-                <span>Payment Method</span>
-                <strong>{paymentMethod.toUpperCase()}</strong>
+                <span>Payment Mode</span>
+                <strong>{paymentMethod === "cod" ? "Cash On Delivery (COD)" : paymentMethod.toUpperCase()}</strong>
               </div>
               <div className="receipt-row total-highlight">
-                <span>Total Amount Paid</span>
+                <span>Total Amount</span>
                 <strong>{formatPrice(cartTotal)}</strong>
               </div>
             </div>
@@ -146,11 +170,43 @@ export default function CheckoutModal() {
           <div className="checkout-grid">
             {/* Left Column: Form & Payment */}
             <div className="checkout-form-col">
-              <span className="checkout-kicker">SECURE CHECKOUT</span>
+              <span className="checkout-kicker">SECURE DISPATCH CHECKOUT</span>
               <h2 className="checkout-heading">Shipping & Payment</h2>
 
+              {/* Guest / Client Status Ribbon */}
+              {customerUser ? (
+                <div className="checkout-auth-banner client">
+                  <div className="cab-icon">✓</div>
+                  <div className="cab-content">
+                    <span className="cab-title">Signed In as <strong>{customerUser.name}</strong></span>
+                    <span className="cab-sub">{customerUser.email} · Order will be linked to your account</span>
+                  </div>
+                  <button type="button" className="cab-action-btn" onClick={logoutCustomer}>
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <div className="checkout-auth-banner guest">
+                  <div className="cab-icon">⚡</div>
+                  <div className="cab-content">
+                    <span className="cab-title">Checking out as <strong>Guest</strong></span>
+                    <span className="cab-sub">No account required. Fast and direct checkout.</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="cab-action-btn"
+                    onClick={() => {
+                      setIsCheckoutOpen(false);
+                      setAuthModalState("login");
+                    }}
+                  >
+                    Sign In
+                  </button>
+                </div>
+              )}
+
               <form onSubmit={handlePlaceOrder} id="checkout-form">
-                <h3 className="form-subheading">1. Contact & Shipping Details</h3>
+                <h3 className="form-subheading">1. Contact & Delivery Information</h3>
                 <div className="form-grid-2">
                   <div className="form-group">
                     <label>First Name</label>
@@ -158,6 +214,7 @@ export default function CheckoutModal() {
                       name="firstName"
                       type="text"
                       required
+                      placeholder="First name"
                       value={formData.firstName}
                       onChange={handleChange}
                       className="auth-input"
@@ -169,6 +226,7 @@ export default function CheckoutModal() {
                       name="lastName"
                       type="text"
                       required
+                      placeholder="Last name"
                       value={formData.lastName}
                       onChange={handleChange}
                       className="auth-input"
@@ -183,17 +241,19 @@ export default function CheckoutModal() {
                       name="email"
                       type="email"
                       required
+                      placeholder="name@example.com"
                       value={formData.email}
                       onChange={handleChange}
                       className="auth-input"
                     />
                   </div>
                   <div className="form-group">
-                    <label>Phone</label>
+                    <label>Phone / Mobile</label>
                     <input
                       name="phone"
                       type="tel"
                       required
+                      placeholder="e.g. 9876543210"
                       value={formData.phone}
                       onChange={handleChange}
                       className="auth-input"
@@ -207,6 +267,7 @@ export default function CheckoutModal() {
                     name="address"
                     type="text"
                     required
+                    placeholder="House/flat no., street, landmark"
                     value={formData.address}
                     onChange={handleChange}
                     className="auth-input"
@@ -220,29 +281,32 @@ export default function CheckoutModal() {
                       name="city"
                       type="text"
                       required
+                      placeholder="e.g. Coimbatore"
                       value={formData.city}
                       onChange={handleChange}
                       className="auth-input"
                     />
                   </div>
                   <div className="form-group">
-                    <label>Postal Code</label>
+                    <label>State</label>
                     <input
-                      name="postalCode"
+                      name="state"
                       type="text"
                       required
-                      value={formData.postalCode}
+                      placeholder="e.g. Tamil Nadu"
+                      value={formData.state}
                       onChange={handleChange}
                       className="auth-input"
                     />
                   </div>
                   <div className="form-group">
-                    <label>Country</label>
+                    <label>Pincode</label>
                     <input
-                      name="country"
+                      name="postalCode"
                       type="text"
                       required
-                      value={formData.country}
+                      placeholder="e.g. 641004"
+                      value={formData.postalCode}
                       onChange={handleChange}
                       className="auth-input"
                     />
@@ -250,7 +314,7 @@ export default function CheckoutModal() {
                 </div>
 
                 <h3 className="form-subheading" style={{ marginTop: "24px" }}>
-                  2. Select Payment Method
+                  2. Select Payment Mode
                 </h3>
                 <div className="payment-options-list">
                   {PAYMENT_METHODS.map((pm) => (
@@ -298,7 +362,7 @@ export default function CheckoutModal() {
                         />
                       </div>
                       <div className="form-group">
-                        <label>CVV / CVC</label>
+                        <label>CVV</label>
                         <input
                           name="cardCvc"
                           type="text"
@@ -361,10 +425,12 @@ export default function CheckoutModal() {
                 style={{ width: "100%", marginTop: "20px" }}
                 disabled={isSubmitting || !cart.length}
               >
-                Complete Order • {formatPrice(cartTotal)}
+                {isSubmitting
+                  ? "Processing Order..."
+                  : `Complete Order • ${formatPrice(cartTotal)}`}
               </button>
 
-              {submitError && <p role="alert" className="auth-error">{submitError}</p>}
+              {submitError && <p role="alert" className="auth-error" style={{ color: "#dc2626", marginTop: 10, fontSize: 13 }}>{submitError}</p>}
 
               <div className="checkout-trust-icons">
                 <span>🔒 Encrypted 256-bit SSL</span>

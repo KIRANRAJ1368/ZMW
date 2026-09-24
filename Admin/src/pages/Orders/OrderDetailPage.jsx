@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CheckCircle, Package, User, MapPin, FileText, IndianRupee, Truck } from "lucide-react";
+import { ArrowLeft, CheckCircle, Package, User, MapPin, FileText, IndianRupee, Truck, Printer } from "lucide-react";
 import { ordersApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import LoadingState from "../../components/LoadingState/LoadingState";
@@ -60,9 +60,20 @@ export default function OrderDetailPage() {
           <span>Back to Orders</span>
         </Link>
         <div className="order-header-main-line">
-          <div className="order-header-title-group">
-            <h1 className="page-title">{order.order_number}</h1>
-            <StatusBadge value={order.status} />
+          <div className="order-header-title-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <h1 className="page-title">{order.order_number}</h1>
+              <StatusBadge value={order.status} />
+            </div>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => window.print()}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+            >
+              <Printer size={16} />
+              <span>Print Tax Invoice</span>
+            </button>
           </div>
           <p className="page-subtitle">
             Placed on {new Date(order.created_at).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}
@@ -170,6 +181,25 @@ export default function OrderDetailPage() {
             <div className="panel-title-wrap">
               <User size={17} className="panel-icon" />
               <h3 className="panel-title">Customer Information</h3>
+            </div>
+            <div style={{ margin: "6px 0 10px 0" }}>
+              {order.is_guest ? (
+                <span
+                  className="pill-badge"
+                  style={{
+                    background: "var(--surface-alt)",
+                    color: "var(--text-muted)",
+                    border: "1px solid var(--border)",
+                    fontSize: 11.5
+                  }}
+                >
+                  Guest Checkout (No Account)
+                </span>
+              ) : (
+                <span className="pill-badge badge-gold" style={{ fontSize: 11.5 }}>
+                  Registered Customer {order.user_id ? `(#${order.user_id})` : ""}
+                </span>
+              )}
             </div>
             <div className="customer-name">{order.customer_name}</div>
             <div className="customer-contact-link">

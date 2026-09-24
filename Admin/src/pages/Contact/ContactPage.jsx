@@ -161,17 +161,30 @@ export default function ContactPage() {
             },
             {
               key: "actions",
-              label: "",
+              label: "Actions",
+              width: "200px",
+              align: "right",
               render: (row) => (
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => openSubmission(row)}
-                  title="Read message"
-                >
-                  <Eye size={13} />
-                  <span>Read</span>
-                </button>
+                <div className="table-actions">
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => openSubmission(row)}
+                    title="Read message"
+                  >
+                    <Eye size={13} />
+                    <span>View</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDelete(row)}
+                    title="Delete message"
+                  >
+                    <Trash2 size={13} />
+                    <span>Delete</span>
+                  </button>
+                </div>
               )
             }
           ]}

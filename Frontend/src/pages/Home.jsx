@@ -15,36 +15,51 @@ import "./Home.css";
 
 export default function Home() {
   const { homeData } = useShop();
-  // Until the public payload loads, preserve the existing complete homepage.
-  const enabled = (key) => !homeData || homeData.sections?.some((section) => section.section_key === key);
+  const sectionComponents = {
+    hero: Hero,
+    category_visuals: CategoryVisuals,
+    new_arrivals: NewArrivalsSection,
+    mens_categories: MensCategoriesSection,
+    womens_categories: WomensCategoriesSection,
+    boys_categories: BoysCategoriesSection,
+    girls_categories: GirlsCategoriesSection,
+    babies_categories: BabiesCategoriesSection,
+    best_sellers: BestSellersSection
+  };
+  // Explicit storefront Home Page sequence requested by user:
+  // 1. Hero
+  // 2. Explore by Department (category_visuals)
+  // 3. New Arrivals (new_arrivals)
+  // 4. Men Categories (mens_categories)
+  // 5. Women Categories (womens_categories)
+  // 6. Boys Categories (boys_categories)
+  // 7. Girls Categories (girls_categories)
+  // 8. Babies Categories (babies_categories)
+  // 9. Best Sellers (best_sellers)
+  const ORDERED_SECTION_KEYS = [
+    "hero",
+    "category_visuals",
+    "new_arrivals",
+    "mens_categories",
+    "womens_categories",
+    "boys_categories",
+    "girls_categories",
+    "babies_categories",
+    "best_sellers"
+  ];
+
+  const isEnabled = (key) => {
+    if (!homeData || !homeData.sections) return true;
+    const found = homeData.sections.find((s) => s.section_key === key);
+    return found ? (found.is_active ?? true) : true;
+  };
+
   return (
     <>
-      {/* 1. Hero Banner */}
-      {enabled("hero") && <Hero />}
-
-      {/* 2. Explore by Department */}
-      {enabled("category_visuals") && <CategoryVisuals />}
-
-      {/* 3. New Arrivals */}
-      {enabled("new_arrivals") && <NewArrivalsSection />}
-
-      {/* 4. Men's Categories */}
-      {enabled("mens_categories") && <MensCategoriesSection />}
-
-      {/* 5. Women's Categories */}
-      {enabled("womens_categories") && <WomensCategoriesSection />}
-
-      {/* 6. Boys' Categories */}
-      {enabled("boys_categories") && <BoysCategoriesSection />}
-
-      {/* 7. Girls' Categories */}
-      {enabled("girls_categories") && <GirlsCategoriesSection />}
-
-      {/* 8. Babies' Categories */}
-      {enabled("babies_categories") && <BabiesCategoriesSection />}
-
-      {/* 9. Best Sellers */}
-      {enabled("best_sellers") && <BestSellersSection />}
+      {ORDERED_SECTION_KEYS.filter(isEnabled).map((key) => {
+        const Section = sectionComponents[key];
+        return Section ? <Section key={key} /> : null;
+      })}
 
       {/* 10. Promotional Benefits Section */}
       <section className="home-benefits-section" aria-label="Shopping Benefits">
