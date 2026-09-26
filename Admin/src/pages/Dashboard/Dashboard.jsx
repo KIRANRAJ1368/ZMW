@@ -122,7 +122,7 @@ export default function Dashboard() {
           <div>
             <h1 className="dash-welcome-title">Store Dashboard</h1>
             <p className="dash-welcome-sub">
-              Real-time overview of your ZMW Clothing storefront
+              Performance metrics, revenue summary, and catalog overview
             </p>
           </div>
         </div>
@@ -153,58 +153,52 @@ export default function Dashboard() {
         </div>
 
         <div className="dash-sales-grid">
-          {/* Total Sales — hero dark card */}
-          <div className="dash-kpi-card --dark">
+          {/* Total Sales — Hero Indigo → Purple gradient card */}
+          <div className="dash-kpi-card --indigo-purple">
+            <div className="dash-kpi-shimmer" aria-hidden="true" />
             <div className="dash-kpi-header">
-              <div>
-                <p className="dash-kpi-label">Total Revenue</p>
-                <p className="dash-kpi-note">Excl. cancelled &amp; returned</p>
-              </div>
-              <div className="dash-kpi-icon-box --gold">
-                <Wallet size={18} />
+              <p className="dash-kpi-label">Total Revenue</p>
+              <div className="dash-kpi-icon-box --glass">
+                <Wallet size={19} />
               </div>
             </div>
             <div className="dash-kpi-body">
               <span className="dash-kpi-value --large">{formatINR(totalSales)}</span>
-              <TrendChip label="All-time" />
             </div>
           </div>
 
-          {/* Today's Sales */}
-          <div className="dash-kpi-card --light">
+          {/* Today's Sales — Amber → Coral gradient card */}
+          <div className="dash-kpi-card --amber-coral">
+            <div className="dash-kpi-shimmer" aria-hidden="true" />
             <div className="dash-kpi-header">
-              <div>
-                <p className="dash-kpi-label">Today's Sales</p>
-                <p className="dash-kpi-note">Last 24 hours</p>
-              </div>
-              <div className="dash-kpi-icon-box --amber">
-                <CalendarClock size={18} />
+              <p className="dash-kpi-label">Today's Sales</p>
+              <div className="dash-kpi-icon-box --glass">
+                <CalendarClock size={19} />
               </div>
             </div>
             <div className="dash-kpi-body">
               <span className="dash-kpi-value">{formatINR(todaySales)}</span>
-              <TrendChip label="Today" positive={todaySales > 0} />
             </div>
           </div>
 
-          {/* Range Sales */}
-          <div className="dash-kpi-card --light">
+          {/* Range Sales — Sky Blue → Indigo gradient card */}
+          <div className="dash-kpi-card --sky-indigo">
+            <div className="dash-kpi-shimmer" aria-hidden="true" />
             <div className="dash-kpi-header">
               <div>
-                <p className="dash-kpi-label">Range Sales</p>
-                <p className="dash-kpi-note">Selected date period</p>
+                <p className="dash-kpi-label">Custom Period Sales</p>
+                {(fromDate && toDate) && (
+                  <span className="dash-kpi-range-dates">{fromDate} → {toDate}</span>
+                )}
               </div>
-              <div className="dash-kpi-icon-box --amber">
-                <CalendarRange size={18} />
+              <div className="dash-kpi-icon-box --glass">
+                <CalendarRange size={19} />
               </div>
             </div>
             <div className="dash-kpi-body">
               <span className="dash-kpi-value">
                 {rangeSales === null || rangeSales === undefined ? "—" : formatINR(rangeSales)}
               </span>
-              {(fromDate && toDate) && (
-                <span className="dash-kpi-range-dates">{fromDate} → {toDate}</span>
-              )}
             </div>
 
             {/* Date filter inline */}
@@ -248,8 +242,8 @@ export default function Dashboard() {
 
         <div className="dash-summary-cards">
 
-          {/* ── Total Products ── */}
-          <Link to="/products" className="dash-scard" data-accent="amber">
+          {/* ── Total Products (Mint → Sky) ── */}
+          <Link to="/products" className="dash-scard" data-accent="mint-sky">
             <div className="dash-scard-icon-col">
               <div className="dash-scard-icon-ring">
                 <Shirt size={22} />
@@ -261,8 +255,7 @@ export default function Dashboard() {
                 {Number(summary?.productCount ?? 0).toLocaleString("en-IN")}
               </p>
               <p className="dash-scard-sub">
-                {summary?.activeProductCount ?? 0} active
-                {(summary?.outOfStockCount ?? 0) > 0 && ` · ${summary.outOfStockCount} out of stock`}
+                {summary?.activeProductCount ?? 0} active in catalog
               </p>
             </div>
             <div className="dash-scard-arrow">
@@ -270,8 +263,8 @@ export default function Dashboard() {
             </div>
           </Link>
 
-          {/* ── Total Orders ── */}
-          <Link to="/orders" className="dash-scard" data-accent="green">
+          {/* ── Total Orders (Sky → Indigo) ── */}
+          <Link to="/orders" className="dash-scard" data-accent="sky-indigo">
             <div className="dash-scard-icon-col">
               <div className="dash-scard-icon-ring">
                 <ShoppingBag size={22} />
@@ -283,8 +276,7 @@ export default function Dashboard() {
                 {Number(summary?.orderCount ?? 0).toLocaleString("en-IN")}
               </p>
               <p className="dash-scard-sub">
-                {summary?.pendingOrders ?? 0} pending
-                {(summary?.deliveredOrders ?? 0) > 0 && ` · ${summary.deliveredOrders} delivered`}
+                {summary?.pendingOrders ?? 0} pending fulfillment
               </p>
             </div>
             <div className="dash-scard-arrow">
@@ -292,20 +284,20 @@ export default function Dashboard() {
             </div>
           </Link>
 
-          {/* ── Total Registered Customers ── */}
-          <Link to="/customers" className="dash-scard" data-accent="rose">
+          {/* ── Total Registered Customers (Coral → Purple) ── */}
+          <Link to="/customers" className="dash-scard" data-accent="coral-purple">
             <div className="dash-scard-icon-col">
               <div className="dash-scard-icon-ring">
                 <Users size={22} />
               </div>
             </div>
             <div className="dash-scard-body">
-              <p className="dash-scard-label">Registered Customers</p>
+              <p className="dash-scard-label">Total Customers</p>
               <p className="dash-scard-value">
                 {Number(summary?.customerCount ?? 0).toLocaleString("en-IN")}
               </p>
               <p className="dash-scard-sub">
-                {Number(summary?.guestOrderCount ?? 0).toLocaleString("en-IN")} guest orders · {Number(summary?.registeredOrderCount ?? 0).toLocaleString("en-IN")} client orders
+                Active customer accounts
               </p>
             </div>
             <div className="dash-scard-arrow">
@@ -313,21 +305,20 @@ export default function Dashboard() {
             </div>
           </Link>
 
-          {/* ── Total Categories ── */}
-          <Link to="/categories" className="dash-scard" data-accent="indigo">
+          {/* ── Total Categories (Amber → Coral) ── */}
+          <Link to="/categories" className="dash-scard" data-accent="amber-coral">
             <div className="dash-scard-icon-col">
               <div className="dash-scard-icon-ring">
                 <FolderTree size={22} />
               </div>
             </div>
             <div className="dash-scard-body">
-              <p className="dash-scard-label">Total Categories</p>
+              <p className="dash-scard-label">Product Categories</p>
               <p className="dash-scard-value">
                 {Number(summary?.categoryCount ?? 0).toLocaleString("en-IN")}
               </p>
               <p className="dash-scard-sub">
-                {summary?.activeCategoryCount ?? 0} active
-                {(summary?.subcategoryCount ?? 0) > 0 && ` · ${summary.subcategoryCount} subcategories`}
+                {summary?.subcategoryCount ?? 0} subcategories
               </p>
             </div>
             <div className="dash-scard-arrow">
@@ -344,7 +335,7 @@ export default function Dashboard() {
       <section className="dash-section">
         <div className="dash-section-head">
           <ShoppingBag size={15} className="dash-section-icon" />
-          <span className="dash-section-label">Orders &amp; Products</span>
+          <span className="dash-section-label">Order Fulfillment Summary</span>
           <span className="dash-section-date">{currentDateFormatted}</span>
         </div>
 
@@ -484,62 +475,6 @@ export default function Dashboard() {
               </table>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          5. QUICK ACTIONS
-      ═══════════════════════════════════════════ */}
-      <section className="dash-section">
-        <div className="dash-section-head">
-          <ArrowRight size={15} className="dash-section-icon" />
-          <span className="dash-section-label">Quick Actions</span>
-        </div>
-
-        <div className="dash-actions-grid">
-          <Link to="/products" className="dash-action-card">
-            <div className="dash-action-icon">
-              <Shirt size={20} />
-            </div>
-            <div className="dash-action-body">
-              <span className="dash-action-title">Products</span>
-              <p className="dash-action-desc">Add, edit, or manage your catalog</p>
-            </div>
-            <ArrowRight size={16} className="dash-action-arrow" />
-          </Link>
-
-          <Link to="/orders" className="dash-action-card">
-            <div className="dash-action-icon">
-              <ShoppingBag size={20} />
-            </div>
-            <div className="dash-action-body">
-              <span className="dash-action-title">Orders</span>
-              <p className="dash-action-desc">View and process customer orders</p>
-            </div>
-            <ArrowRight size={16} className="dash-action-arrow" />
-          </Link>
-
-          <Link to="/banners" className="dash-action-card">
-            <div className="dash-action-icon">
-              <ImageIcon size={20} />
-            </div>
-            <div className="dash-action-body">
-              <span className="dash-action-title">Banners</span>
-              <p className="dash-action-desc">Update hero banners &amp; promotions</p>
-            </div>
-            <ArrowRight size={16} className="dash-action-arrow" />
-          </Link>
-
-          <Link to="/categories" className="dash-action-card">
-            <div className="dash-action-icon">
-              <FolderTree size={20} />
-            </div>
-            <div className="dash-action-body">
-              <span className="dash-action-title">Categories</span>
-              <p className="dash-action-desc">Organize product categories</p>
-            </div>
-            <ArrowRight size={16} className="dash-action-arrow" />
-          </Link>
         </div>
       </section>
 

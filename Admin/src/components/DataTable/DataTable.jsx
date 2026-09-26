@@ -26,28 +26,48 @@ export default function DataTable({
       <table className="data-table">
         <thead>
           <tr>
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                style={
-                  col.width || col.align
-                    ? { ...(col.width ? { width: col.width } : {}), ...(col.align ? { textAlign: col.align } : {}) }
-                    : undefined
-                }
-              >
-                {col.label}
-              </th>
-            ))}
+            {columns.map((col, idx) => {
+              const label = col.label ?? col.header ?? "";
+              const key = col.key ?? col.id ?? label ?? idx;
+              return (
+                <th
+                  key={key}
+                  style={{
+                    ...(col.width ? { width: col.width, minWidth: col.width } : {}),
+                    ...(col.align ? { textAlign: col.align } : {})
+                  }}
+                >
+                  {label}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
           {rows.map((row, idx) => (
             <tr key={rowKey(row)}>
-              {columns.map((col) => (
-                <td key={col.key} style={col.align ? { textAlign: col.align } : undefined}>
-                  {col.render ? col.render(row, idx) : row[col.key]}
-                </td>
-              ))}
+              {columns.map((col, colIdx) => {
+                const key = col.key ?? col.id ?? col.label ?? col.header ?? colIdx;
+                const cellContent = col.render
+                  ? col.render(row, idx)
+                  : col.cell
+                  ? col.cell(row, idx)
+                  : col.key
+                  ? row[col.key]
+                  : null;
+
+                return (
+                  <td
+                    key={key}
+                    style={{
+                      ...(col.width ? { width: col.width, minWidth: col.width } : {}),
+                      ...(col.align ? { textAlign: col.align } : {})
+                    }}
+                  >
+                    {cellContent}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

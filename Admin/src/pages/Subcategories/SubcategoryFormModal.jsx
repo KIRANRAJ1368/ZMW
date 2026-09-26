@@ -1,11 +1,12 @@
-import { useState, useRef } from "react";
-import { UploadCloud, Image as ImageIcon, X } from "lucide-react";
+import { useState } from "react";
 import Modal from "../../components/Modal/Modal";
 import FormField from "../../components/FormField/FormField";
-import { subcategoriesApi, uploadApi } from "../../services/resources";
+import ImageUploadField from "../../components/ImageUploadField/ImageUploadField";
+import { subcategoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { ApiError } from "../../services/api";
 import { slugify } from "../../utils/slugify";
+import { getSubcategoryImageUrl } from "../../utils/categoryImageResolver";
 
 export default function SubcategoryFormModal({ subcategory, categories, onClose, onSaved }) {
   const isEdit = !!subcategory.id;
@@ -13,19 +14,24 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
     category_id: subcategory.category_id || subcategory.category?.id || categories[0]?.id || "",
     name: subcategory.name || "",
     slug: subcategory.slug || "",
-    image_url: subcategory.image_url || "",
+    image_url: subcategory.image_url || (isEdit ? getSubcategoryImageUrl(subcategory) : ""),
     sort_order: subcategory.sort_order ?? 0,
     is_active: subcategory.is_active ?? true
   });
   const [errors, setErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
   const [slugTouched, setSlugTouched] = useState(isEdit);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef(null);
   const toast = useToast();
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
   }
 
   function handleNameChange(value) {
@@ -33,31 +39,58 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
     if (!slugTouched) update("slug", slugify(value));
   }
 
-  async function handleImageUpload(e) {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-    setIsUploading(true);
-    try {
-      const result = await uploadApi.upload("subcategories", files);
-      const url = result?.data?.files?.[0]?.url || result?.files?.[0]?.url;
-      if (url) {
-        update("image_url", url);
-        toast.success("Subcategory photo uploaded successfully");
-      }
-    } catch (err) {
-      toast.error("Image upload failed: " + err.message);
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+  function validate() {
+    const errs = {};
+    const trimmedName = (form.name || "").trim();
+    const trimmedSlug = (form.slug || "").trim();
+    const trimmedImage = (form.image_url || "").trim();
+    const catId = Number(form.category_id);
+
+    if (!catId) {
+      errs.category_id = "Please select a parent category";
     }
+
+    if (!trimmedName) {
+      errs.name = "Subcategory title is required";
+    } else if (trimmedName.length > 80) {
+      errs.name = "Subcategory title must be under 80 characters";
+    }
+
+    if (!trimmedSlug) {
+      errs.slug = "URL slug is required";
+    } else if (!/^[a-z0-9-]+$/.test(trimmedSlug)) {
+      errs.slug = "Slug may only contain lowercase letters, numbers, and hyphens";
+    }
+
+    if (!trimmedImage) {
+      errs.image_url = "Subcategory thumbnail is required. Please upload an image.";
+    }
+
+    return errs;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      const firstError = Object.values(validationErrors)[0];
+      toast.error(firstError || "Please fill in all required fields.");
+      return;
+    }
+
     setErrors({});
     setIsSaving(true);
     try {
-      const payload = { ...form, category_id: Number(form.category_id) };
+      const payload = {
+        category_id: Number(form.category_id),
+        name: form.name.trim(),
+        slug: form.slug.trim(),
+        image_url: form.image_url.trim(),
+        sort_order: Number(form.sort_order) || 0,
+        is_active: Boolean(form.is_active)
+      };
+
       if (isEdit) {
         await subcategoriesApi.update(subcategory.id, payload);
         toast.success("Subcategory updated successfully");
@@ -70,7 +103,7 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
       if (err instanceof ApiError && err.details?.length) {
         setErrors(Object.fromEntries(err.details.map((d) => [d.field, d.message])));
       }
-      toast.error(err.message);
+      toast.error(err.message || "Failed to save subcategory");
     } finally {
       setIsSaving(false);
     }
@@ -88,8 +121,10 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
             id="sub-category"
             value={form.category_id}
             onChange={(e) => update("category_id", e.target.value)}
+            className={errors.category_id ? "has-error" : ""}
             required
           >
+            <option value="">Select a Parent Category...</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -126,94 +161,15 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
         </div>
 
         {/* Subcategory Image */}
-        <FormField
+        <ImageUploadField
           label="Subcategory Thumbnail"
-          htmlFor="sub-image"
-          error={errors.image_url}
+          value={form.image_url}
+          onChange={(url) => update("image_url", url)}
+          folder="subcategories"
           hint="Recommended: 3:4 portrait (e.g. 600 × 800px). Used for filter pill previews."
-        >
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <input
-              id="sub-image"
-              value={form.image_url}
-              onChange={(e) => update("image_url", e.target.value)}
-              placeholder="Paste image URL or upload →"
-              style={{ flex: 1 }}
-            />
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-            >
-              <UploadCloud size={16} />
-              <span>{isUploading ? "Uploading..." : "Upload Photo"}</span>
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleImageUpload}
-            />
-          </div>
-
-          {form.image_url && (
-            <div
-              style={{
-                marginTop: 12,
-                display: "flex",
-                alignItems: "center",
-                gap: 14,
-                padding: 12,
-                background: "var(--surface-alt)",
-                borderRadius: "var(--radius-sm)",
-                border: "1px solid var(--border)"
-              }}
-            >
-              <img
-                src={form.image_url}
-                alt="Subcategory Preview"
-                style={{
-                  width: 48,
-                  height: 60,
-                  borderRadius: 6,
-                  objectFit: "cover",
-                  border: "1px solid var(--border)"
-                }}
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-main)" }}>
-                  Thumbnail Preview
-                </div>
-                <div
-                  style={{
-                    fontSize: 11.5,
-                    color: "var(--text-muted)",
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap"
-                  }}
-                >
-                  {form.image_url}
-                </div>
-              </div>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                onClick={() => update("image_url", "")}
-                title="Remove image"
-                style={{ color: "var(--danger)" }}
-              >
-                <X size={16} />
-                <span>Remove</span>
-              </button>
-            </div>
-          )}
-        </FormField>
+          error={errors.image_url}
+          required
+        />
 
         <div className="form-grid">
           <FormField label="Display Order" htmlFor="sub-sort" hint="Sequence within parent category">

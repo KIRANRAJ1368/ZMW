@@ -2,6 +2,7 @@ const { Order, OrderItem, Product, ProductImage, User, sequelize } = require("..
 const ApiError = require("../utils/ApiError");
 const { sendSuccess } = require("../utils/apiResponse");
 const { getPagination, buildMeta } = require("../utils/pagination");
+const mailer = require("../utils/mailer");
 
 function generateOrderNumber() {
   const stamp = Date.now().toString(36).toUpperCase();
@@ -95,6 +96,13 @@ async function create(req, res) {
       { model: User, as: "user", attributes: ["id", "name", "email", "phone"] }
     ]
   });
+
+  // Asynchronously dispatch luxury order confirmation email without blocking API response
+  if (full && full.email) {
+    mailer.sendOrderConfirmationEmail(full.email, full).catch((err) => {
+      console.error("[ZMW NODEMAILER] Failed to send order confirmation email:", err.message);
+    });
+  }
 
   return sendSuccess(res, { statusCode: 201, data: full });
 }

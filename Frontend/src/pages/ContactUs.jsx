@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { storefrontApi } from "../services/storefrontApi";
 import "./ContactUs.css";
 
 export default function ContactUs() {
@@ -11,19 +12,41 @@ export default function ContactUs() {
     message: ""
   });
   const [submittedData, setSubmittedData] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
-    setSubmittedData({
-      ...formData,
-      timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
-    });
+    if (!formData.name || !formData.email || !formData.message || isSubmitting) return;
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    const fullSubject = formData.subject
+      ? `[${formData.category.toUpperCase()}] ${formData.subject}`
+      : `[${formData.category.toUpperCase()}] Inquiry`;
+
+    try {
+      await storefrontApi.submitContact({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || undefined,
+        subject: fullSubject,
+        message: formData.message.trim()
+      });
+      setSubmittedData({
+        ...formData,
+        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+      });
+    } catch (err) {
+      setSubmitError(err.message || "Failed to send message. Please try again or reach us directly on WhatsApp.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -355,8 +378,18 @@ export default function ContactUs() {
                     ></textarea>
                   </div>
 
-                  <button type="submit" className="btn btn-primary contact-submit-btn">
-                    Send Customer Message
+                  {submitError && (
+                    <div style={{ color: "#DC2626", fontSize: "0.85rem", marginBottom: "16px", background: "#FEF2F2", padding: "10px 14px", borderRadius: "6px", border: "1px solid #FCA5A5" }}>
+                      ⚠️ {submitError}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary contact-submit-btn"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending Your Message..." : "Send Customer Message"}
                   </button>
                 </form>
               )}

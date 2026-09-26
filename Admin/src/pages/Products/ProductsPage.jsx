@@ -20,6 +20,8 @@ import Pagination from "../../components/Pagination/Pagination";
 import EmptyState from "../../components/EmptyState/EmptyState";
 import LoadingState from "../../components/LoadingState/LoadingState";
 import ProductViewModal from "../../components/ProductViewModal/ProductViewModal";
+import ImageLightboxModal from "../../components/ImageLightboxModal/ImageLightboxModal";
+import { resolveImageUrl } from "../../utils/imageUrl";
 import "./ProductsPage.css";
 
 export default function ProductsPage() {
@@ -30,6 +32,7 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [viewing, setViewing] = useState(null);
+  const [lightboxImg, setLightboxImg] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
@@ -236,7 +239,8 @@ export default function ProductsPage() {
               {
                 key: "sno",
                 label: "S.No",
-                width: "60px",
+                width: "55px",
+                align: "center",
                 render: (_row, idx) => (
                   <span className="table-sno-badge">{(page - 1) * 15 + idx + 1}</span>
                 )
@@ -244,23 +248,36 @@ export default function ProductsPage() {
               {
                 key: "image",
                 label: "Image",
-                width: "70px",
+                width: "65px",
+                align: "center",
                 render: (row) => (
-                  <div className="product-thumb-wrap">
+                  <div
+                    className="product-thumb-wrap"
+                    onClick={(e) => {
+                      if (row.images?.[0]) {
+                        e.stopPropagation();
+                        setLightboxImg(resolveImageUrl(row.images[0]));
+                      }
+                    }}
+                    role={row.images?.[0] ? "button" : undefined}
+                    tabIndex={row.images?.[0] ? 0 : undefined}
+                    title={row.images?.[0] ? "Click to view larger image" : undefined}
+                    style={row.images?.[0] ? { cursor: "pointer" } : undefined}
+                  >
                     {row.images?.[0] ? (
                       <img
-                        src={row.images[0]}
+                        src={resolveImageUrl(row.images[0])}
                         alt={row.name}
                         className="product-thumb-img"
                         onError={(e) => {
                           e.target.style.display = "none";
+                          e.target.parentElement.classList.add("img-fallback-active");
                         }}
                       />
-                    ) : (
-                      <div className="product-thumb-empty">
-                        <ImageIcon size={18} />
-                      </div>
-                    )}
+                    ) : null}
+                    <div className="product-thumb-empty">
+                      <ImageIcon size={18} />
+                    </div>
                     {row.images?.length > 1 && (
                       <span className="product-thumb-count">
                         +{row.images.length - 1}
@@ -272,6 +289,7 @@ export default function ProductsPage() {
               {
                 key: "name",
                 label: "Product Name",
+                width: "220px",
                 render: (row) => (
                   <div className="product-details">
                     <span className="cell-title">{row.name}</span>
@@ -289,10 +307,11 @@ export default function ProductsPage() {
               {
                 key: "category",
                 label: "Category",
+                width: "150px",
                 render: (row) => (
                   <div className="category-cell">
                     <span className="category-tag-ref">
-                      <Tag size={12} />
+                      <Tag size={11} />
                       <span>{row.category || "—"}</span>
                     </span>
                     {row.subCategory && (
@@ -304,6 +323,7 @@ export default function ProductsPage() {
               {
                 key: "price",
                 label: "Price",
+                width: "90px",
                 render: (row) => (
                   <div className="price-cell">
                     <span className="price-current">₹{row.price}</span>
@@ -316,6 +336,7 @@ export default function ProductsPage() {
               {
                 key: "stockCount",
                 label: "Stock & Status",
+                width: "125px",
                 render: (row) => (
                   <StatusBadge
                     value={row.inStock ? "in stock" : "out of stock"}
@@ -326,6 +347,8 @@ export default function ProductsPage() {
               {
                 key: "isBestSeller",
                 label: "Best Seller",
+                width: "100px",
+                align: "center",
                 render: (row) => (
                   <label className="toggle-ref" title="Toggle Best Seller">
                     <input
@@ -343,6 +366,8 @@ export default function ProductsPage() {
               {
                 key: "isNewArrival",
                 label: "New Drop",
+                width: "100px",
+                align: "center",
                 render: (row) => (
                   <label className="toggle-ref" title="Toggle New Drop">
                     <input
@@ -360,7 +385,7 @@ export default function ProductsPage() {
               {
                 key: "actions",
                 label: "Actions",
-                width: "230px",
+                width: "210px",
                 align: "right",
                 render: (row) => (
                   <div className="table-actions">
@@ -407,6 +432,14 @@ export default function ProductsPage() {
 
       {viewing && (
         <ProductViewModal product={viewing} onClose={() => setViewing(null)} />
+      )}
+
+      {lightboxImg && (
+        <ImageLightboxModal
+          src={lightboxImg}
+          alt="Product Preview"
+          onClose={() => setLightboxImg(null)}
+        />
       )}
     </div>
   );

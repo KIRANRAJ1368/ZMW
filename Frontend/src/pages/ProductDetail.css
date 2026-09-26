@@ -72,6 +72,28 @@
   gap: 12px;
 }
 
+/* Dynamic Gallery Grid Layouts */
+.pd-gallery-count-1 {
+  grid-template-columns: 1fr;
+}
+.pd-gallery-count-1 .pd-grid-item {
+  aspect-ratio: 4 / 5;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.pd-gallery-count-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pd-gallery-count-3 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.pd-gallery-count-3 .pd-grid-item-0 {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 10;
+}
+
 .pd-grid-item {
   position: relative;
   width: 100%;

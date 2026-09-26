@@ -7,6 +7,7 @@ import DataTable from "../../components/DataTable/DataTable";
 import Pagination from "../../components/Pagination/Pagination";
 import Modal from "../../components/Modal/Modal";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
+import CustomerViewModal from "../../components/EntityViewModal/CustomerViewModal";
 
 export default function CustomersPage() {
   const [customers, setCustomers] = useState([]);
@@ -150,6 +151,7 @@ export default function CustomersPage() {
             {
               key: "name",
               label: "Customer",
+              width: "200px",
               render: (row) => (
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div
@@ -157,9 +159,9 @@ export default function CustomersPage() {
                       width: 36,
                       height: 36,
                       borderRadius: "50%",
-                      background: "var(--surface-alt)",
-                      border: "1px solid var(--border)",
-                      color: "var(--dark)",
+                      background: "#eef2ff",
+                      border: "1px solid #e0e7ff",
+                      color: "#4f46e5",
                       fontWeight: 700,
                       display: "flex",
                       alignItems: "center",
@@ -182,23 +184,38 @@ export default function CustomersPage() {
             {
               key: "contact",
               label: "Contact Details",
+              width: "220px",
               render: (row) => (
-                <div style={{ fontSize: 12.5 }}>
-                  <div style={{ color: "var(--text-main)", fontWeight: 500 }}>{row.email}</div>
-                  <div className="cell-muted">{row.phone || "—"}</div>
+                <div style={{ fontSize: 12.5, maxWidth: 210 }}>
+                  <div
+                    style={{
+                      color: "var(--text-main)",
+                      fontWeight: 500,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
+                    }}
+                    title={row.email}
+                  >
+                    {row.email}
+                  </div>
+                  <div className="cell-muted" style={{ whiteSpace: "nowrap" }}>{row.phone || "—"}</div>
                 </div>
               )
             },
             {
               key: "order_count",
               label: "Total Orders",
+              width: "130px",
+              align: "center",
               render: (row) => (
                 <span
                   className="pill-badge"
                   style={{
-                    background: "var(--surface-alt)",
-                    border: "1px solid var(--border)",
-                    color: "var(--text-main)"
+                    background: "#f1f5f9",
+                    border: "1px solid #cbd5e1",
+                    color: "var(--text-main)",
+                    whiteSpace: "nowrap"
                   }}
                 >
                   {Number(row.order_count || 0)} Order{Number(row.order_count) === 1 ? "" : "s"}
@@ -208,8 +225,10 @@ export default function CustomersPage() {
             {
               key: "total_spent",
               label: "Total Spend",
+              width: "120px",
+              align: "right",
               render: (row) => (
-                <span style={{ fontWeight: 800, color: "var(--text-main)", fontSize: 14 }}>
+                <span style={{ fontWeight: 800, color: "var(--text-main)", fontSize: 14, whiteSpace: "nowrap" }}>
                   ₹{Number(row.total_spent || 0).toLocaleString("en-IN")}
                 </span>
               )
@@ -217,8 +236,10 @@ export default function CustomersPage() {
             {
               key: "created_at",
               label: "Member Since",
+              width: "130px",
+              align: "center",
               render: (row) => (
-                <span style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
+                <span style={{ fontSize: 12.5, color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                   {new Date(row.created_at).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -230,7 +251,7 @@ export default function CustomersPage() {
             {
               key: "actions",
               label: "Actions",
-              width: "120px",
+              width: "100px",
               align: "right",
               render: (row) => (
                 <div className="table-actions">
@@ -254,124 +275,15 @@ export default function CustomersPage() {
 
       {/* Customer Detail Modal */}
       {viewingCustomer && (
-        <Modal
-          title={`Customer Profile: ${viewingCustomer.name}`}
-          width={700}
+        <CustomerViewModal
+          customer={viewingCustomer}
+          customerDetail={customerDetail}
+          loadingDetail={loadingDetail}
           onClose={() => {
             setViewingCustomer(null);
             setCustomerDetail(null);
           }}
-        >
-          {loadingDetail ? (
-            <div style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>
-              Loading customer account details...
-            </div>
-          ) : (
-            <div>
-              {/* Profile Card Header */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                  gap: 14,
-                  marginBottom: 20
-                }}
-              >
-                <div
-                  style={{
-                    background: "var(--surface-alt)",
-                    padding: "14px 16px",
-                    borderRadius: "var(--radius-sm)",
-                    border: "1px solid var(--border)"
-                  }}
-                >
-                  <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700 }}>
-                    Email
-                  </span>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--text-main)", marginTop: 4 }}>
-                    {customerDetail?.email || viewingCustomer.email}
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: "var(--surface-alt)",
-                    padding: "14px 16px",
-                    borderRadius: "var(--radius-sm)",
-                    border: "1px solid var(--border)"
-                  }}
-                >
-                  <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700 }}>
-                    Mobile Number
-                  </span>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--text-main)", marginTop: 4 }}>
-                    {customerDetail?.phone || viewingCustomer.phone || "—"}
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: "var(--surface-alt)",
-                    padding: "14px 16px",
-                    borderRadius: "var(--radius-sm)",
-                    border: "1px solid var(--border)"
-                  }}
-                >
-                  <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700 }}>
-                    Lifetime Spend
-                  </span>
-                  <div style={{ fontSize: 14.5, fontWeight: 800, color: "var(--text-main)", marginTop: 4 }}>
-                    ₹{Number(customerDetail?.total_spent || viewingCustomer.total_spent || 0).toLocaleString("en-IN")}
-                  </div>
-                </div>
-              </div>
-
-              {/* Order History */}
-              <h4 style={{ fontSize: 14, fontWeight: 700, marginBottom: 10, color: "var(--text-main)" }}>
-                Order History ({customerDetail?.orders?.length || 0})
-              </h4>
-
-              {customerDetail?.orders?.length === 0 ? (
-                <p style={{ color: "var(--text-muted)", fontSize: 13 }}>No orders placed yet by this customer.</p>
-              ) : (
-                <div style={{ maxHeight: 280, overflowY: "auto", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-                    <thead>
-                      <tr style={{ background: "var(--surface-alt)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                        <th style={{ padding: "8px 12px" }}>Order Ref</th>
-                        <th style={{ padding: "8px 12px" }}>Date</th>
-                        <th style={{ padding: "8px 12px" }}>Status</th>
-                        <th style={{ padding: "8px 12px" }}>Total</th>
-                        <th style={{ padding: "8px 12px", textAlign: "right" }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(customerDetail?.orders || []).map((o) => (
-                        <tr key={o.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                          <td style={{ padding: "10px 12px" }}>
-                            <code style={{ fontWeight: 700 }}>{o.order_number}</code>
-                          </td>
-                          <td style={{ padding: "10px 12px", color: "var(--text-muted)" }}>
-                            {new Date(o.created_at).toLocaleDateString("en-IN")}
-                          </td>
-                          <td style={{ padding: "10px 12px" }}>
-                            <StatusBadge value={o.status} />
-                          </td>
-                          <td style={{ padding: "10px 12px", fontWeight: 700 }}>₹{o.total}</td>
-                          <td style={{ padding: "10px 12px", textAlign: "right" }}>
-                            <Link to={`/orders/${o.id}`} className="btn btn-secondary btn-sm" style={{ padding: "4px 8px" }}>
-                              View Order
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
-        </Modal>
+        />
       )}
     </div>
   );

@@ -1,18 +1,11 @@
-import { useState, useMemo, useEffect, useLayoutEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import ProductCard from "../components/ProductCard/ProductCard";
 import SizeGuideModal from "../components/Modals/SizeGuideModal";
+import { imageUrl } from "../utils/imageUrl";
+import { storefrontApi } from "../services/storefrontApi";
 import "./ProductDetail.css";
-
-// Supplementary high-res detail images to ensure 4 distinct angles per garment
-const DETAIL_FALLBACK_ANGLES = [
-  "/images/photo-1576566588028-4147f3842f27.jpg",
-  "/images/photo-1583743814966-8936f5b7be1a.jpg",
-  "/images/photo-1618354691373-d851c5c3a990.jpg",
-  "/images/photo-1622470953794-aa9c70b0fb9d.jpg"
-];
-
 
 export default function ProductDetail() {
   const { productId } = useParams();
@@ -23,18 +16,15 @@ export default function ProductDetail() {
     wishlist,
     toggleWishlist,
     setIsCartOpen,
-    setIsCheckoutOpen,
-    proceedToCheckout,
     allProducts,
     findProduct,
     recentlyViewed,
     trackRecentlyViewed
   } = useShop();
 
-  const product = useMemo(
-    () => findProduct(productId),
-    [productId, findProduct]
-  );
+  const [product, setProduct] = useState(() => findProduct(productId));
+  const [isLoading, setIsLoading] = useState(!product);
+  const [loadError, setLoadError] = useState(null);
 
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -56,60 +46,110 @@ export default function ProductDetail() {
     setOpenAccordions((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Build a 4-image distinct gallery
+  // Dynamic Product Loader: Guarantees NO previously selected product content leaks
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+
+    // Reset selection states immediately on ID change
+    setSelectedColor(null);
+    setSelectedSize(null);
+    setQuantity(1);
+    setAddedToCart(false);
+    setPreviewImage(null);
+    setLoadError(null);
+
+    let isMounted = true;
+    const initialMatch = findProduct(productId);
+
+    if (initialMatch) {
+      setProduct(initialMatch);
+      setSelectedColor(initialMatch.colors?.[0]?.name ?? "Standard");
+      setSelectedSize(initialMatch.sizes?.[1] || initialMatch.sizes?.[0] || "M");
+      trackRecentlyViewed(initialMatch.id);
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+      setProduct(null); // Clear previous product immediately
+    }
+
+    // Always fetch fresh dynamic data for this specific product
+    storefrontApi
+      .product(productId)
+      .then((data) => {
+        if (!isMounted || !data) return;
+        setProduct(data);
+        setSelectedColor((prev) => {
+          if (prev && data.colors?.some((c) => c.name === prev)) return prev;
+          return data.colors?.[0]?.name ?? "Standard";
+        });
+        setSelectedSize((prev) => {
+          if (prev && data.sizes?.includes(prev)) return prev;
+          return data.sizes?.[1] || data.sizes?.[0] || "M";
+        });
+        trackRecentlyViewed(data.id);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        if (!initialMatch) {
+          setLoadError(err.message || "Product not found");
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [productId, findProduct, trackRecentlyViewed]);
+
+  // Build clean, accurate gallery images using ONLY this product's actual images
   const galleryImages = useMemo(() => {
     if (!product) return [];
-    const imgs = [...(product.images || [])];
-    let fallbackIdx = 0;
-    while (imgs.length < 4) {
-      const candidate = DETAIL_FALLBACK_ANGLES[fallbackIdx % DETAIL_FALLBACK_ANGLES.length];
-      if (!imgs.includes(candidate)) {
-        imgs.push(candidate);
-      } else {
-        imgs.push(DETAIL_FALLBACK_ANGLES[(fallbackIdx + 1) % DETAIL_FALLBACK_ANGLES.length]);
-      }
-      fallbackIdx++;
+    const imgs = [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      product.images.forEach((img) => {
+        if (img && typeof img === "string") imgs.push(img);
+        else if (img && typeof img.url === "string") imgs.push(img.url);
+      });
+    } else if (product.image) {
+      imgs.push(product.image);
     }
-    return imgs.slice(0, 4);
+
+    const unique = [...new Set(imgs)].filter(Boolean);
+    if (unique.length === 0) {
+      return ["/images/photo-1521572163474-6864f9cf17ab.jpg"];
+    }
+    return unique;
   }, [product]);
 
-  // Related products (same subcategory, excluding current)
-  const relatedProducts = useMemo(() => {
-    if (!product) return [];
-    return allProducts.filter(
-      (p) => p.id !== product.id && p.subCategory === product.subCategory
-    ).slice(0, 4);
-  }, [product, allProducts]);
-
   const recentlyViewedProducts = useMemo(
-    () => recentlyViewed.filter((p) => p.id !== product?.id).slice(0, 8),
+    () => recentlyViewed.filter((p) => String(p.id) !== String(product?.id)).slice(0, 8),
     [recentlyViewed, product]
   );
 
-  // Reset selection states on product change
-  useLayoutEffect(() => {
-    if (product) {
-      setSelectedColor(product.colors?.[0]?.name ?? "Jet Black");
-      setSelectedSize(product.sizes?.[1] || product.sizes?.[0] || "M");
-      setQuantity(1);
-      setAddedToCart(false);
-      setPreviewImage(null);
-      trackRecentlyViewed(product.id);
-    }
-  }, [productId, product, trackRecentlyViewed]);
+  if (isLoading && !product) {
+    return (
+      <div className="pd-loading-screen" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center", color: "var(--color-ink)" }}>
+          <div className="pd-spinner" style={{ width: 44, height: 44, border: "3px solid #e5e7eb", borderTopColor: "var(--color-accent, #FAA703)", borderRadius: "50%", margin: "0 auto 16px", animation: "spin 0.8s linear infinite" }} />
+          <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-grey-600)" }}>Loading product details…</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!product) {
+  if (!product && !isLoading) {
     return (
       <div className="pd-not-found">
         <div className="container">
           <h2>Product Not Found</h2>
-          <p>The product you are looking for is no longer available.</p>
+          <p>{loadError || "The product you are looking for is no longer available."}</p>
           <div className="hero-cta-group" style={{ justifyContent: "center" }}>
             <Link to="/collection?category=mens" className="btn btn-primary">
               Browse Mens' Collection
             </Link>
-            <Link to="/collection?category=girls" className="btn btn-secondary">
-              Browse Girls' Collection
+            <Link to="/collection?category=women" className="btn btn-secondary">
+              Browse Women's Collection
             </Link>
           </div>
         </div>
@@ -122,9 +162,7 @@ export default function ProductDetail() {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null;
 
-  // Determine which category page this product belongs to, so the
-  // breadcrumb and "back to collection" links point somewhere correct
-  // regardless of how the person arrived.
+  // Determine category page navigation
   const CATEGORY_COLLECTION = {
     mens: { path: "/collection?category=mens", label: "Mens' Collection" },
     boys: { path: "/collection?category=boys", label: "Boys' Collection" },
@@ -134,10 +172,14 @@ export default function ProductDetail() {
     kids: { path: "/collection?category=kids", label: "Kids' Collection" },
     men: { path: "/collection?category=mens", label: "Mens' Collection" }
   };
-  const catKey = product.category || "mens";
+  const catKey = (product.category || "mens").toLowerCase();
   const catMeta = CATEGORY_COLLECTION[catKey] || CATEGORY_COLLECTION.mens;
   const collectionPath = catMeta.path;
   const collectionLabel = catMeta.label;
+
+  const isWomensProduct = catKey === "women";
+  const isKidsProduct = ["kids", "boys", "girls", "babies"].includes(catKey);
+  const isBabiesProduct = catKey === "babies";
 
   // Add to Cart handler
   const handleAddToCart = () => {
@@ -162,16 +204,70 @@ export default function ProductDetail() {
     setTimeout(() => setCopiedCoupon(null), 2000);
   };
 
-  const isWomensProduct = (product.category || "").toLowerCase() === "women";
-
-  // Highlights table data
+  // Dynamic Highlights derived from this product's actual information
   const highlights = [
-    { label: "Silhouette", value: product.subCategory?.includes("Oversized") ? "Oversized Boxy Fit" : "Relaxed Regular Fit" },
-    { label: "Fabric Weight", value: isWomensProduct ? "Soft-Washed Midweight Cotton" : "240 GSM Combed Cotton" },
-    { label: "Collar", value: product.category === "Polo" ? "Ribbed Polo Collar" : product.category === "Co-Ords" ? "Style-Specific Neckline" : "Reinforced Crew Neck" },
-    { label: "Sleeve", value: product.name.includes("Full Sleeve") || product.name.includes("Long Sleeve") ? "Long Sleeve" : "Drop-Shoulder Half Sleeve" },
-    { label: "Print Technique", value: isWomensProduct ? "Colorfast Pigment Print" : "High-Density Screen Print" },
-    { label: "Treatment", value: "Pre-Shrunk & Garment Washed" },
+    {
+      label: "Silhouette",
+      value: (product.subCategory || product.name || "").toLowerCase().includes("oversized")
+        ? "Oversized Boxy Fit"
+        : (product.subCategory || product.name || "").toLowerCase().includes("polo")
+        ? "Classic Tailored Fit"
+        : (product.subCategory || product.name || "").toLowerCase().includes("hoodie")
+        ? "Relaxed Streetwear Fit"
+        : (product.subCategory || product.name || "").toLowerCase().includes("sweatshirt")
+        ? "Comfort Streetwear Fit"
+        : isBabiesProduct
+        ? "Easy-Fit Snug Infant Cut"
+        : isKidsProduct
+        ? "Kids' Active Comfort Fit"
+        : "Relaxed Regular Fit"
+    },
+    {
+      label: "Fabric Composition",
+      value: isBabiesProduct
+        ? "100% Hypoallergenic Baby-Safe Cotton"
+        : isKidsProduct
+        ? "100% Super-Soft Bio-Washed Organic Cotton"
+        : isWomensProduct
+        ? "Soft-Washed Midweight Combed Cotton"
+        : (product.subCategory || product.name || "").toLowerCase().includes("hoodie")
+        ? "360 GSM Heavyweight French Terry"
+        : "240 GSM Pure Combed Cotton"
+    },
+    {
+      label: "Collar / Neckline",
+      value: (product.subCategory || product.name || "").toLowerCase().includes("polo")
+        ? "Ribbed Knit Polo Collar"
+        : (product.subCategory || product.name || "").toLowerCase().includes("high neck")
+        ? "Snug Mock High Neck"
+        : (product.subCategory || product.name || "").toLowerCase().includes("v-neck")
+        ? "Clean Minimalist V-Neck"
+        : (product.subCategory || product.name || "").toLowerCase().includes("hoodie")
+        ? "Double-Layered Warm Hood"
+        : isBabiesProduct
+        ? "Envelope / Expandable Soft Ribbed Neck"
+        : "Reinforced Crew Neck"
+    },
+    {
+      label: "Sleeve Style",
+      value: (product.name || "").toLowerCase().includes("full sleeve") || (product.name || "").toLowerCase().includes("long sleeve")
+        ? "Full Length with Ribbed Cuffs"
+        : (product.subCategory || product.name || "").toLowerCase().includes("hoodie") || (product.subCategory || product.name || "").toLowerCase().includes("sweatshirt")
+        ? "Long Sleeve with Ribbed Cuffs"
+        : "Drop-Shoulder Half Sleeve"
+    },
+    {
+      label: "Print & Finish",
+      value: isBabiesProduct
+        ? "Non-Toxic Skin-Safe Reactive Dye"
+        : isWomensProduct
+        ? "Colorfast Artistic Pigment Print"
+        : "High-Density Screen Print"
+    },
+    {
+      label: "Garment Treatment",
+      value: "Pre-Shrunk, Bio-Washed & Colorfast"
+    }
   ];
 
   return (
@@ -179,35 +275,35 @@ export default function ProductDetail() {
       {/* ── Breadcrumb Navigation ─────────────────────────────────── */}
       <div className="pd-breadcrumb-bar">
         <div className="container">
-<nav className="pd-breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="pd-sep">/</span>
-              <Link to={collectionPath}>{collectionLabel}</Link>
-              {product.subCategory && (
-                <>
-                  <span className="pd-sep">/</span>
-                  <Link to={`/collection?category=${encodeURIComponent(catKey)}&type=${encodeURIComponent(product.subCategory.toLowerCase())}`}>
-                    {product.subCategory}
-                  </Link>
-                </>
-              )}
-              <span className="pd-sep">/</span>
-              <span aria-current="page" className="pd-crumb-current">{product.name}</span>
-            </nav>
+          <nav className="pd-breadcrumb" aria-label="Breadcrumb">
+            <Link to="/">Home</Link>
+            <span className="pd-sep">/</span>
+            <Link to={collectionPath}>{collectionLabel}</Link>
+            {product.subCategory && (
+              <>
+                <span className="pd-sep">/</span>
+                <Link to={`/collection?category=${encodeURIComponent(catKey)}&type=${encodeURIComponent(product.subCategory.toLowerCase())}`}>
+                  {product.subCategory}
+                </Link>
+              </>
+            )}
+            <span className="pd-sep">/</span>
+            <span aria-current="page" className="pd-crumb-current">{product.name}</span>
+          </nav>
         </div>
       </div>
 
-      {/* ── Main Product Display: 2×2 Image Grid Left + Info Right ── */}
+      {/* ── Main Product Display: Clean Gallery Left + Info Right ── */}
       <section className="pd-main-section">
         <div className="container">
           <div className="pd-layout">
-            {/* ── Left: 2×2 High-Quality Product Image Gallery ── */}
+            {/* ── Left: Dynamic High-Quality Product Image Gallery ── */}
             <div className="pd-gallery-col">
-              <div className="pd-image-grid-2x2">
+              <div className={`pd-image-grid-2x2 pd-gallery-count-${galleryImages.length}`}>
                 {galleryImages.map((img, idx) => (
                   <div
-                    key={idx}
-                    className={`pd-grid-item pd-grid-item-${idx}`}
+                    key={`${img}-${idx}`}
+                    className={`pd-grid-item pd-grid-item-${idx} ${galleryImages.length === 1 ? "pd-grid-single" : ""}`}
                     onClick={() => setPreviewImage(img)}
                     title="Click to view high-resolution image"
                     role="button"
@@ -217,14 +313,22 @@ export default function ProductDetail() {
                     {idx === 0 && (
                       <>
                         <span className="pd-overlay-badge-top">
-                          {product.subCategory?.includes("Oversized") ? "OVERSIZED FIT" : "PREMIUM FIT"}
+                          {product.badge || ((product.subCategory || product.name || "").toLowerCase().includes("oversized") ? "OVERSIZED FIT" : "PREMIUM FIT")}
                         </span>
-                        <span className="pd-overlay-badge-bottom">240 GSM COMBED COTTON</span>
+                        <span className="pd-overlay-badge-bottom">
+                          {isBabiesProduct
+                            ? "100% ORGANIC COTTON"
+                            : isKidsProduct
+                            ? "SUPER-SOFT ORGANIC"
+                            : isWomensProduct
+                            ? "COMBED PURE COTTON"
+                            : "240 GSM COMBED COTTON"}
+                        </span>
                       </>
                     )}
                     <img
-                      src={img}
-                      alt={`${product.name} angle ${idx + 1}`}
+                      src={imageUrl(img)}
+                      alt={`${product.name} - view ${idx + 1}`}
                       className="pd-grid-img"
                       loading={idx < 2 ? "eager" : "lazy"}
                       onError={(event) => { event.currentTarget.src = "/images/zmw-logo-transparent.png"; }}
@@ -604,26 +708,6 @@ export default function ProductDetail() {
         </div>
       </section>
 
-      {/* ── You Might Also Like Section ───────────────────────────── */}
-      {relatedProducts.length > 0 && (
-        <section className="section-padding pd-recommendations-section">
-          <div className="container">
-            <div className="section-header">
-              <span className="section-eyebrow">CURATED PAIRINGS</span>
-              <h2 className="section-title">You Might Also Like</h2>
-              <p className="section-subtitle">
-                Complementary streetwear silhouettes selected to elevate your rotation.
-              </p>
-            </div>
-            <div className="product-grid">
-              {relatedProducts.map((p) => (
-                <ProductCard key={`related-${p.id}`} product={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ── Recently Viewed Products Section ──────────────────────── */}
       {recentlyViewedProducts.length > 0 && (
         <section className="section-padding pd-recently-viewed-section">
@@ -644,17 +728,6 @@ export default function ProductDetail() {
         </section>
       )}
 
-      {/* ── ZMW Luxury Atelier Statement Strip ──────────────────────── */}
-      <section className="pd-atelier-banner">
-        <div className="container pd-banner-inner">
-          <span className="pd-banner-eyebrow">ZMW ATELIER CRAFTSMANSHIP</span>
-          <h3 className="pd-banner-title">Substance Over Hype</h3>
-          <p className="pd-banner-desc">
-            Heavyweight cotton, precision cuts, and enduring finishes. Designed for how you actually move.
-          </p>
-        </div>
-      </section>
-
       {/* ── Interactive Size Guide Modal ────────────────────────────── */}
       <SizeGuideModal
         isOpen={isSizeGuideOpen}
@@ -674,7 +747,7 @@ export default function ProductDetail() {
             >
               ✕
             </button>
-            <img src={previewImage} alt="Product high-resolution view" className="pd-lightbox-img" />
+            <img src={imageUrl(previewImage)} alt={`${product.name} enlarged`} className="pd-lightbox-img" />
           </div>
         </div>
       )}

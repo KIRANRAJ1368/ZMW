@@ -13,12 +13,15 @@ import {
   Palette,
   Ruler,
   Layers,
-  IndianRupee
+  IndianRupee,
+  ZoomIn
 } from "lucide-react";
 import { productsApi, categoriesApi, subcategoriesApi, uploadApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { ApiError } from "../../services/api";
 import { slugify } from "../../utils/slugify";
+import { resolveImageUrl } from "../../utils/imageUrl";
+import ImageLightboxModal from "../../components/ImageLightboxModal/ImageLightboxModal";
 import FormField from "../../components/FormField/FormField";
 import LoadingState from "../../components/LoadingState/LoadingState";
 import "./ProductFormPage.css";
@@ -46,7 +49,94 @@ const BLANK_FORM = {
   sizes: []
 };
 
-const COMMON_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
+const FASHION_COLOR_PRESETS = [
+  { name: "Jet Black", hex: "#111827" },
+  { name: "Crisp White", hex: "#FFFFFF" },
+  { name: "Off White", hex: "#F3EFE4" },
+  { name: "Charcoal", hex: "#374151" },
+  { name: "Heather Grey", hex: "#9CA3AF" },
+  { name: "Navy Blue", hex: "#1E3A8A" },
+  { name: "Sky Blue", hex: "#9BB8CC" },
+  { name: "Olive Green", hex: "#4B5A3F" },
+  { name: "Sage Green", hex: "#84A98C" },
+  { name: "Sand Beige", hex: "#D8CDBC" },
+  { name: "Espresso Brown", hex: "#3A2A1E" },
+  { name: "Mustard Gold", hex: "#C89D3C" },
+  { name: "Crimson Red", hex: "#DC2626" },
+  { name: "Burgundy Wine", hex: "#800020" },
+  { name: "Dusty Rose", hex: "#DCAE96" },
+  { name: "Forest Green", hex: "#1E3A2F" }
+];
+
+function normalizeHex(val) {
+  if (!val || typeof val !== "string") return "#111827";
+  let h = val.trim();
+  if (!h.startsWith("#")) h = "#" + h;
+  if (/^#[0-9A-Fa-f]{3}$/.test(h)) {
+    h = "#" + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
+  }
+  if (/^#[0-9A-Fa-f]{6}$/.test(h)) {
+    return h.toUpperCase();
+  }
+  return "#111827";
+}
+
+function isValidHex(val) {
+  if (!val || typeof val !== "string") return false;
+  let h = val.trim();
+  if (!h.startsWith("#")) h = "#" + h;
+  return /^#[0-9A-Fa-f]{6}$/.test(h) || /^#[0-9A-Fa-f]{3}$/.test(h);
+}
+
+function getClosestColorName(hex) {
+  const norm = normalizeHex(hex);
+  const r = parseInt(norm.slice(1, 3), 16);
+  const g = parseInt(norm.slice(3, 5), 16);
+  const b = parseInt(norm.slice(5, 7), 16);
+
+  let closest = FASHION_COLOR_PRESETS[0].name;
+  let minDist = Infinity;
+
+  for (const preset of FASHION_COLOR_PRESETS) {
+    const pr = parseInt(preset.hex.slice(1, 3), 16);
+    const pg = parseInt(preset.hex.slice(3, 5), 16);
+    const pb = parseInt(preset.hex.slice(5, 7), 16);
+    const dist = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2;
+    if (dist < minDist) {
+      minDist = dist;
+      closest = preset.name;
+    }
+  }
+  return closest;
+}
+
+const SIZE_CATEGORIES = [
+  {
+    id: "all",
+    label: "Popular Presets",
+    sizes: ["XS", "S", "M", "L", "XL", "XXL", "3XL", "28", "30", "32", "34", "36", "Free Size"]
+  },
+  {
+    id: "standard",
+    label: "Tops & Outerwear",
+    sizes: ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL"]
+  },
+  {
+    id: "bottoms",
+    label: "Waist / Trousers",
+    sizes: ["28", "30", "32", "34", "36", "38", "40", "42"]
+  },
+  {
+    id: "kids",
+    label: "Kids Age Bands",
+    sizes: ["0-6M", "6-12M", "1-2Y", "2-3Y", "3-4Y", "4-5Y", "5-6Y", "7-8Y", "9-10Y", "11-12Y"]
+  },
+  {
+    id: "universal",
+    label: "Universal",
+    sizes: ["Free Size", "One Size", "Regular Fit", "Oversized"]
+  }
+];
 
 export default function ProductFormPage() {
   const { id } = useParams();
@@ -59,9 +149,13 @@ export default function ProductFormPage() {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [errors, setErrors] = useState({});
+  const [colorErrors, setColorErrors] = useState({});
+  const [activeSizeCategory, setActiveSizeCategory] = useState("all");
   const [isLoading, setIsLoading] = useState(isEdit);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDraggingPhotos, setIsDraggingPhotos] = useState(false);
+  const [lightboxImg, setLightboxImg] = useState(null);
   const [slugTouched, setSlugTouched] = useState(isEdit);
 
   useEffect(() => {
@@ -98,8 +192,13 @@ export default function ProductFormPage() {
           badge_type: p.badgeType || "",
           is_active: p.isActive,
           images: p.images || [],
-          colors: p.colors || [],
-          sizes: p.sizes || [],
+          colors: (p.colors || []).map((c) => ({
+            name: typeof c === "string" ? c : c?.name || "",
+            hex: normalizeHex(typeof c === "object" ? c?.hex || c?.hex_code : "#111827")
+          })),
+          sizes: (p.sizes || [])
+            .map((s) => (typeof s === "string" ? s : s?.label || s?.name || String(s)).trim())
+            .filter(Boolean),
           _categorySlug: p.category,
           _subcategoryName: p.subCategory
         });
@@ -146,20 +245,25 @@ export default function ProductFormPage() {
   }
 
   // ── Images ──
-  function addImageUrl() {
-    update("images", [...form.images, ""]);
-  }
-  function updateImage(idx, value) {
-    const next = [...form.images];
-    next[idx] = value;
-    update("images", next);
-  }
   function removeImage(idx) {
     update("images", form.images.filter((_, i) => i !== idx));
   }
-  async function handleFileUpload(e) {
-    const files = e.target.files;
-    if (!files?.length) return;
+
+  function makeCoverPhoto(idx) {
+    if (idx === 0) return;
+    const target = form.images[idx];
+    const rest = form.images.filter((_, i) => i !== idx);
+    update("images", [target, ...rest]);
+    toast.success("Cover photo updated");
+  }
+
+  async function handlePhotoFiles(fileList) {
+    if (!fileList || fileList.length === 0) return;
+    const files = Array.from(fileList).filter((f) => f.type.startsWith("image/"));
+    if (files.length === 0) {
+      toast.error("Please select valid image files (JPG, PNG, WEBP, GIF)");
+      return;
+    }
     setIsUploading(true);
     try {
       const { data } = await uploadApi.upload("products", files);
@@ -170,32 +274,133 @@ export default function ProductFormPage() {
       toast.error(err.message || "Failed to upload product photo");
     } finally {
       setIsUploading(false);
-      e.target.value = "";
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  function handlePhotoDrop(e) {
+    e.preventDefault();
+    setIsDraggingPhotos(false);
+    if (isUploading) return;
+    if (e.dataTransfer.files?.length) {
+      handlePhotoFiles(e.dataTransfer.files);
     }
   }
 
   // ── Colors ──
-  function addColor() {
-    update("colors", [...form.colors, { name: "", hex: "#111827" }]);
+  function addColor(preset) {
+    if (preset) {
+      const exists = form.colors.some(
+        (c) =>
+          c.name.trim().toLowerCase() === preset.name.toLowerCase() ||
+          c.hex.toLowerCase() === preset.hex.toLowerCase()
+      );
+      if (exists) {
+        toast.info(`"${preset.name}" is already in the color list`);
+        return;
+      }
+      update("colors", [...form.colors, { name: preset.name, hex: normalizeHex(preset.hex) }]);
+    } else {
+      update("colors", [...form.colors, { name: "", hex: "#111827" }]);
+    }
   }
+
+  function toggleColorPreset(preset) {
+    const existingIdx = form.colors.findIndex(
+      (c) =>
+        c.name.trim().toLowerCase() === preset.name.toLowerCase() ||
+        c.hex.toLowerCase() === preset.hex.toLowerCase()
+    );
+    if (existingIdx !== -1) {
+      removeColor(existingIdx);
+    } else {
+      update("colors", [...form.colors, { name: preset.name, hex: normalizeHex(preset.hex) }]);
+    }
+  }
+
   function updateColor(idx, field, value) {
-    const next = form.colors.map((c, i) => (i === idx ? { ...c, [field]: value } : c));
+    const next = form.colors.map((c, i) => {
+      if (i !== idx) return c;
+      const updated = { ...c, [field]: value };
+      if (field === "hex") {
+        let cleanHex = value.trim();
+        if (!cleanHex.startsWith("#") && /^[0-9A-Fa-f]/.test(cleanHex)) {
+          cleanHex = "#" + cleanHex;
+        }
+        updated.hex = cleanHex;
+        if (!c.name || c.name.trim() === "" || FASHION_COLOR_PRESETS.some((p) => p.name === c.name)) {
+          if (isValidHex(cleanHex)) {
+            updated.name = getClosestColorName(cleanHex);
+          }
+        }
+      }
+      return updated;
+    });
     update("colors", next);
+
+    if (colorErrors[idx]) {
+      setColorErrors((prev) => {
+        const copy = { ...prev };
+        delete copy[idx];
+        return copy;
+      });
+    }
   }
+
   function removeColor(idx) {
     update("colors", form.colors.filter((_, i) => i !== idx));
+    setColorErrors((prev) => {
+      const copy = { ...prev };
+      delete copy[idx];
+      return copy;
+    });
   }
 
   // ── Sizes ──
   const [sizeDraft, setSizeDraft] = useState("");
-  function addSize(sizeName) {
-    const val = (sizeName || sizeDraft).trim();
-    if (!val || form.sizes.includes(val)) return;
+
+  const displayedPresetSizes = useMemo(() => {
+    const cat = SIZE_CATEGORIES.find((c) => c.id === activeSizeCategory);
+    return cat ? cat.sizes : SIZE_CATEGORIES[0].sizes;
+  }, [activeSizeCategory]);
+
+  function toggleSize(sizeName) {
+    const val = sizeName.trim();
+    if (!val) return;
+    if (form.sizes.includes(val)) {
+      update("sizes", form.sizes.filter((s) => s !== val));
+    } else {
+      update("sizes", [...form.sizes, val]);
+    }
+  }
+
+  function addCustomSize() {
+    const val = sizeDraft.trim();
+    if (!val) {
+      toast.warning("Please enter a size label");
+      return;
+    }
+    if (form.sizes.some((s) => s.toLowerCase() === val.toLowerCase())) {
+      toast.info(`Size "${val}" is already in the list`);
+      return;
+    }
     update("sizes", [...form.sizes, val]);
     setSizeDraft("");
   }
+
   function removeSize(idx) {
     update("sizes", form.sizes.filter((_, i) => i !== idx));
+  }
+
+  function addStandardSizes() {
+    const standard = ["XS", "S", "M", "L", "XL", "XXL"];
+    const merged = Array.from(new Set([...form.sizes, ...standard]));
+    update("sizes", merged);
+    toast.success("Standard sizes added");
+  }
+
+  function clearAllSizes() {
+    update("sizes", []);
   }
 
   const isValid = useMemo(
@@ -206,6 +411,30 @@ export default function ProductFormPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setErrors({});
+    setColorErrors({});
+
+    // Validate colors
+    const newColorErrors = {};
+    form.colors.forEach((c, idx) => {
+      const nameEmpty = !c.name || !c.name.trim();
+      const hexInvalid = !isValidHex(c.hex);
+      if (nameEmpty || hexInvalid) {
+        newColorErrors[idx] = {
+          name: nameEmpty ? "Color display name is required" : null,
+          hex: hexInvalid ? "Must be valid 6-char hex (e.g. #111827)" : null
+        };
+      }
+    });
+
+    if (Object.keys(newColorErrors).length > 0) {
+      setColorErrors(newColorErrors);
+      toast.error("Please complete or fix invalid color swatches before saving.");
+      return;
+    }
+
+    // Clean & unique sizes
+    const cleanedSizes = Array.from(new Set(form.sizes.map((s) => s.trim()).filter(Boolean)));
+
     setIsSaving(true);
     try {
       const payload = {
@@ -217,7 +446,11 @@ export default function ProductFormPage() {
         stock_count: Number(form.stock_count),
         badge_type: form.badge_type || null,
         images: form.images.filter(Boolean),
-        colors: form.colors.filter((c) => c.name && c.hex)
+        colors: form.colors.map((c) => ({
+          name: c.name.trim(),
+          hex: normalizeHex(c.hex)
+        })),
+        sizes: cleanedSizes
       };
       delete payload._categorySlug;
       delete payload._subcategoryName;
@@ -232,7 +465,19 @@ export default function ProductFormPage() {
       navigate("/products");
     } catch (err) {
       if (err instanceof ApiError && err.details?.length) {
-        setErrors(Object.fromEntries(err.details.map((d) => [d.field, d.message])));
+        const errObj = Object.fromEntries(err.details.map((d) => [d.field, d.message]));
+        setErrors(errObj);
+        err.details.forEach((d) => {
+          const match = d.field.match(/^colors\[(\d+)\]\.(\w+)$/);
+          if (match) {
+            const idx = Number(match[1]);
+            const field = match[2];
+            setColorErrors((prev) => ({
+              ...prev,
+              [idx]: { ...(prev[idx] || {}), [field]: d.message }
+            }));
+          }
+        });
       }
       toast.error(err.message);
     } finally {
@@ -537,173 +782,418 @@ export default function ProductFormPage() {
             <div>
               <h3 className="section-title">Product Image Gallery</h3>
               <p className="section-sub">
-                Portrait 3:4 ratio photography (minimum 900 × 1200px recommended). The first image serves as the storefront cover.
+                Portrait 3:4 ratio photography (minimum 900 × 1200px recommended). The first image serves as the storefront cover. Click any photo to view full resolution.
               </p>
             </div>
           </div>
 
-          <div className="image-gallery-grid">
-            {form.images.map((url, idx) => (
-              <div key={idx} className="image-gallery-card">
-                <div className="image-preview-wrap">
-                  {url ? (
-                    <img
-                      src={url}
-                      alt={`Product #${idx + 1}`}
-                      className="image-preview-img"
-                      onError={(e) => {
-                        e.target.style.visibility = "hidden";
-                      }}
-                    />
-                  ) : (
-                    <div className="image-preview-empty">
-                      <ImageIcon size={26} />
-                      <span>No URL Provided</span>
-                    </div>
-                  )}
-                  {idx === 0 && <span className="image-primary-badge">Cover Photo</span>}
-                  <span className="image-order-badge">#{idx + 1}</span>
-                </div>
-                <div className="image-card-footer">
-                  <input
-                    value={url}
-                    onChange={(e) => updateImage(idx, e.target.value)}
-                    placeholder="Image URL"
-                    className="image-url-input"
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-ghost btn-sm btn-delete-img"
-                    onClick={() => removeImage(idx)}
-                    title="Remove Photo"
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="gallery-action-bar">
-            <button type="button" className="btn btn-secondary" onClick={addImageUrl}>
-              <Plus size={16} />
-              <span>Add Direct Image URL</span>
-            </button>
+          {/* Device Dropzone / Upload Area */}
+          <div
+            className={`gallery-dropzone ${isDraggingPhotos ? "is-dragging" : ""} ${isUploading ? "is-uploading" : ""}`}
+            onClick={() => !isUploading && fileInputRef.current?.click()}
+            onDrop={handlePhotoDrop}
+            onDragOver={(e) => {
+              e.preventDefault();
+              if (!isDraggingPhotos) setIsDraggingPhotos(true);
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault();
+              setIsDraggingPhotos(false);
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && !isUploading && fileInputRef.current?.click()}
+          >
+            <div className="gallery-dropzone-icon">
+              <UploadCloud size={28} className={isUploading ? "spin" : ""} />
+            </div>
+            <div className="gallery-dropzone-text">
+              <strong>{isUploading ? "Uploading photos..." : "Click to select or drag & drop product photos"}</strong>
+              <p>Upload directly from your device (JPG, PNG, WEBP, GIF). Multiple files supported.</p>
+            </div>
             <button
               type="button"
-              className="btn btn-secondary"
-              onClick={() => fileInputRef.current?.click()}
+              className="btn btn-secondary btn-sm gallery-upload-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
               disabled={isUploading}
             >
-              <UploadCloud size={16} />
-              <span>{isUploading ? "Uploading..." : "Upload Device Photos"}</span>
+              <UploadCloud size={14} />
+              <span>{isUploading ? "Uploading..." : "Browse Device Photos"}</span>
             </button>
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,image/gif"
               multiple
               hidden
-              onChange={handleFileUpload}
+              onChange={(e) => handlePhotoFiles(e.target.files)}
               disabled={isUploading}
             />
           </div>
+
+          {/* Image Cards Grid */}
+          {form.images.length > 0 ? (
+            <div className="image-gallery-grid">
+              {form.images.map((url, idx) => {
+                const resolved = resolveImageUrl(url);
+                return (
+                  <div key={idx} className="image-gallery-card">
+                    <div
+                      className="image-preview-wrap"
+                      onClick={() => setLightboxImg(resolved)}
+                      title="Click to view larger image"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === "Enter" && setLightboxImg(resolved)}
+                    >
+                      <img
+                        src={resolved}
+                        alt={`Product #${idx + 1}`}
+                        className="image-preview-img"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                          const fallback = e.currentTarget.parentElement.querySelector(".image-preview-empty");
+                          if (fallback) fallback.style.display = "flex";
+                        }}
+                      />
+                      <div className="image-preview-empty" style={{ display: "none" }}>
+                        <ImageIcon size={26} />
+                        <span>Preview Unavailable</span>
+                      </div>
+                      <div className="image-gallery-hover-overlay">
+                        <ZoomIn size={18} />
+                        <span>Enlarge</span>
+                      </div>
+                      {idx === 0 && <span className="image-primary-badge">Cover Photo</span>}
+                      <span className="image-order-badge">#{idx + 1}</span>
+                    </div>
+                    <div className="image-card-footer">
+                      <div className="image-card-actions-left">
+                        {idx > 0 ? (
+                          <button
+                            type="button"
+                            className="btn-make-cover"
+                            onClick={() => makeCoverPhoto(idx)}
+                            title="Set this photo as primary cover"
+                          >
+                            Set as Cover
+                          </button>
+                        ) : (
+                          <span className="cover-label-pill">Main Cover</span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm btn-delete-img"
+                        onClick={() => removeImage(idx)}
+                        title="Remove Photo"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="no-images-notice">
+              <ImageIcon size={22} />
+              <span>No product photos attached yet. Use the upload area above to attach photos from your device.</span>
+            </div>
+          )}
+
+          {lightboxImg && (
+            <ImageLightboxModal
+              src={lightboxImg}
+              alt="Product Photo Preview"
+              onClose={() => setLightboxImg(null)}
+            />
+          )}
         </div>
 
         {/* Section 5: Available Colors */}
-        <div className="card form-section-card">
+        <div className="card form-section-card colors-section-card">
           <div className="section-card-heading">
-            <div className="section-icon-wrap">
+            <div className="section-icon-wrap section-icon-palette">
               <Palette size={18} />
             </div>
-            <div>
-              <h3 className="section-title">Color Swatches</h3>
-              <p className="section-sub">Add available fabric colors with exact hex color codes for storefront swatches</p>
+            <div className="section-heading-text">
+              <div className="section-title-row">
+                <h3 className="section-title">Color Swatches</h3>
+                <span className="section-count-badge">
+                  {form.colors.length} {form.colors.length === 1 ? "color" : "colors"}
+                </span>
+              </div>
+              <p className="section-sub">
+                Add fabric colors with accurate hex color codes for customer storefront selection
+              </p>
             </div>
           </div>
 
-          <div className="color-swatch-list">
-            {form.colors.map((color, idx) => (
-              <div key={idx} className="color-swatch-item">
-                <input
-                  type="color"
-                  value={color.hex}
-                  onChange={(e) => updateColor(idx, "hex", e.target.value)}
-                  className="color-picker-input"
-                  title="Choose swatch color"
-                />
-                <input
-                  value={color.name}
-                  onChange={(e) => updateColor(idx, "name", e.target.value)}
-                  placeholder="Color Name, e.g. Jet Black, Vintage Cream"
-                  className="color-name-input"
-                />
-                <code className="color-hex-badge">{color.hex}</code>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm btn-delete-color"
-                  onClick={() => removeColor(idx)}
-                  title="Remove Color"
-                >
-                  <Trash2 size={15} />
-                </button>
-              </div>
-            ))}
+          {/* Quick Color Presets Palette */}
+          <div className="quick-colors-container">
+            <div className="quick-colors-header">
+              <span className="quick-colors-label">Popular Apparel Palettes (Click to toggle):</span>
+            </div>
+            <div className="quick-colors-grid">
+              {FASHION_COLOR_PRESETS.map((p) => {
+                const isActive = form.colors.some(
+                  (c) =>
+                    c.name.trim().toLowerCase() === p.name.toLowerCase() ||
+                    c.hex.toLowerCase() === p.hex.toLowerCase()
+                );
+                return (
+                  <button
+                    key={p.name}
+                    type="button"
+                    className={`quick-color-pill ${isActive ? "active" : ""}`}
+                    onClick={() => toggleColorPreset(p)}
+                    title={`${p.name} (${p.hex}) — Click to ${isActive ? "remove" : "add"}`}
+                  >
+                    <span
+                      className="quick-color-swatch-dot"
+                      style={{ backgroundColor: p.hex }}
+                    />
+                    <span className="quick-color-name">{p.name}</span>
+                    {isActive ? (
+                      <Check size={12} className="quick-color-check" />
+                    ) : (
+                      <span className="quick-color-plus">+</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <button type="button" className="btn btn-secondary btn-sm" onClick={addColor} style={{ marginTop: 12 }}>
-            <Plus size={15} />
-            <span>Add Color Swatch</span>
-          </button>
+          {/* Colors List */}
+          <div className="colors-management-area">
+            {form.colors.length === 0 ? (
+              <div className="empty-swatches-box">
+                <div className="empty-swatches-icon">
+                  <Palette size={26} />
+                </div>
+                <div className="empty-swatches-text">
+                  <strong>No color swatches configured</strong>
+                  <p>Choose from popular apparel palettes above or add a custom color below.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="color-swatch-list-modern">
+                {form.colors.map((color, idx) => {
+                  const itemErr = colorErrors[idx];
+                  return (
+                    <div
+                      key={idx}
+                      className={`color-swatch-card ${itemErr ? "has-error" : ""}`}
+                    >
+                      <div className="color-swatch-card-main">
+                        {/* Swatch Picker & Visual Preview */}
+                        <div className="color-picker-control-wrap">
+                          <label
+                            className="color-picker-visual-preview"
+                            style={{ backgroundColor: color.hex || "#111827" }}
+                            title="Click to open color picker"
+                          >
+                            <input
+                              type="color"
+                              value={isValidHex(color.hex) ? normalizeHex(color.hex) : "#111827"}
+                              onChange={(e) => updateColor(idx, "hex", e.target.value)}
+                              className="color-picker-hidden-input"
+                              aria-label={`Pick color for item ${idx + 1}`}
+                            />
+                            <span className="color-picker-overlay-icon">
+                              <Palette size={13} />
+                            </span>
+                          </label>
+                        </div>
+
+                        {/* Color Name Input */}
+                        <div className="color-field-col color-field-name">
+                          <label className="color-mini-label" htmlFor={`c-name-${idx}`}>
+                            Color Display Name *
+                          </label>
+                          <input
+                            id={`c-name-${idx}`}
+                            value={color.name}
+                            onChange={(e) => updateColor(idx, "name", e.target.value)}
+                            placeholder="e.g. Jet Black, Vintage Cream"
+                            className={`color-name-input ${itemErr?.name ? "input-error" : ""}`}
+                            required
+                          />
+                          {itemErr?.name && <span className="color-field-error">{itemErr.name}</span>}
+                        </div>
+
+                        {/* Hex Code Input */}
+                        <div className="color-field-col color-field-hex">
+                          <label className="color-mini-label" htmlFor={`c-hex-${idx}`}>
+                            Hex Code *
+                          </label>
+                          <div className={`color-hex-input-box ${itemErr?.hex ? "input-error" : ""}`}>
+                            <span className="hex-prefix">#</span>
+                            <input
+                              id={`c-hex-${idx}`}
+                              value={color.hex.replace(/^#/, "")}
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/[^0-9A-Fa-f]/g, "").slice(0, 6);
+                                updateColor(idx, "hex", "#" + val);
+                              }}
+                              placeholder="111827"
+                              maxLength={6}
+                              className="color-hex-text-input"
+                            />
+                          </div>
+                          {itemErr?.hex && <span className="color-field-error">{itemErr.hex}</span>}
+                        </div>
+
+                        {/* Live Storefront Preview Tag */}
+                        <div className="color-field-col color-field-preview">
+                          <span className="color-mini-label">Storefront Preview</span>
+                          <div className="color-live-badge">
+                            <span
+                              className="live-badge-dot"
+                              style={{ backgroundColor: color.hex || "#111827" }}
+                            />
+                            <span className="live-badge-name">
+                              {color.name || "Untitled Color"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Delete Action */}
+                        <div className="color-action-col">
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-sm btn-delete-swatch"
+                            onClick={() => removeColor(idx)}
+                            title="Remove this color swatch"
+                            aria-label={`Remove color ${color.name || idx + 1}`}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="color-actions-bar">
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => addColor()}
+            >
+              <Plus size={15} />
+              <span>Add Custom Color Swatch</span>
+            </button>
+          </div>
         </div>
 
         {/* Section 6: Available Sizes */}
-        <div className="card form-section-card">
+        <div className="card form-section-card sizes-section-card">
           <div className="section-card-heading">
-            <div className="section-icon-wrap">
+            <div className="section-icon-wrap section-icon-ruler">
               <Ruler size={18} />
             </div>
-            <div>
-              <h3 className="section-title">Available Sizing</h3>
-              <p className="section-sub">Specify available size tags for customer selection on product page</p>
+            <div className="section-heading-text">
+              <div className="section-title-row">
+                <h3 className="section-title">Available Sizing</h3>
+                <span className="section-count-badge">
+                  {form.sizes.length} {form.sizes.length === 1 ? "size" : "sizes"}
+                </span>
+              </div>
+              <p className="section-sub">
+                Define available size options for customer selection on product and quick-view pages
+              </p>
             </div>
+          </div>
+
+          {/* Sizing Category Tabs */}
+          <div className="sizes-category-tabs">
+            {SIZE_CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                className={`size-cat-tab ${activeSizeCategory === cat.id ? "active" : ""}`}
+                onClick={() => setActiveSizeCategory(cat.id)}
+              >
+                {cat.label}
+              </button>
+            ))}
           </div>
 
           {/* Quick Add Pills */}
           <div className="quick-sizes-bar">
-            <span className="quick-sizes-label">One-Click Add:</span>
             <div className="quick-sizes-pills">
-              {COMMON_SIZES.map((s) => (
+              {displayedPresetSizes.map((s) => {
+                const isSelected = form.sizes.includes(s);
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    className={`btn btn-xs quick-size-pill ${isSelected ? "btn-accent is-selected" : "btn-secondary"}`}
+                    onClick={() => toggleSize(s)}
+                    title={`Click to ${isSelected ? "remove" : "add"} size ${s}`}
+                  >
+                    {isSelected ? `✓ ${s}` : `+ ${s}`}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="quick-sizes-actions">
+              <button
+                type="button"
+                className="btn btn-ghost btn-xs"
+                onClick={addStandardSizes}
+                title="Add S, M, L, XL, XXL in one click"
+              >
+                + Add Standard Set
+              </button>
+              {form.sizes.length > 0 && (
                 <button
-                  key={s}
                   type="button"
-                  className={`btn btn-xs ${form.sizes.includes(s) ? "btn-accent" : "btn-secondary"}`}
-                  onClick={() => addSize(s)}
+                  className="btn btn-ghost btn-xs btn-clear-sizes"
+                  onClick={clearAllSizes}
+                  title="Remove all sizes"
                 >
-                  {form.sizes.includes(s) ? `✓ ${s}` : `+ ${s}`}
+                  Clear All
                 </button>
-              ))}
+              )}
             </div>
           </div>
 
           {/* Active Size Chips */}
-          <div className="active-sizes-row">
-            {form.sizes.map((size, idx) => (
-              <span key={idx} className="active-size-chip">
-                <span>{size}</span>
-                <button
-                  type="button"
-                  onClick={() => removeSize(idx)}
-                  aria-label={`Remove size ${size}`}
-                  className="size-chip-delete"
-                >
-                  &times;
-                </button>
-              </span>
-            ))}
-            {form.sizes.length === 0 && (
-              <span className="hint">No sizes added yet. Click one of the quick options above or enter a custom size below.</span>
-            )}
+          <div className="active-sizes-section">
+            <span className="active-sizes-heading">
+              Active Product Sizes ({form.sizes.length}):
+            </span>
+            <div className="active-sizes-row">
+              {form.sizes.map((size, idx) => (
+                <span key={`${size}-${idx}`} className="active-size-chip">
+                  <span className="size-chip-text">{size}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeSize(idx)}
+                    aria-label={`Remove size ${size}`}
+                    className="size-chip-delete"
+                    title={`Remove ${size}`}
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+              {form.sizes.length === 0 && (
+                <span className="no-sizes-hint">
+                  No sizes selected. Click one of the quick options above or enter a custom size below.
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Custom Size Input */}
@@ -711,15 +1201,20 @@ export default function ProductFormPage() {
             <input
               value={sizeDraft}
               onChange={(e) => setSizeDraft(e.target.value)}
-              placeholder="e.g. 28, 30, Oversized, Free Size"
+              placeholder="Enter custom size (e.g. 28, 30, Oversized, Free Size, 3-4Y)"
+              className="custom-size-input"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  addSize();
+                  addCustomSize();
                 }
               }}
             />
-            <button type="button" className="btn btn-secondary btn-sm" onClick={() => addSize()}>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={addCustomSize}
+            >
               <Plus size={15} />
               <span>Add Custom Size</span>
             </button>

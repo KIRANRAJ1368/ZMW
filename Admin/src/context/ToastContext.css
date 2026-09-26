@@ -21,9 +21,9 @@
   box-shadow: var(--shadow-xl);
   cursor: pointer;
   animation: toast-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  color: var(--surface);
-  background: var(--dark);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  background: #ffffff;
+  border: 1px solid var(--border);
   pointer-events: auto;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
@@ -78,5 +78,5 @@
 }
 
 .toast-close:hover {
-  color: var(--surface);
+  color: var(--text-main);
 }

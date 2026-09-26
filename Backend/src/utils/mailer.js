@@ -134,7 +134,155 @@ async function sendPasswordResetOtp(email, otp) {
   }
 }
 
+async function sendOrderConfirmationEmail(email, order) {
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const from = process.env.SMTP_FROM;
+
+  const orderNumber = order.order_number || `#${order.id}`;
+  const customerName = order.customer_name || "Valued Client";
+  const items = order.items || [];
+  const total = Number(order.total || 0).toLocaleString("en-IN");
+  const subtotal = Number(order.subtotal || order.total || 0).toLocaleString("en-IN");
+  const discount = Number(order.discount_amount || 0);
+  const shipping = Number(order.shipping_fee || 0);
+
+  const subject = `Order Confirmed: ${orderNumber} — ZMW Clothing Concierge`;
+  const text = `Dear ${customerName},\n\nThank you for choosing ZMW Clothing. Your order ${orderNumber} for ₹${total} has been confirmed.\n\nShipping Address: ${order.shipping_address}, ${order.city || ""}\n\nWe will notify you once dispatched.\n\nZMW Clothing Atelier`;
+
+  const itemsHtml = items.map((it) => {
+    const title = it.product_name_snapshot || it.title || "Signature Piece";
+    const qty = it.quantity || 1;
+    const price = Number(it.unit_price || it.price || 0).toLocaleString("en-IN");
+    const meta = [it.size ? `Size: ${it.size}` : "", it.color ? `Color: ${it.color}` : ""].filter(Boolean).join(" | ");
+    return `
+      <tr>
+        <td style="padding: 10px 8px; border-bottom: 1px solid #eeeeee; font-size: 13px; color: #111827;">
+          <strong>${title}</strong>
+          ${meta ? `<div style="font-size: 11px; color: #6b7280; margin-top: 2px;">${meta}</div>` : ""}
+        </td>
+        <td style="padding: 10px 8px; border-bottom: 1px solid #eeeeee; font-size: 13px; color: #4b5563; text-align: center;">${qty}</td>
+        <td style="padding: 10px 8px; border-bottom: 1px solid #eeeeee; font-size: 13px; color: #111827; text-align: right;">₹${price}</td>
+      </tr>
+    `;
+  }).join("");
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Order Confirmation - ZMW Clothing</title>
+</head>
+<body style="margin: 0; padding: 24px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8f6f0; color: #111827;">
+  <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+    <div style="background: #111111; padding: 28px 24px; text-align: center;">
+      <h1 style="color: #c5a059; font-size: 26px; letter-spacing: 0.18em; margin: 0; font-weight: 700;">ZMW</h1>
+      <p style="color: #d1d5db; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; margin: 6px 0 0 0;">Haute Couture & Luxury Apparel</p>
+    </div>
+
+    <div style="padding: 32px 28px;">
+      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.15em; color: #c5a059; text-transform: uppercase;">Order Confirmed</span>
+      <h2 style="font-size: 20px; color: #111827; margin: 6px 0 16px 0;">Thank you, ${customerName}</h2>
+      <p style="font-size: 14px; line-height: 1.6; color: #4b5563; margin: 0 0 24px 0;">
+        We have received your order <strong>${orderNumber}</strong>. Our atelier artisans are hand-inspecting and preparing your pieces for express dispatch.
+      </p>
+
+      <div style="background: #fdfcf9; border: 1px solid #efe9dc; border-radius: 6px; padding: 16px; margin-bottom: 24px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+          <tr>
+            <td style="color: #6b7280; padding: 3px 0;">Order Reference:</td>
+            <td style="text-align: right; font-weight: 600; color: #111827;">${orderNumber}</td>
+          </tr>
+          <tr>
+            <td style="color: #6b7280; padding: 3px 0;">Payment Method:</td>
+            <td style="text-align: right; font-weight: 600; color: #111827;">${(order.payment_method || "Online Pay").toUpperCase()}</td>
+          </tr>
+          <tr>
+            <td style="color: #6b7280; padding: 3px 0;">Delivery Destination:</td>
+            <td style="text-align: right; color: #111827;">${order.shipping_address}${order.city ? `, ${order.city}` : ""}</td>
+          </tr>
+        </table>
+      </div>
+
+      <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; color: #111827; margin: 0 0 10px 0; border-bottom: 2px solid #111111; padding-bottom: 6px;">
+        Ordered Items
+      </h3>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+          <tr style="background: #f9fafb;">
+            <th style="padding: 8px; text-align: left; font-size: 11px; color: #6b7280; text-transform: uppercase;">Piece</th>
+            <th style="padding: 8px; text-align: center; font-size: 11px; color: #6b7280; text-transform: uppercase;">Qty</th>
+            <th style="padding: 8px; text-align: right; font-size: 11px; color: #6b7280; text-transform: uppercase;">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHtml || '<tr><td colspan="3" style="padding: 12px; text-align: center; color: #6b7280;">Standard Luxury Order</td></tr>'}
+        </tbody>
+      </table>
+
+      <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; margin-bottom: 24px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+          <tr>
+            <td style="padding: 3px 0; color: #6b7280;">Subtotal:</td>
+            <td style="padding: 3px 0; text-align: right; color: #111827;">₹${subtotal}</td>
+          </tr>
+          ${discount > 0 ? `
+          <tr>
+            <td style="padding: 3px 0; color: #2e7d32;">Privilege Discount:</td>
+            <td style="padding: 3px 0; text-align: right; color: #2e7d32;">-₹${discount.toLocaleString("en-IN")}</td>
+          </tr>` : ""}
+          <tr>
+            <td style="padding: 3px 0; color: #6b7280;">Express Insured Courier:</td>
+            <td style="padding: 3px 0; text-align: right; color: #111827;">${shipping > 0 ? `₹${shipping.toLocaleString("en-IN")}` : "COMPLIMENTARY"}</td>
+          </tr>
+          <tr style="font-size: 16px; font-weight: 700; border-top: 1px solid #111111;">
+            <td style="padding: 10px 0 0 0; color: #111827;">Total Paid:</td>
+            <td style="padding: 10px 0 0 0; text-align: right; color: #c5a059;">₹${total}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="background: #f9fafb; border-radius: 6px; padding: 14px; text-align: center; font-size: 12px; color: #6b7280;">
+        Questions or special tailoring instructions? Reach our concierge at <a href="mailto:zmw@gmail.com" style="color: #c5a059; text-decoration: none; font-weight: 600;">zmw@gmail.com</a> or WhatsApp <strong>+91 9876543210</strong>.
+      </div>
+    </div>
+
+    <div style="background: #111111; padding: 16px; text-align: center; font-size: 11px; color: #9ca3af;">
+      &copy; ${new Date().getFullYear()} ZMW Clothing Atelier, 123 Avinashi Road, Coimbatore. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  console.log(`\n[ZMW NODEMAILER] 📦 ORDER CONFIRMATION EMAIL PREPARED for ${email} (Order ${orderNumber})`);
+
+  if (!user || !pass) {
+    console.log(`[ZMW NODEMAILER] ℹ️ SMTP credentials not configured. Email simulated.`);
+    return { success: true, simulated: true };
+  }
+
+  try {
+    const transport = getTransporter();
+    const info = await transport.sendMail({
+      from: from || `ZMW Clothing Concierge <${user}>`,
+      to: email,
+      subject,
+      text,
+      html
+    });
+    console.log(`[ZMW NODEMAILER] ✅ Order confirmation dispatched to ${email}. (Message ID: ${info.messageId})`);
+    return { success: true, messageId: info.messageId };
+  } catch (err) {
+    console.error(`[ZMW NODEMAILER] ❌ Failed to dispatch order confirmation:`, err.message);
+    return { success: false, error: err.message };
+  }
+}
+
 module.exports = {
   getTransporter,
-  sendPasswordResetOtp
+  sendPasswordResetOtp,
+  sendOrderConfirmationEmail
 };
+

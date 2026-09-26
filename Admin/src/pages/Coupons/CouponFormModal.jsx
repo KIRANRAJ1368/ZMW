@@ -46,9 +46,18 @@ export default function CouponFormModal({ coupon, onClose, onSaved }) {
         await couponsApi.create(payload);
         toast.success("New coupon code created successfully");
       }
-      onSaved();
+      if (typeof onSaved === "function") {
+        await onSaved();
+      }
       onClose();
     } catch (err) {
+      if (err.details?.length) {
+        const fieldErrors = {};
+        err.details.forEach((d) => {
+          fieldErrors[d.field] = d.message;
+        });
+        setErrors(fieldErrors);
+      }
       toast.error(err.message || "Failed to save coupon");
     } finally {
       setIsSaving(false);
@@ -174,7 +183,7 @@ export default function CouponFormModal({ coupon, onClose, onSaved }) {
             id="coupon_active"
             checked={form.is_active}
             onChange={(e) => update("is_active", e.target.checked)}
-            style={{ width: "18px", height: "18px", accentColor: "#c5a059", cursor: "pointer" }}
+            style={{ width: "18px", height: "18px", accentColor: "#6366F1", cursor: "pointer" }}
           />
           <label htmlFor="coupon_active" style={{ fontSize: "0.9rem", fontWeight: 500, cursor: "pointer" }}>
             Enable Coupon (Active for customer checkouts)

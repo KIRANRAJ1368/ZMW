@@ -26,6 +26,10 @@
   border: 1px solid var(--success-border);
 }
 
+.status-badge-success .status-badge-dot {
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
 .status-badge-danger {
   background: var(--danger-bg);
   color: var(--danger-text);
@@ -36,6 +40,10 @@
   background: var(--warning-bg);
   color: var(--warning-text);
   border: 1px solid var(--warning-border);
+}
+
+.status-badge-warning .status-badge-dot {
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
 }
 
 .status-badge-info {

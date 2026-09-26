@@ -467,7 +467,7 @@ export default function Men() {
             src="/images/cat-banner-mens.jpg"
             alt="Stylish male model wearing an ultra-premium graphic T-shirt"
             className="hero-backdrop-img"
-            style={{ objectPosition: "right 20%" }}
+            style={{ objectPosition: "85% top" }}
             loading="eager"
           />
           <div className="hero-backdrop-scrim" />
@@ -475,31 +475,85 @@ export default function Men() {
         </div>
 
         <div className="container hero-container">
-          <div className="hero-content">
-            <div className="hero-kicker-wrapper">
-              <span className="hero-kicker-badge">
-                <span className="kicker-pulse-dot" />
-                MEN'S EDIT · OVERSIZED SERIES
+          <div className="hero-content hero-content-box">
+            {/* Top Eyebrow Badges Row */}
+            <div className="hero-tag-wrap">
+              <span className="hero-tag-badge gold">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2l2.4 7.2h7.6l-6.1 4.5 2.3 7.3-6.2-4.6-6.2 4.6 2.3-7.3-6.1-4.5h7.6z" />
+                </svg>
+                NEW ARRIVALS
+              </span>
+              <span className="hero-tag-subbadge">
+                SEASON 2026
               </span>
             </div>
-            <h1 className="hero-title">
-              Oversized Graphics, <br />
-              <span className="hero-title-highlight">Deliberately Cut.</span>
-            </h1>
-            <p className="hero-subtitle">
-              Heavyweight 280 GSM cotton, structural drop shoulders, and modern street aesthetics.
-            </p>
+
+            {/* 1. PRIMARY OFFER HEADING */}
+            <div className="hero-offer-block">
+              <div className="hero-offer-heading" style={{ background: "linear-gradient(135deg, #FFFFFF 15%, #FFD166 60%, #FAA703 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                FLAT 25% OFF
+              </div>
+              <span className="hero-offer-tag">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                  <circle cx="7" cy="7" r="1.5" />
+                </svg>
+                AUTO-APPLIED AT CHECKOUT
+              </span>
+            </div>
+
+            {/* 2. SUPPORTING TEXT & CAMPAIGN HEADLINE */}
+            <div className="hero-campaign-info">
+              <h2 className="hero-campaign-headline" style={{ color: "#FFFFFF" }}>
+                NEW SEASON STYLES
+              </h2>
+              <p className="hero-subtitle">
+                Heavyweight 280 GSM drops with relaxed drop-shoulder silhouettes, modern street aesthetics, and all-day comfort.
+              </p>
+            </div>
+
+            {/* ECOMMERCE MICRO-PERKS BAR */}
+            <div className="hero-perks-bar">
+              <div className="hero-perk-item">
+                <span className="hero-perk-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                </span>
+                <span className="hero-perk-label">280 GSM Heavyweight</span>
+              </div>
+              <div className="hero-perk-item">
+                <span className="hero-perk-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#FAA703" stroke="#FAA703" strokeWidth="1">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                </span>
+                <span className="hero-perk-label">4.9★ Customer Rating</span>
+              </div>
+              <div className="hero-perk-item">
+                <span className="hero-perk-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                    <line x1="7" y1="7" x2="7.01" y2="7" />
+                  </svg>
+                </span>
+                <span className="hero-perk-label">100% Combed Cotton</span>
+              </div>
+            </div>
+
+            {/* 3. CALL TO ACTION & URGENCY PILL */}
             <div className="hero-cta-group">
-              <a href="#men-catalog" className="btn btn-hero-primary btn-lg">
-                Explore Men
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
+              <a href="#men-catalog" className="hero-btn-primary">
+                <span>EXPLORE NOW</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
                 </svg>
               </a>
-              <Link to="/oversized-t-shirts" className="btn btn-hero-secondary btn-lg">
-                View Lookbook
-              </Link>
+              <span className="hero-urgency-pill">
+                ✨ Fresh Drop
+              </span>
             </div>
           </div>
         </div>

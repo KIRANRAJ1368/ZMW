@@ -1,6 +1,7 @@
 /* ==========================================================================
-   ZMW CLOTHING — MODERN LUXURY LOGIN EXPERIENCE
-   Haute Couture Flowing Silk Waves & Balanced Ambient Luminescence
+   ZMW CLOTHING — VIBRANT ROYAL AZURE LIGHT LOGIN EXPERIENCE
+   Attractive, modern, luxury SaaS aesthetic with Electric Royal Azure Blue accents
+   Zero violet/purple, 100% clean, professional, and visually captivating
    ========================================================================== */
 
 .login-viewport {
@@ -9,149 +10,134 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8fafc;
+  background-color: var(--bg, #f8fafc);
   background-image:
-    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(250, 167, 3, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 45% at 50% 100%, rgba(17, 24, 39, 0.035) 0%, transparent 60%),
-    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(2, 132, 199, 0.06) 0%, transparent 50%);
   position: relative;
   overflow: hidden;
-  padding: 28px 20px;
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 32px 20px;
+  font-family: var(--font-sans, "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
 }
 
-/* ── Top Runway Ambient Keylight ── */
-.login-bg-runway-light {
+/* ── Ambient Soft Glow (Royal Azure Tint) ── */
+.login-mesh-orb {
   position: absolute;
-  top: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(90px);
+  z-index: 1;
+}
+
+.login-mesh-top {
+  top: -150px;
   left: 50%;
   transform: translateX(-50%);
-  width: 840px;
-  height: 380px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(250, 167, 3, 0.12) 0%, rgba(250, 167, 3, 0.03) 45%, transparent 70%);
-  filter: blur(50px);
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* ── Symmetrical Balanced Ambient Glows (Left & Right Flanks) ── */
-.login-bg-glow {
-  position: absolute;
   width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(95px);
-  z-index: 1;
+  height: 400px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.09) 0%, transparent 70%);
 }
 
-.login-bg-glow-left {
-  top: 20%;
-  left: -140px;
-  background: radial-gradient(circle, rgba(250, 167, 3, 0.13) 0%, rgba(250, 167, 3, 0.03) 45%, transparent 70%);
+.login-mesh-bottom {
+  bottom: -150px;
+  right: -50px;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.07) 0%, transparent 70%);
 }
 
-.login-bg-glow-right {
-  top: 20%;
-  right: -140px;
-  background: radial-gradient(circle, rgba(250, 167, 3, 0.13) 0%, rgba(250, 167, 3, 0.03) 45%, transparent 70%);
-}
-
-/* ── Center Clean Spotlight (Guarantees Pristine Focus Behind Card) ── */
-.login-bg-center-spotlight {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 700px;
-  height: 700px;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.6) 45%, transparent 70%);
-  filter: blur(45px);
-  z-index: 2;
-}
-
-/* ── Abstract Flowing Silk Curves (Full-Screen Scalable Vector) ── */
-.login-bg-silk-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 3;
+.login-grid-overlay {
+  display: none;
 }
 
 /* ── Login Container ── */
 .login-wrapper {
   width: 100%;
-  max-width: 440px;
+  max-width: 430px;
   position: relative;
   z-index: 10;
   margin: auto;
 }
 
-/* ── Modern Elevated Card ── */
+/* ── Elevated Azure-Accented Card ── */
 .login-card {
   position: relative;
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.95);
-  border-radius: 24px;
-  padding: 46px 40px 42px;
+  background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 50%);
+  border: 1px solid #e2e8f0;
+  border-top: 3.5px solid #2563eb;
+  border-radius: 22px;
+  padding: 40px 36px 32px;
   box-shadow:
-    0 1px 3px rgba(17, 24, 39, 0.02),
-    0 12px 32px -4px rgba(17, 24, 39, 0.06),
-    0 28px 64px -12px rgba(17, 24, 39, 0.09);
+    0 1px 3px rgba(15, 23, 42, 0.02),
+    0 8px 24px -4px rgba(15, 23, 42, 0.05),
+    0 20px 40px -4px rgba(37, 99, 235, 0.1);
   overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Top Subtle Gold Accent Hairline */
 .login-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3.5px;
-  background: linear-gradient(90deg, transparent 0%, #faa703 25%, #faa703 75%, transparent 100%);
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
+  display: none;
 }
 
-/* ── Logo Presentation ── */
-.login-logo-section {
+/* ── Brand Header Presentation ── */
+.login-brand-header {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 34px;
-  position: relative;
-  min-height: 82px;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-.login-logo-glow {
-  position: absolute;
-  width: 200px;
-  height: 74px;
-  background: radial-gradient(ellipse, rgba(250, 167, 3, 0.18) 0%, transparent 70%);
-  filter: blur(20px);
-  pointer-events: none;
+.login-logo-wrap {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-logo-image {
-  height: 78px;
+  height: 62px;
   width: auto;
-  max-width: 260px;
+  max-width: 200px;
   object-fit: contain;
   display: block;
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 4px 14px rgba(17, 24, 39, 0.06));
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s ease;
 }
 
 .login-logo-image:hover {
   transform: scale(1.02);
+}
+
+.login-admin-pill {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 9999px;
+  padding: 3px 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.08);
+}
+
+.login-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.login-subheading {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+  font-weight: 400;
 }
 
 /* ── Validation & Error Alert ── */
@@ -164,9 +150,9 @@
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #991b1b;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
   animation: loginShake 0.32s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
@@ -186,19 +172,19 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .login-form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .login-label {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
-  color: #111827;
+  color: #334155;
   letter-spacing: 0.01em;
 }
 
@@ -210,24 +196,24 @@
 
 .login-input-icon {
   position: absolute;
-  left: 16px;
+  left: 15px;
   color: #64748b;
   pointer-events: none;
-  transition: color 0.2s ease;
+  transition: color 0.18s ease;
 }
 
 .login-input {
   width: 100%;
-  height: 50px;
-  padding: 0 16px 0 46px;
-  background: #ffffff;
+  height: 48px;
+  padding: 0 16px 0 44px;
+  background: #f8fafc;
   border: 1.5px solid #cbd5e1;
   border-radius: 12px;
-  color: #111827;
-  font-size: 14.5px;
+  color: #0f172a;
+  font-size: 14px;
   font-family: inherit;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.03);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
 }
 
 .login-input:hover {
@@ -238,28 +224,28 @@
 .login-input:focus {
   outline: none;
   background: #ffffff;
-  border-color: #faa703;
-  box-shadow: 0 0 0 4px rgba(250, 167, 3, 0.18), 0 2px 4px rgba(17, 24, 39, 0.03);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.16), 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
 .login-input-container:focus-within .login-input-icon {
-  color: #faa703;
+  color: #2563eb;
 }
 
-/* Browser autofill override so Chrome/Edge never forces a pale blue box */
+/* Browser autofill override so Chrome/Edge never forces an ugly background */
 .login-input:-webkit-autofill,
 .login-input:-webkit-autofill:hover,
 .login-input:-webkit-autofill:focus,
 .login-input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-  -webkit-text-fill-color: #111827 !important;
+  -webkit-text-fill-color: #0f172a !important;
   box-shadow: 0 0 0 1000px #ffffff inset !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
 .login-input::placeholder {
-  color: #64748b;
-  font-size: 14px;
+  color: #94a3b8;
+  font-size: 13.5px;
   font-weight: 400;
   opacity: 1;
 }
@@ -270,10 +256,10 @@
 
 .login-toggle-password {
   position: absolute;
-  right: 10px;
+  right: 8px;
   color: #64748b;
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -285,40 +271,40 @@
 }
 
 .login-toggle-password:hover {
-  color: #111827;
-  background: #f1f5f9;
+  color: #0f172a;
+  background: #eff6ff;
 }
 
-/* ── ZMW Gold Action Button ── */
+/* ── Vibrant Royal Azure Button ── */
 .login-button {
   width: 100%;
-  height: 50px;
-  font-size: 15px;
+  height: 48px;
+  font-size: 14.5px;
   font-weight: 700;
-  color: #111827;
-  background: linear-gradient(135deg, #faa703 0%, #f59e0b 100%);
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   border: none;
   border-radius: 12px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 9px;
   letter-spacing: 0.015em;
-  margin-top: 8px;
-  box-shadow: 0 6px 18px -2px rgba(250, 167, 3, 0.4), 0 2px 4px rgba(17, 24, 39, 0.04);
+  margin-top: 6px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.38);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .login-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ffb326 0%, #faa703 100%);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px -2px rgba(250, 167, 3, 0.5), 0 4px 8px rgba(17, 24, 39, 0.06);
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.48);
 }
 
 .login-button:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(250, 167, 3, 0.3);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
 }
 
 .login-button:disabled {
@@ -330,10 +316,10 @@
 
 /* Spinner */
 .login-spinner {
-  width: 18px;
-  height: 18px;
-  border: 2.5px solid rgba(17, 24, 39, 0.25);
-  border-top-color: #111827;
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
   border-radius: 50%;
   animation: loginSpin 0.7s linear infinite;
 }
@@ -342,54 +328,52 @@
   to { transform: rotate(360deg); }
 }
 
-/* ── Responsive Refinements ── */
-@media (max-width: 900px) {
-  .login-bg-glow {
-    width: 420px;
-    height: 420px;
-    filter: blur(75px);
-  }
-
-  .login-bg-silk-svg {
-    opacity: 0.7;
-  }
+/* ── Security Footnote ── */
+.login-security-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 11.5px;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
 }
 
-@media (max-width: 480px) {
-  .login-bg-runway-light {
-    width: 100vw;
-    height: 240px;
-  }
+.login-security-icon {
+  color: #059669;
+  flex-shrink: 0;
+}
 
-  .login-bg-silk-svg {
-    opacity: 0.5;
-  }
+/* ── Responsive Refinements ── */
+@media (max-width: 480px) {
   .login-viewport {
     padding: 20px 16px;
   }
 
   .login-card {
-    padding: 36px 24px 32px;
+    padding: 34px 22px 28px;
     border-radius: 20px;
   }
 
-  .login-logo-section {
-    margin-bottom: 26px;
-    min-height: 68px;
+  .login-logo-image {
+    height: 56px;
   }
 
-  .login-logo-image {
-    height: 64px;
-    max-width: 220px;
+  .login-heading {
+    font-size: 20px;
   }
 
   .login-input {
-    height: 48px;
-    font-size: 14px;
+    height: 46px;
+    font-size: 13.5px;
   }
 
   .login-button {
-    height: 48px;
-    font-size: 14.5px;
+    height: 46px;
+    font-size: 14px;
   }
 }

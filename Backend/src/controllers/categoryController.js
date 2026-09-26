@@ -2,6 +2,28 @@ const { Category, Subcategory, Product } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { sendSuccess } = require("../utils/apiResponse");
 
+const DEFAULT_CATEGORY_IMAGES = {
+  mens: "/images/dept-mens.jpg",
+  men: "/images/dept-mens.jpg",
+  women: "/images/dept-womens.jpg",
+  womens: "/images/dept-womens.jpg",
+  boys: "/images/dept-boys.jpg",
+  girls: "/images/dept-girls.jpg",
+  babies: "/images/dept-babies.jpg",
+  kids: "/images/dept-boys.jpg"
+};
+
+function attachDefaultImage(categoryJson) {
+  if (!categoryJson) return categoryJson;
+  if (!categoryJson.image_url) {
+    const slug = (categoryJson.slug || "").toLowerCase();
+    const name = (categoryJson.name || "").toLowerCase();
+    categoryJson.image_url =
+      DEFAULT_CATEGORY_IMAGES[slug] || DEFAULT_CATEGORY_IMAGES[name] || "/images/dept-family-banner.jpg";
+  }
+  return categoryJson;
+}
+
 async function list(req, res) {
   const where = req.query.includeInactive === "true" ? {} : { is_active: true };
   const categories = await Category.findAll({
@@ -9,7 +31,8 @@ async function list(req, res) {
     order: [["sort_order", "ASC"]],
     include: [{ model: Subcategory, as: "subcategories", where: { is_active: true }, required: false }]
   });
-  return sendSuccess(res, { data: categories });
+  const data = categories.map((c) => attachDefaultImage(c.toJSON()));
+  return sendSuccess(res, { data });
 }
 
 async function getBySlug(req, res) {
@@ -18,7 +41,7 @@ async function getBySlug(req, res) {
     include: [{ model: Subcategory, as: "subcategories", where: { is_active: true }, required: false }]
   });
   if (!category) throw ApiError.notFound("Category not found");
-  return sendSuccess(res, { data: category });
+  return sendSuccess(res, { data: attachDefaultImage(category.toJSON()) });
 }
 
 async function create(req, res) {
@@ -33,7 +56,7 @@ async function create(req, res) {
     sort_order: req.body.sort_order ?? 0,
     is_active: req.body.is_active ?? true
   });
-  return sendSuccess(res, { statusCode: 201, data: category });
+  return sendSuccess(res, { statusCode: 201, data: attachDefaultImage(category.toJSON()) });
 }
 
 async function update(req, res) {
@@ -50,7 +73,7 @@ async function update(req, res) {
     if (req.body[f] !== undefined) category[f] = req.body[f];
   });
   await category.save();
-  return sendSuccess(res, { data: category });
+  return sendSuccess(res, { data: attachDefaultImage(category.toJSON()) });
 }
 
 async function remove(req, res) {

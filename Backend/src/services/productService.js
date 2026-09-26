@@ -109,7 +109,7 @@ async function replaceNestedCollections(product, body, transaction) {
         body.colors.map((c, idx) => ({
           product_id: product.id,
           name: c.name,
-          hex_code: c.hex,
+          hex_code: c.hex || c.hex_code,
           sort_order: idx
         })),
         { transaction }
@@ -121,7 +121,11 @@ async function replaceNestedCollections(product, body, transaction) {
     await ProductSize.destroy({ where: { product_id: product.id }, transaction });
     if (body.sizes.length > 0) {
       await ProductSize.bulkCreate(
-        body.sizes.map((label, idx) => ({ product_id: product.id, label, sort_order: idx })),
+        body.sizes.map((label, idx) => ({
+          product_id: product.id,
+          label: typeof label === "string" ? label : label?.label || String(label),
+          sort_order: idx
+        })),
         { transaction }
       );
     }

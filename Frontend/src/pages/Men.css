@@ -17,7 +17,7 @@
 }
 
 .men-hero .hero-backdrop-img {
-  object-position: 84% 20%;
+  object-position: 85% top;
   opacity: 0.74;
 }
 
@@ -1150,7 +1150,7 @@
   }
 
   .men-hero .hero-backdrop-img {
-    object-position: 78% 15%;
+    object-position: 85% top;
     opacity: 0.7;
   }
 

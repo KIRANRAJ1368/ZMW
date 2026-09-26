@@ -1,6 +1,10 @@
-import { Image as ImageIcon } from "lucide-react";
+import { useState } from "react";
+import { ZoomIn, FolderTree, ArrowUpRight, Hash, Layers, Eye } from "lucide-react";
 import Modal from "../Modal/Modal";
 import StatusBadge from "../StatusBadge/StatusBadge";
+import ImageLightboxModal from "../ImageLightboxModal/ImageLightboxModal";
+import { resolveImageUrl } from "../../utils/imageUrl";
+import { getCategoryImageUrl } from "../../utils/categoryImageResolver";
 import "./EntityViewModal.css";
 
 const formatDate = (value) =>
@@ -8,7 +12,8 @@ const formatDate = (value) =>
     ? new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : "—";
 
-export default function CategoryViewModal({ category, onClose }) {
+export default function CategoryViewModal({ category, onEdit, onClose }) {
+  const [showLightbox, setShowLightbox] = useState(false);
   const data = category || null;
 
   if (!data) {
@@ -25,19 +30,24 @@ export default function CategoryViewModal({ category, onClose }) {
   }
 
   const subcategories = data.subcategories || [];
+  const imageUrl = getCategoryImageUrl(data);
+  const resolvedImg = resolveImageUrl(imageUrl);
 
   return (
-    <Modal title="Category Details" onClose={onClose} width={760}>
+    <Modal title="Category Overview" onClose={onClose} width={740}>
       <div className="ev">
-        {/* Header */}
+        {/* Header Banner */}
         <div className="ev-header">
           <div className="ev-heading">
-            <h2 className="ev-name">{data.name}</h2>
+            <div className="ev-title-row">
+              <h2 className="ev-name">{data.name}</h2>
+              <span className="pill-badge badge-gold">Primary Department</span>
+            </div>
             <div className="ev-meta-line">
-              <code>{data.slug || "—"}</code>
+              <code>/{data.slug || "—"}</code>
               <span className="ev-sep">•</span>
               <span>
-                {subcategories.length} subcategor{subcategories.length === 1 ? "y" : "ies"}
+                {subcategories.length} item group{subcategories.length === 1 ? "" : "s"}
               </span>
             </div>
           </div>
@@ -46,89 +56,139 @@ export default function CategoryViewModal({ category, onClose }) {
           </div>
         </div>
 
-        {/* Image + details */}
+        {/* 2-Column Body: Spotlight + Stat Cards */}
         <div className="ev-grid">
           <div className="ev-media">
-            <div className="ev-section-label">Cover Image</div>
-            {data.image_url ? (
-              <div className="ev-image-frame ev-image-frame-portrait">
-                <img
-                  src={data.image_url}
-                  alt={data.name}
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
+            <div className="ev-section-label">Department Photography</div>
+            <div
+              className="ev-image-frame ev-image-frame-portrait ev-image-clickable"
+              onClick={() => setShowLightbox(true)}
+              title="Click to inspect in Full HD"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === "Enter" && setShowLightbox(true)}
+            >
+              <span className="ev-image-badge">Storefront Cover</span>
+              <img
+                src={resolvedImg}
+                alt={data.name}
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.src = "/images/dept-family-banner.jpg";
+                }}
+              />
+              <div className="ev-image-hover-hint">
+                <ZoomIn size={14} />
+                <span>Enlarge HD</span>
               </div>
-            ) : (
-              <div className="ev-no-image">
-                <ImageIcon size={22} />
-                <span>No image uploaded</span>
-              </div>
-            )}
+            </div>
           </div>
 
           <div className="ev-details">
-            <div className="ev-section-label">Details</div>
-            <div className="ev-attr-list">
-              <div className="ev-attr">
-                <span className="ev-attr-label">Category Name</span>
-                <span className="ev-attr-value">{data.name}</span>
+            <div className="ev-section-label">Storefront Specifications</div>
+
+            <div className="ev-stat-grid">
+              <div className="ev-stat-card">
+                <span className="ev-stat-label">Navigation Slug</span>
+                <span className="ev-stat-value">
+                  <code>/{data.slug || "—"}</code>
+                </span>
               </div>
-              <div className="ev-attr">
-                <span className="ev-attr-label">URL Slug</span>
-                <code className="ev-attr-code">{data.slug || "—"}</code>
+
+              <div className="ev-stat-card">
+                <span className="ev-stat-label">Sort Priority</span>
+                <span className="ev-stat-value">
+                  <Hash size={14} style={{ color: "var(--indigo)" }} />
+                  <span>Sequence #{data.sort_order ?? 0}</span>
+                </span>
               </div>
-              <div className="ev-attr">
-                <span className="ev-attr-label">Sequence</span>
-                <span className="ev-attr-value">{data.sort_order ?? 0}</span>
+
+              <div className="ev-stat-card">
+                <span className="ev-stat-label">Subcategories</span>
+                <span className="ev-stat-value">
+                  <Layers size={14} style={{ color: "var(--indigo)" }} />
+                  <span>{subcategories.length} Classified Groups</span>
+                </span>
               </div>
-              <div className="ev-attr">
-                <span className="ev-attr-label">Visibility</span>
-                <span className="ev-attr-value">{data.is_active ? "Active" : "Inactive"}</span>
+
+              <div className="ev-stat-card">
+                <span className="ev-stat-label">Catalog Status</span>
+                <span className="ev-stat-value">
+                  <Eye size={14} style={{ color: data.is_active ? "#059669" : "#94a3b8" }} />
+                  <span>{data.is_active ? "Live on Store" : "Hidden"}</span>
+                </span>
               </div>
-              <div className="ev-attr">
-                <span className="ev-attr-label">Subcategories</span>
-                <span className="ev-attr-value">{subcategories.length}</span>
+            </div>
+
+            {/* Editorial Description */}
+            <div>
+              <div className="ev-section-label">Department Overview</div>
+              <div className="ev-desc-card">
+                <p>
+                  {data.description ||
+                    `Bespoke wardrobe essentials curated for iconic fashion and luxury lifestyle within the ${data.name} department.`}
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Description */}
-        <div className="ev-desc">
-          <div className="ev-section-label">Description</div>
-          <p>{data.description || "No description provided."}</p>
-        </div>
-
-        {/* Subcategory chips */}
+        {/* Subcategories Chips */}
         {subcategories.length > 0 && (
           <div>
             <div className="ev-section-label">
-              Subcategories <span className="ev-section-count">({subcategories.length})</span>
+              <FolderTree size={13} />
+              <span>Assigned Subcategories & Item Groups</span>
+              <span className="ev-section-count">({subcategories.length})</span>
             </div>
             <div className="ev-chip-row">
               {subcategories.map((s) => (
-                <span className="ev-chip" key={s.id}>
-                  {s.name}
+                <span className="ev-chip" key={s.id || s.slug}>
+                  <span className="ev-chip-dot" />
+                  <span>{s.name}</span>
                 </span>
               ))}
             </div>
           </div>
         )}
 
-        {/* Footer meta */}
+        {/* Footer Meta & Actions */}
         <div className="ev-footer">
-          <span className="ev-footer-item">
-            Category ID: <strong>{data.id}</strong>
-          </span>
-          <span className="ev-footer-item">
-            Added {formatDate(data.createdAt)}
-            {data.updatedAt ? ` • Updated ${formatDate(data.updatedAt)}` : ""}
-          </span>
+          <div className="ev-footer-meta">
+            <span>
+              Category ID: <strong>#{data.id}</strong>
+            </span>
+            <span className="ev-sep">•</span>
+            <span>Created {formatDate(data.createdAt || data.created_at)}</span>
+          </div>
+
+          <div className="ev-footer-actions">
+            {onEdit && (
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => {
+                  onClose();
+                  onEdit(data);
+                }}
+              >
+                Edit Category
+              </button>
+            )}
+            <button type="button" className="btn btn-accent btn-sm" onClick={onClose}>
+              Done
+            </button>
+          </div>
         </div>
       </div>
+
+      {showLightbox && (
+        <ImageLightboxModal
+          src={resolvedImg}
+          alt={data.name}
+          onClose={() => setShowLightbox(false)}
+        />
+      )}
     </Modal>
   );
 }

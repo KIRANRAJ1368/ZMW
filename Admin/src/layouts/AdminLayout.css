@@ -4,52 +4,55 @@
   background: var(--bg);
 }
 
-/* ── Floating Luxury Obsidian Sidebar ── */
+/* ── Modern Premium Light Sidebar (Clean White & Slate) ── */
 .admin-sidebar {
   width: var(--sidebar-width);
   flex-shrink: 0;
-  background: linear-gradient(180deg, #0B0F19 0%, #0A0E17 50%, #080C14 100%);
-  color: #94a3b8;
+  background: #FFFFFF;
+  color: #475569;
   display: flex;
   flex-direction: column;
   position: sticky;
   top: 0;
   height: 100vh;
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  border-right: 1px solid #E2E8F0;
   z-index: 100;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.035);
 }
 
-/* Brand header */
+/* ── Brand Header — Centered, prominent, crystal clear logo ── */
 .admin-sidebar-brand {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 22px 20px 20px;
+  border-bottom: 1px solid #E2E8F0;
   min-height: var(--header-height);
-  background: rgba(0, 0, 0, 0.3);
+  background: #FFFFFF;
 }
 
-.admin-brand-left {
+.admin-brand-center {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-.admin-brand-emblem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  justify-content: center;
+  width: 100%;
 }
 
 .admin-sidebar-logo-img {
-  height: 48px;
-  width: auto;
+  max-width: 175px;
+  height: auto;
+  max-height: 56px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(250, 167, 3, 0.3));
+  display: block;
+  margin: 0 auto;
+  filter: none;
+  transition: transform 0.2s ease;
+}
+
+.admin-sidebar-logo-img:hover {
+  transform: scale(1.03);
 }
 
 .admin-sidebar-close-btn {
@@ -58,33 +61,36 @@
   right: 12px;
   transform: translateY(-50%);
   display: none;
-  color: #94a3b8;
+  color: #64748B;
   padding: 6px;
   border-radius: var(--radius-sm);
   transition: all 0.15s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .admin-sidebar-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background: #F1F5F9;
+  color: #0F172A;
 }
 
-/* Section heading */
+/* ── Section Heading ── */
 .admin-nav-section-title {
   font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #64748b;
-  padding: 24px 24px 10px;
+  letter-spacing: 0.12em;
+  color: #94A3B8;
+  padding: 20px 22px 8px;
 }
 
-/* Navigation items */
+/* ── Navigation Links ── */
 .admin-nav {
   display: flex;
   flex-direction: column;
-  padding: 0 14px;
-  gap: 6px;
+  padding: 0 12px;
+  gap: 5px;
   flex: 1;
   overflow-y: auto;
 }
@@ -93,14 +99,15 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 11px 16px;
-  border-radius: var(--radius-md);
-  font-size: 13.5px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: #94a3b8;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #475569;
+  transition: all 0.18s ease;
   position: relative;
   text-decoration: none;
+  border: 1px solid transparent;
 }
 
 .admin-nav-icon-wrap {
@@ -109,7 +116,7 @@
   justify-content: center;
   width: 20px;
   flex-shrink: 0;
-  color: #64748b;
+  color: #64748B;
   transition: color 0.18s ease, transform 0.18s ease;
 }
 
@@ -124,36 +131,110 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--dark);
+  background: #4F46E5;
 }
 
 .admin-nav-link:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-  transform: translateX(3px);
+  background: #F8FAFC;
+  color: #0F172A;
+  border-color: #E2E8F0;
+  transform: translateX(2px);
 }
 
 .admin-nav-link:hover .admin-nav-icon-wrap {
-  color: #ffffff;
-  transform: scale(1.1);
+  color: #4F46E5;
+  transform: scale(1.08);
 }
 
-/* Active Navigation Item (Luminous Gold Capsule) */
+/* Active Navigation Item (Modern Indigo capsule on light theme) */
 .admin-nav-link.active {
-  background: var(--primary-gradient);
-  color: var(--dark);
-  font-weight: 700;
-  box-shadow: 0 6px 18px rgba(250, 167, 3, 0.4);
-  transform: translateX(4px);
+  background: #EEF2FF;
+  color: #4F46E5;
+  font-weight: 600;
+  border-color: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+  transform: translateX(2px);
 }
 
 .admin-nav-link.active .admin-nav-icon-wrap {
-  color: var(--dark);
+  color: #4F46E5;
   transform: scale(1.05);
 }
 
 .admin-nav-link.active .admin-nav-active-pip {
   display: block;
+}
+
+/* ── Redesigned Sidebar Footer (Sign Out Action) ── */
+.admin-sidebar-footer {
+  padding: 14px 14px 16px;
+  border-top: 1px solid #E2E8F0;
+  background: #F8FAFC;
+}
+
+.admin-logout-card-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: #FFF1F2;
+  border: 1.5px solid #FFE4E6;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.admin-logout-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: #FFE4E6;
+  color: #E11D48;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.admin-logout-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.admin-logout-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #9F1239;
+  line-height: 1.2;
+  transition: color 0.2s ease;
+}
+
+.admin-logout-role {
+  font-size: 11px;
+  color: #E11D48;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.admin-logout-card-btn:hover {
+  background: #E11D48;
+  border-color: #E11D48;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.28);
+}
+
+.admin-logout-card-btn:hover .admin-logout-icon-box {
+  background: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+}
+
+.admin-logout-card-btn:hover .admin-logout-title,
+.admin-logout-card-btn:hover .admin-logout-role {
+  color: #FFFFFF;
 }
 
 /* ── Main Layout Area ── */
@@ -164,7 +245,7 @@
   min-width: 0;
 }
 
-/* ── Glassmorphic Top Header ── */
+/* ── Top Header ── */
 .admin-header {
   height: var(--header-height);
   flex-shrink: 0;
@@ -172,10 +253,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 36px;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  border-bottom: 1px solid #E2E8F0;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -195,6 +276,9 @@
   border-radius: var(--radius-sm);
   align-items: center;
   justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .admin-menu-toggle:hover {
@@ -214,7 +298,7 @@
 }
 
 .breadcrumb-arrow {
-  color: #cbd5e1;
+  color: #CBD5E1;
 }
 
 .breadcrumb-current {
@@ -225,11 +309,88 @@
 .admin-header-user {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
-.admin-logout-btn {
-  margin-left: 4px;
+.admin-header-store-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.18s ease;
+  text-decoration: none;
+}
+
+.admin-header-store-btn:hover {
+  background: #FFFFFF;
+  border-color: rgba(99, 102, 241, 0.35);
+  color: var(--indigo);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+  transform: translateY(-1px);
+}
+
+.admin-profile-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 12px 5px 6px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 9999px;
+}
+
+.admin-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--grad-sky-indigo);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);
+}
+
+.admin-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-profile-role {
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* ── Redesigned Header Logout Button ── */
+.admin-header-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  background: #FFF1F2;
+  color: #E11D48;
+  border: 1.5px solid #FFE4E6;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.admin-header-logout-btn:hover {
+  background: #E11D48;
+  border-color: #E11D48;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
 }
 
 /* ── Content Container ── */
@@ -254,7 +415,7 @@
     bottom: 0;
     height: 100vh;
     transform: translateX(-100%);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     z-index: 1000;
   }
 
@@ -274,8 +435,8 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(11, 15, 23, 0.7);
-    backdrop-filter: blur(6px);
+    background: rgba(11, 15, 23, 0.45);
+    backdrop-filter: blur(4px);
     z-index: 999;
   }
 
@@ -283,7 +444,22 @@
     padding: 0 18px;
   }
 
+  .admin-profile-info {
+    display: none;
+  }
+
   .admin-content {
     padding: 20px 16px 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-header-store-btn {
+    display: none;
+  }
+
+  .breadcrumb-root,
+  .breadcrumb-arrow {
+    display: none;
   }
 }

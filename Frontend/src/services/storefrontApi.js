@@ -37,6 +37,7 @@ export const storefrontApi = {
     );
     return [first?.data || [], ...pages.map((page) => page?.data || [])].flat();
   },
+  product: (idOrSlug) => get(`/products/${encodeURIComponent(idOrSlug)}`),
   createOrder: (order, token = null) => {
     const headers = { "Content-Type": "application/json" };
     if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -105,5 +106,12 @@ export const storefrontApi = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, subtotal })
+    }),
+  submitContact: (payload) =>
+    request("/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     })
 };
+

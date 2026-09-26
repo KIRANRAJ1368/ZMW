@@ -32,6 +32,12 @@ const PAYMENT_METHODS = [
     name: "Net Banking",
     icon: "🏦",
     desc: "HDFC, ICICI, SBI, Axis & all major Indian banks"
+  },
+  {
+    id: "wallet",
+    name: "Wallets / Cash Cards",
+    icon: "👛",
+    desc: "Paytm, PhonePe Wallet, Amazon Pay & Mobikwik"
   }
 ];
 

@@ -20,6 +20,7 @@ router.get("/me", requireAuth, authController.me);
 
 /* ── Customer Auth Routes ── */
 router.post("/register", authLimiter, customerRegister, validate, authController.customerRegister);
+router.post("/customer/register", authLimiter, customerRegister, validate, authController.customerRegister);
 router.post("/customer/login", authLimiter, customerLogin, validate, authController.customerLogin);
 router.get("/customer/me", requireCustomerAuth, authController.customerMe);
 router.put("/customer/profile", requireCustomerAuth, authController.customerUpdateProfile);

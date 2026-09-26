@@ -2,51 +2,67 @@
   overflow-x: auto;
   width: 100%;
   border-radius: inherit;
+  background: var(--surface);
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
   width: 100%;
+  min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 13.5px;
+  font-size: 13px;
+  table-layout: auto;
 }
 
 .data-table th {
   text-align: left;
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-subtle);
-  font-weight: 600;
-  padding: 14px 20px;
-  background: var(--bg);
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 700;
+  padding: 12px 16px;
+  background: var(--surface-alt);
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
+  vertical-align: middle;
   user-select: none;
 }
 
 .data-table th:first-child {
   border-top-left-radius: inherit;
+  padding-left: 20px;
 }
 
 .data-table th:last-child {
   border-top-right-radius: inherit;
+  padding-right: 20px;
 }
 
 .data-table td {
-  padding: 14px 20px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border-light);
   vertical-align: middle;
   color: var(--text-main);
-  transition: background 0.12s ease;
+  transition: background 0.15s ease;
+  line-height: 1.45;
+}
+
+.data-table td:first-child {
+  padding-left: 20px;
+}
+
+.data-table td:last-child {
+  padding-right: 20px;
 }
 
 .data-table tbody tr {
-  transition: background 0.12s ease;
+  transition: background 0.15s ease;
 }
 
 .data-table tbody tr:hover td {
-  background: var(--surface-hover);
+  background: #f8fafc;
 }
 
 .data-table tbody tr:last-child td {
@@ -54,11 +70,65 @@
 }
 
 .data-table code {
-  font-family: monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 11.5px;
+  font-weight: 600;
   background: var(--surface-alt);
-  color: var(--text-muted);
-  padding: 2px 6px;
-  border-radius: 4px;
+  color: #334155;
+  padding: 2px 7px;
+  border-radius: 6px;
   border: 1px solid var(--border);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  word-break: keep-all;
+  display: inline-block;
+}
+
+/* ── Table Typography & Cell Helpers ── */
+.table-sno-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface-alt);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+
+.cell-title {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 13.5px;
+  line-height: 1.35;
+}
+
+.cell-muted {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+.table-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.table-actions > .btn {
+  flex-shrink: 0;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  height: 31px;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }

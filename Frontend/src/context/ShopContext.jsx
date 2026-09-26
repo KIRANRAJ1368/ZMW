@@ -58,13 +58,32 @@ export const ShopProvider = ({ children }) => {
 
   const allProductsMap = useMemo(() => {
     const map = new Map();
-    allProducts.forEach((p) => {
-      map.set(String(p.id), p);
+    (allProducts || []).forEach((p) => {
+      if (!p) return;
+      if (p.id !== undefined && p.id !== null) {
+        map.set(String(p.id), p);
+        map.set(String(p.id).toLowerCase(), p);
+      }
+      if (p.slug) {
+        map.set(String(p.slug), p);
+        map.set(String(p.slug).toLowerCase(), p);
+      }
+      if (p.sku) {
+        map.set(String(p.sku), p);
+        map.set(String(p.sku).toLowerCase(), p);
+      }
     });
     return map;
   }, [allProducts]);
 
-  const findProduct = (productId) => allProductsMap.get(String(productId)) || null;
+  const findProduct = useCallback(
+    (productId) => {
+      if (!productId) return null;
+      const key = String(productId).trim();
+      return allProductsMap.get(key) || allProductsMap.get(key.toLowerCase()) || null;
+    },
+    [allProductsMap]
+  );
 
   const [recentlyViewedIds, setRecentlyViewedIds] = useState(() => {
     return readRecentlyViewedIds();

@@ -6,8 +6,7 @@ import {
   Download,
   IndianRupee,
   ShoppingBag,
-  RotateCcw,
-  Calendar
+  RotateCcw
 } from "lucide-react";
 import { reportsApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
@@ -117,8 +116,10 @@ export default function ReportsPage() {
     toast.success("CSV report exported successfully");
   }
 
+  const dailyTrendList = salesData?.dailyTrend || salesData?.breakdown || [];
+
   return (
-    <div>
+    <div className="reports-page">
       <div className="page-header">
         <div>
           <h1 className="page-title">
@@ -165,19 +166,20 @@ export default function ReportsPage() {
         </div>
 
         <div className="reports-filters">
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <Calendar size={15} color="#888" />
-            <span style={{ fontSize: "0.82rem", color: "#666" }}>From:</span>
+          <div className="reports-filter-group">
+            <span className="reports-filter-label">From:</span>
             <input
               type="date"
+              className="reports-date-input"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
             />
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ fontSize: "0.82rem", color: "#666" }}>To:</span>
+          <div className="reports-filter-group">
+            <span className="reports-filter-label">To:</span>
             <input
               type="date"
+              className="reports-date-input"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
             />
@@ -185,7 +187,7 @@ export default function ReportsPage() {
           {(fromDate || toDate) && (
             <button
               type="button"
-              className="btn btn-secondary btn-sm"
+              className="reports-reset-btn"
               onClick={() => {
                 setFromDate("");
                 setToDate("");
@@ -203,9 +205,9 @@ export default function ReportsPage() {
           <div className="reports-kpis-grid">
             <div className="kpi-card">
               <div className="kpi-icon-wrap" style={{ background: "#ecfdf5", color: "#059669" }}>
-                <IndianRupee size={24} />
+                <IndianRupee size={22} />
               </div>
-              <div>
+              <div className="kpi-content">
                 <div className="kpi-title">Gross Sales</div>
                 <div className="kpi-val">₹{Number(salesData.summary?.grossSales ?? salesData.grossSales ?? 0).toLocaleString("en-IN")}</div>
               </div>
@@ -213,9 +215,9 @@ export default function ReportsPage() {
 
             <div className="kpi-card">
               <div className="kpi-icon-wrap" style={{ background: "#fef3c7", color: "#d97706" }}>
-                <TrendingUp size={24} />
+                <TrendingUp size={22} />
               </div>
-              <div>
+              <div className="kpi-content">
                 <div className="kpi-title">Net Revenue</div>
                 <div className="kpi-val">₹{Number(salesData.summary?.netRevenue ?? salesData.netSales ?? 0).toLocaleString("en-IN")}</div>
               </div>
@@ -223,9 +225,9 @@ export default function ReportsPage() {
 
             <div className="kpi-card">
               <div className="kpi-icon-wrap" style={{ background: "#eff6ff", color: "#2563eb" }}>
-                <ShoppingBag size={24} />
+                <ShoppingBag size={22} />
               </div>
-              <div>
+              <div className="kpi-content">
                 <div className="kpi-title">Total Orders</div>
                 <div className="kpi-val">{salesData.summary?.totalOrders ?? salesData.ordersCount ?? 0}</div>
               </div>
@@ -233,50 +235,74 @@ export default function ReportsPage() {
 
             <div className="kpi-card">
               <div className="kpi-icon-wrap" style={{ background: "#f5f3ff", color: "#7c3aed" }}>
-                <IndianRupee size={24} />
+                <IndianRupee size={22} />
               </div>
-              <div>
-                <div className="kpi-title">Average Order Value</div>
+              <div className="kpi-content">
+                <div className="kpi-title" title="Average Order Value">Avg Order Value</div>
                 <div className="kpi-val">₹{Number(salesData.summary?.averageOrderValue ?? salesData.aov ?? 0).toLocaleString("en-IN")}</div>
               </div>
             </div>
 
             <div className="kpi-card">
               <div className="kpi-icon-wrap" style={{ background: "#fef2f2", color: "#dc2626" }}>
-                <RotateCcw size={24} />
+                <RotateCcw size={22} />
               </div>
-              <div>
+              <div className="kpi-content">
                 <div className="kpi-title">Cancellations</div>
                 <div className="kpi-val">{salesData.summary?.cancelledCount ?? salesData.cancelledCount ?? 0}</div>
               </div>
             </div>
           </div>
 
-          <div className="card">
-            <h3 style={{ margin: "0 0 16px 0", fontSize: "1.05rem" }}>Daily Revenue Breakdown</h3>
+          <div className="card report-table-card">
+            <div className="report-table-header">
+              <div>
+                <h3 className="report-table-title">Daily Revenue Breakdown</h3>
+                <p className="report-table-subtitle">Aggregated orders, subtotal and net revenue per calendar day</p>
+              </div>
+              <span className="report-table-count">
+                {dailyTrendList.length} Recorded {dailyTrendList.length === 1 ? "Day" : "Days"}
+              </span>
+            </div>
             <DataTable
               isLoading={isLoading}
-              rows={salesData.dailyTrend || salesData.breakdown || []}
+              rows={dailyTrendList}
               rowKey={(row) => row.date}
               emptyTitle="No sales records in range"
               emptyDescription="Orders placed in this time period will be aggregated here."
               columns={[
                 {
                   header: "Date",
-                  cell: (row) => <strong>{row.date}</strong>
+                  align: "left",
+                  width: "25%",
+                  cell: (row) => <span className="report-date-cell">{row.date}</span>
                 },
                 {
                   header: "Orders Count",
-                  cell: (row) => row.ordersCount ?? row.count ?? 0
+                  align: "center",
+                  width: "20%",
+                  cell: (row) => (
+                    <span className="report-badge-neutral">
+                      {row.ordersCount ?? row.count ?? 0}
+                    </span>
+                  )
                 },
                 {
                   header: "Subtotal",
-                  cell: (row) => `₹${Number(row.subtotal ?? row.grossSales ?? 0).toLocaleString("en-IN")}`
+                  align: "right",
+                  width: "25%",
+                  cell: (row) => (
+                    <span className="report-money-subtotal">
+                      ₹{Number(row.subtotal ?? row.grossSales ?? 0).toLocaleString("en-IN")}
+                    </span>
+                  )
                 },
                 {
                   header: "Net Revenue",
+                  align: "right",
+                  width: "30%",
                   cell: (row) => (
-                    <span style={{ color: "#059669", fontWeight: 600 }}>
+                    <span className="report-money-net">
                       ₹{Number(row.total ?? row.netSales ?? 0).toLocaleString("en-IN")}
                     </span>
                   )
@@ -289,7 +315,16 @@ export default function ReportsPage() {
 
       {/* PRODUCTS PERFORMANCE TAB */}
       {activeTab === "products" && (
-        <div className="card">
+        <div className="card report-table-card">
+          <div className="report-table-header">
+            <div>
+              <h3 className="report-table-title">Product Performance</h3>
+              <p className="report-table-subtitle">Sales volume, total revenue generated, and live inventory count</p>
+            </div>
+            <span className="report-table-count">
+              {productsData.length} Products
+            </span>
+          </div>
           <DataTable
             isLoading={isLoading}
             rows={productsData}
@@ -299,35 +334,45 @@ export default function ReportsPage() {
             columns={[
               {
                 header: "Product Title",
+                align: "left",
+                width: "30%",
                 cell: (row) => <strong>{row.productName || row.product_name || "Piece"}</strong>
               },
               {
                 header: "Category",
+                align: "left",
+                width: "18%",
                 cell: (row) => <span>{row.category || "General"}</span>
               },
               {
                 header: "Units Sold",
-                cell: (row) => <span style={{ fontWeight: 600 }}>{row.unitsSold ?? row.units_sold ?? 0}</span>
+                align: "center",
+                width: "16%",
+                cell: (row) => (
+                  <span className="report-badge-neutral">
+                    {row.unitsSold ?? row.units_sold ?? 0}
+                  </span>
+                )
               },
               {
                 header: "Revenue Generated",
+                align: "right",
+                width: "20%",
                 cell: (row) => (
-                  <span style={{ color: "#059669", fontWeight: 600 }}>
+                  <span className="report-money-net">
                     ₹{Number(row.revenue || 0).toLocaleString("en-IN")}
                   </span>
                 )
               },
               {
                 header: "Remaining Inventory",
+                align: "center",
+                width: "16%",
                 cell: (row) => {
                   const stock = row.currentStock ?? row.stock_count;
+                  const isLow = Number(stock) < 5;
                   return (
-                    <span
-                      style={{
-                        color: Number(stock) < 5 ? "#dc2626" : "#111827",
-                        fontWeight: 600
-                      }}
-                    >
+                    <span className={isLow ? "report-stock-low" : "report-stock-normal"}>
                       {stock ?? "N/A"}
                     </span>
                   );
@@ -340,7 +385,16 @@ export default function ReportsPage() {
 
       {/* ORDERS LEDGER TAB */}
       {activeTab === "orders" && (
-        <div className="card">
+        <div className="card report-table-card">
+          <div className="report-table-header">
+            <div>
+              <h3 className="report-table-title">Orders Ledger</h3>
+              <p className="report-table-subtitle">Comprehensive transaction log and fulfillment status</p>
+            </div>
+            <span className="report-table-count">
+              {ordersData.length} Orders
+            </span>
+          </div>
           <DataTable
             isLoading={isLoading}
             rows={ordersData}
@@ -350,37 +404,55 @@ export default function ReportsPage() {
             columns={[
               {
                 header: "Order Number",
-                cell: (row) => <strong>{row.orderNumber || row.order_number}</strong>
+                align: "left",
+                width: "18%",
+                cell: (row) => (
+                  <code className="report-order-code">
+                    {row.orderNumber || row.order_number}
+                  </code>
+                )
               },
               {
                 header: "Date",
-                cell: (row) => row.date || row.order_date
+                align: "left",
+                width: "14%",
+                cell: (row) => <span className="cell-muted">{row.date || row.order_date}</span>
               },
               {
                 header: "Customer",
+                align: "left",
+                width: "26%",
                 cell: (row) => (
                   <div>
-                    <div>{row.customerName || row.customer_name || "Guest"}</div>
-                    <div style={{ fontSize: "0.78rem", color: "#666" }}>{row.customerEmail || row.customer_email}</div>
+                    <div className="cell-title">{row.customerName || row.customer_name || "Guest"}</div>
+                    <div className="cell-muted">{row.customerEmail || row.customer_email}</div>
                   </div>
                 )
               },
               {
                 header: "Status",
+                align: "center",
+                width: "14%",
                 cell: (row) => <StatusBadge status={row.status} label={row.status.toUpperCase()} />
               },
               {
                 header: "Payment",
+                align: "center",
+                width: "14%",
                 cell: (row) => (
-                  <div>
-                    <div>{row.paymentMethod || row.payment_method}</div>
-                  </div>
+                  <span className="report-payment-badge">
+                    {row.paymentMethod || row.payment_method}
+                  </span>
                 )
               },
               {
                 header: "Total Amount",
+                align: "right",
+                width: "14%",
                 cell: (row) => (
-                  <strong>₹{Number(row.total || row.total_amount || 0).toLocaleString("en-IN")}</strong>
+                  <strong style={{ color: "var(--text-main)", fontSize: "13.5px" }}>
+                    ₹{Number(row.total || row.total_amount || 0).toLocaleString("en-IN")}
+                  </strong>
                 )
               }
             ]}

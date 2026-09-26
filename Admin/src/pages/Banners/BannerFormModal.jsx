@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
-import { UploadCloud, X, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import Modal from "../../components/Modal/Modal";
 import FormField from "../../components/FormField/FormField";
-import { bannersApi, uploadApi } from "../../services/resources";
+import ImageUploadField from "../../components/ImageUploadField/ImageUploadField";
+import { bannersApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { ApiError } from "../../services/api";
 
@@ -38,31 +39,10 @@ export default function BannerFormModal({ banner, onClose, onSaved }) {
   });
   const [errors, setErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef(null);
   const toast = useToast();
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
-  }
-
-  async function handleFileUpload(e) {
-    const files = e.target.files;
-    if (!files?.length) return;
-    setIsUploading(true);
-    try {
-      const result = await uploadApi.upload("banners", files);
-      const url = result?.data?.files?.[0]?.url || result?.files?.[0]?.url;
-      if (url) {
-        update("image_url", url);
-        toast.success("Banner photo uploaded successfully");
-      }
-    } catch (err) {
-      toast.error(err.message || "Failed to upload banner photo");
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
   }
 
   async function handleSubmit(e) {
@@ -122,82 +102,17 @@ export default function BannerFormModal({ banner, onClose, onSaved }) {
         </div>
 
         {/* Banner Imagery */}
-        <FormField
-          label="Banner Image *"
-          htmlFor="b-image"
-          error={errors.image_url}
+        <ImageUploadField
+          label="Banner Image"
+          value={form.image_url}
+          onChange={(url) => update("image_url", url)}
+          folder="banners"
+          aspectRatio="16/9"
+          previewHeight={180}
           hint="Recommended: 1920 × 800px (16:9 / 21:9 wide landscape). Supports JPG, PNG, WEBP."
-        >
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <input
-              id="b-image"
-              value={form.image_url}
-              onChange={(e) => update("image_url", e.target.value)}
-              placeholder="Paste banner image URL or upload →"
-              required
-              style={{ flex: 1 }}
-            />
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-            >
-              <UploadCloud size={16} />
-              <span>{isUploading ? "Uploading..." : "Upload Photo"}</span>
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleFileUpload}
-            />
-          </div>
-
-          {form.image_url && (
-            <div
-              style={{
-                marginTop: 12,
-                borderRadius: "var(--radius-md)",
-                overflow: "hidden",
-                border: "1px solid var(--border)",
-                background: "var(--surface-alt)",
-                position: "relative"
-              }}
-            >
-              <img
-                src={form.image_url}
-                alt="Banner Preview"
-                style={{
-                  width: "100%",
-                  height: 140,
-                  objectFit: "cover",
-                  objectPosition: form.image_position,
-                  display: "block"
-                }}
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: 8,
-                  left: 10,
-                  background: "rgba(0,0,0,0.7)",
-                  color: "#fff",
-                  fontSize: 11,
-                  padding: "3px 8px",
-                  borderRadius: 4,
-                  backdropFilter: "blur(2px)"
-                }}
-              >
-                Focal alignment: {form.image_position}
-              </div>
-            </div>
-          )}
-        </FormField>
+          error={errors.image_url}
+          required
+        />
 
         <div className="form-grid">
           <FormField

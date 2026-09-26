@@ -6,7 +6,8 @@ import {
   Eye,
   EyeOff,
   LogIn,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { ApiError } from "../../services/api";
@@ -53,91 +54,24 @@ export default function Login() {
 
   return (
     <div className="login-viewport">
-      {/* ── Luxury Fashion Ambient Background (Smooth, Line-Free, Balanced) ── */}
-      {/* Top Ambient Studio Keylight */}
-      <div className="login-bg-runway-light" aria-hidden="true" />
-
-      {/* Symmetrical Balanced Ambient Lighting Orbs */}
-      <div className="login-bg-glow login-bg-glow-left" aria-hidden="true" />
-      <div className="login-bg-glow login-bg-glow-right" aria-hidden="true" />
-
-      {/* Center Clean Spotlight Behind Login Card */}
-      <div className="login-bg-center-spotlight" aria-hidden="true" />
-
-      {/* Abstract Flowing Organic Shapes (Pure Silky Gradients, Zero Lines) */}
-      <svg
-        className="login-bg-silk-svg"
-        viewBox="0 0 1440 900"
-        fill="none"
-        preserveAspectRatio="xMidYMid slice"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <defs>
-          <filter id="smoothBlur" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="24" />
-          </filter>
-
-          {/* Left Flank Soft Gradients */}
-          <linearGradient id="silkSoftLeft1" x1="0%" y1="0%" x2="100%" y2="80%">
-            <stop offset="0%" stopColor="#FAA703" stopOpacity="0.09" />
-            <stop offset="50%" stopColor="#FAA703" stopOpacity="0.03" />
-            <stop offset="100%" stopColor="#FAA703" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient id="silkSoftLeft2" x1="0%" y1="30%" x2="80%" y2="90%">
-            <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.07" />
-            <stop offset="60%" stopColor="#FAA703" stopOpacity="0.015" />
-            <stop offset="100%" stopColor="#FAA703" stopOpacity="0" />
-          </linearGradient>
-
-          {/* Right Flank Soft Gradients */}
-          <linearGradient id="silkSoftRight1" x1="100%" y1="0%" x2="0%" y2="80%">
-            <stop offset="0%" stopColor="#FAA703" stopOpacity="0.09" />
-            <stop offset="50%" stopColor="#FAA703" stopOpacity="0.03" />
-            <stop offset="100%" stopColor="#FAA703" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient id="silkSoftRight2" x1="100%" y1="30%" x2="20%" y2="90%">
-            <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.07" />
-            <stop offset="60%" stopColor="#FAA703" stopOpacity="0.015" />
-            <stop offset="100%" stopColor="#FAA703" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-
-        {/* ── LEFT FLANK: Smooth Abstract Fluid Curves (No lines, only soft silky fills) ── */}
-        <path
-          d="M -50 -50 Q 220 80 260 420 T -50 950 Z"
-          fill="url(#silkSoftLeft1)"
-          filter="url(#smoothBlur)"
-        />
-        <path
-          d="M -30 180 Q 240 320 180 620 T -30 920 Z"
-          fill="url(#silkSoftLeft2)"
-          filter="url(#smoothBlur)"
-        />
-
-        {/* ── RIGHT FLANK: Balanced Smooth Abstract Fluid Curves ── */}
-        <path
-          d="M 1490 -50 Q 1220 80 1180 420 T 1490 950 Z"
-          fill="url(#silkSoftRight1)"
-          filter="url(#smoothBlur)"
-        />
-        <path
-          d="M 1470 180 Q 1200 320 1260 620 T 1470 920 Z"
-          fill="url(#silkSoftRight2)"
-          filter="url(#smoothBlur)"
-        />
-      </svg>
+      {/* ── Modern Ambient Background Mesh ── */}
+      <div className="login-mesh-orb login-mesh-top" aria-hidden="true" />
+      <div className="login-mesh-orb login-mesh-bottom" aria-hidden="true" />
+      <div className="login-grid-overlay" aria-hidden="true" />
 
       <div className="login-wrapper">
         <div className="login-card">
-          {/* Brand Logo - ONLY the official emblem, large, sharp & centered */}
-          <div className="login-logo-section">
-            <div className="login-logo-glow" />
-            <img
-              src="/images/zmw-logo-transparent.png"
-              alt="Brand Logo"
-              className="login-logo-image"
-            />
+          {/* Brand Logo Presentation */}
+          <div className="login-brand-header">
+            <div className="login-logo-wrap">
+              <img
+                src="/images/zmw-logo-transparent.png"
+                alt="ZMW Clothing"
+                className="login-logo-image"
+              />
+            </div>
+            <span className="login-admin-pill">ADMIN PORTAL</span>
+            <h1 className="login-heading">Welcome Back</h1>
           </div>
 
           {/* Validation & Error Alert */}
@@ -176,7 +110,7 @@ export default function Login() {
             {/* Email / Username Field */}
             <div className="login-form-group">
               <label htmlFor="login-email" className="login-label">
-                Email or Username
+                Email
               </label>
               <div className="login-input-container">
                 <Mail size={18} className="login-input-icon" />
@@ -251,6 +185,11 @@ export default function Login() {
               )}
             </button>
           </form>
+{/* 
+          <div className="login-security-notice">
+            <ShieldCheck size={14} className="login-security-icon" />
+            <span>Authorized personnel only · 256-bit encrypted session</span>
+          </div> */}
         </div>
       </div>
     </div>

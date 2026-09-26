@@ -9,6 +9,7 @@ router.post("/validate", couponController.validate);
 
 // Admin Coupon Management
 router.get("/", requireAuth, couponController.list);
+router.get("/:id", requireAuth, couponController.getById);
 router.post("/", requireAuth, couponController.create);
 router.put("/:id", requireAuth, couponController.update);
 router.delete("/:id", requireAuth, couponController.remove);

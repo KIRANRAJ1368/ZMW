@@ -141,17 +141,20 @@ export default function OrdersPage() {
             {
               key: "order_number",
               label: "Order Reference",
+              width: "165px",
               render: (row) => (
                 <code
                   style={{
-                    fontFamily: "monospace",
-                    fontSize: 12.5,
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                    fontSize: 11.5,
                     fontWeight: 700,
-                    background: "var(--surface-alt)",
-                    padding: "3px 7px",
-                    borderRadius: 4,
-                    border: "1px solid var(--border)",
-                    color: "var(--dark)"
+                    background: "#f8fafc",
+                    padding: "3px 8px",
+                    borderRadius: 6,
+                    border: "1px solid #e2e8f0",
+                    color: "#0f172a",
+                    whiteSpace: "nowrap",
+                    display: "inline-block"
                   }}
                 >
                   {row.order_number}
@@ -161,12 +164,11 @@ export default function OrdersPage() {
             {
               key: "customer_name",
               label: "Customer & Destination",
+              width: "165px",
               render: (row) => (
                 <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span className="cell-title">{row.customer_name}</span>
-                  </div>
-                  <div className="cell-muted" style={{ fontSize: 11.5 }}>
+                  <div className="cell-title" style={{ fontSize: 13, fontWeight: 600 }}>{row.customer_name}</div>
+                  <div className="cell-muted" style={{ fontSize: 11.5, marginTop: 2, whiteSpace: "nowrap" }}>
                     {row.city ? `${row.city}, ` : ""}{row.state || "India"}
                   </div>
                 </div>
@@ -175,21 +177,33 @@ export default function OrdersPage() {
             {
               key: "customer_type",
               label: "Account Type",
+              width: "135px",
+              align: "center",
               render: (row) =>
                 row.is_guest ? (
                   <span
                     className="pill-badge"
                     style={{
-                      background: "var(--surface-alt)",
-                      color: "var(--text-muted)",
-                      border: "1px solid var(--border)",
-                      fontSize: 11
+                      background: "#f1f5f9",
+                      color: "#475569",
+                      border: "1px solid #cbd5e1",
+                      fontSize: 11,
+                      whiteSpace: "nowrap"
                     }}
                   >
                     Guest Checkout
                   </span>
                 ) : (
-                  <span className="pill-badge badge-gold" style={{ fontSize: 11 }}>
+                  <span
+                    className="pill-badge"
+                    style={{
+                      background: "#eef2ff",
+                      color: "#4f46e5",
+                      border: "1px solid #c7d2fe",
+                      fontSize: 11,
+                      whiteSpace: "nowrap"
+                    }}
+                  >
                     Registered Client
                   </span>
                 )
@@ -197,18 +211,44 @@ export default function OrdersPage() {
             {
               key: "email",
               label: "Customer Contact",
+              width: "195px",
               render: (row) => (
-                <div style={{ fontSize: 12.5 }}>
-                  <div style={{ color: "var(--text-main)", fontWeight: 500 }}>{row.email}</div>
-                  <div className="cell-muted">{row.phone}</div>
+                <div style={{ maxWidth: 190 }}>
+                  <div
+                    style={{
+                      color: "var(--text-main)",
+                      fontWeight: 500,
+                      fontSize: 12,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
+                    }}
+                    title={row.email}
+                  >
+                    {row.email}
+                  </div>
+                  <div className="cell-muted" style={{ fontSize: 11.5, marginTop: 1, whiteSpace: "nowrap" }}>
+                    {row.phone || "—"}
+                  </div>
                 </div>
               )
             },
             {
               key: "payment_method",
               label: "Payment",
+              width: "85px",
+              align: "center",
               render: (row) => (
-                <span className="pill-badge" style={{ background: "var(--surface-alt)", color: "var(--text-main)", border: "1px solid var(--border)" }}>
+                <span
+                  className="pill-badge"
+                  style={{
+                    background: "#f1f5f9",
+                    color: "#334155",
+                    border: "1px solid #cbd5e1",
+                    fontSize: 11,
+                    whiteSpace: "nowrap"
+                  }}
+                >
                   {row.payment_method || "COD"}
                 </span>
               )
@@ -216,22 +256,28 @@ export default function OrdersPage() {
             {
               key: "total",
               label: "Order Amount",
+              width: "115px",
+              align: "right",
               render: (row) => (
-                <span style={{ fontWeight: 800, color: "var(--text-main)", fontSize: 14.5 }}>
-                  ₹{row.total}
+                <span style={{ fontWeight: 800, color: "var(--text-main)", fontSize: 14, whiteSpace: "nowrap" }}>
+                  ₹{Number(row.total).toFixed(2)}
                 </span>
               )
             },
             {
               key: "status",
               label: "Pipeline Status",
+              width: "135px",
+              align: "center",
               render: (row) => <StatusBadge value={row.status} />
             },
             {
               key: "created_at",
               label: "Date Placed",
+              width: "115px",
+              align: "center",
               render: (row) => (
-                <span style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
+                <span style={{ fontSize: 12, color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                   {new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>
               )
@@ -239,7 +285,7 @@ export default function OrdersPage() {
             {
               key: "actions",
               label: "Actions",
-              width: "120px",
+              width: "90px",
               align: "right",
               render: (row) => (
                 <div className="table-actions">

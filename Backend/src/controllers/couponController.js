@@ -127,6 +127,12 @@ async function update(req, res) {
   return sendSuccess(res, { data: coupon });
 }
 
+async function getById(req, res) {
+  const coupon = await Coupon.findByPk(req.params.id);
+  if (!coupon) throw ApiError.notFound("Coupon not found");
+  return sendSuccess(res, { data: coupon });
+}
+
 async function remove(req, res) {
   const coupon = await Coupon.findByPk(req.params.id);
   if (!coupon) throw ApiError.notFound("Coupon not found");
@@ -137,6 +143,7 @@ async function remove(req, res) {
 module.exports = {
   validate,
   list,
+  getById,
   create,
   update,
   remove

@@ -7,13 +7,17 @@ import DataTable from "../../components/DataTable/DataTable";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import BannerFormModal from "./BannerFormModal";
 import BannerViewModal from "../../components/EntityViewModal/BannerViewModal";
+import ImageLightboxModal from "../../components/ImageLightboxModal/ImageLightboxModal";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 export default function BannersPage() {
   const [banners, setBanners] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
+  const [lightboxImg, setLightboxImg] = useState(null);
   const [activeTab, setActiveTab] = useState("all"); // 'all' | 'hero' | 'collection'
+  const [isCompact, setIsCompact] = useState(true);
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
 
@@ -80,13 +84,14 @@ export default function BannersPage() {
       </div>
 
       <div className="card">
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs & View Mode Switch */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
+            justifyContent: "space-between",
             gap: 10,
-            padding: "16px 22px",
+            padding: "14px 20px",
             borderBottom: "1px solid var(--border)",
             background: "var(--surface)",
             borderTopLeftRadius: "inherit",
@@ -94,29 +99,43 @@ export default function BannersPage() {
             flexWrap: "wrap"
           }}
         >
-          <button
-            type="button"
-            className={`btn btn-sm ${activeTab === "all" ? "btn-primary" : "btn-secondary"}`}
-            onClick={() => setActiveTab("all")}
-          >
-            All Banners ({banners.length})
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${activeTab === "hero" ? "btn-accent" : "btn-secondary"}`}
-            onClick={() => setActiveTab("hero")}
-          >
-            <Sparkles size={14} />
-            <span>Hero Slider ({heroCount})</span>
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${activeTab === "collection" ? "btn-primary" : "btn-secondary"}`}
-            onClick={() => setActiveTab("collection")}
-          >
-            <Layout size={14} />
-            <span>Collection Banners ({collectionCount})</span>
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <button
+              type="button"
+              className={`btn btn-sm ${activeTab === "all" ? "btn-primary" : "btn-secondary"}`}
+              onClick={() => setActiveTab("all")}
+            >
+              All Banners ({banners.length})
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${activeTab === "hero" ? "btn-accent" : "btn-secondary"}`}
+              onClick={() => setActiveTab("hero")}
+            >
+              <Sparkles size={14} />
+              <span>Hero Slider ({heroCount})</span>
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${activeTab === "collection" ? "btn-primary" : "btn-secondary"}`}
+              onClick={() => setActiveTab("collection")}
+            >
+              <Layout size={14} />
+              <span>Collection Banners ({collectionCount})</span>
+            </button>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => setIsCompact(!isCompact)}
+              title={isCompact ? "Switch to detailed multiline view" : "Switch to compact view"}
+              style={{ fontSize: 12, padding: "5px 12px" }}
+            >
+              <span>{isCompact ? "Compact Mode: ON" : "Detailed Mode"}</span>
+            </button>
+          </div>
         </div>
 
         <DataTable
@@ -135,28 +154,37 @@ export default function BannersPage() {
             {
               key: "image_url",
               label: "Banner Preview",
-              width: 150,
+              width: "115px",
+              align: "center",
               render: (row) =>
                 row.image_url ? (
                   <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLightboxImg(resolveImageUrl(row.image_url));
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    title="Click to view full resolution banner"
                     style={{
                       position: "relative",
-                      width: 130,
-                      height: 54,
+                      width: 96,
+                      height: 42,
                       overflow: "hidden",
                       borderRadius: 6,
                       border: "1px solid var(--border)",
-                      background: "var(--surface-alt)"
+                      background: "var(--surface-alt)",
+                      cursor: "pointer"
                     }}
                   >
                     <img
-                      src={row.image_url}
+                      src={resolveImageUrl(row.image_url)}
                       alt={row.title}
                       style={{
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
-                        objectPosition: row.image_position || "center center"
+                        objectPosition: row.image_position || "85% top"
                       }}
                       onError={(e) => {
                         e.target.style.display = "none";
@@ -166,8 +194,8 @@ export default function BannersPage() {
                 ) : (
                   <div
                     style={{
-                      width: 130,
-                      height: 54,
+                      width: 96,
+                      height: 42,
                       borderRadius: 6,
                       background: "var(--surface-alt)",
                       border: "1px dashed var(--border)",
@@ -177,52 +205,144 @@ export default function BannersPage() {
                       color: "var(--text-subtle)"
                     }}
                   >
-                    <ImageIcon size={18} />
+                    <ImageIcon size={16} />
                   </div>
                 )
             },
             {
               key: "title",
               label: "Title & Copy",
-              render: (row) => (
-                <div style={{ maxWidth: 320 }}>
-                  {row.tag && (
+              width: "280px",
+              render: (row) =>
+                isCompact ? (
+                  <div
+                    style={{ maxWidth: 280 }}
+                    title={`${row.title}\n${row.subtitle || ""}\n${row.tag || ""}`}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                      {row.tag && (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            fontWeight: 700,
+                            color: "#4f46e5",
+                            background: "#eef2ff",
+                            padding: "1px 6px",
+                            borderRadius: 4,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.04em",
+                            whiteSpace: "nowrap"
+                          }}
+                        >
+                          {row.tag}
+                        </span>
+                      )}
+                      {row.badge_promo && (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            color: "#059669",
+                            background: "#ecfdf5",
+                            padding: "1px 6px",
+                            borderRadius: 4,
+                            whiteSpace: "nowrap"
+                          }}
+                        >
+                          {row.badge_promo}
+                        </span>
+                      )}
+                    </div>
                     <div
+                      className="cell-title"
                       style={{
-                        fontSize: 11,
-                        fontWeight: 700,
-                        color: "var(--primary-text)",
-                        letterSpacing: "0.06em",
-                        textTransform: "uppercase",
-                        marginBottom: 2
+                        fontSize: 13,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
                       }}
                     >
-                      {row.tag}
+                      {row.title}
                     </div>
-                  )}
-                  <div className="cell-title">{row.title}</div>
-                  {row.subtitle && <div className="cell-muted" style={{ fontSize: 12 }}>{row.subtitle}</div>}
-                  {row.badge_promo && (
-                    <div style={{ marginTop: 4 }}>
-                      <span className="pill-badge badge-gold" style={{ fontSize: 10 }}>
-                        {row.badge_promo}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )
+                    {row.subtitle && (
+                      <div
+                        className="cell-muted"
+                        style={{
+                          fontSize: 11.5,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          marginTop: 2
+                        }}
+                      >
+                        {row.subtitle}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ maxWidth: 320 }}>
+                    {row.tag && (
+                      <div
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: "#4f46e5",
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          marginBottom: 2
+                        }}
+                      >
+                        {row.tag}
+                      </div>
+                    )}
+                    <div className="cell-title">{row.title}</div>
+                    {row.subtitle && (
+                      <div className="cell-muted" style={{ fontSize: 12 }}>
+                        {row.subtitle}
+                      </div>
+                    )}
+                    {row.badge_promo && (
+                      <div style={{ marginTop: 4 }}>
+                        <span className="pill-badge" style={{ background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0", fontSize: 10 }}>
+                          {row.badge_promo}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )
             },
             {
               key: "placement",
               label: "Target Placement",
+              width: "135px",
+              align: "center",
               render: (row) =>
                 row.placement === "hero" ? (
-                  <span className="pill-badge badge-gold">
+                  <span
+                    className="pill-badge"
+                    style={{
+                      background: "#eef2ff",
+                      color: "#4f46e5",
+                      border: "1px solid #c7d2fe",
+                      fontSize: 11,
+                      whiteSpace: "nowrap"
+                    }}
+                  >
                     <Sparkles size={11} />
                     <span>Hero Slider</span>
                   </span>
                 ) : (
-                  <span className="pill-badge badge-dark">
+                  <span
+                    className="pill-badge"
+                    style={{
+                      background: "#f1f5f9",
+                      color: "#334155",
+                      border: "1px solid #cbd5e1",
+                      fontSize: 11,
+                      whiteSpace: "nowrap"
+                    }}
+                  >
                     <span>{row.placement}</span>
                   </span>
                 )
@@ -230,13 +350,18 @@ export default function BannersPage() {
             {
               key: "primary_cta_text",
               label: "Call to Action",
+              width: "145px",
               render: (row) =>
                 row.primary_cta_text ? (
                   <div style={{ fontSize: 12 }}>
-                    <span style={{ fontWeight: 600, color: "var(--text-main)" }}>{row.primary_cta_text}</span>
+                    <span style={{ fontWeight: 600, color: "var(--text-main)", whiteSpace: "nowrap" }}>
+                      {row.primary_cta_text}
+                    </span>
                     {row.primary_cta_link && (
-                      <div className="cell-muted" style={{ fontSize: 11 }}>
-                        <code>{row.primary_cta_link}</code>
+                      <div className="cell-muted" style={{ fontSize: 11, marginTop: 2 }}>
+                        <code style={{ fontSize: 10.5, padding: "1px 5px", whiteSpace: "nowrap" }}>
+                          {row.primary_cta_link}
+                        </code>
                       </div>
                     )}
                   </div>
@@ -247,17 +372,21 @@ export default function BannersPage() {
             {
               key: "sort_order",
               label: "Sequence",
-              render: (row) => <strong>{row.sort_order}</strong>
+              width: "80px",
+              align: "center",
+              render: (row) => <strong style={{ color: "#475569" }}>{row.sort_order}</strong>
             },
             {
               key: "is_active",
               label: "Status",
+              width: "100px",
+              align: "center",
               render: (row) => <StatusBadge value={row.is_active ? "active" : "inactive"} />
             },
             {
               key: "actions",
               label: "Actions",
-              width: "230px",
+              width: "190px",
               align: "right",
               render: (row) => (
                 <div className="table-actions">
@@ -305,7 +434,23 @@ export default function BannersPage() {
           }}
         />
       )}
-      {viewing && <BannerViewModal banner={viewing} onClose={() => setViewing(null)} />}
+      {viewing && (
+        <BannerViewModal
+          banner={viewing}
+          onEdit={(b) => {
+            setViewing(null);
+            setEditing(b);
+          }}
+          onClose={() => setViewing(null)}
+        />
+      )}
+      {lightboxImg && (
+        <ImageLightboxModal
+          src={lightboxImg}
+          alt="Banner Preview"
+          onClose={() => setLightboxImg(null)}
+        />
+      )}
       <ConfirmModal />
     </div>
   );

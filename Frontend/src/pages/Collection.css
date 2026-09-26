@@ -169,13 +169,17 @@
 
 .coll-hero-offer-heading {
   font-family: var(--font-display, "Outfit", sans-serif);
-  font-size: clamp(2.4rem, 4.4vw, 3.8rem);
+  font-size: clamp(2.5rem, 4.6vw, 4.0rem);
   font-weight: 900;
-  line-height: 1.05;
+  line-height: 1.04;
   letter-spacing: -0.02em;
   text-transform: uppercase;
-  color: #FFFFFF;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+  background: linear-gradient(135deg, #FFFFFF 15%, #FFD166 60%, #FAA703 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-shadow: none;
 }
 
 .coll-hero-offer-tag {
@@ -202,9 +206,9 @@
 
 .coll-hero-campaign-headline {
   font-family: var(--font-display, "Outfit", sans-serif);
-  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
   font-weight: 800;
-  color: #FAA703;
+  color: #FFFFFF;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   margin: 0 0 6px 0;
@@ -341,6 +345,21 @@
   color: #111827 !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(250, 167, 3, 0.6);
+}
+
+.coll-hero-urgency-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.03em;
 }
 
 /* ── Navigation Arrows ── */

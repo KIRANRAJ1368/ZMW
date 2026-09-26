@@ -93,117 +93,123 @@ const HERO_CATEGORY_TABS = [
 const BANNER_CONFIG = {
   mens: {
     categoryName: "Men",
-    badge: "Men's Collection",
-    badgeIcon: "bolt",
-    subBadge: "Heavyweight Streetwear",
-    offer: "MEN",
-    offerTag: "PREMIUM ESSENTIALS",
-    title: "Oversized Graphics, Deliberately Cut.",
-    subtitle: "Heavyweight 280 GSM cotton, relaxed drop-shoulder silhouettes, and modern street aesthetics.",
+    badge: "New Arrivals",
+    badgeIcon: "sparkle",
+    subBadge: "Season 2026",
+    offer: "FLAT 25% OFF",
+    offerTag: "AUTO-APPLIED AT CHECKOUT",
+    title: "NEW SEASON STYLES",
+    subtitle: "Heavyweight 280 GSM drops with relaxed drop-shoulder silhouettes, modern street aesthetics, and all-day comfort.",
     perks: [
       { icon: "shield", label: "280 GSM Heavyweight" },
-      { icon: "bolt", label: "Drop-Shoulder Fit" },
+      { icon: "star", label: "4.9★ Customer Rating" },
       { icon: "tag", label: "100% Combed Cotton" }
     ],
-    ctaText: "Explore Men",
+    ctaText: "EXPLORE NOW",
+    urgencyTag: "✨ Fresh Drop",
     primaryHash: "#collection-catalog",
-    image: "/images/cat-banner-mens.jpg",
-    imagePosition: "80% 18%"
+    image: "/images/banner-mens.jpg",
+    imagePosition: "85% top"
   },
   women: {
     categoryName: "Women",
-    badge: "Women's Collection",
+    badge: "New Arrivals",
     badgeIcon: "sparkle",
-    subBadge: "Contemporary Chic",
-    offer: "WOMEN",
-    offerTag: "ELEGANT ESSENTIALS",
-    title: "Artistic Prints, Deliberately Styled.",
-    subtitle: "Chic relaxed silhouettes, ultra-soft breathable combed cotton, and modern minimalist graphics.",
+    subBadge: "Season 2026",
+    offer: "FLAT 25% OFF",
+    offerTag: "AUTO-APPLIED AT CHECKOUT",
+    title: "CONTEMPORARY CHIC",
+    subtitle: "Chic relaxed drop-shoulder fits, ultra-breathable pure combed cotton, and modern minimalist artwork.",
     perks: [
       { icon: "sparkle", label: "Artistic Minimalist Prints" },
-      { icon: "tag", label: "Breathable Combed Cotton" },
-      { icon: "heart", label: "Relaxed Chic Fit" }
+      { icon: "star", label: "4.9★ Customer Rating" },
+      { icon: "tag", label: "100% Combed Cotton" }
     ],
-    ctaText: "Explore Women",
+    ctaText: "EXPLORE NOW",
+    urgencyTag: "✨ Fresh Drop",
     primaryHash: "#collection-catalog",
-    image: "/images/cat-banner-womens.jpg",
-    imagePosition: "78% 16%"
+    image: "/images/banner-womens.jpg",
+    imagePosition: "85% top"
   },
   boys: {
     categoryName: "Boys",
-    badge: "Boys' Collection",
+    badge: "Playful Drops",
     badgeIcon: "bolt",
-    subBadge: "Active Playwear",
-    offer: "BOYS",
-    offerTag: "BUILT FOR PLAY",
-    title: "High-Energy Graphics, Made To Last.",
-    subtitle: "Durable reinforced seams, super-soft bio-washed cotton, and high-energy street styles.",
+    subBadge: "Season 2026",
+    offer: "STARTING AT ₹599",
+    offerTag: "FREE SHIPPING ₹499+",
+    title: "BUILT FOR PLAY",
+    subtitle: "High-energy graphic streetwear hoodies, durable reinforced seams, and super-soft bio-washed cotton.",
     perks: [
       { icon: "shield", label: "Reinforced Durability" },
-      { icon: "truck", label: "Super-Soft Bio-Washed" },
-      { icon: "tag", label: "100% Pure Cotton" }
+      { icon: "star", label: "4.8★ Parent Approved" },
+      { icon: "truck", label: "Free Shipping ₹499+" }
     ],
-    ctaText: "Explore Boys",
+    ctaText: "EXPLORE NOW",
+    urgencyTag: "⚡ Selling Out Fast",
     primaryHash: "#collection-catalog",
     image: "/images/banner-boys.jpg",
-    imagePosition: "75% 16%"
+    imagePosition: "85% top"
   },
   girls: {
     categoryName: "Girls",
-    badge: "Girls' Collection",
+    badge: "Sweet & Trendy",
     badgeIcon: "sparkle",
-    subBadge: "Sweet & Playful",
-    offer: "GIRLS",
-    offerTag: "FRESH & PLAYFUL",
-    title: "Fresh & Playful, Comfort First.",
-    subtitle: "Cheerful dresses, high-necks, trendy matching sets, and gentle skin-friendly cotton.",
+    subBadge: "Season 2026",
+    offer: "FLAT 20% OFF",
+    offerTag: "AUTO-APPLIED AT CHECKOUT",
+    title: "FRESH & PLAYFUL",
+    subtitle: "Cheerful graphic sweatshirts, soft high-necks, trendy matching sets, and gentle skin-friendly organic cotton.",
     perks: [
       { icon: "heart", label: "Ultra-Gentle on Skin" },
-      { icon: "sparkle", label: "Colorfast Vibrant Dyes" },
-      { icon: "tag", label: "Comfort-Stretch Fit" }
+      { icon: "star", label: "4.9★ Customer Rating" },
+      { icon: "tag", label: "100% Pure Cotton" }
     ],
-    ctaText: "Explore Girls",
+    ctaText: "EXPLORE NOW",
+    urgencyTag: "✨ Fresh Drop",
     primaryHash: "#collection-catalog",
     image: "/images/banner-girls.jpg",
-    imagePosition: "75% 16%"
+    imagePosition: "85% top"
   },
   babies: {
     categoryName: "Babies",
-    badge: "Babies' Collection",
+    badge: "Tiny & Soft",
     badgeIcon: "heart",
     subBadge: "100% Baby-Safe",
-    offer: "BABIES",
+    offer: "STARTING AT ₹449",
     offerTag: "HYPOALLERGENIC COTTON",
-    title: "Gentle Layers, Made For Baby.",
-    subtitle: "Cozy rompers, buttery-soft pyjamas, tiny hoodies, and stretch bottoms in pure gentle cotton.",
+    title: "GENTLE ESSENTIALS",
+    subtitle: "Cozy ribbed rompers, buttery-soft pyjamas, and stretch bottoms crafted in pure hypoallergenic organic cotton.",
     perks: [
       { icon: "heart", label: "Hypoallergenic Pure Cotton" },
       { icon: "shield", label: "Zero Harsh Chemicals" },
       { icon: "tag", label: "Easy Snap Fastening" }
     ],
-    ctaText: "Explore Babies",
+    ctaText: "EXPLORE NOW",
+    urgencyTag: "🍼 Gentle Care",
     primaryHash: "#collection-catalog",
     image: "/images/banner-babies.jpg",
-    imagePosition: "75% 16%"
+    imagePosition: "85% top"
   },
   kids: {
     categoryName: "Kids",
-    badge: "Kids' Collection",
+    badge: "Kids' Edit",
     badgeIcon: "sparkle",
-    subBadge: "Playful Essentials",
-    offer: "KIDS",
-    offerTag: "BUILT FOR PLAY",
-    title: "Built For Play, Made To Last.",
-    subtitle: "Super-soft organic cotton, cheerful artwork, and all-day durability for growing kids.",
+    subBadge: "Season 2026",
+    offer: "FLAT 25% OFF",
+    offerTag: "AUTO-APPLIED AT CHECKOUT",
+    title: "BUILT FOR PLAY",
+    subtitle: "Super-soft bio-washed cotton, cheerful artwork, and all-day play durability for growing kids.",
     perks: [
-      { icon: "heart", label: "100% Bio-Wash Cotton" },
-      { icon: "shield", label: "All-Day Play Comfort" },
+      { icon: "shield", label: "100% Bio-Wash Cotton" },
+      { icon: "star", label: "4.9★ Customer Rating" },
       { icon: "truck", label: "Free Shipping ₹499+" }
     ],
-    ctaText: "Explore Kids",
+    ctaText: "EXPLORE NOW",
+    urgencyTag: "✨ Fresh Drop",
     primaryHash: "#collection-catalog",
-    image: "/images/cat-banner-kids.jpg",
-    imagePosition: "80% 18%"
+    image: "/images/banner-boys.jpg",
+    imagePosition: "85% top"
   },
   "best-sellers": {
     categoryName: "Best Sellers",
@@ -359,20 +365,24 @@ export default function Collection() {
 
   const bannerKey = collectionParam !== "all" ? collectionParam : categoryParam !== "all" ? categoryParam : "default";
   const managedBanner = homeData?.banners?.[bannerKey]?.[0];
+  const config = BANNER_CONFIG[bannerKey] || BANNER_CONFIG.default;
   const banner = managedBanner
     ? {
-        image: managedBanner.image_url,
-        imagePosition: managedBanner.image_position || "center center",
-        tag: managedBanner.tag,
-        badge: managedBanner.badge_promo,
-        title: managedBanner.title,
-        subtitle: managedBanner.subtitle,
-        primaryCta: managedBanner.primary_cta_text,
-        primaryLink: managedBanner.primary_cta_link,
-        secondaryCta: managedBanner.secondary_cta_text,
-        secondaryLink: managedBanner.secondary_cta_link
+        ...config,
+        image: managedBanner.image_url || config.image,
+        imagePosition: managedBanner.image_position || config.imagePosition || "85% top",
+        badge: config.badge,
+        badgeIcon: config.badgeIcon,
+        subBadge: config.subBadge,
+        offer: config.offer,
+        offerTag: config.offerTag,
+        title: config.title,
+        subtitle: config.subtitle,
+        ctaText: config.ctaText,
+        urgencyTag: config.urgencyTag,
+        perks: config.perks
       }
-    : BANNER_CONFIG[bannerKey] || BANNER_CONFIG.default;
+    : config;
 
   const currentCategoryKey = categoryParam === "all" ? "all" : categoryParam;
   const activeCategoryLabel = HERO_CATEGORY_TABS.find((t) => t.id === currentCategoryKey)?.label || "Collection";
@@ -824,7 +834,7 @@ export default function Collection() {
               src={banner.image}
               alt={banner.title || "ZMW Apparel Collection"}
               className="hero-backdrop-img coll-hero-backdrop-img"
-              style={{ objectPosition: banner.imagePosition || "75% 20%" }}
+              style={{ objectPosition: banner.imagePosition || "85% top" }}
               onError={(event) => { event.currentTarget.src = "/images/hero-family-banner.jpg"; }}
             />
             {/* Subtle balanced scrim: preserves bright, sharp model on right while text on left is ultra-crisp */}
@@ -848,40 +858,52 @@ export default function Collection() {
 
             <div className="hero-content-box coll-hero-content-box">
               {/* Top Eyebrow Badges Row */}
-              <div className="hero-tag-wrap coll-hero-tag-wrap">
-                <span className="hero-tag-badge gold">
-                  {renderHeroIcon(banner.badgeIcon)}
-                  {banner.badge}
-                </span>
-                <span className="hero-tag-subbadge">
-                  {banner.subBadge}
-                </span>
-              </div>
+              {(banner.badge || banner.subBadge) && (
+                <div className="hero-tag-wrap coll-hero-tag-wrap">
+                  {banner.badge && (
+                    <span className="hero-tag-badge gold">
+                      {renderHeroIcon(banner.badgeIcon)}
+                      {banner.badge}
+                    </span>
+                  )}
+                  {banner.subBadge && (
+                    <span className="hero-tag-subbadge">
+                      {banner.subBadge}
+                    </span>
+                  )}
+                </div>
+              )}
 
               {/* 1. PRIMARY OFFER HEADING (Strong Visual Hierarchy) */}
-              <div className="hero-offer-block coll-hero-offer-block">
-                <div className="hero-offer-heading coll-hero-offer-heading">
-                  {banner.offer}
+              {banner.offer && (
+                <div className="hero-offer-block coll-hero-offer-block">
+                  <div className="hero-offer-heading coll-hero-offer-heading">
+                    {banner.offer}
+                  </div>
+                  {banner.offerTag && (
+                    <span className="hero-offer-tag coll-hero-offer-tag">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                        <circle cx="7" cy="7" r="1.5" />
+                      </svg>
+                      {banner.offerTag}
+                    </span>
+                  )}
                 </div>
-                {banner.offerTag && (
-                  <span className="hero-offer-tag coll-hero-offer-tag">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-                      <circle cx="7" cy="7" r="1.5" />
-                    </svg>
-                    {banner.offerTag}
-                  </span>
-                )}
-              </div>
+              )}
 
               {/* 2. SUPPORTING TEXT & CAMPAIGN HEADLINE */}
               <div className="hero-campaign-info coll-hero-campaign-info">
-                <h2 className="hero-campaign-headline coll-hero-campaign-headline">
-                  {banner.title}
-                </h2>
-                <p className="hero-subtitle coll-hero-subtitle">
-                  {banner.subtitle}
-                </p>
+                {banner.title && (
+                  <h2 className="hero-campaign-headline coll-hero-campaign-headline">
+                    {banner.title}
+                  </h2>
+                )}
+                {banner.subtitle && (
+                  <p className="hero-subtitle coll-hero-subtitle">
+                    {banner.subtitle}
+                  </p>
+                )}
               </div>
 
               {/* ECOMMERCE MICRO-PERKS BAR */}
@@ -898,15 +920,20 @@ export default function Collection() {
                 </div>
               )}
 
-              {/* 3. CALL TO ACTION — Clean, simple, no product count */}
+              {/* 3. CALL TO ACTION & URGENCY PILL */}
               <div className="hero-cta-group coll-hero-cta-group">
                 <a href="#collection-catalog" className="hero-btn-primary coll-hero-btn-primary">
-                  <span>{banner.ctaText || `Explore ${banner.categoryName || activeCategoryLabel}`}</span>
+                  <span>{banner.ctaText || "EXPLORE NOW"}</span>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <polyline points="19 12 12 19 5 12" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
                   </svg>
                 </a>
+                {banner.urgencyTag && (
+                  <span className="hero-urgency-pill coll-hero-urgency-pill">
+                    {banner.urgencyTag}
+                  </span>
+                )}
               </div>
             </div>
           </div>

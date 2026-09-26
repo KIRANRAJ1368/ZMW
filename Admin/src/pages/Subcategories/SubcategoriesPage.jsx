@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, Eye, Image as ImageIcon, Filter, Tags } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, Filter } from "lucide-react";
 import { subcategoriesApi, categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../components/ConfirmDialog/ConfirmDialog";
@@ -7,6 +7,9 @@ import DataTable from "../../components/DataTable/DataTable";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import SubcategoryFormModal from "./SubcategoryFormModal";
 import SubcategoryViewModal from "../../components/EntityViewModal/SubcategoryViewModal";
+import ImageLightboxModal from "../../components/ImageLightboxModal/ImageLightboxModal";
+import { resolveImageUrl } from "../../utils/imageUrl";
+import { getSubcategoryImageUrl } from "../../utils/categoryImageResolver";
 
 export default function SubcategoriesPage() {
   const [subcategories, setSubcategories] = useState([]);
@@ -15,6 +18,7 @@ export default function SubcategoriesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
+  const [lightboxImg, setLightboxImg] = useState(null);
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
 
@@ -70,7 +74,9 @@ export default function SubcategoriesPage() {
         <div>
           <h1 className="page-title">
             <span>Subcategories & Item Groups</span>
-            <span className="pill-badge badge-gold">{subcategories.length} Group{subcategories.length === 1 ? "" : "s"}</span>
+            <span className="pill-badge badge-gold">
+              {subcategories.length} Group{subcategories.length === 1 ? "" : "s"}
+            </span>
           </h1>
           <p className="page-subtitle">
             Manage product classifications within each category (e.g. Hoodies, T-Shirts, Bottoms, Jackets).
@@ -155,45 +161,39 @@ export default function SubcategoriesPage() {
             {
               key: "image_url",
               label: "Thumbnail",
-              width: 80,
-              render: (row) =>
-                row.image_url ? (
+              width: "75px",
+              align: "center",
+              render: (row) => {
+                const img = getSubcategoryImageUrl(row);
+                return (
                   <img
-                    src={row.image_url}
+                    src={resolveImageUrl(img)}
                     alt={row.name}
                     className="cell-thumb"
-                    style={{ width: 44, height: 52, borderRadius: 6, objectFit: "cover" }}
+                    style={{ width: 44, height: 54, borderRadius: 8, objectFit: "cover", cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLightboxImg(resolveImageUrl(img));
+                    }}
+                    title="Click to inspect thumbnail in Full HD"
                     onError={(e) => {
-                      e.target.style.display = "none";
+                      e.target.src = "/images/cat-men-round-neck.jpg";
                     }}
                   />
-                ) : (
-                  <div
-                    style={{
-                      width: 44,
-                      height: 52,
-                      borderRadius: 6,
-                      background: "var(--surface-alt)",
-                      border: "1px dashed var(--border)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "var(--text-subtle)"
-                    }}
-                    title="No image uploaded"
-                  >
-                    <ImageIcon size={16} />
-                  </div>
-                )
+                );
+              }
             },
             {
               key: "name",
               label: "Subcategory Name",
+              align: "left",
               render: (row) => <span className="cell-title">{row.name}</span>
             },
             {
               key: "category",
               label: "Parent Category",
+              width: "140px",
+              align: "center",
               render: (row) => (
                 <span className="pill-badge badge-gold">
                   {row.category?.name || "Unassigned"}
@@ -203,22 +203,27 @@ export default function SubcategoriesPage() {
             {
               key: "slug",
               label: "URL Slug",
+              align: "left",
               render: (row) => <code>{row.slug}</code>
             },
             {
               key: "sort_order",
               label: "Sequence",
+              width: "90px",
+              align: "center",
               render: (row) => <strong>{row.sort_order}</strong>
             },
             {
               key: "is_active",
               label: "Filter Pill Status",
+              width: "150px",
+              align: "center",
               render: (row) => <StatusBadge value={row.is_active ? "active" : "inactive"} />
             },
             {
               key: "actions",
               label: "Actions",
-              width: "230px",
+              width: "220px",
               align: "right",
               render: (row) => (
                 <div className="table-actions">
@@ -267,7 +272,20 @@ export default function SubcategoriesPage() {
           }}
         />
       )}
-      {viewing && <SubcategoryViewModal subcategory={viewing} onClose={() => setViewing(null)} />}
+      {viewing && (
+        <SubcategoryViewModal
+          subcategory={viewing}
+          onEdit={(sub) => setEditing(sub)}
+          onClose={() => setViewing(null)}
+        />
+      )}
+      {lightboxImg && (
+        <ImageLightboxModal
+          src={lightboxImg}
+          alt="Subcategory Preview"
+          onClose={() => setLightboxImg(null)}
+        />
+      )}
       <ConfirmModal />
     </div>
   );

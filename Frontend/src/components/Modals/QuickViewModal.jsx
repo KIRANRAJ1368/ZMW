@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useShop } from "../../context/ShopContext";
 import SizeGuideModal from "./SizeGuideModal";
+import { imageUrl } from "../../utils/imageUrl";
 import "./QuickViewModal.css";
 
 export default function QuickViewModal() {
@@ -19,12 +20,21 @@ export default function QuickViewModal() {
   const [quantity, setQuantity] = useState(1);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
+  const images = useMemo(() => {
+    if (!quickViewProduct) return [];
+    if (Array.isArray(quickViewProduct.images) && quickViewProduct.images.length > 0) {
+      return quickViewProduct.images.map((img) => (typeof img === "string" ? img : img?.url)).filter(Boolean);
+    }
+    if (quickViewProduct.image) return [quickViewProduct.image];
+    return ["/images/photo-1521572163474-6864f9cf17ab.jpg"];
+  }, [quickViewProduct]);
+
   // Initialize defaults when product changes
   useEffect(() => {
     if (quickViewProduct) {
       setActiveImgIndex(0);
-      setSelectedColor(quickViewProduct.colors ? quickViewProduct.colors[0]?.name : null);
-      setSelectedSize(quickViewProduct.sizes ? quickViewProduct.sizes[0] : null);
+      setSelectedColor(quickViewProduct.colors?.[0]?.name || null);
+      setSelectedSize(quickViewProduct.sizes?.[0] || null);
       setQuantity(1);
     }
   }, [quickViewProduct]);
@@ -37,6 +47,8 @@ export default function QuickViewModal() {
     addToCart(quickViewProduct, selectedColor, selectedSize, quantity);
     setQuickViewProduct(null);
   };
+
+  const currentImg = images[activeImgIndex] || images[0];
 
   return (
     <div className="modal-overlay active" onClick={() => setQuickViewProduct(null)}>
@@ -60,22 +72,22 @@ export default function QuickViewModal() {
                 </span>
               )}
               <img
-                src={quickViewProduct.images[activeImgIndex] || quickViewProduct.images[0]}
+                src={imageUrl(currentImg)}
                 alt={quickViewProduct.name}
                 className="main-view-img"
               />
             </div>
 
             {/* Thumbnail Row */}
-            {quickViewProduct.images && quickViewProduct.images.length > 1 && (
+            {images.length > 1 && (
               <div className="quickview-thumbnails">
-                {quickViewProduct.images.map((img, i) => (
+                {images.map((img, i) => (
                   <button
                     key={i}
                     className={`thumb-btn ${i === activeImgIndex ? "active" : ""}`}
                     onClick={() => setActiveImgIndex(i)}
                   >
-                    <img src={img} alt={`Angle ${i + 1}`} />
+                    <img src={imageUrl(img)} alt={`Angle ${i + 1}`} />
                   </button>
                 ))}
               </div>

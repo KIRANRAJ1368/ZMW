@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { ImageIcon, Star } from "lucide-react";
+import { ImageIcon, Star, ZoomIn } from "lucide-react";
 import Modal from "../Modal/Modal";
 import LoadingState from "../LoadingState/LoadingState";
 import StatusBadge from "../StatusBadge/StatusBadge";
+import ImageLightboxModal from "../ImageLightboxModal/ImageLightboxModal";
+import { resolveImageUrl } from "../../utils/imageUrl";
 import { productsApi, categoriesApi } from "../../services/resources";
 import "./ProductViewModal.css";
 
@@ -17,6 +19,7 @@ export default function ProductViewModal({ product, productId, onClose }) {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(!product);
   const [error, setError] = useState(null);
+  const [lightboxSrc, setLightboxSrc] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -122,18 +125,32 @@ export default function ProductViewModal({ product, productId, onClose }) {
             </div>
             {data.images.length > 0 ? (
               <div className="pv-image-grid">
-                {data.images.map((src, i) => (
-                  <div className="pv-image-tile" key={`${src}-${i}`}>
-                    <img
-                      src={src}
-                      alt={`${data.name} ${i + 1}`}
-                      loading="lazy"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  </div>
-                ))}
+                {data.images.map((src, i) => {
+                  const resolved = resolveImageUrl(src);
+                  return (
+                    <div
+                      className="pv-image-tile pv-image-clickable"
+                      key={`${src}-${i}`}
+                      onClick={() => setLightboxSrc(resolved)}
+                      title="Click to view larger image"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === "Enter" && setLightboxSrc(resolved)}
+                    >
+                      <img
+                        src={resolved}
+                        alt={`${data.name} ${i + 1}`}
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                      <div className="pv-image-hover-hint">
+                        <ZoomIn size={14} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="pv-no-images">
@@ -197,7 +214,7 @@ export default function ProductViewModal({ product, productId, onClose }) {
               <div className="pv-chip-row">
                 {data.colors.map((c, i) => (
                   <span className="pv-color-chip" key={`${c.name}-${i}`}>
-                    <span className="pv-color-swatch" style={{ background: c.hex || "#E2E8F0" }} />
+                    <span className="pv-color-swatch" style={{ background: c.hex || c.hex_code || "#E2E8F0" }} />
                     {c.name}
                   </span>
                 ))}
@@ -212,7 +229,7 @@ export default function ProductViewModal({ product, productId, onClose }) {
               <div className="pv-chip-row">
                 {data.sizes.map((s, i) => (
                   <span className="pv-size-chip" key={`${s}-${i}`}>
-                    {s}
+                    {typeof s === "string" ? s : s?.label || s}
                   </span>
                 ))}
               </div>
@@ -244,6 +261,14 @@ export default function ProductViewModal({ product, productId, onClose }) {
           </span>
         </div>
       </div>
+
+      {lightboxSrc && (
+        <ImageLightboxModal
+          src={lightboxSrc}
+          alt={data.name}
+          onClose={() => setLightboxSrc(null)}
+        />
+      )}
     </Modal>
   );
 }

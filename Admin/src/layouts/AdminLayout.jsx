@@ -14,7 +14,9 @@ import {
   X,
   ChevronRight,
   Tag,
-  TrendingUp
+  TrendingUp,
+  ExternalLink,
+  ShieldCheck
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import "./AdminLayout.css";
@@ -60,19 +62,17 @@ export default function AdminLayout() {
 
       {/* Floating Luxury Sidebar */}
       <aside className={`admin-sidebar ${mobileNavOpen ? "open" : ""}`}>
-        {/* Brand Header */}
+        {/* Brand Header — Centered, clear, prominent logo */}
         <div className="admin-sidebar-brand">
-          <div className="admin-brand-left">
-            <div className="admin-brand-emblem">
-              <img
-                src="/images/zmw-logo-transparent.png"
-                alt="ZMW"
-                className="admin-sidebar-logo-img"
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-            </div>
+          <div className="admin-brand-center">
+            <img
+              src="/images/zmw-logo-transparent.png"
+              alt="ZMW Clothing"
+              className="admin-sidebar-logo-img"
+              onError={(e) => {
+                e.target.style.display = "none";
+              }}
+            />
           </div>
           <button
             type="button"
@@ -85,7 +85,7 @@ export default function AdminLayout() {
         </div>
 
         {/* Section Heading */}
-        <div className="admin-nav-section-title">Store Management</div>
+        <div className="admin-nav-section-title">Navigation</div>
 
         {/* Navigation links */}
         <nav className="admin-nav">
@@ -108,6 +108,23 @@ export default function AdminLayout() {
           })}
         </nav>
 
+        {/* Redesigned Sidebar Footer with Logout & Live Store link */}
+        <div className="admin-sidebar-footer">
+          <button
+            type="button"
+            className="admin-logout-card-btn"
+            onClick={logout}
+            title="Sign out of Admin Portal"
+          >
+            <div className="admin-logout-icon-box">
+              <LogOut size={16} />
+            </div>
+            <div className="admin-logout-info">
+              <span className="admin-logout-title">Logout</span>
+              {/* <span className="admin-logout-role">Admin Session</span> */}
+            </div>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -130,15 +147,35 @@ export default function AdminLayout() {
           </div>
 
           <div className="admin-header-user">
-            <button
+            {/* <a
+              href="http://localhost:3000"
+              target="_blank"
+              rel="noreferrer"
+              className="admin-header-store-btn"
+              title="Open customer storefront in a new tab"
+            >
+              <span>Storefront</span>
+              <ExternalLink size={13} />
+            </a> */}
+
+            <div className="admin-profile-pill">
+              <div className="admin-avatar">
+                <ShieldCheck size={16} />
+              </div>
+              <div className="admin-profile-info">
+                <span className="admin-profile-role">Admin</span>
+              </div>
+            </div>
+
+            {/* <button
               type="button"
-              className="btn btn-secondary btn-sm admin-logout-btn"
+              className="admin-header-logout-btn"
               onClick={logout}
               title="Sign out of Admin Portal"
             >
-              <LogOut size={15} />
-              <span>Log out</span>
-            </button>
+              <LogOut size={14} />
+              <span>Logout</span>
+            </button> */}
           </div>
         </header>
 

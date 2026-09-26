@@ -1,11 +1,12 @@
-import { useState, useRef } from "react";
-import { UploadCloud, Image as ImageIcon, X, Check } from "lucide-react";
+import { useState } from "react";
 import Modal from "../../components/Modal/Modal";
 import FormField from "../../components/FormField/FormField";
-import { categoriesApi, uploadApi } from "../../services/resources";
+import ImageUploadField from "../../components/ImageUploadField/ImageUploadField";
+import { categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { ApiError } from "../../services/api";
 import { slugify } from "../../utils/slugify";
+import { getCategoryImageUrl } from "../../utils/categoryImageResolver";
 
 export default function CategoryFormModal({ category, onClose, onSaved }) {
   const isEdit = !!category.id;
@@ -13,19 +14,24 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
     name: category.name || "",
     slug: category.slug || "",
     description: category.description || "",
-    image_url: category.image_url || "",
+    image_url: category.image_url || (isEdit ? getCategoryImageUrl(category) : ""),
     sort_order: category.sort_order ?? 0,
     is_active: category.is_active ?? true
   });
   const [errors, setErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
   const [slugTouched, setSlugTouched] = useState(isEdit);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef(null);
   const toast = useToast();
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
   }
 
   function handleNameChange(value) {
@@ -33,35 +39,58 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
     if (!slugTouched) update("slug", slugify(value));
   }
 
-  async function handleImageUpload(e) {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-    setIsUploading(true);
-    try {
-      const result = await uploadApi.upload("categories", files);
-      const url = result?.data?.files?.[0]?.url || result?.files?.[0]?.url;
-      if (url) {
-        update("image_url", url);
-        toast.success("Category cover photo uploaded successfully");
-      }
-    } catch (err) {
-      toast.error("Image upload failed: " + err.message);
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+  function validate() {
+    const errs = {};
+    const trimmedName = (form.name || "").trim();
+    const trimmedSlug = (form.slug || "").trim();
+    const trimmedImage = (form.image_url || "").trim();
+
+    if (!trimmedName) {
+      errs.name = "Category name is required";
+    } else if (trimmedName.length > 80) {
+      errs.name = "Category name must be under 80 characters";
     }
+
+    if (!trimmedSlug) {
+      errs.slug = "URL slug is required";
+    } else if (!/^[a-z0-9-]+$/.test(trimmedSlug)) {
+      errs.slug = "Slug may only contain lowercase letters, numbers, and hyphens";
+    }
+
+    if (!trimmedImage) {
+      errs.image_url = "Category cover photo is required. Please upload an image.";
+    }
+
+    return errs;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      const firstError = Object.values(validationErrors)[0];
+      toast.error(firstError || "Please fill in all required fields.");
+      return;
+    }
+
     setErrors({});
     setIsSaving(true);
     try {
+      const payload = {
+        name: form.name.trim(),
+        slug: form.slug.trim(),
+        description: form.description ? form.description.trim() : "",
+        image_url: form.image_url.trim(),
+        sort_order: Number(form.sort_order) || 0,
+        is_active: Boolean(form.is_active)
+      };
+
       if (isEdit) {
-        await categoriesApi.update(category.id, form);
+        await categoriesApi.update(category.id, payload);
         toast.success("Category updated successfully");
       } else {
-        await categoriesApi.create(form);
+        await categoriesApi.create(payload);
         toast.success("Category created successfully");
       }
       onSaved();
@@ -69,7 +98,7 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
       if (err instanceof ApiError && err.details?.length) {
         setErrors(Object.fromEntries(err.details.map((d) => [d.field, d.message])));
       }
-      toast.error(err.message);
+      toast.error(err.message || "Failed to save category");
     } finally {
       setIsSaving(false);
     }
@@ -125,94 +154,15 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
         </FormField>
 
         {/* Category Cover Photo */}
-        <FormField
+        <ImageUploadField
           label="Category Cover Photo"
-          htmlFor="cat-image"
+          value={form.image_url}
+          onChange={(url) => update("image_url", url)}
+          folder="categories"
+          hint="Recommended: 4:5 portrait ratio (e.g. 800 × 1000px). Displayed across category cards on storefront."
           error={errors.image_url}
-          hint="Recommended: 4:5 portrait ratio (e.g. 800 × 1000px). Displayed across category cards."
-        >
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <input
-              id="cat-image"
-              value={form.image_url}
-              onChange={(e) => update("image_url", e.target.value)}
-              placeholder="Paste direct image URL or upload →"
-              style={{ flex: 1 }}
-            />
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-            >
-              <UploadCloud size={16} />
-              <span>{isUploading ? "Uploading..." : "Upload Photo"}</span>
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleImageUpload}
-            />
-          </div>
-
-          {form.image_url && (
-            <div
-              style={{
-                marginTop: 12,
-                display: "flex",
-                alignItems: "center",
-                gap: 14,
-                padding: 12,
-                background: "var(--surface-alt)",
-                borderRadius: "var(--radius-sm)",
-                border: "1px solid var(--border)"
-              }}
-            >
-              <img
-                src={form.image_url}
-                alt="Category Preview"
-                style={{
-                  width: 54,
-                  height: 68,
-                  borderRadius: 6,
-                  objectFit: "cover",
-                  border: "1px solid var(--border)"
-                }}
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-main)" }}>
-                  Cover Image Preview
-                </div>
-                <div
-                  style={{
-                    fontSize: 11.5,
-                    color: "var(--text-muted)",
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap"
-                  }}
-                >
-                  {form.image_url}
-                </div>
-              </div>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                onClick={() => update("image_url", "")}
-                title="Remove image"
-                style={{ color: "var(--danger)" }}
-              >
-                <X size={16} />
-                <span>Remove</span>
-              </button>
-            </div>
-          )}
-        </FormField>
+          required
+        />
 
         <div className="form-grid">
           <FormField label="Display Order" htmlFor="cat-sort" hint="Lower sequence numbers appear first">

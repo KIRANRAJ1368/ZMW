@@ -9,9 +9,18 @@ async function list(req, res) {
   return sendSuccess(res, { data: rows.map(serializeProduct), meta });
 }
 
+const { Op } = require("sequelize");
+
 async function getBySlug(req, res) {
+  const { slug } = req.params;
+  const isNumeric = /^\d+$/.test(slug);
+
+  const whereClause = isNumeric
+    ? { [Op.or]: [{ id: Number(slug) }, { slug }], is_active: true }
+    : { [Op.or]: [{ slug }, { sku: slug }], is_active: true };
+
   const product = await Product.findOne({
-    where: { slug: req.params.slug, is_active: true },
+    where: whereClause,
     include: productService.PRODUCT_INCLUDES
   });
   if (!product) throw ApiError.notFound("Product not found");
