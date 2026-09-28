@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, AlertCircle } from "lucide-react";
 import Modal from "../../components/Modal/Modal";
 import FormField from "../../components/FormField/FormField";
 import ImageUploadField from "../../components/ImageUploadField/ImageUploadField";
@@ -20,10 +20,19 @@ const PLACEMENTS = [
   { value: "default", label: "Default Fallback Banner" }
 ];
 
-export default function BannerFormModal({ banner, onClose, onSaved }) {
+export default function BannerFormModal({ banner, heroCount = 0, onClose, onSaved }) {
   const isEdit = !!banner.id;
+  const isHeroCapped =
+    formPlacement() === "hero" && (!isEdit || banner.placement !== "hero") && heroCount >= 3;
+
+  function defaultPlacement() {
+    if (banner.placement) return banner.placement;
+    if (heroCount >= 3) return "mens";
+    return "hero";
+  }
+
   const [form, setForm] = useState({
-    placement: banner.placement || "hero",
+    placement: defaultPlacement(),
     title: banner.title || "",
     subtitle: banner.subtitle || "",
     tag: banner.tag || "",
@@ -41,12 +50,29 @@ export default function BannerFormModal({ banner, onClose, onSaved }) {
   const [isSaving, setIsSaving] = useState(false);
   const toast = useToast();
 
+  function formPlacement() {
+    return form?.placement || banner.placement || "hero";
+  }
+
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (form.placement === "hero" && (!isEdit || banner.placement !== "hero") && heroCount >= 3) {
+      toast.error("Maximum 3 Hero Banners can be added.");
+      setErrors((prev) => ({ ...prev, placement: "Maximum 3 Hero Banners can be added." }));
+      return;
+    }
+
     setErrors({});
     setIsSaving(true);
     try {
@@ -62,11 +88,14 @@ export default function BannerFormModal({ banner, onClose, onSaved }) {
       if (err instanceof ApiError && err.details?.length) {
         setErrors(Object.fromEntries(err.details.map((d) => [d.field, d.message])));
       }
-      toast.error(err.message);
+      toast.error(err.message || "Failed to save banner");
     } finally {
       setIsSaving(false);
     }
   }
+
+  const currentIsHeroCapped =
+    form.placement === "hero" && (!isEdit || banner.placement !== "hero") && heroCount >= 3;
 
   return (
     <Modal
@@ -75,19 +104,47 @@ export default function BannerFormModal({ banner, onClose, onSaved }) {
       width={700}
     >
       <form onSubmit={handleSubmit}>
+        {currentIsHeroCapped && (
+          <div
+            style={{
+              background: "#fef2f2",
+              border: "1px solid #fecaca",
+              color: "#991b1b",
+              padding: "10px 14px",
+              borderRadius: 8,
+              marginBottom: 16,
+              fontSize: 13,
+              display: "flex",
+              alignItems: "center",
+              gap: 8
+            }}
+          >
+            <AlertCircle size={16} style={{ flexShrink: 0 }} />
+            <span><strong>Maximum 3 Hero Banners can be added.</strong> Please choose another placement or remove an existing hero banner first.</span>
+          </div>
+        )}
+
         {/* Placement & Sequence */}
         <div className="form-grid">
-          <FormField label="Banner Placement / Target *" htmlFor="b-placement" error={errors.placement}>
+          <FormField
+            label="Banner Placement / Target *"
+            htmlFor="b-placement"
+            error={errors.placement || (currentIsHeroCapped ? "Maximum 3 Hero Banners can be added." : null)}
+          >
             <select
               id="b-placement"
               value={form.placement}
               onChange={(e) => update("placement", e.target.value)}
             >
-              {PLACEMENTS.map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
-                </option>
-              ))}
+              {PLACEMENTS.map((p) => {
+                const isHeroOptionDisabled =
+                  p.value === "hero" && (!isEdit || banner.placement !== "hero") && heroCount >= 3;
+                return (
+                  <option key={p.value} value={p.value} disabled={isHeroOptionDisabled}>
+                    {p.label}{isHeroOptionDisabled ? " — (Max 3 reached)" : ""}
+                  </option>
+                );
+              })}
             </select>
           </FormField>
 
@@ -233,7 +290,7 @@ export default function BannerFormModal({ banner, onClose, onSaved }) {
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" className="btn btn-accent" disabled={isSaving}>
+          <button type="submit" className="btn btn-accent" disabled={isSaving || currentIsHeroCapped}>
             {isSaving ? "Saving..." : isEdit ? "Save Changes" : "Create Banner"}
           </button>
         </div>

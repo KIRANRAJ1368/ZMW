@@ -5,6 +5,7 @@ import { ordersApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import LoadingState from "../../components/LoadingState/LoadingState";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
+import { formatINR } from "../../utils/formatPrice";
 import "./OrderDetailPage.css";
 
 const STATUSES = ["pending", "confirmed", "packed", "shipped", "delivered", "cancelled", "returned"];
@@ -120,9 +121,9 @@ export default function OrderDetailPage() {
                       <td>
                         <strong>{item.quantity}</strong>
                       </td>
-                      <td>₹{item.unit_price}</td>
+                      <td>{formatINR(item.unit_price)}</td>
                       <td>
-                        <strong style={{ color: "var(--text-main)" }}>₹{item.line_total}</strong>
+                        <strong style={{ color: "var(--text-main)" }}>{formatINR(item.line_total)}</strong>
                       </td>
                     </tr>
                   ))}
@@ -133,21 +134,21 @@ export default function OrderDetailPage() {
             <div className="order-totals-box">
               <div className="order-totals-row">
                 <span>Product Subtotal</span>
-                <span>₹{order.subtotal}</span>
+                    <span>{formatINR(order.subtotal)}</span>
               </div>
               {order.discount_amount > 0 && (
                 <div className="order-totals-row discount-row">
                   <span>Promotional Discount</span>
-                  <span>-₹{order.discount_amount}</span>
+                    <span>-{formatINR(order.discount_amount)}</span>
                 </div>
               )}
               <div className="order-totals-row">
                 <span>Shipping & Delivery Fee</span>
-                <span>{order.shipping_fee > 0 ? `₹${order.shipping_fee}` : "Free Shipping"}</span>
+                    <span>{order.shipping_fee > 0 ? formatINR(order.shipping_fee) : "Free Shipping"}</span>
               </div>
               <div className="order-totals-row final-row">
                 <span>Total Amount Paid</span>
-                <span className="final-price">₹{order.total}</span>
+                    <span className="final-price">{formatINR(order.total)}</span>
               </div>
             </div>
           </div>

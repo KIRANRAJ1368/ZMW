@@ -1,4 +1,6 @@
 import React from "react";
+import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from "../utils/shopConfig";
+import { formatPrice } from "../utils/formatPrice";
 import "./PolicyPages.css";
 
 export default function ShippingPolicy() {
@@ -36,7 +38,7 @@ export default function ShippingPolicy() {
 
             <h2>3. Shipping Charges</h2>
             <p>
-              We offer <strong>Free Standard Shipping</strong> on all prepaid and COD orders exceeding ₹999 across India. For orders below ₹999, a nominal standard delivery fee is applied at checkout.
+              We offer <strong>Free Standard Shipping</strong> on all prepaid and COD orders exceeding {formatPrice(FREE_SHIPPING_THRESHOLD)} across India. For orders below {formatPrice(FREE_SHIPPING_THRESHOLD)}, a standard delivery fee of {formatPrice(SHIPPING_FEE)} is applied at checkout.
             </p>
 
             <h2>4. Cash on Delivery (COD)</h2>

@@ -65,6 +65,16 @@ export default function BannersPage() {
   const heroCount = banners.filter((b) => b.placement === "hero").length;
   const collectionCount = banners.filter((b) => b.placement !== "hero").length;
 
+  function handleAddBanner() {
+    if (activeTab === "hero" && heroCount >= 3) {
+      toast.error("Maximum 3 Hero Banners can be added.");
+      return;
+    }
+    setEditing({
+      placement: activeTab === "collection" ? "mens" : activeTab === "hero" ? "hero" : (heroCount >= 3 ? "mens" : "hero")
+    });
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -77,7 +87,7 @@ export default function BannersPage() {
             Configure homepage hero slider carousels and dedicated collection promotional banners.
           </p>
         </div>
-        <button type="button" className="btn btn-accent btn-lg" onClick={() => setEditing({})}>
+        <button type="button" className="btn btn-accent btn-lg" onClick={handleAddBanner}>
           <Plus size={17} />
           <span>Add New Banner</span>
         </button>
@@ -113,7 +123,7 @@ export default function BannersPage() {
               onClick={() => setActiveTab("hero")}
             >
               <Sparkles size={14} />
-              <span>Hero Slider ({heroCount})</span>
+              <span>Hero Slider ({heroCount}/3)</span>
             </button>
             <button
               type="button"
@@ -145,7 +155,7 @@ export default function BannersPage() {
           emptyTitle="No banners match this filter"
           emptyDescription="Create high-res hero banners or collection covers to attract customers."
           emptyAction={
-            <button type="button" className="btn btn-accent" onClick={() => setEditing({})}>
+            <button type="button" className="btn btn-accent" onClick={handleAddBanner}>
               <Plus size={16} />
               <span>Create Banner</span>
             </button>
@@ -427,6 +437,7 @@ export default function BannersPage() {
       {editing && (
         <BannerFormModal
           banner={editing}
+          heroCount={heroCount}
           onClose={() => setEditing(null)}
           onSaved={() => {
             setEditing(null);

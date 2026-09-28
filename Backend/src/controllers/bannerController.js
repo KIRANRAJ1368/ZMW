@@ -11,6 +11,13 @@ async function list(req, res) {
 }
 
 async function create(req, res) {
+  if (req.body.placement === "hero") {
+    const heroCount = await Banner.count({ where: { placement: "hero" } });
+    if (heroCount >= 3) {
+      throw ApiError.badRequest("Maximum 3 Hero Banners can be added.");
+    }
+  }
+
   const banner = await Banner.create({
     placement: req.body.placement,
     tag: req.body.tag || null,
@@ -32,6 +39,13 @@ async function create(req, res) {
 async function update(req, res) {
   const banner = await Banner.findByPk(req.params.id);
   if (!banner) throw ApiError.notFound("Banner not found");
+
+  if (req.body.placement === "hero" && banner.placement !== "hero") {
+    const heroCount = await Banner.count({ where: { placement: "hero" } });
+    if (heroCount >= 3) {
+      throw ApiError.badRequest("Maximum 3 Hero Banners can be added.");
+    }
+  }
 
   const fields = [
     "placement",

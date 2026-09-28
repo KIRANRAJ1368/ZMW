@@ -628,8 +628,28 @@
   color: var(--color-success);
 }
 
+.pd-stock-badge.low-stock {
+  color: #d97706;
+}
+
 .pd-stock-badge.out-of-stock {
   color: var(--color-error);
+}
+
+.pd-size-chip.sold-out {
+  opacity: 0.6;
+  text-decoration: line-through;
+  position: relative;
+}
+
+.pd-size-chip .sold-out-tag {
+  display: block;
+  font-size: 8.5px;
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--color-error);
+  line-height: 1;
+  margin-top: 1px;
 }
 
 .pd-stock-indicator-dot {

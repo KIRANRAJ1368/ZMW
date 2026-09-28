@@ -5,11 +5,9 @@ import LoadingState from "../LoadingState/LoadingState";
 import StatusBadge from "../StatusBadge/StatusBadge";
 import ImageLightboxModal from "../ImageLightboxModal/ImageLightboxModal";
 import { resolveImageUrl } from "../../utils/imageUrl";
+import { formatINR } from "../../utils/formatPrice";
 import { productsApi, categoriesApi } from "../../services/resources";
 import "./ProductViewModal.css";
-
-const formatINR = (value) =>
-  "₹" + Number(value ?? 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
 
 const formatDate = (value) =>
   value ? new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
@@ -66,10 +64,17 @@ export default function ProductViewModal({ product, productId, onClose }) {
     data.category ||
     "—";
 
-  const discount =
-    data.originalPrice && data.originalPrice > data.price
-      ? Math.round(((data.originalPrice - data.price) / data.originalPrice) * 100)
-      : 0;
+  // An MRP only means something when it is genuinely above the selling price;
+  // anything else is a data-entry slip and must not be shown as a comparison.
+  const hasDiscount =
+    data.originalPrice !== null &&
+    data.originalPrice !== undefined &&
+    data.originalPrice !== "" &&
+    Number(data.originalPrice) > Number(data.price);
+
+  const discount = hasDiscount
+    ? Math.round(((Number(data.originalPrice) - Number(data.price)) / Number(data.originalPrice)) * 100)
+    : 0;
 
   const badges = [];
   if (data.isBestSeller) badges.push({ label: "Best Seller", className: "pv-badge-gold" });
@@ -169,7 +174,7 @@ export default function ProductViewModal({ product, productId, onClose }) {
               </div>
               <div className="pv-price-row">
                 <span className="pv-price-label">MRP</span>
-                {data.originalPrice ? (
+                {hasDiscount ? (
                   <span className="pv-mrp">{formatINR(data.originalPrice)}</span>
                 ) : (
                   <span className="pv-none">—</span>

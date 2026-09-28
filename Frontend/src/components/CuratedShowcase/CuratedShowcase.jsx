@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useEffect, useCallback } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useShop } from "../../context/ShopContext";
 import {
   getBestSellers,
@@ -7,38 +7,8 @@ import {
 } from "../../utils/merchandising";
 import CuratedCard from "./CuratedCard";
 import CTABanner from "../CTABanner/CTABanner";
+import useCarousel from "../../hooks/useCarousel";
 import "./CuratedShowcase.css";
-
-/* ── Carousel Hook ── */
-function useCarousel(itemsCount, visibleCount, autoDelayMs = 4000) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const timerRef = useRef(null);
-
-  const maxIndex = Math.max(0, itemsCount - visibleCount);
-
-  const next = useCallback(() => {
-    setIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  }, [maxIndex]);
-
-  const prev = useCallback(() => {
-    setIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  }, [maxIndex]);
-
-  useEffect(() => {
-    if (paused || itemsCount <= visibleCount) return;
-    timerRef.current = setInterval(next, autoDelayMs);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [paused, next, autoDelayMs, itemsCount, visibleCount]);
-
-  useEffect(() => {
-    setIndex(0);
-  }, [itemsCount, visibleCount]);
-
-  return { index, maxIndex, next, prev, setPaused };
-}
 
 /* ── ProductCarousel Component ── */
 function ProductCarousel({
@@ -215,21 +185,27 @@ export function NewArrivalsSection() {
 
   const displayedNewArrivals = useMemo(() => {
     if (selectedDept === "all") return newArrivals;
-    const filtered = catalog.filter((p) => {
-      if (selectedDept === "mens") return p.category === "mens" || p.category === "men";
-      if (selectedDept === "women") return p.category === "women";
-      if (selectedDept === "boys") return p.category === "boys";
-      if (selectedDept === "girls") return p.category === "girls";
-      if (selectedDept === "kids") return p.category === "kids" || p.category === "boys" || p.category === "girls";
+    const matchDept = (p) => {
+      const cat = (p.category || "").toLowerCase();
+      const sub = (p.subCategory || "").toLowerCase();
+      const name = (p.name || "").toLowerCase();
+      if (selectedDept === "mens") return cat === "mens" || cat === "men";
+      if (selectedDept === "women") return cat === "women" || cat === "womens";
+      if (selectedDept === "boys") return cat === "boys";
+      if (selectedDept === "girls") return cat === "girls";
+      if (selectedDept === "kids") return cat === "kids" || cat === "boys" || cat === "girls";
       if (selectedDept === "babies")
         return (
-          p.category === "babies" ||
-          (p.subCategory && p.subCategory.toLowerCase().includes("bab")) ||
-          (p.name && p.name.toLowerCase().includes("baby"))
+          cat === "babies" ||
+          sub.includes("bab") ||
+          name.includes("baby")
         );
       return true;
-    });
-    return filtered.length > 0 ? filtered.slice(0, 12) : newArrivals;
+    };
+    const inNewArrivals = newArrivals.filter(matchDept);
+    if (inNewArrivals.length > 0) return inNewArrivals;
+    const inCatalog = catalog.filter(matchDept);
+    return inCatalog.length > 0 ? inCatalog.slice(0, 12) : newArrivals;
   }, [catalog, newArrivals, selectedDept]);
 
   const newArrivalsJsonLd = useMemo(() => {

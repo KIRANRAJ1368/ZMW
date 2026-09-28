@@ -1,37 +1,23 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import { MEN_SUBCATEGORIES, WOMEN_SUBCATEGORIES, BOYS_SUBCATEGORIES, GIRLS_SUBCATEGORIES, BABIES_SUBCATEGORIES } from "../../data/products";
 import "./Navbar.css";
 
-const PROMO_MESSAGES = [
-  "🔥 FREE SHIPPING ON ALL PREPAID ORDERS | EXPRESS DELIVERY IN 2-4 DAYS 🚀",
-  "⚡ BUY 2 GET 10% OFF AUTO-APPLIED · USE CODE: ZMW10",
-  "👕 240+ GSM HEAVYWEIGHT COMBED COTTON · OVERSIZED STREETWEAR DROPS",
-  "📦 CASH ON DELIVERY (COD) AVAILABLE ACROSS 25,000+ PINCODES"
-];
-
 export default function Navbar() {
   const {
+    homeData,
     cartItemCount,
-    cartSubtotal,
     wishlist,
     setIsCartOpen,
     setIsWishlistOpen,
     setIsSearchOpen,
     setAuthModalState,
     setIsOrderTrackOpen,
-    currency,
-    setCurrency,
-    currencies,
-    language,
-    setLanguage,
-    formatPrice,
     customerUser,
     logoutCustomer
   } = useShop();
 
-  const [promoIndex, setPromoIndex] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDesktopMenu, setOpenDesktopMenu] = useState(null);
@@ -45,12 +31,31 @@ export default function Navbar() {
 
   const desktopNavRef = useRef(null);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setPromoIndex((prev) => (prev + 1) % PROMO_MESSAGES.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, []);
+  const getSubcategories = useCallback((categoryKey, fallbackList) => {
+    if (!homeData?.categories?.length) {
+      return fallbackList.map((name) => ({ name, type: name.toLowerCase() }));
+    }
+    const cat = homeData.categories.find(
+      (c) =>
+        c.slug?.toLowerCase() === categoryKey.toLowerCase() ||
+        c.name?.toLowerCase() === categoryKey.toLowerCase() ||
+        (categoryKey === "mens" && (c.slug?.toLowerCase() === "men" || c.name?.toLowerCase() === "men")) ||
+        (categoryKey === "women" && (c.slug?.toLowerCase() === "womens" || c.name?.toLowerCase() === "women"))
+    );
+    if (cat?.subcategories && cat.subcategories.length > 0) {
+      return cat.subcategories.map((s) => ({
+        name: s.name,
+        type: (s.name || s.slug).toLowerCase()
+      }));
+    }
+    return fallbackList.map((name) => ({ name, type: name.toLowerCase() }));
+  }, [homeData]);
+
+  const menSubcategories = useMemo(() => getSubcategories("mens", MEN_SUBCATEGORIES), [getSubcategories]);
+  const womenSubcategories = useMemo(() => getSubcategories("women", WOMEN_SUBCATEGORIES), [getSubcategories]);
+  const boysSubcategories = useMemo(() => getSubcategories("boys", BOYS_SUBCATEGORIES), [getSubcategories]);
+  const girlsSubcategories = useMemo(() => getSubcategories("girls", GIRLS_SUBCATEGORIES), [getSubcategories]);
+  const babiesSubcategories = useMemo(() => getSubcategories("babies", BABIES_SUBCATEGORIES), [getSubcategories]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,66 +136,6 @@ export default function Navbar() {
 
   return (
     <header className="site-header">
-      <div className="announcement-bar">
-        <div className="container announcement-inner">
-          <div className="announcement-social">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-            </a>
-            <a href="https://pinterest.com" target="_blank" rel="noreferrer" aria-label="Pinterest">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5c0 3-2 5.5-4.5 5.5-.8 0-1.5-.3-2.1-.8L9.5 20"></path></svg>
-            </a>
-            <a href="https://tiktok.com" target="_blank" rel="noreferrer" aria-label="TikTok">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
-            </a>
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-            </a>
-          </div>
-
-          <div className="announcement-message">
-            <span key={promoIndex} className="promo-text-fade">
-              {PROMO_MESSAGES[promoIndex]}
-            </span>
-          </div>
-
-          <div className="announcement-right">
-            <button
-              className="announcement-link"
-              onClick={() => setIsOrderTrackOpen(true)}
-            >
-              Track Order
-            </button>
-            <span className="announcement-divider">|</span>
-            <div className="currency-selector">
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                aria-label="Currency Selector"
-              >
-                {Object.keys(currencies).map((curr) => (
-                  <option key={curr} value={curr}>
-                    {curr} ({currencies[curr].symbol})
-                  </option>
-                ))}
-              </select>
-            </div>
-            <span className="announcement-divider">|</span>
-            <div className="language-selector">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                aria-label="Language Selector"
-              >
-                <option value="EN">EN</option>
-                <option value="FR">FR</option>
-                <option value="DE">DE</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <nav className={`main-navbar ${isScrolled ? "navbar-scrolled" : ""}`}>
         <div className="container navbar-inner" ref={desktopNavRef}>
           <button
@@ -243,13 +188,13 @@ export default function Navbar() {
                   <div className="mega-dropdown-inner">
                     <ul className="dropdown-col">
                       <li className="dropdown-heading">Men's Apparel</li>
-                      {MEN_SUBCATEGORIES.map((sub) => (
-                        <li key={sub}>
+                      {menSubcategories.map((sub) => (
+                        <li key={sub.name}>
                           <Link
-                            to={`/collection?category=mens&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            to={`/collection?category=mens&type=${encodeURIComponent(sub.type)}`}
                             onClick={closeAllMenus}
                           >
-                            {sub}
+                            {sub.name}
                           </Link>
                         </li>
                       ))}
@@ -288,13 +233,13 @@ export default function Navbar() {
                   <div className="mega-dropdown-inner">
                     <ul className="dropdown-col">
                       <li className="dropdown-heading">Women's Apparel</li>
-                      {WOMEN_SUBCATEGORIES.map((sub) => (
-                        <li key={sub}>
+                      {womenSubcategories.map((sub) => (
+                        <li key={sub.name}>
                           <Link
-                            to={`/collection?category=women&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            to={`/collection?category=women&type=${encodeURIComponent(sub.type)}`}
                             onClick={closeAllMenus}
                           >
-                            {sub}
+                            {sub.name}
                           </Link>
                         </li>
                       ))}
@@ -333,13 +278,13 @@ export default function Navbar() {
                   <div className="mega-dropdown-inner">
                     <ul className="dropdown-col">
                       <li className="dropdown-heading">Boys' Apparel</li>
-                      {BOYS_SUBCATEGORIES.map((sub) => (
-                        <li key={sub}>
+                      {boysSubcategories.map((sub) => (
+                        <li key={sub.name}>
                           <Link
-                            to={`/collection?category=boys&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            to={`/collection?category=boys&type=${encodeURIComponent(sub.type)}`}
                             onClick={closeAllMenus}
                           >
-                            {sub}
+                            {sub.name}
                           </Link>
                         </li>
                       ))}
@@ -378,13 +323,13 @@ export default function Navbar() {
                   <div className="mega-dropdown-inner">
                     <ul className="dropdown-col">
                       <li className="dropdown-heading">Girls' Apparel</li>
-                      {GIRLS_SUBCATEGORIES.map((sub) => (
-                        <li key={sub}>
+                      {girlsSubcategories.map((sub) => (
+                        <li key={sub.name}>
                           <Link
-                            to={`/collection?category=girls&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            to={`/collection?category=girls&type=${encodeURIComponent(sub.type)}`}
                             onClick={closeAllMenus}
                           >
-                            {sub}
+                            {sub.name}
                           </Link>
                         </li>
                       ))}
@@ -423,13 +368,13 @@ export default function Navbar() {
                   <div className="mega-dropdown-inner">
                     <ul className="dropdown-col">
                       <li className="dropdown-heading">Baby Essentials</li>
-                      {BABIES_SUBCATEGORIES.map((sub) => (
-                        <li key={sub}>
+                      {babiesSubcategories.map((sub) => (
+                        <li key={sub.name}>
                           <Link
-                            to={`/collection?category=babies&type=${encodeURIComponent(sub.toLowerCase())}`}
+                            to={`/collection?category=babies&type=${encodeURIComponent(sub.type)}`}
                             onClick={closeAllMenus}
                           >
-                            {sub}
+                            {sub.name}
                           </Link>
                         </li>
                       ))}
@@ -661,13 +606,13 @@ export default function Navbar() {
             </div>
             {mobileMenExpanded && (
               <ul className="mobile-nav-submenu">
-                {MEN_SUBCATEGORIES.map((sub) => (
-                  <li key={sub}>
+                {menSubcategories.map((sub) => (
+                  <li key={sub.name}>
                     <Link
-                      to={`/collection?category=mens&type=${encodeURIComponent(sub.toLowerCase())}`}
+                      to={`/collection?category=mens&type=${encodeURIComponent(sub.type)}`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {sub}
+                      {sub.name}
                     </Link>
                   </li>
                 ))}
@@ -706,13 +651,13 @@ export default function Navbar() {
             </div>
             {mobileWomenExpanded && (
               <ul className="mobile-nav-submenu">
-                {WOMEN_SUBCATEGORIES.map((sub) => (
-                  <li key={sub}>
+                {womenSubcategories.map((sub) => (
+                  <li key={sub.name}>
                     <Link
-                      to={`/collection?category=women&type=${encodeURIComponent(sub.toLowerCase())}`}
+                      to={`/collection?category=women&type=${encodeURIComponent(sub.type)}`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {sub}
+                      {sub.name}
                     </Link>
                   </li>
                 ))}
@@ -751,13 +696,13 @@ export default function Navbar() {
             </div>
             {mobileBoysExpanded && (
               <ul className="mobile-nav-submenu">
-                {BOYS_SUBCATEGORIES.map((sub) => (
-                  <li key={sub}>
+                {boysSubcategories.map((sub) => (
+                  <li key={sub.name}>
                     <Link
-                      to={`/collection?category=boys&type=${encodeURIComponent(sub.toLowerCase())}`}
+                      to={`/collection?category=boys&type=${encodeURIComponent(sub.type)}`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {sub}
+                      {sub.name}
                     </Link>
                   </li>
                 ))}
@@ -796,13 +741,13 @@ export default function Navbar() {
             </div>
             {mobileGirlsExpanded && (
               <ul className="mobile-nav-submenu">
-                {GIRLS_SUBCATEGORIES.map((sub) => (
-                  <li key={sub}>
+                {girlsSubcategories.map((sub) => (
+                  <li key={sub.name}>
                     <Link
-                      to={`/collection?category=girls&type=${encodeURIComponent(sub.toLowerCase())}`}
+                      to={`/collection?category=girls&type=${encodeURIComponent(sub.type)}`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {sub}
+                      {sub.name}
                     </Link>
                   </li>
                 ))}
@@ -841,13 +786,13 @@ export default function Navbar() {
             </div>
             {mobileBabiesExpanded && (
               <ul className="mobile-nav-submenu">
-                {BABIES_SUBCATEGORIES.map((sub) => (
-                  <li key={sub}>
+                {babiesSubcategories.map((sub) => (
+                  <li key={sub.name}>
                     <Link
-                      to={`/collection?category=babies&type=${encodeURIComponent(sub.toLowerCase())}`}
+                      to={`/collection?category=babies&type=${encodeURIComponent(sub.type)}`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {sub}
+                      {sub.name}
                     </Link>
                   </li>
                 ))}

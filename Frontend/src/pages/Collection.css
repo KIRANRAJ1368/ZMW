@@ -17,9 +17,9 @@
 .coll-hero-banner {
   position: relative;
   width: 100%;
-  min-height: 600px;
-  height: clamp(600px, calc(80vh - 70px), 740px);
-  height: clamp(600px, calc(80dvh - 70px), 740px);
+  min-height: 520px;
+  height: clamp(520px, calc(100vh - 68px), 640px);
+  height: clamp(520px, calc(100dvh - 68px), 640px);
   background-color: #06090F;
   overflow: hidden;
   contain: layout size paint;
@@ -102,8 +102,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 64px;
-  padding-bottom: 64px;
+  padding-top: clamp(24px, 3.5vw, 40px);
+  padding-bottom: clamp(24px, 3.5vw, 40px);
 }
 
 /* Breadcrumbs on Hero Banner — sits cleanly at the top without overlapping content */
@@ -1437,7 +1437,8 @@
 
 @media (max-width: 1024px) {
   .coll-hero-banner {
-    height: 540px;
+    min-height: 580px;
+    height: clamp(580px, calc(90vh - 65px), 660px);
   }
 
   .coll-hero-offer-heading {
@@ -1582,7 +1583,45 @@
     font-size: 0.8rem;
   }
 
-  .coll-toolbar {
+/* Subcategory breadcrumb trail - shown on subcategory pages, which have no banner */
+.coll-subcat-trail {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted, #6b7280);
+}
+
+.coll-subcat-trail-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.coll-subcat-trail-link:hover {
+  color: #FAA703;
+}
+
+.coll-subcat-trail-sep {
+  opacity: 0.5;
+}
+
+.coll-subcat-trail-current {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #111827;
+}
+
+.coll-toolbar {
     flex-wrap: wrap;
     gap: 10px;
   }

@@ -115,6 +115,27 @@ async function createVariant(req, res) {
   return sendSuccess(res, { statusCode: 201, data: variant });
 }
 
+async function syncProductTotalStock(productId) {
+  const all = await ProductVariant.findAll({ where: { product_id: productId } });
+  if (all.length > 0) {
+    const total = all.reduce((sum, v) => sum + (Number(v.stock_count) || 0), 0);
+    await Product.update(
+      { stock_count: total, in_stock: total > 0 },
+      { where: { id: productId } }
+    );
+  }
+}
+
+async function saveVariants(req, res) {
+  const product = await Product.findByPk(req.params.id);
+  if (!product) throw ApiError.notFound("Product not found");
+
+  const variants = Array.isArray(req.body.variants) ? req.body.variants : [];
+  await productService.updateProduct(product, { variants });
+  const full = await Product.findByPk(product.id, { include: productService.PRODUCT_INCLUDES });
+  return sendSuccess(res, { data: serializeProduct(full) });
+}
+
 async function updateVariant(req, res) {
   const variant = await ProductVariant.findOne({
     where: { id: req.params.variantId, product_id: req.params.id }
@@ -126,6 +147,7 @@ async function updateVariant(req, res) {
     if (req.body[f] !== undefined) variant[f] = req.body[f];
   });
   await variant.save();
+  await syncProductTotalStock(req.params.id);
   return sendSuccess(res, { data: variant });
 }
 
@@ -135,6 +157,7 @@ async function deleteVariant(req, res) {
   });
   if (!variant) throw ApiError.notFound("Variant not found");
   await variant.destroy();
+  await syncProductTotalStock(req.params.id);
   return sendSuccess(res, { message: "Variant deleted" });
 }
 
@@ -151,5 +174,6 @@ module.exports = {
   listVariants,
   createVariant,
   updateVariant,
-  deleteVariant
+  deleteVariant,
+  saveVariants
 };

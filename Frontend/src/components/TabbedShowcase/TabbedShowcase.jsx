@@ -116,7 +116,7 @@ export default function TabbedShowcase() {
 
                   <div className="tabbed-price-row">
                     <span className="price-current">{formatPrice(product.price)}</span>
-                    {product.originalPrice && (
+                    {product.originalPrice && product.originalPrice > product.price && (
                       <span className="price-original">
                         {formatPrice(product.originalPrice)}
                       </span>

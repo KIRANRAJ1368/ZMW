@@ -6,21 +6,19 @@ import {
   Plus,
   Trash2,
   Image as ImageIcon,
-  Check,
-  Star,
   Sparkles,
-  Tag,
-  Palette,
-  Ruler,
   Layers,
   IndianRupee,
-  ZoomIn
+  ZoomIn,
+  Check,
+  Package2
 } from "lucide-react";
 import { productsApi, categoriesApi, subcategoriesApi, uploadApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { ApiError } from "../../services/api";
 import { slugify } from "../../utils/slugify";
 import { resolveImageUrl } from "../../utils/imageUrl";
+import { formatINR } from "../../utils/formatPrice";
 import ImageLightboxModal from "../../components/ImageLightboxModal/ImageLightboxModal";
 import FormField from "../../components/FormField/FormField";
 import LoadingState from "../../components/LoadingState/LoadingState";
@@ -44,99 +42,8 @@ const BLANK_FORM = {
   badge_label: "",
   badge_type: "",
   is_active: true,
-  images: [],
-  colors: [],
-  sizes: []
+  images: []
 };
-
-const FASHION_COLOR_PRESETS = [
-  { name: "Jet Black", hex: "#111827" },
-  { name: "Crisp White", hex: "#FFFFFF" },
-  { name: "Off White", hex: "#F3EFE4" },
-  { name: "Charcoal", hex: "#374151" },
-  { name: "Heather Grey", hex: "#9CA3AF" },
-  { name: "Navy Blue", hex: "#1E3A8A" },
-  { name: "Sky Blue", hex: "#9BB8CC" },
-  { name: "Olive Green", hex: "#4B5A3F" },
-  { name: "Sage Green", hex: "#84A98C" },
-  { name: "Sand Beige", hex: "#D8CDBC" },
-  { name: "Espresso Brown", hex: "#3A2A1E" },
-  { name: "Mustard Gold", hex: "#C89D3C" },
-  { name: "Crimson Red", hex: "#DC2626" },
-  { name: "Burgundy Wine", hex: "#800020" },
-  { name: "Dusty Rose", hex: "#DCAE96" },
-  { name: "Forest Green", hex: "#1E3A2F" }
-];
-
-function normalizeHex(val) {
-  if (!val || typeof val !== "string") return "#111827";
-  let h = val.trim();
-  if (!h.startsWith("#")) h = "#" + h;
-  if (/^#[0-9A-Fa-f]{3}$/.test(h)) {
-    h = "#" + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
-  }
-  if (/^#[0-9A-Fa-f]{6}$/.test(h)) {
-    return h.toUpperCase();
-  }
-  return "#111827";
-}
-
-function isValidHex(val) {
-  if (!val || typeof val !== "string") return false;
-  let h = val.trim();
-  if (!h.startsWith("#")) h = "#" + h;
-  return /^#[0-9A-Fa-f]{6}$/.test(h) || /^#[0-9A-Fa-f]{3}$/.test(h);
-}
-
-function getClosestColorName(hex) {
-  const norm = normalizeHex(hex);
-  const r = parseInt(norm.slice(1, 3), 16);
-  const g = parseInt(norm.slice(3, 5), 16);
-  const b = parseInt(norm.slice(5, 7), 16);
-
-  let closest = FASHION_COLOR_PRESETS[0].name;
-  let minDist = Infinity;
-
-  for (const preset of FASHION_COLOR_PRESETS) {
-    const pr = parseInt(preset.hex.slice(1, 3), 16);
-    const pg = parseInt(preset.hex.slice(3, 5), 16);
-    const pb = parseInt(preset.hex.slice(5, 7), 16);
-    const dist = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2;
-    if (dist < minDist) {
-      minDist = dist;
-      closest = preset.name;
-    }
-  }
-  return closest;
-}
-
-const SIZE_CATEGORIES = [
-  {
-    id: "all",
-    label: "Popular Presets",
-    sizes: ["XS", "S", "M", "L", "XL", "XXL", "3XL", "28", "30", "32", "34", "36", "Free Size"]
-  },
-  {
-    id: "standard",
-    label: "Tops & Outerwear",
-    sizes: ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL"]
-  },
-  {
-    id: "bottoms",
-    label: "Waist / Trousers",
-    sizes: ["28", "30", "32", "34", "36", "38", "40", "42"]
-  },
-  {
-    id: "kids",
-    label: "Kids Age Bands",
-    sizes: ["0-6M", "6-12M", "1-2Y", "2-3Y", "3-4Y", "4-5Y", "5-6Y", "7-8Y", "9-10Y", "11-12Y"]
-  },
-  {
-    id: "universal",
-    label: "Universal",
-    sizes: ["Free Size", "One Size", "Regular Fit", "Oversized"]
-  }
-];
 
 export default function ProductFormPage() {
   const { id } = useParams();
@@ -149,8 +56,6 @@ export default function ProductFormPage() {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [errors, setErrors] = useState({});
-  const [colorErrors, setColorErrors] = useState({});
-  const [activeSizeCategory, setActiveSizeCategory] = useState("all");
   const [isLoading, setIsLoading] = useState(isEdit);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -192,13 +97,6 @@ export default function ProductFormPage() {
           badge_type: p.badgeType || "",
           is_active: p.isActive,
           images: p.images || [],
-          colors: (p.colors || []).map((c) => ({
-            name: typeof c === "string" ? c : c?.name || "",
-            hex: normalizeHex(typeof c === "object" ? c?.hex || c?.hex_code : "#111827")
-          })),
-          sizes: (p.sizes || [])
-            .map((s) => (typeof s === "string" ? s : s?.label || s?.name || String(s)).trim())
-            .filter(Boolean),
           _categorySlug: p.category,
           _subcategoryName: p.subCategory
         });
@@ -287,122 +185,6 @@ export default function ProductFormPage() {
     }
   }
 
-  // ── Colors ──
-  function addColor(preset) {
-    if (preset) {
-      const exists = form.colors.some(
-        (c) =>
-          c.name.trim().toLowerCase() === preset.name.toLowerCase() ||
-          c.hex.toLowerCase() === preset.hex.toLowerCase()
-      );
-      if (exists) {
-        toast.info(`"${preset.name}" is already in the color list`);
-        return;
-      }
-      update("colors", [...form.colors, { name: preset.name, hex: normalizeHex(preset.hex) }]);
-    } else {
-      update("colors", [...form.colors, { name: "", hex: "#111827" }]);
-    }
-  }
-
-  function toggleColorPreset(preset) {
-    const existingIdx = form.colors.findIndex(
-      (c) =>
-        c.name.trim().toLowerCase() === preset.name.toLowerCase() ||
-        c.hex.toLowerCase() === preset.hex.toLowerCase()
-    );
-    if (existingIdx !== -1) {
-      removeColor(existingIdx);
-    } else {
-      update("colors", [...form.colors, { name: preset.name, hex: normalizeHex(preset.hex) }]);
-    }
-  }
-
-  function updateColor(idx, field, value) {
-    const next = form.colors.map((c, i) => {
-      if (i !== idx) return c;
-      const updated = { ...c, [field]: value };
-      if (field === "hex") {
-        let cleanHex = value.trim();
-        if (!cleanHex.startsWith("#") && /^[0-9A-Fa-f]/.test(cleanHex)) {
-          cleanHex = "#" + cleanHex;
-        }
-        updated.hex = cleanHex;
-        if (!c.name || c.name.trim() === "" || FASHION_COLOR_PRESETS.some((p) => p.name === c.name)) {
-          if (isValidHex(cleanHex)) {
-            updated.name = getClosestColorName(cleanHex);
-          }
-        }
-      }
-      return updated;
-    });
-    update("colors", next);
-
-    if (colorErrors[idx]) {
-      setColorErrors((prev) => {
-        const copy = { ...prev };
-        delete copy[idx];
-        return copy;
-      });
-    }
-  }
-
-  function removeColor(idx) {
-    update("colors", form.colors.filter((_, i) => i !== idx));
-    setColorErrors((prev) => {
-      const copy = { ...prev };
-      delete copy[idx];
-      return copy;
-    });
-  }
-
-  // ── Sizes ──
-  const [sizeDraft, setSizeDraft] = useState("");
-
-  const displayedPresetSizes = useMemo(() => {
-    const cat = SIZE_CATEGORIES.find((c) => c.id === activeSizeCategory);
-    return cat ? cat.sizes : SIZE_CATEGORIES[0].sizes;
-  }, [activeSizeCategory]);
-
-  function toggleSize(sizeName) {
-    const val = sizeName.trim();
-    if (!val) return;
-    if (form.sizes.includes(val)) {
-      update("sizes", form.sizes.filter((s) => s !== val));
-    } else {
-      update("sizes", [...form.sizes, val]);
-    }
-  }
-
-  function addCustomSize() {
-    const val = sizeDraft.trim();
-    if (!val) {
-      toast.warning("Please enter a size label");
-      return;
-    }
-    if (form.sizes.some((s) => s.toLowerCase() === val.toLowerCase())) {
-      toast.info(`Size "${val}" is already in the list`);
-      return;
-    }
-    update("sizes", [...form.sizes, val]);
-    setSizeDraft("");
-  }
-
-  function removeSize(idx) {
-    update("sizes", form.sizes.filter((_, i) => i !== idx));
-  }
-
-  function addStandardSizes() {
-    const standard = ["XS", "S", "M", "L", "XL", "XXL"];
-    const merged = Array.from(new Set([...form.sizes, ...standard]));
-    update("sizes", merged);
-    toast.success("Standard sizes added");
-  }
-
-  function clearAllSizes() {
-    update("sizes", []);
-  }
-
   const isValid = useMemo(
     () => form.name && form.slug && form.sku && form.category_id && form.price !== "",
     [form]
@@ -411,29 +193,6 @@ export default function ProductFormPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setErrors({});
-    setColorErrors({});
-
-    // Validate colors
-    const newColorErrors = {};
-    form.colors.forEach((c, idx) => {
-      const nameEmpty = !c.name || !c.name.trim();
-      const hexInvalid = !isValidHex(c.hex);
-      if (nameEmpty || hexInvalid) {
-        newColorErrors[idx] = {
-          name: nameEmpty ? "Color display name is required" : null,
-          hex: hexInvalid ? "Must be valid 6-char hex (e.g. #111827)" : null
-        };
-      }
-    });
-
-    if (Object.keys(newColorErrors).length > 0) {
-      setColorErrors(newColorErrors);
-      toast.error("Please complete or fix invalid color swatches before saving.");
-      return;
-    }
-
-    // Clean & unique sizes
-    const cleanedSizes = Array.from(new Set(form.sizes.map((s) => s.trim()).filter(Boolean)));
 
     setIsSaving(true);
     try {
@@ -444,13 +203,9 @@ export default function ProductFormPage() {
         price: Number(form.price),
         original_price: form.original_price === "" ? null : Number(form.original_price),
         stock_count: Number(form.stock_count),
+        in_stock: Boolean(form.in_stock),
         badge_type: form.badge_type || null,
-        images: form.images.filter(Boolean),
-        colors: form.colors.map((c) => ({
-          name: c.name.trim(),
-          hex: normalizeHex(c.hex)
-        })),
-        sizes: cleanedSizes
+        images: form.images.filter(Boolean)
       };
       delete payload._categorySlug;
       delete payload._subcategoryName;
@@ -467,17 +222,6 @@ export default function ProductFormPage() {
       if (err instanceof ApiError && err.details?.length) {
         const errObj = Object.fromEntries(err.details.map((d) => [d.field, d.message]));
         setErrors(errObj);
-        err.details.forEach((d) => {
-          const match = d.field.match(/^colors\[(\d+)\]\.(\w+)$/);
-          if (match) {
-            const idx = Number(match[1]);
-            const field = match[2];
-            setColorErrors((prev) => ({
-              ...prev,
-              [idx]: { ...(prev[idx] || {}), [field]: d.message }
-            }));
-          }
-        });
       }
       toast.error(err.message);
     } finally {
@@ -502,7 +246,7 @@ export default function ProductFormPage() {
             </h1>
             <p className="page-subtitle">
               {isEdit
-                ? `SKU: ${form.sku} &bull; Adjust pricing, photos, swatches, and sizes`
+                ? `SKU: ${form.sku} • Adjust pricing, photos, and product details`
                 : "Create and publish a premium apparel piece to the ZMW storefront"}
             </p>
           </div>
@@ -618,15 +362,15 @@ export default function ProductFormPage() {
           </FormField>
         </div>
 
-        {/* Section 2: Pricing & Inventory */}
+        {/* Section 2: Pricing */}
         <div className="card form-section-card">
           <div className="section-card-heading">
             <div className="section-icon-wrap">
               <IndianRupee size={18} />
             </div>
             <div>
-              <h3 className="section-title">Pricing & Inventory</h3>
-              <p className="section-sub">Retail price in ₹, discounts, and real-time stock levels</p>
+              <h3 className="section-title">Pricing</h3>
+              <p className="section-sub">Selling price in ₹ and original comparison / MRP price</p>
             </div>
           </div>
 
@@ -637,7 +381,7 @@ export default function ProductFormPage() {
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="e.g. 1999"
+                placeholder="e.g. 42"
                 value={form.price}
                 onChange={(e) => update("price", e.target.value)}
                 required
@@ -649,7 +393,7 @@ export default function ProductFormPage() {
               htmlFor="p-original-price"
               hint={
                 form.original_price && Number(form.original_price) > Number(form.price)
-                  ? `Discount: ${Math.round(((Number(form.original_price) - Number(form.price)) / Number(form.original_price)) * 100)}% OFF (Save ₹${Number(form.original_price) - Number(form.price)})`
+                  ? `Discount: ${Math.round(((Number(form.original_price) - Number(form.price)) / Number(form.original_price)) * 100)}% OFF (Save ${formatINR(Number(form.original_price) - Number(form.price))})`
                   : "Displays as strikethrough comparison price"
               }
             >
@@ -658,37 +402,36 @@ export default function ProductFormPage() {
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="e.g. 2999"
+                placeholder="e.g. 58"
                 value={form.original_price}
                 onChange={(e) => update("original_price", e.target.value)}
               />
             </FormField>
           </div>
 
-          <div className="form-grid">
-            <FormField label="Available Stock Units" htmlFor="p-stock" hint="Units currently in distribution center">
-              <input
-                id="p-stock"
-                type="number"
-                min="0"
-                value={form.stock_count}
-                onChange={(e) => update("stock_count", e.target.value)}
-              />
-            </FormField>
-
-            <div className="instock-checkbox-wrap">
-              <label className="checkbox-row" style={{ marginBottom: 0 }}>
-                <input
-                  id="p-instock"
-                  type="checkbox"
-                  checked={form.in_stock}
-                  onChange={(e) => update("in_stock", e.target.checked)}
-                />
-                <span>
-                  <strong>Mark In Stock & Purchasable</strong> (Visible in cart & checkout)
-                </span>
-              </label>
-            </div>
+          {/* Navigation links to dedicated management pages */}
+          <div className="variant-inventory-link-row">
+            <Link
+              to={isEdit ? `/variants?productId=${id}` : "/variants"}
+              className="inventory-deep-link"
+            >
+              <Layers size={15} />
+              <span>
+                Manage Size &amp; Color combinations in{" "}
+                <strong>Variant Management</strong> ➔
+              </span>
+            </Link>
+            <Link
+              to={isEdit ? `/stock?productId=${id}` : "/stock"}
+              className="inventory-deep-link"
+              style={{ marginTop: 6 }}
+            >
+              <Package2 size={15} />
+              <span>
+                Manage inventory quantities and stock availability in{" "}
+                <strong>Stock Management</strong> ➔
+              </span>
+            </Link>
           </div>
         </div>
 
@@ -699,7 +442,7 @@ export default function ProductFormPage() {
               <Sparkles size={18} />
             </div>
             <div>
-              <h3 className="section-title">Storefront Merchandising & Highlights</h3>
+              <h3 className="section-title">Storefront Merchandising &amp; Highlights</h3>
               <p className="section-sub">Feature this product in home carousels, drop sections, and sale categories</p>
             </div>
           </div>
@@ -914,314 +657,7 @@ export default function ProductFormPage() {
           )}
         </div>
 
-        {/* Section 5: Available Colors */}
-        <div className="card form-section-card colors-section-card">
-          <div className="section-card-heading">
-            <div className="section-icon-wrap section-icon-palette">
-              <Palette size={18} />
-            </div>
-            <div className="section-heading-text">
-              <div className="section-title-row">
-                <h3 className="section-title">Color Swatches</h3>
-                <span className="section-count-badge">
-                  {form.colors.length} {form.colors.length === 1 ? "color" : "colors"}
-                </span>
-              </div>
-              <p className="section-sub">
-                Add fabric colors with accurate hex color codes for customer storefront selection
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Color Presets Palette */}
-          <div className="quick-colors-container">
-            <div className="quick-colors-header">
-              <span className="quick-colors-label">Popular Apparel Palettes (Click to toggle):</span>
-            </div>
-            <div className="quick-colors-grid">
-              {FASHION_COLOR_PRESETS.map((p) => {
-                const isActive = form.colors.some(
-                  (c) =>
-                    c.name.trim().toLowerCase() === p.name.toLowerCase() ||
-                    c.hex.toLowerCase() === p.hex.toLowerCase()
-                );
-                return (
-                  <button
-                    key={p.name}
-                    type="button"
-                    className={`quick-color-pill ${isActive ? "active" : ""}`}
-                    onClick={() => toggleColorPreset(p)}
-                    title={`${p.name} (${p.hex}) — Click to ${isActive ? "remove" : "add"}`}
-                  >
-                    <span
-                      className="quick-color-swatch-dot"
-                      style={{ backgroundColor: p.hex }}
-                    />
-                    <span className="quick-color-name">{p.name}</span>
-                    {isActive ? (
-                      <Check size={12} className="quick-color-check" />
-                    ) : (
-                      <span className="quick-color-plus">+</span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Colors List */}
-          <div className="colors-management-area">
-            {form.colors.length === 0 ? (
-              <div className="empty-swatches-box">
-                <div className="empty-swatches-icon">
-                  <Palette size={26} />
-                </div>
-                <div className="empty-swatches-text">
-                  <strong>No color swatches configured</strong>
-                  <p>Choose from popular apparel palettes above or add a custom color below.</p>
-                </div>
-              </div>
-            ) : (
-              <div className="color-swatch-list-modern">
-                {form.colors.map((color, idx) => {
-                  const itemErr = colorErrors[idx];
-                  return (
-                    <div
-                      key={idx}
-                      className={`color-swatch-card ${itemErr ? "has-error" : ""}`}
-                    >
-                      <div className="color-swatch-card-main">
-                        {/* Swatch Picker & Visual Preview */}
-                        <div className="color-picker-control-wrap">
-                          <label
-                            className="color-picker-visual-preview"
-                            style={{ backgroundColor: color.hex || "#111827" }}
-                            title="Click to open color picker"
-                          >
-                            <input
-                              type="color"
-                              value={isValidHex(color.hex) ? normalizeHex(color.hex) : "#111827"}
-                              onChange={(e) => updateColor(idx, "hex", e.target.value)}
-                              className="color-picker-hidden-input"
-                              aria-label={`Pick color for item ${idx + 1}`}
-                            />
-                            <span className="color-picker-overlay-icon">
-                              <Palette size={13} />
-                            </span>
-                          </label>
-                        </div>
-
-                        {/* Color Name Input */}
-                        <div className="color-field-col color-field-name">
-                          <label className="color-mini-label" htmlFor={`c-name-${idx}`}>
-                            Color Display Name *
-                          </label>
-                          <input
-                            id={`c-name-${idx}`}
-                            value={color.name}
-                            onChange={(e) => updateColor(idx, "name", e.target.value)}
-                            placeholder="e.g. Jet Black, Vintage Cream"
-                            className={`color-name-input ${itemErr?.name ? "input-error" : ""}`}
-                            required
-                          />
-                          {itemErr?.name && <span className="color-field-error">{itemErr.name}</span>}
-                        </div>
-
-                        {/* Hex Code Input */}
-                        <div className="color-field-col color-field-hex">
-                          <label className="color-mini-label" htmlFor={`c-hex-${idx}`}>
-                            Hex Code *
-                          </label>
-                          <div className={`color-hex-input-box ${itemErr?.hex ? "input-error" : ""}`}>
-                            <span className="hex-prefix">#</span>
-                            <input
-                              id={`c-hex-${idx}`}
-                              value={color.hex.replace(/^#/, "")}
-                              onChange={(e) => {
-                                const val = e.target.value.replace(/[^0-9A-Fa-f]/g, "").slice(0, 6);
-                                updateColor(idx, "hex", "#" + val);
-                              }}
-                              placeholder="111827"
-                              maxLength={6}
-                              className="color-hex-text-input"
-                            />
-                          </div>
-                          {itemErr?.hex && <span className="color-field-error">{itemErr.hex}</span>}
-                        </div>
-
-                        {/* Live Storefront Preview Tag */}
-                        <div className="color-field-col color-field-preview">
-                          <span className="color-mini-label">Storefront Preview</span>
-                          <div className="color-live-badge">
-                            <span
-                              className="live-badge-dot"
-                              style={{ backgroundColor: color.hex || "#111827" }}
-                            />
-                            <span className="live-badge-name">
-                              {color.name || "Untitled Color"}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Delete Action */}
-                        <div className="color-action-col">
-                          <button
-                            type="button"
-                            className="btn btn-ghost btn-sm btn-delete-swatch"
-                            onClick={() => removeColor(idx)}
-                            title="Remove this color swatch"
-                            aria-label={`Remove color ${color.name || idx + 1}`}
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          <div className="color-actions-bar">
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => addColor()}
-            >
-              <Plus size={15} />
-              <span>Add Custom Color Swatch</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Section 6: Available Sizes */}
-        <div className="card form-section-card sizes-section-card">
-          <div className="section-card-heading">
-            <div className="section-icon-wrap section-icon-ruler">
-              <Ruler size={18} />
-            </div>
-            <div className="section-heading-text">
-              <div className="section-title-row">
-                <h3 className="section-title">Available Sizing</h3>
-                <span className="section-count-badge">
-                  {form.sizes.length} {form.sizes.length === 1 ? "size" : "sizes"}
-                </span>
-              </div>
-              <p className="section-sub">
-                Define available size options for customer selection on product and quick-view pages
-              </p>
-            </div>
-          </div>
-
-          {/* Sizing Category Tabs */}
-          <div className="sizes-category-tabs">
-            {SIZE_CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                className={`size-cat-tab ${activeSizeCategory === cat.id ? "active" : ""}`}
-                onClick={() => setActiveSizeCategory(cat.id)}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Quick Add Pills */}
-          <div className="quick-sizes-bar">
-            <div className="quick-sizes-pills">
-              {displayedPresetSizes.map((s) => {
-                const isSelected = form.sizes.includes(s);
-                return (
-                  <button
-                    key={s}
-                    type="button"
-                    className={`btn btn-xs quick-size-pill ${isSelected ? "btn-accent is-selected" : "btn-secondary"}`}
-                    onClick={() => toggleSize(s)}
-                    title={`Click to ${isSelected ? "remove" : "add"} size ${s}`}
-                  >
-                    {isSelected ? `✓ ${s}` : `+ ${s}`}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="quick-sizes-actions">
-              <button
-                type="button"
-                className="btn btn-ghost btn-xs"
-                onClick={addStandardSizes}
-                title="Add S, M, L, XL, XXL in one click"
-              >
-                + Add Standard Set
-              </button>
-              {form.sizes.length > 0 && (
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-xs btn-clear-sizes"
-                  onClick={clearAllSizes}
-                  title="Remove all sizes"
-                >
-                  Clear All
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Active Size Chips */}
-          <div className="active-sizes-section">
-            <span className="active-sizes-heading">
-              Active Product Sizes ({form.sizes.length}):
-            </span>
-            <div className="active-sizes-row">
-              {form.sizes.map((size, idx) => (
-                <span key={`${size}-${idx}`} className="active-size-chip">
-                  <span className="size-chip-text">{size}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeSize(idx)}
-                    aria-label={`Remove size ${size}`}
-                    className="size-chip-delete"
-                    title={`Remove ${size}`}
-                  >
-                    &times;
-                  </button>
-                </span>
-              ))}
-              {form.sizes.length === 0 && (
-                <span className="no-sizes-hint">
-                  No sizes selected. Click one of the quick options above or enter a custom size below.
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Custom Size Input */}
-          <div className="custom-size-input-row">
-            <input
-              value={sizeDraft}
-              onChange={(e) => setSizeDraft(e.target.value)}
-              placeholder="Enter custom size (e.g. 28, 30, Oversized, Free Size, 3-4Y)"
-              className="custom-size-input"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addCustomSize();
-                }
-              }}
-            />
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={addCustomSize}
-            >
-              <Plus size={15} />
-              <span>Add Custom Size</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Sticky Form Footer */}
+        {/* Sticky Footer */}
         <div className="product-form-sticky-footer">
           <button type="button" className="btn btn-secondary" onClick={() => navigate("/products")}>
             Cancel

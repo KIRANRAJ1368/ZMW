@@ -16,7 +16,8 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
     description: category.description || "",
     image_url: category.image_url || (isEdit ? getCategoryImageUrl(category) : ""),
     sort_order: category.sort_order ?? 0,
-    is_active: category.is_active ?? true
+    is_active: category.is_active ?? true,
+    show_on_homepage: category.show_on_homepage ?? true
   });
   const [errors, setErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
@@ -83,7 +84,8 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
         description: form.description ? form.description.trim() : "",
         image_url: form.image_url.trim(),
         sort_order: Number(form.sort_order) || 0,
-        is_active: Boolean(form.is_active)
+        is_active: Boolean(form.is_active),
+        show_on_homepage: Boolean(form.show_on_homepage)
       };
 
       if (isEdit) {
@@ -174,7 +176,7 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
             />
           </FormField>
 
-          <div style={{ display: "flex", alignItems: "center", paddingTop: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingTop: 10 }}>
             <label className="checkbox-row" style={{ marginBottom: 0 }}>
               <input
                 id="cat-active"
@@ -183,7 +185,22 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
                 onChange={(e) => update("is_active", e.target.checked)}
               />
               <span>
-                <strong>Active on Storefront</strong>
+                <strong>Active in Store Catalog</strong>
+              </span>
+            </label>
+
+            <label className="checkbox-row" style={{ marginBottom: 0 }}>
+              <input
+                id="cat-homepage"
+                type="checkbox"
+                checked={form.show_on_homepage}
+                onChange={(e) => update("show_on_homepage", e.target.checked)}
+              />
+              <span>
+                <strong>Show on Homepage</strong>
+                <span style={{ display: "block", fontSize: 11.5, color: "var(--text-muted)", marginTop: 2 }}>
+                  Display this category section on the customer storefront homepage
+                </span>
               </span>
             </label>
           </div>

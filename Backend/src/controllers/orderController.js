@@ -1,4 +1,4 @@
-const { Order, OrderItem, Product, ProductImage, User, sequelize } = require("../models");
+const { Order, OrderItem, Product, ProductImage, ProductVariant, ProductSize, ProductColor, User, sequelize } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { sendSuccess } = require("../utils/apiResponse");
 const { getPagination, buildMeta } = require("../utils/pagination");
@@ -10,6 +10,37 @@ function generateOrderNumber() {
     .toString()
     .padStart(3, "0");
   return `ZMW-${stamp}-${rand}`;
+}
+
+async function adjustItemStock(item, qtyChange, transaction) {
+  if (!item.product_id) return;
+  const product = await Product.findByPk(item.product_id, { transaction });
+  if (!product) return;
+
+  const variants = await ProductVariant.findAll({
+    where: { product_id: product.id },
+    include: [
+      { model: ProductSize, as: "size" },
+      { model: ProductColor, as: "color" }
+    ],
+    transaction
+  });
+
+  if (variants.length > 0) {
+    const match = variants.find((v) => {
+      const matchSize = !v.size || !item.size || v.size.label.toLowerCase() === String(item.size).toLowerCase();
+      const matchColor = !v.color || !item.color || v.color.name.toLowerCase() === String(item.color).toLowerCase();
+      return matchSize && matchColor;
+    });
+    if (match) {
+      match.stock_count = Math.max(0, match.stock_count + qtyChange);
+      await match.save({ transaction });
+    }
+  }
+
+  product.stock_count = Math.max(0, product.stock_count + qtyChange);
+  product.in_stock = product.stock_count > 0;
+  await product.save({ transaction });
 }
 
 async function create(req, res) {
@@ -28,7 +59,35 @@ async function create(req, res) {
       const product = productById[item.product_id];
       if (!product) throw ApiError.badRequest(`Product ${item.product_id} does not exist`);
       if (!product.is_active) throw ApiError.badRequest(`"${product.name}" is no longer available`);
-      if (product.in_stock === false || product.stock_count < item.quantity) {
+
+      // Check variant-level stock if product has variants
+      const variants = await ProductVariant.findAll({
+        where: { product_id: product.id },
+        include: [
+          { model: ProductSize, as: "size" },
+          { model: ProductColor, as: "color" }
+        ],
+        transaction
+      });
+
+      let matchingVariant = null;
+      if (variants.length > 0) {
+        matchingVariant = variants.find((v) => {
+          const matchSize = !v.size || !item.size || v.size.label.toLowerCase() === String(item.size).toLowerCase();
+          const matchColor = !v.color || !item.color || v.color.name.toLowerCase() === String(item.color).toLowerCase();
+          return matchSize && matchColor;
+        });
+
+        if (matchingVariant) {
+          if (matchingVariant.stock_count < item.quantity) {
+            throw ApiError.badRequest(
+              `"${product.name} (${item.size || ''} ${item.color || ''})" only has ${matchingVariant.stock_count} units left in stock`
+            );
+          }
+        } else if (product.stock_count < item.quantity || product.in_stock === false) {
+          throw ApiError.badRequest(`"${product.name}" does not have enough stock`);
+        }
+      } else if (product.in_stock === false || product.stock_count < item.quantity) {
         throw ApiError.badRequest(`"${product.name}" does not have enough stock`);
       }
 
@@ -47,7 +106,14 @@ async function create(req, res) {
         line_total: lineTotal
       });
 
-      product.stock_count -= item.quantity;
+      // Deduct variant stock
+      if (matchingVariant) {
+        matchingVariant.stock_count = Math.max(0, matchingVariant.stock_count - item.quantity);
+        await matchingVariant.save({ transaction });
+      }
+
+      // Deduct product overall stock
+      product.stock_count = Math.max(0, product.stock_count - item.quantity);
       if (product.stock_count <= 0) {
         product.stock_count = 0;
         product.in_stock = false;
@@ -198,16 +264,7 @@ async function updateStatus(req, res) {
       prevStatus !== "returned"
     ) {
       for (const item of order.items) {
-        if (item.product_id) {
-          const product = await Product.findByPk(item.product_id, { transaction });
-          if (product) {
-            product.stock_count += item.quantity;
-            if (product.stock_count > 0) {
-              product.in_stock = true;
-            }
-            await product.save({ transaction });
-          }
-        }
+        await adjustItemStock(item, item.quantity, transaction);
       }
     }
     // If transitioning from cancelled back to active, decrement inventory
@@ -217,16 +274,7 @@ async function updateStatus(req, res) {
       newStatus !== "returned"
     ) {
       for (const item of order.items) {
-        if (item.product_id) {
-          const product = await Product.findByPk(item.product_id, { transaction });
-          if (product) {
-            product.stock_count = Math.max(0, product.stock_count - item.quantity);
-            if (product.stock_count <= 0) {
-              product.in_stock = false;
-            }
-            await product.save({ transaction });
-          }
-        }
+        await adjustItemStock(item, -item.quantity, transaction);
       }
     }
 
@@ -265,16 +313,7 @@ async function cancelOrder(req, res) {
   await sequelize.transaction(async (transaction) => {
     // Restore stock for all line items
     for (const item of order.items) {
-      if (item.product_id) {
-        const product = await Product.findByPk(item.product_id, { transaction });
-        if (product) {
-          product.stock_count += item.quantity;
-          if (product.stock_count > 0) {
-            product.in_stock = true;
-          }
-          await product.save({ transaction });
-        }
-      }
+      await adjustItemStock(item, item.quantity, transaction);
     }
 
     order.status = "cancelled";

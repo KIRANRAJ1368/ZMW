@@ -1,10 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { useShop } from "../context/ShopContext";
-import {
-  MEN_PRODUCTS,
-  WOMEN_PRODUCTS,
-  KIDS_PRODUCTS
-} from "../data/products";
+import { CURRENCY_SYMBOL, formatINRNumber } from "../utils/formatPrice";
 import { getBestSellers } from "../utils/merchandising";
 import ProductCard from "../components/ProductCard/ProductCard";
 import RecentlyViewed from "../components/RecentlyViewed/RecentlyViewed";
@@ -26,22 +22,30 @@ const GENDER_TABS = ["All", "Men", "Women", "Kids"];
 
 const INITIAL_PAGE_SIZE = 12;
 
-// Build a tagged combined catalog once (outside component to avoid re-creation)
-const TAGGED_MEN = MEN_PRODUCTS.map((p) => ({ ...p, gender: "Men" }));
-const TAGGED_WOMEN = WOMEN_PRODUCTS.map((p) => ({ ...p, gender: "Women" }));
-const TAGGED_KIDS = KIDS_PRODUCTS.map((p) => ({ ...p, gender: "Kids" }));
-const ALL_GENDER_PRODUCTS = [...TAGGED_MEN, ...TAGGED_WOMEN, ...TAGGED_KIDS];
+// Department grouping: slugs come from the Admin catalog's category slugs.
+const GENDER_SLUGS = [
+  { label: "Men", slugs: ["mens"] },
+  { label: "Women", slugs: ["women"] },
+  { label: "Kids", slugs: ["kids", "boys", "girls", "babies"] }
+];
+
+const tagByDepartment = (products) =>
+  GENDER_SLUGS.flatMap(({ label, slugs }) =>
+    products
+      .filter((p) => slugs.includes(String(p?.category ?? "").toLowerCase()))
+      .map((p) => ({ ...p, gender: label }))
+  );
 
 export default function BestSellers() {
-  const { currency, currencies } = useShop();
+  const { allProducts } = useShop();
 
-  const rate = (currencies && currencies[currency]?.rate) || 83;
-  const currencySymbol = (currencies && currencies[currency]?.symbol) || "₹";
+  // Always the Admin/backend catalog — never a separate static price list.
+  const ALL_GENDER_PRODUCTS = useMemo(() => tagByDepartment(allProducts || []), [allProducts]);
 
   // Dynamic price ceiling from full catalog
   const priceCeiling = useMemo(
-    () => Math.ceil(Math.max(...ALL_GENDER_PRODUCTS.map((p) => p.price * rate)) / 100) * 100,
-    [rate]
+    () => Math.ceil(Math.max(1, ...ALL_GENDER_PRODUCTS.map((p) => Number(p.price) || 0)) / 100) * 100,
+    [ALL_GENDER_PRODUCTS]
   );
 
   // Filter states
@@ -173,7 +177,7 @@ export default function BestSellers() {
       if (selectedSizes.length > 0 && !p.sizes.some((s) => selectedSizes.includes(s))) return false;
       if (availability === "inStock" && !p.inStock) return false;
       if (availability === "outOfStock" && p.inStock) return false;
-      const pPrice = Math.round(p.price * rate);
+      const pPrice = Number(p.price) || 0;
       if (pPrice < minPrice || pPrice > maxPrice) return false;
       return true;
     });
@@ -207,7 +211,7 @@ export default function BestSellers() {
     }
 
     return list;
-  }, [genderCatalog, selectedColors, selectedSizes, availability, minPrice, maxPrice, sortBy, rate]);
+  }, [genderCatalog, selectedColors, selectedSizes, availability, minPrice, maxPrice, sortBy]);
 
   const displayedProducts = useMemo(() => filteredProducts.slice(0, visibleCount), [filteredProducts, visibleCount]);
 
@@ -285,7 +289,7 @@ export default function BestSellers() {
           <div className="filter-accordion-content">
             <div className="price-inputs-row">
               <div className="price-input-group">
-                <span className="price-input-prefix">{currencySymbol}</span>
+                <span className="price-input-prefix">{CURRENCY_SYMBOL}</span>
                 <input
                   type="number"
                   min={0}
@@ -298,7 +302,7 @@ export default function BestSellers() {
               </div>
               <span className="price-separator">to</span>
               <div className="price-input-group">
-                <span className="price-input-prefix">{currencySymbol}</span>
+                <span className="price-input-prefix">{CURRENCY_SYMBOL}</span>
                 <input
                   type="number"
                   min={minPrice}
@@ -321,8 +325,8 @@ export default function BestSellers() {
               aria-label="Maximum price range"
             />
             <div className="price-range-labels">
-              <span>{currencySymbol}0</span>
-              <span>up to {currencySymbol}{maxPrice.toLocaleString("en-IN")}</span>
+              <span>{CURRENCY_SYMBOL}0</span>
+              <span>up to {CURRENCY_SYMBOL}{formatINRNumber(maxPrice)}</span>
             </div>
           </div>
         )}
@@ -591,7 +595,7 @@ export default function BestSellers() {
                     onClick={() => { setMinPrice(0); setMaxPrice(priceCeiling); }}
                     title="Reset price filter"
                   >
-                    <span>{currencySymbol}{minPrice.toLocaleString("en-IN")} – {currencySymbol}{maxPrice.toLocaleString("en-IN")}</span>
+                    <span>{CURRENCY_SYMBOL}{formatINRNumber(minPrice)} – {CURRENCY_SYMBOL}{formatINRNumber(maxPrice)}</span>
                     <span className="m-tag-close">✕</span>
                   </button>
                 )}

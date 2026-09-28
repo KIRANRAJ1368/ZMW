@@ -10,7 +10,8 @@ const create = [
     .withMessage("Slug may only contain lowercase letters, numbers and hyphens"),
   body("image_url").optional({ nullable: true }).isString(),
   body("sort_order").optional().isInt(),
-  body("is_active").optional().isBoolean()
+  body("is_active").optional().isBoolean(),
+  body("show_on_homepage").optional().isBoolean()
 ];
 
 const update = [
@@ -24,7 +25,8 @@ const update = [
     .withMessage("Slug may only contain lowercase letters, numbers and hyphens"),
   body("image_url").optional({ nullable: true }).isString(),
   body("sort_order").optional().isInt(),
-  body("is_active").optional().isBoolean()
+  body("is_active").optional().isBoolean(),
+  body("show_on_homepage").optional().isBoolean()
 ];
 
 const idParam = [param("id").isInt()];

@@ -1,7 +1,9 @@
 import React from "react";
+import { useShop } from "../../context/ShopContext";
 import "./InvoiceModal.css";
 
 export default function InvoiceModal({ order, onClose }) {
+  const { formatPrice } = useShop();
   if (!order) return null;
 
   const handlePrint = () => {
@@ -20,11 +22,13 @@ export default function InvoiceModal({ order, onClose }) {
         year: "numeric"
       });
 
-  const subtotal = Number(order.subtotal || order.total_amount || 0);
-  const discount = Number(order.discount_amount || 0);
-  const shipping = Number(order.shipping_fee || 0);
-  const tax = Number(order.tax_amount || 0);
-  const total = Number(order.total_amount || subtotal - discount + shipping + tax);
+  // Read the persisted order amounts straight from the backend. These columns
+  // are already stored in the same unit as catalogue prices, so they are
+  // rendered as-is and never recomputed here.
+  const subtotal = Number(order.subtotal ?? 0);
+  const discount = Number(order.discount_amount ?? 0);
+  const shipping = Number(order.shipping_fee ?? 0);
+  const total = Number(order.total ?? 0);
 
   return (
     <div className="invoice-modal-overlay" onClick={onClose}>
@@ -137,8 +141,8 @@ export default function InvoiceModal({ order, onClose }) {
               <tbody>
                 {(order.items && order.items.length > 0 ? order.items : [order]).map((item, index) => {
                   const qty = Number(item.quantity || 1);
-                  const price = Number(item.price || item.unit_price || total);
-                  const lineTotal = qty * price;
+                  const price = Number(item.unit_price ?? item.price ?? 0);
+                  const lineTotal = Number(item.line_total ?? qty * price);
                   return (
                     <tr key={index}>
                       <td>{index + 1}</td>
@@ -152,8 +156,8 @@ export default function InvoiceModal({ order, onClose }) {
                         )}
                       </td>
                       <td style={{ textAlign: "center" }}>{qty}</td>
-                      <td style={{ textAlign: "right" }}>₹{price.toLocaleString("en-IN")}</td>
-                      <td style={{ textAlign: "right" }}>₹{lineTotal.toLocaleString("en-IN")}</td>
+                      <td style={{ textAlign: "right" }}>{formatPrice(price)}</td>
+                      <td style={{ textAlign: "right" }}>{formatPrice(lineTotal)}</td>
                     </tr>
                   );
                 })}
@@ -173,27 +177,21 @@ export default function InvoiceModal({ order, onClose }) {
             <div className="invoice-breakdown">
               <div className="calc-row">
                 <span>Subtotal:</span>
-                <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
               {discount > 0 && (
                 <div className="calc-row discount-row">
                   <span>Privilege Savings:</span>
-                  <span>-₹{discount.toLocaleString("en-IN")}</span>
+                  <span>-{formatPrice(discount)}</span>
                 </div>
               )}
               <div className="calc-row">
                 <span>Express Insured Courier:</span>
-                <span>{shipping > 0 ? `₹${shipping.toLocaleString("en-IN")}` : "COMPLIMENTARY"}</span>
+                <span>{shipping > 0 ? formatPrice(shipping) : "COMPLIMENTARY"}</span>
               </div>
-              {tax > 0 && (
-                <div className="calc-row">
-                  <span>Integrated GST (18%):</span>
-                  <span>₹{tax.toLocaleString("en-IN")}</span>
-                </div>
-              )}
               <div className="calc-row total-row">
                 <span>Total Amount:</span>
-                <span className="total-gold">₹{total.toLocaleString("en-IN")}</span>
+                <span className="total-gold">{formatPrice(total)}</span>
               </div>
             </div>
           </div>

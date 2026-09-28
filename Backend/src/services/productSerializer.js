@@ -21,8 +21,14 @@ function serializeProduct(product) {
     originalPrice: p.original_price !== null && p.original_price !== undefined ? Number(p.original_price) : null,
     rating: Number(p.rating),
     reviewCount: p.review_count,
-    inStock: p.in_stock,
-    stockCount: p.stock_count,
+    inStock: Boolean(p.in_stock && Number(p.stock_count ?? 0) > 0),
+    stockCount: Number(p.stock_count ?? 0),
+    stockStatus:
+      !p.in_stock || Number(p.stock_count ?? 0) === 0
+        ? "out_of_stock"
+        : Number(p.stock_count ?? 0) <= 5
+        ? "low_stock"
+        : "in_stock",
     isBestSeller: p.is_best_seller,
     isNewArrival: p.is_new_arrival,
     isSale: p.is_sale,
@@ -34,8 +40,24 @@ function serializeProduct(product) {
     images: (p.images || []).sort((a, b) => a.sort_order - b.sort_order).map((i) => i.url),
     colors: (p.colors || [])
       .sort((a, b) => a.sort_order - b.sort_order)
-      .map((c) => ({ name: c.name, hex: c.hex_code })),
+      .map((c) => ({ id: c.id, name: c.name, hex: c.hex_code })),
     sizes: (p.sizes || []).sort((a, b) => a.sort_order - b.sort_order).map((s) => s.label),
+    variants: (p.variants || []).map((v) => {
+      const vStock = Number(v.stock_count ?? 0);
+      return {
+        id: v.id,
+        sizeId: v.size_id,
+        size: v.size ? v.size.label : null,
+        colorId: v.color_id,
+        color: v.color ? v.color.name : null,
+        colorHex: v.color ? v.color.hex_code : null,
+        skuSuffix: v.sku_suffix,
+        stockCount: vStock,
+        priceOverride: v.price_override !== null && v.price_override !== undefined ? Number(v.price_override) : null,
+        inStock: vStock > 0,
+        stockStatus: vStock === 0 ? "out_of_stock" : vStock <= 5 ? "low_stock" : "in_stock"
+      };
+    }),
     createdAt: p.created_at,
     updatedAt: p.updated_at
   };

@@ -11,7 +11,8 @@ const create = [
   body("description").optional({ nullable: true }).isString(),
   body("image_url").optional({ nullable: true }).isString(),
   body("sort_order").optional().isInt(),
-  body("is_active").optional().isBoolean()
+  body("is_active").optional().isBoolean(),
+  body("show_on_homepage").optional().isBoolean()
 ];
 
 const update = [
@@ -25,7 +26,8 @@ const update = [
   body("description").optional({ nullable: true }).isString(),
   body("image_url").optional({ nullable: true }).isString(),
   body("sort_order").optional().isInt(),
-  body("is_active").optional().isBoolean()
+  body("is_active").optional().isBoolean(),
+  body("show_on_homepage").optional().isBoolean()
 ];
 
 const idParam = [param("id").isInt().withMessage("Invalid category id")];

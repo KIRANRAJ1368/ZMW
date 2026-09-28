@@ -172,7 +172,7 @@ export default function CuratedCard({ product, badgeLabel, badgeTone = "hot" }) 
         <div className="curated-pricing-row">
           <div className="curated-price-box">
             <span className="curated-price-current">{formatPrice(product.price)}</span>
-            {product.originalPrice && (
+            {product.originalPrice && product.originalPrice > product.price && (
               <span className="curated-price-original">{formatPrice(product.originalPrice)}</span>
             )}
           </div>

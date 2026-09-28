@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
+import { FREE_SHIPPING_THRESHOLD } from "../../utils/shopConfig";
 import { imageUrl } from "../../utils/imageUrl";
+import { formatPrice } from "../../utils/formatPrice";
 import "./Hero.css";
+
+const FREE_SHIPPING_LABEL = `Free Shipping ${formatPrice(FREE_SHIPPING_THRESHOLD)}+`;
 
 function renderHeroIcon(name) {
   switch (name) {
@@ -77,7 +81,7 @@ const HERO_BANNERS = [
     link: "/collection",
     urgencyTag: "⚡ Selling Out Fast",
     perks: [
-      { icon: "truck", label: "Free Shipping ₹499+" },
+      { icon: "truck", label: FREE_SHIPPING_LABEL },
       { icon: "refresh", label: "7-Day Easy Returns" },
       { icon: "shield", label: "100% Quality Checked" }
     ],
@@ -116,8 +120,8 @@ const HERO_BANNERS = [
     badgeIcon: "flame",
     subBadge: "Winter Special",
     offer: "WINTER SALE",
-    offerTag: "STYLES STARTING ₹999",
-    headline: "Styles Starting ₹999",
+    offerTag: "STYLES STARTING {{MIN_PRICE}}",
+    headline: "Styles Starting {{MIN_PRICE}}",
     support: "Brushed fleece hoodies, ribbed high-necks & signature winter layering essentials built for the cold.",
     cta: "Shop Now",
     link: "/collection",
@@ -136,29 +140,48 @@ const HERO_BANNERS = [
 ];
 
 export default function Hero() {
-  const { homeData } = useShop();
+  const { homeData, allProducts } = useShop();
   const managedBanners = homeData?.banners?.hero || [];
+
+  // Any "starting at" claim is generated from the real Admin catalog minimum so
+  // it can never advertise an amount the storefront does not actually charge.
+  const minPrice = useMemo(() => {
+    const prices = (allProducts || [])
+      .map((p) => Number(p?.price))
+      .filter((n) => Number.isFinite(n) && n > 0);
+    return prices.length ? formatPrice(Math.min(...prices)) : "";
+  }, [allProducts]);
+  const withMinPrice = (text) => (text || "").replace(/\{\{MIN_PRICE\}\}/g, minPrice);
+
   const banners = managedBanners.length
     ? managedBanners.map((banner, index) => ({
         id: banner.id,
         badge: banner.tag || "ZMW",
         badgeIcon: "sparkle",
         subBadge: banner.badge_promo || "",
-        offer: banner.title,
-        offerTag: "",
+        offer: banner.badge_promo || banner.title,
+        offerTag: banner.badge_promo ? (banner.tag || "LIMITED DROP") : "",
         headline: banner.title,
         support: banner.subtitle || "",
         cta: banner.primary_cta_text || "Shop Now",
         link: banner.primary_cta_link || "/collection",
-        urgencyTag: banner.secondary_cta_text || "",
-        perks: [],
+        urgencyTag: banner.secondary_cta_text || "✨ Fresh Drop",
+        perks: [
+          { icon: "truck", label: FREE_SHIPPING_LABEL },
+          { icon: "refresh", label: "7-Day Easy Returns" },
+          { icon: "shield", label: "100% Quality Checked" }
+        ],
         image: banner.image_url,
         imagePosition: banner.image_position || "75% 10%",
         alt: banner.title,
         slideLabel: banner.title,
         themeClass: `hero-theme-${(index % 3) + 1}`
       }))
-    : HERO_BANNERS;
+    : HERO_BANNERS.map((banner) => ({
+        ...banner,
+        offerTag: withMinPrice(banner.offerTag),
+        headline: withMinPrice(banner.headline)
+      }));
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(null);

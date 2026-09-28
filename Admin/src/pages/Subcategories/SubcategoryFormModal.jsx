@@ -16,7 +16,8 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
     slug: subcategory.slug || "",
     image_url: subcategory.image_url || (isEdit ? getSubcategoryImageUrl(subcategory) : ""),
     sort_order: subcategory.sort_order ?? 0,
-    is_active: subcategory.is_active ?? true
+    is_active: subcategory.is_active ?? true,
+    show_on_homepage: subcategory.show_on_homepage ?? true
   });
   const [errors, setErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
@@ -88,7 +89,8 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
         slug: form.slug.trim(),
         image_url: form.image_url.trim(),
         sort_order: Number(form.sort_order) || 0,
-        is_active: Boolean(form.is_active)
+        is_active: Boolean(form.is_active),
+        show_on_homepage: Boolean(form.show_on_homepage)
       };
 
       if (isEdit) {
@@ -181,7 +183,7 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
             />
           </FormField>
 
-          <div style={{ display: "flex", alignItems: "center", paddingTop: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingTop: 20 }}>
             <label className="checkbox-row" style={{ marginBottom: 0 }}>
               <input
                 id="sub-active"
@@ -191,6 +193,21 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
               />
               <span>
                 <strong>Active in Storefront Filter Pills</strong>
+              </span>
+            </label>
+
+            <label className="checkbox-row" style={{ marginBottom: 0 }}>
+              <input
+                id="sub-homepage"
+                type="checkbox"
+                checked={form.show_on_homepage}
+                onChange={(e) => update("show_on_homepage", e.target.checked)}
+              />
+              <span>
+                <strong>Show on Homepage</strong>
+                <span style={{ display: "block", fontSize: 11.5, color: "var(--text-muted)", marginTop: 2 }}>
+                  Display this subcategory tile in its category section on the customer storefront homepage. If more than 4 subcategories are enabled in a category, that section switches to a horizontal carousel.
+                </span>
               </span>
             </label>
           </div>

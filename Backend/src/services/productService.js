@@ -1,5 +1,5 @@
 const { Op, fn, col, where: sequelizeWhere } = require("sequelize");
-const { Product, Category, Subcategory, ProductImage, ProductColor, ProductSize, sequelize } = require("../models");
+const { Product, Category, Subcategory, ProductImage, ProductColor, ProductSize, ProductVariant, sequelize } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getPagination, buildMeta } = require("../utils/pagination");
 
@@ -8,7 +8,15 @@ const PRODUCT_INCLUDES = [
   { model: Subcategory, as: "subcategory", attributes: ["id", "name", "slug"] },
   { model: ProductImage, as: "images" },
   { model: ProductColor, as: "colors" },
-  { model: ProductSize, as: "sizes" }
+  { model: ProductSize, as: "sizes" },
+  {
+    model: ProductVariant,
+    as: "variants",
+    include: [
+      { model: ProductSize, as: "size", attributes: ["id", "label"] },
+      { model: ProductColor, as: "color", attributes: ["id", "name", "hex_code"] }
+    ]
+  }
 ];
 
 const SORT_MAP = {
@@ -51,8 +59,17 @@ async function listProducts(query) {
   if (query.collection === "best-sellers") where.is_best_seller = true;
   if (query.collection === "new-arrivals") where.is_new_arrival = true;
 
-  if (query.availability === "in-stock") where.in_stock = true;
-  if (query.availability === "out-of-stock") where.in_stock = false;
+  if (query.availability === "in-stock") {
+    where.in_stock = true;
+    where.stock_count = { [Op.gt]: 0 };
+  }
+  if (query.availability === "out-of-stock") {
+    where[Op.or] = [{ in_stock: false }, { stock_count: 0 }];
+  }
+  if (query.availability === "low-stock") {
+    where.in_stock = true;
+    where.stock_count = { [Op.gt]: 0, [Op.lte]: 5 };
+  }
 
   if (query.minPrice || query.maxPrice) {
     where.price = {};
@@ -102,10 +119,11 @@ async function replaceNestedCollections(product, body, transaction) {
     }
   }
 
+  let createdColors = [];
   if (Array.isArray(body.colors)) {
     await ProductColor.destroy({ where: { product_id: product.id }, transaction });
     if (body.colors.length > 0) {
-      await ProductColor.bulkCreate(
+      createdColors = await ProductColor.bulkCreate(
         body.colors.map((c, idx) => ({
           product_id: product.id,
           name: c.name,
@@ -115,12 +133,15 @@ async function replaceNestedCollections(product, body, transaction) {
         { transaction }
       );
     }
+  } else {
+    createdColors = await ProductColor.findAll({ where: { product_id: product.id }, transaction });
   }
 
+  let createdSizes = [];
   if (Array.isArray(body.sizes)) {
     await ProductSize.destroy({ where: { product_id: product.id }, transaction });
     if (body.sizes.length > 0) {
-      await ProductSize.bulkCreate(
+      createdSizes = await ProductSize.bulkCreate(
         body.sizes.map((label, idx) => ({
           product_id: product.id,
           label: typeof label === "string" ? label : label?.label || String(label),
@@ -128,6 +149,79 @@ async function replaceNestedCollections(product, body, transaction) {
         })),
         { transaction }
       );
+    }
+  } else {
+    createdSizes = await ProductSize.findAll({ where: { product_id: product.id }, transaction });
+  }
+
+  if (Array.isArray(body.variants)) {
+    await ProductVariant.destroy({ where: { product_id: product.id }, transaction });
+    if (body.variants.length > 0) {
+      const colorMap = new Map();
+      createdColors.forEach((c) => {
+        colorMap.set(String(c.name).toLowerCase(), c.id);
+        colorMap.set(String(c.id), c.id);
+      });
+
+      const sizeMap = new Map();
+      createdSizes.forEach((s) => {
+        sizeMap.set(String(s.label).toLowerCase(), s.id);
+        sizeMap.set(String(s.id), s.id);
+      });
+
+      // Automatically register any new sizes or colors specified in the variants
+      for (const v of body.variants) {
+        const sizeVal = (v.size || "").trim();
+        if (sizeVal && !sizeMap.has(sizeVal.toLowerCase())) {
+          const newSize = await ProductSize.create(
+            { product_id: product.id, label: sizeVal, sort_order: sizeMap.size },
+            { transaction }
+          );
+          sizeMap.set(sizeVal.toLowerCase(), newSize.id);
+          sizeMap.set(String(newSize.id), newSize.id);
+        }
+
+        const colorVal = (v.color || "").trim();
+        if (colorVal && !colorMap.has(colorVal.toLowerCase())) {
+          const newColor = await ProductColor.create(
+            {
+              product_id: product.id,
+              name: colorVal,
+              hex_code: v.colorHex || v.color_hex || "#1E293B",
+              sort_order: colorMap.size
+            },
+            { transaction }
+          );
+          colorMap.set(colorVal.toLowerCase(), newColor.id);
+          colorMap.set(String(newColor.id), newColor.id);
+        }
+      }
+
+      const variantRows = body.variants.map((v) => {
+        const sizeVal = (v.size || "").trim();
+        const colorVal = (v.color || "").trim();
+        const sizeId = v.size_id || (sizeVal ? sizeMap.get(sizeVal.toLowerCase()) : null);
+        const colorId = v.color_id || (colorVal ? colorMap.get(colorVal.toLowerCase()) : null);
+        return {
+          product_id: product.id,
+          size_id: sizeId || null,
+          color_id: colorId || null,
+          sku_suffix: v.sku_suffix || v.skuSuffix || null,
+          stock_count: Math.max(0, Number(v.stock_count ?? v.stockCount ?? 0)),
+          price_override: v.price_override || v.priceOverride ? parseFloat(v.price_override || v.priceOverride) : null
+        };
+      });
+
+      await ProductVariant.bulkCreate(variantRows, { transaction });
+
+      // Synchronize overall stock count and in_stock from variants
+      const totalStock = variantRows.reduce((sum, v) => sum + (Number(v.stock_count) || 0), 0);
+      product.stock_count = totalStock;
+      product.in_stock = totalStock > 0;
+      await product.save({ transaction });
+    } else {
+      product.in_stock = Number(product.stock_count || 0) > 0;
+      await product.save({ transaction });
     }
   }
 }
@@ -167,7 +261,13 @@ async function createProduct(body) {
   });
 }
 
-async function updateProduct(product, body) {
+async function updateProduct(productOrId, body) {
+  const product =
+    typeof productOrId === "object" && productOrId?.save
+      ? productOrId
+      : await Product.findByPk(productOrId);
+  if (!product) throw ApiError.notFound("Product not found");
+
   return sequelize.transaction(async (transaction) => {
     if (body.sku && body.sku !== product.sku) {
       const clash = await Product.findOne({ where: { sku: body.sku }, transaction });

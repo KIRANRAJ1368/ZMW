@@ -22,6 +22,7 @@ router.patch("/:id/stock", requireAuth, v.idParam, validate, productController.u
 
 router.get("/:id/variants", requireAuth, v.idParam, validate, productController.listVariants);
 router.post("/:id/variants", requireAuth, v.idParam, validate, productController.createVariant);
+router.put("/:id/variants", requireAuth, v.idParam, validate, productController.saveVariants);
 router.put("/:id/variants/:variantId", requireAuth, v.idParam, validate, productController.updateVariant);
 router.delete("/:id/variants/:variantId", requireAuth, v.idParam, validate, productController.deleteVariant);
 

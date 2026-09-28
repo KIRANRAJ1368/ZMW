@@ -16,7 +16,10 @@ import {
   Tag,
   TrendingUp,
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  Boxes,
+  Layers,
+  Package2
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import "./AdminLayout.css";
@@ -24,6 +27,8 @@ import "./AdminLayout.css";
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/products", label: "Products", icon: Shirt },
+  { to: "/variants", label: "Variant Management", icon: Layers },
+  { to: "/stock", label: "Stock Management", icon: Package2 },
   { to: "/categories", label: "Categories", icon: FolderTree },
   { to: "/subcategories", label: "Subcategories", icon: Tags },
   { to: "/banners", label: "Hero & Banners", icon: ImageIcon },

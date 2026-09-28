@@ -87,6 +87,34 @@
   padding-top: 24px;
 }
 
+.variant-inventory-link-row {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: var(--surface-alt);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+
+.inventory-deep-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.inventory-deep-link:hover {
+  color: var(--primary);
+}
+
+.inventory-deep-link strong {
+  text-decoration: underline;
+  color: var(--dark);
+}
+
 /* Merchandising Banner */
 .merchandising-banner {
   display: flex;
@@ -968,4 +996,334 @@
     padding: 14px 16px;
     bottom: 10px;
   }
+}
+
+/* ==========================================================================
+   Section 7: Variants & Stock Matrix Styles
+   ========================================================================== */
+.section-icon-variants {
+  background: var(--primary-light);
+  color: var(--primary-text);
+}
+
+.variant-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 18px;
+}
+
+.variant-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.variant-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bulk-stock-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.bulk-stock-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-clear-variants {
+  color: var(--danger);
+}
+
+.btn-clear-variants:hover {
+  background: var(--danger-bg);
+}
+
+/* Variant Stats Strip */
+.variant-stats-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.variant-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+}
+
+.variant-stat-pill .stat-label {
+  color: var(--text-muted);
+}
+
+.variant-stat-pill .stat-val {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.stat-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-green {
+  background: var(--success);
+}
+
+.dot-amber {
+  background: var(--warning);
+}
+
+.dot-red {
+  background: var(--danger);
+}
+
+.stat-pill-green {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.stat-pill-green .stat-val {
+  color: var(--success-text);
+}
+
+.stat-pill-amber {
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
+}
+
+.stat-pill-amber .stat-val {
+  color: var(--warning-text);
+}
+
+.stat-pill-red {
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+}
+
+.stat-pill-red .stat-val {
+  color: var(--danger-text);
+}
+
+/* Variant Table */
+.variant-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.variant-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.variant-table th {
+  background: var(--surface-alt);
+  padding: 10px 14px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.variant-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.variant-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.variant-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.variant-combo-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.combo-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border-hover);
+  flex-shrink: 0;
+}
+
+.combo-title {
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.variant-select,
+.variant-text-input {
+  width: 100%;
+  min-width: 110px;
+  max-width: 160px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.variant-stock-input-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.variant-stock-input {
+  width: 74px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.quick-stock-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.quick-stock-stepper button {
+  padding: 3px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--surface-alt);
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.quick-stock-stepper button:hover {
+  background: var(--border);
+  color: var(--text-main);
+}
+
+/* Variant Status Badge */
+.variant-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.variant-status-badge .status-indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.variant-status-badge.status-in {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
+}
+
+.variant-status-badge.status-in .status-indicator-dot {
+  background: var(--success);
+}
+
+.variant-status-badge.status-low {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid var(--warning-border);
+}
+
+.variant-status-badge.status-low .status-indicator-dot {
+  background: var(--warning);
+}
+
+.variant-status-badge.status-out {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid var(--danger-border);
+}
+
+.variant-status-badge.status-out .status-indicator-dot {
+  background: var(--danger);
+}
+
+.btn-delete-variant {
+  color: var(--text-muted);
+  padding: 6px;
+  border-radius: var(--radius-xs);
+}
+
+.btn-delete-variant:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* Empty state */
+.empty-variants-card {
+  padding: 36px 20px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-alt);
+}
+
+.empty-variants-icon {
+  margin: 0 auto 10px auto;
+  color: var(--text-muted);
+  display: block;
+}
+
+.empty-variants-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+.empty-variants-card p {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.5;
 }

@@ -112,7 +112,7 @@ export default function QuickViewModal() {
             {/* Pricing */}
             <div className="quickview-price-row">
               <span className="price-current">{formatPrice(quickViewProduct.price)}</span>
-              {quickViewProduct.originalPrice && (
+              {quickViewProduct.originalPrice && quickViewProduct.originalPrice > quickViewProduct.price && (
                 <span className="price-original">
                   {formatPrice(quickViewProduct.originalPrice)}
                 </span>

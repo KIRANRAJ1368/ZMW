@@ -1,24 +1,16 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import {
-  PRODUCTS,
-  MEN_PRODUCTS,
-  WOMEN_PRODUCTS,
-  KIDS_PRODUCTS,
-  UNIFIED_PRODUCTS,
-  INSTAGRAM_SHOWCASE
-} from "../data/products";
+import { INSTAGRAM_SHOWCASE } from "../data/products";
 import { storefrontApi } from "../services/storefrontApi";
+import { formatPrice as formatINR, CURRENCY_SYMBOL, CURRENCY_LOCALE } from "../utils/formatPrice";
+import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from "../utils/shopConfig";
 
 const ShopContext = createContext();
 
+// The store sells in a single currency. Prices are stored exactly as entered in
+// the Admin panel, so every rate is 1 and no FX conversion is ever applied.
 const CURRENCIES = {
-  INR: { symbol: "₹", rate: 83, name: "INR (₹)", locale: "en-IN" },
-  USD: { symbol: "$", rate: 1.0, name: "USD ($)", locale: "en-US" },
-  EUR: { symbol: "€", rate: 0.92, name: "EUR (€)", locale: "de-DE" },
-  GBP: { symbol: "£", rate: 0.78, name: "GBP (£)", locale: "en-GB" }
+  INR: { symbol: CURRENCY_SYMBOL, rate: 1, name: "INR (₹)", locale: CURRENCY_LOCALE }
 };
-
-const FREE_SHIPPING_THRESHOLD = 75; // in USD
 const RECENTLY_VIEWED_KEY = "zmw_recently_viewed";
 const MAX_RECENTLY_VIEWED = 5;
 
@@ -34,27 +26,40 @@ const readRecentlyViewedIds = () => {
 };
 
 export const ShopProvider = ({ children }) => {
-  // Keep the local catalogue as a resilient first-render fallback, then replace
-  // it with the admin-managed API catalogue as soon as it is available.
-  const [allProducts, setAllProducts] = useState(UNIFIED_PRODUCTS);
+  // The catalogue starts empty on purpose. Prices are owned solely by the Admin
+  // panel / database and are only ever populated from the API, so a stale
+  // hard-coded list can never be shown instead of an Admin-edited price.
+  const [allProducts, setAllProducts] = useState([]);
   const [homeData, setHomeData] = useState(null);
   const [storefrontStatus, setStorefrontStatus] = useState("loading");
 
-  useEffect(() => {
-    let mounted = true;
-    Promise.all([storefrontApi.home(), storefrontApi.products()])
-      .then(([home, productPayload]) => {
-        if (!mounted) return;
-        setHomeData(home);
-        if (Array.isArray(productPayload) && productPayload.length) setAllProducts(productPayload);
-        setStorefrontStatus("ready");
-      })
-      .catch(() => {
-        // The existing local data remains visible if the API is temporarily unavailable.
-        if (mounted) setStorefrontStatus("fallback");
-      });
-    return () => { mounted = false; };
+  const refreshHomeData = useCallback(async () => {
+    try {
+      const [home, productPayload] = await Promise.all([storefrontApi.home(), storefrontApi.products()]);
+      setHomeData(home);
+      if (Array.isArray(productPayload) && productPayload.length) setAllProducts(productPayload);
+      setStorefrontStatus("ready");
+      return home;
+    } catch {
+      setStorefrontStatus("fallback");
+    }
   }, []);
+
+  useEffect(() => {
+    refreshHomeData();
+
+    const handleFocus = () => {
+      refreshHomeData();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
+  }, [refreshHomeData]);
 
   const allProductsMap = useMemo(() => {
     const map = new Map();
@@ -83,6 +88,23 @@ export const ShopProvider = ({ children }) => {
       return allProductsMap.get(key) || allProductsMap.get(key.toLowerCase()) || null;
     },
     [allProductsMap]
+  );
+
+  // Catalogue pages ask for their department by slug ("mens", "women", "kids",
+  // "boys", "girls", "babies"), or a list of slugs when a page spans several.
+  // Always served from the Admin/backend catalog so an Admin price edit is
+  // reflected everywhere immediately.
+  const productsByCategory = useCallback(
+    (categorySlug) => {
+      const list = Array.isArray(categorySlug) ? categorySlug : [categorySlug];
+      const wanted = list
+        .map((s) => String(s || "").trim().toLowerCase())
+        .map((s) => (s === "men" ? "mens" : s === "woman" ? "women" : s))
+        .filter(Boolean);
+      if (!wanted.length) return allProducts || [];
+      return (allProducts || []).filter((p) => wanted.includes(String(p?.category ?? "").trim().toLowerCase()));
+    },
+    [allProducts]
   );
 
   const [recentlyViewedIds, setRecentlyViewedIds] = useState(() => {
@@ -116,18 +138,8 @@ export const ShopProvider = ({ children }) => {
   // Cart state
   const [cart, setCart] = useState(() => {
     try {
-      const saved = localStorage.getItem("zmw_cart");
-      return saved ? JSON.parse(saved) : [
-        {
-          id: "zmw-001",
-          name: "Linen Boxy Oversized Tee",
-          price: 68,
-          color: "Cream Linen",
-          size: "M",
-          image: "/images/photo-1521572267360-ee0c2909d518.jpg",
-          quantity: 1
-        }
-      ];
+      const saved = JSON.parse(localStorage.getItem("zmw_cart") || "[]");
+      return Array.isArray(saved) ? saved : [];
     } catch {
       return [];
     }
@@ -326,19 +338,29 @@ export const ShopProvider = ({ children }) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Format all storefront prices consistently as Indian Rupees.
-  const formatPrice = (amountInUsd) => {
-    if (amountInUsd === null || amountInUsd === undefined) return "";
-    const inr = CURRENCIES.INR;
-    const converted = Math.round(amountInUsd * inr.rate);
-    return `₹${new Intl.NumberFormat("en-IN").format(converted)}`;
-  };
+  // Render an Admin/database price as ₹. The stored value is the single source
+  // of truth and is displayed verbatim — no conversion, no re-scaling — so the
+  // storefront can never disagree with the Admin panel or the database.
+  const formatPrice = (amount) => formatINR(amount);
 
   // Cart operations
   const addToCart = (product, selectedColor = null, selectedSize = null, quantity = 1) => {
     const color = selectedColor || (product.colors && product.colors[0]?.name) || "Standard";
     const size = selectedSize || (product.sizes && product.sizes[0]) || "Standard";
     const image = (product.images && product.images[0]) || "";
+
+    // Find variant max stock if available
+    let maxStock = product.stockCount ?? null;
+    if (product.variants && product.variants.length > 0) {
+      const match = product.variants.find(
+        (v) =>
+          (!v.color || v.color.toLowerCase() === color.toLowerCase()) &&
+          (!v.size || v.size.toLowerCase() === size.toLowerCase())
+      );
+      if (match != null) {
+        maxStock = match.stockCount ?? match.stock_count ?? null;
+      }
+    }
 
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
@@ -347,9 +369,17 @@ export const ShopProvider = ({ children }) => {
 
       if (existingIndex > -1) {
         const updated = [...prevCart];
-        updated[existingIndex].quantity += quantity;
+        const currentQty = updated[existingIndex].quantity;
+        const availableMax = maxStock !== null ? maxStock : (updated[existingIndex].maxStock ?? 99);
+        const newQty = Math.min(availableMax, currentQty + quantity);
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: newQty,
+          maxStock: availableMax
+        };
         return updated;
       } else {
+        const initialQty = maxStock !== null ? Math.min(quantity, Math.max(1, maxStock)) : quantity;
         return [
           ...prevCart,
           {
@@ -360,7 +390,8 @@ export const ShopProvider = ({ children }) => {
             color,
             size,
             image,
-            quantity
+            quantity: initialQty,
+            maxStock: maxStock !== null ? maxStock : undefined
           }
         ];
       }
@@ -375,8 +406,27 @@ export const ShopProvider = ({ children }) => {
       prev
         .map((item) => {
           if (String(item.id) === String(id) && item.color === color && item.size === size) {
+            let maxLimit = item.maxStock ?? 99;
+            const prod = allProducts.find((p) => String(p.id) === String(id));
+            if (prod?.variants?.length > 0) {
+              const mv = prod.variants.find(
+                (v) =>
+                  (!v.color || v.color.toLowerCase() === color.toLowerCase()) &&
+                  (!v.size || v.size.toLowerCase() === size.toLowerCase())
+              );
+              if (mv != null && mv.stockCount !== undefined) {
+                maxLimit = mv.stockCount;
+              }
+            } else if (prod?.stockCount !== undefined) {
+              maxLimit = prod.stockCount;
+            }
+
             const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...item, quantity: newQty } : null;
+            if (delta > 0 && newQty > maxLimit) {
+              addToast(`Cannot add more. Only ${maxLimit} units available in stock.`, "warning");
+              return item;
+            }
+            return newQty > 0 ? { ...item, quantity: newQty, maxStock: maxLimit } : null;
           }
           return item;
         })
@@ -461,16 +511,38 @@ export const ShopProvider = ({ children }) => {
     addToast("Coupon removed", "info");
   };
 
+  // A cart row stores the name/price that were current when the item was added,
+  // which then sits in localStorage indefinitely. Re-read the price from the live
+  // catalogue on every render so an Admin price edit is reflected in the bag, the
+  // totals and checkout straight away. The stored snapshot is only kept for rows
+  // whose product is no longer in the catalogue (deleted or unpublished).
+  const cartLines = useMemo(() => {
+    if (!cart.length) return cart;
+    return cart.map((item) => {
+      const key = String(item.id);
+      const live = allProductsMap.get(key) || allProductsMap.get(key.toLowerCase());
+      if (!live) return item;
+      const price = Number(live.price);
+      if (!Number.isFinite(price)) return item;
+      const originalPrice =
+        live.originalPrice === null || live.originalPrice === undefined
+          ? item.originalPrice
+          : Number(live.originalPrice);
+      if (price === Number(item.price) && originalPrice === Number(item.originalPrice)) return item;
+      return { ...item, price, originalPrice };
+    });
+  }, [cart, allProductsMap]);
+
   // Cart Calculations
-  const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const cartSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const cartItemCount = cartLines.reduce((sum, item) => sum + item.quantity, 0);
+  const cartSubtotal = cartLines.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discountAmount = appliedCoupon
     ? appliedCoupon.discountAmount !== undefined
       ? appliedCoupon.discountAmount
       : (cartSubtotal * (appliedCoupon.discountPercent || 0)) / 100
     : 0;
   const isFreeShipping = cartSubtotal >= FREE_SHIPPING_THRESHOLD;
-  const shippingCost = cartSubtotal === 0 || isFreeShipping ? 0 : 15;
+  const shippingCost = cartSubtotal === 0 || isFreeShipping ? 0 : SHIPPING_FEE;
   const cartTotal = Math.max(0, cartSubtotal - discountAmount + shippingCost);
   const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - cartSubtotal);
   const freeShippingPercent = Math.min(100, Math.round((cartSubtotal / FREE_SHIPPING_THRESHOLD) * 100));
@@ -492,22 +564,28 @@ export const ShopProvider = ({ children }) => {
   return (
     <ShopContext.Provider
       value={{
-        // Catalog
-        products: allProducts.length ? allProducts : PRODUCTS,
+        // Catalog. `products` is a legacy alias for `allProducts`; both point at
+        // the API payload so no consumer can fall back to static prices.
+        products: allProducts,
         allProducts,
+        productsByCategory,
         findProduct,
         homeData,
+        refreshHomeData,
         storefrontStatus,
         recentlyViewed,
         trackRecentlyViewed,
-        // Cart
-        cart,
+        // Cart. `cart` carries the live Admin/DB price for every line; the
+        // stored snapshot only survives for products missing from the catalogue.
+        cart: cartLines,
         cartItemCount,
         cartSubtotal,
         discountAmount,
         shippingCost,
         cartTotal,
         isFreeShipping,
+        freeShippingThreshold: FREE_SHIPPING_THRESHOLD,
+        shippingFee: SHIPPING_FEE,
         freeShippingRemaining,
         freeShippingPercent,
         appliedCoupon,

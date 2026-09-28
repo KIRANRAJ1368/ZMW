@@ -1,6 +1,16 @@
-const { Category, Subcategory, Product } = require("../models");
+const { Category, Subcategory, Product, HomepageSection } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { sendSuccess } = require("../utils/apiResponse");
+
+const CATEGORY_SECTION_KEY_MAP = {
+  mens: "mens_categories",
+  men: "mens_categories",
+  women: "womens_categories",
+  womens: "womens_categories",
+  boys: "boys_categories",
+  girls: "girls_categories",
+  babies: "babies_categories"
+};
 
 const DEFAULT_CATEGORY_IMAGES = {
   mens: "/images/dept-mens.jpg",
@@ -54,8 +64,18 @@ async function create(req, res) {
     description: req.body.description || null,
     image_url: req.body.image_url || null,
     sort_order: req.body.sort_order ?? 0,
-    is_active: req.body.is_active ?? true
+    is_active: req.body.is_active ?? true,
+    show_on_homepage: req.body.show_on_homepage ?? true
   });
+
+  const sectionKey = CATEGORY_SECTION_KEY_MAP[category.slug];
+  if (sectionKey) {
+    await HomepageSection.update(
+      { is_active: category.show_on_homepage },
+      { where: { section_key: sectionKey } }
+    );
+  }
+
   return sendSuccess(res, { statusCode: 201, data: attachDefaultImage(category.toJSON()) });
 }
 
@@ -68,11 +88,22 @@ async function update(req, res) {
     if (clash) throw ApiError.conflict("A category with this slug already exists");
   }
 
-  const fields = ["name", "slug", "description", "image_url", "sort_order", "is_active"];
+  const fields = ["name", "slug", "description", "image_url", "sort_order", "is_active", "show_on_homepage"];
   fields.forEach((f) => {
     if (req.body[f] !== undefined) category[f] = req.body[f];
   });
   await category.save();
+
+  if (req.body.show_on_homepage !== undefined) {
+    const sectionKey = CATEGORY_SECTION_KEY_MAP[category.slug];
+    if (sectionKey) {
+      await HomepageSection.update(
+        { is_active: Boolean(category.show_on_homepage) },
+        { where: { section_key: sectionKey } }
+      );
+    }
+  }
+
   return sendSuccess(res, { data: attachDefaultImage(category.toJSON()) });
 }
 

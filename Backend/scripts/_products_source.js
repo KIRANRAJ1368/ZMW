@@ -393,7 +393,7 @@ const MEN_SUBCATEGORIES = [
 const MEN_PRODUCTS = [
   {
     id: "zmw-m01",
-    name: "CM Original Oversized Graphic Tee",
+    name: "Printed Round Neck T-Shirt - Jet Black & Off White",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Best Seller",
@@ -422,7 +422,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m02",
-    name: "Racer Stripe Oversized Tee",
+    name: "Printed Round Neck T-Shirt - Charcoal & Rust",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "New Drop",
@@ -450,7 +450,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m03",
-    name: "UnderRated Script Oversized Tee",
+    name: "Printed Round Neck T-Shirt - Sage Green & Stone Beige",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Trending",
@@ -478,7 +478,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m04",
-    name: "Street Calm Zipper Oversized Tee",
+    name: "Oversized Round Neck T-Shirt - Ivory & Jet Black",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: null,
@@ -506,7 +506,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m05",
-    name: "Initial D Oversized Racing Tee",
+    name: "Printed Round Neck T-Shirt - Racing Red & Jet Black",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Limited",
@@ -534,7 +534,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m06",
-    name: "Original 99 Oversized Tee",
+    name: "Oversized Round Neck T-Shirt - Olive & Off White",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "New Drop",
@@ -563,7 +563,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m07",
-    name: "Mono Line Zipper Regular Polo",
+    name: "Classic Polo T-Shirt - Ivory & Navy",
     category: "Polo",
     subCategory: "Polo T-shirt",
     badge: "Best Seller",
@@ -591,7 +591,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m08",
-    name: "Shadow Hunter Oversized Polo",
+    name: "Classic Polo T-Shirt - Maroon & Jet Black",
     category: "Polo",
     subCategory: "Polo T-shirt",
     badge: "New Drop",
@@ -619,7 +619,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m09",
-    name: "Spartans High-Density Oversized Polo",
+    name: "Classic Polo T-Shirt - Espresso Brown & Off White",
     category: "Polo",
     subCategory: "Polo T-shirt",
     badge: "Trending",
@@ -647,7 +647,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m10",
-    name: "Detroit High-Neck Oversized Polo",
+    name: "Classic Polo T-Shirt - Mustard Gold & Jet Black",
     category: "Polo",
     subCategory: "Polo T-shirt",
     badge: null,
@@ -675,7 +675,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m11",
-    name: "Neutral Wave Regular Polo",
+    name: "Classic Polo T-Shirt - Sand Beige & Sky Blue",
     category: "Polo",
     subCategory: "Polo T-shirt",
     badge: "New Drop",
@@ -703,7 +703,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m12",
-    name: "Relaxed Boxy Oxford Weave Shirt",
+    name: "Oversized Round Neck T-Shirt - Crisp White & Sky Blue",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Best Seller",
@@ -732,7 +732,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m13",
-    name: "Beige Atelier Regular Long Sleeve",
+    name: "Classic Cotton Round Neck T-Shirt - Beige & Ivory",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: null,
@@ -760,7 +760,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m14",
-    name: "Dark Dimension Full Sleeve Tee",
+    name: "Classic Cotton Round Neck T-Shirt - Jet Black",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Trending",
@@ -787,7 +787,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m19",
-    name: "Originals 88 Oversized T-Shirt - Navy & White",
+    name: "Oversized Round Neck T-Shirt - Navy Blue & White",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Best Seller",
@@ -815,7 +815,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m20",
-    name: "Fast Lane Full Sleeve Oversized Tee - Off White & Red",
+    name: "Oversized Round Neck T-Shirt - Off White & Crimson Red",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "New Drop",
@@ -843,7 +843,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m21",
-    name: "Riders Life Acid Wash Oversized Tee - Black & Denim",
+    name: "Printed Round Neck T-Shirt - Acid Black & Denim Blue",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Trending",
@@ -871,7 +871,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m22",
-    name: "Sprint Club Oversized Tee - Contrast 5 Thread Black",
+    name: "Oversized Round Neck T-Shirt - Jet Black & Light Grey",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Sale",
@@ -899,7 +899,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m23",
-    name: "Madrid Oversized Graphic Tee - White & Navy",
+    name: "Printed Round Neck T-Shirt - Ivory White & Navy Blue",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "Best Seller",
@@ -927,7 +927,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m24",
-    name: "Eternal Khepri Oversized Tee - Black & Hazelnut",
+    name: "Printed Round Neck T-Shirt - Jet Black & Hazelnut",
     category: "T-Shirt",
     subCategory: "Round Neck T-shirt",
     badge: "New Drop",
@@ -1069,7 +1069,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m29",
-    name: "Heavyweight Zip-Up Hoodie - Charcoal",
+    name: "Zip-Up Hoodie - Charcoal Slate & Jet Black",
     category: "Hoodie",
     subCategory: "Mens Hoodies",
     badge: "Best Seller",
@@ -1098,7 +1098,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m30",
-    name: "Oversized Pullover Hoodie - Forest",
+    name: "Basic Pullover Hoodie",
     category: "Hoodie",
     subCategory: "Mens Hoodies",
     badge: "New Drop",
@@ -1126,7 +1126,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m31",
-    name: "Graphic Logo Hoodie - Vintage Wash",
+    name: "Printed Hoodie",
     category: "Hoodie",
     subCategory: "Mens Hoodies",
     badge: "Trending",
@@ -1154,7 +1154,7 @@ const MEN_PRODUCTS = [
   },
   {
     id: "zmw-m32",
-    name: "Oversized Zip Hoodie - Ink Black",
+    name: "Zip-Up Hoodie - Ink Black & Slate Grey",
     category: "Hoodie",
     subCategory: "Mens Hoodies",
     badge: null,
@@ -1312,7 +1312,7 @@ const WOMEN_SUBCATEGORIES = ["Round Neck", "V Neck", "Women's Hoodies", "Women's
 const WOMEN_PRODUCTS = [
   {
     id: "zmw-w01",
-    name: "Star League Varsity Printed Tee",
+    name: "Women's Oversized Tee - Sunflower Yellow & Off White",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: "Best Seller",
@@ -1341,7 +1341,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w02",
-    name: "Retro Script Printed Tee",
+    name: "Graphic Tee - Jet Black & Sage Green",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: "New Drop",
@@ -1369,7 +1369,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w03",
-    name: "Floral Graphic Boxy Tee",
+    name: "Women's Oversized Tee - Ivory & Blush Pink",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: "Trending",
@@ -1397,7 +1397,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w04",
-    name: "Motorsport Graphic Tee",
+    name: "Graphic Tee - Racing Red & Jet Black",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: null,
@@ -1425,7 +1425,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w05",
-    name: "Star League University Tee",
+    name: "Women's Oversized Tee - Sunflower Yellow & Ivory",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: "Best Seller",
@@ -1453,7 +1453,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w06",
-    name: "Minimal Line-Art Graphic Tee",
+    name: "Graphic Tee - Stone Beige",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: "New Drop",
@@ -1480,7 +1480,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w19",
-    name: "City Skyline Oversized Tee - Downtown",
+    name: "Women's Oversized Tee - Graphite & Off White",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: "Trending",
@@ -1508,7 +1508,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w20",
-    name: "Sunset Palm Graphic Tee",
+    name: "Graphic Tee - Sand & Terracotta",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: "New Drop",
@@ -1536,7 +1536,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w21",
-    name: "Abstract Muse Artist Tee",
+    name: "Graphic Tee - Ivory & Clay",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: "Sale",
@@ -1564,7 +1564,7 @@ const WOMEN_PRODUCTS = [
   },
   {
     id: "zmw-w22",
-    name: "Total Eclipse Crop Graphic Tee",
+    name: "Graphic Tee - Onyx & Moon Grey",
     category: "T-Shirt",
     subCategory: "Women's Tees",
     badge: null,
@@ -2036,7 +2036,7 @@ const KIDS_PRODUCTS = [
 const BOYS_PRODUCTS = [
   {
     id: "zmw-b01",
-    name: "Wave Runner Round Neck Tee",
+    name: "Printed Round Neck T-Shirt",
     category: "T-Shirt",
     subCategory: "Round Neck",
     badge: "Best Seller",
@@ -2065,7 +2065,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b02",
-    name: "Surf Stripe Round Neck Tee",
+    name: "Printed Round Neck T-Shirt - Sky Blue & Crisp White",
     category: "T-Shirt",
     subCategory: "Round Neck",
     badge: "Trending",
@@ -2093,7 +2093,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b03",
-    name: "Cozy Fleece High Neck Top",
+    name: "Boys High Neck T-Shirt",
     category: "High Neck",
     subCategory: "High Neck",
     badge: "New Drop",
@@ -2121,7 +2121,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b04",
-    name: "Contrast Zip High Neck Top",
+    name: "Boys Zip High Neck T-Shirt",
     category: "High Neck",
     subCategory: "High Neck",
     badge: "Trending",
@@ -2149,7 +2149,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b05",
-    name: "Cargo Pocket Play Shorts",
+    name: "Boys Cotton Shorts",
     category: "Shorts",
     subCategory: "Shorts",
     badge: "Best Seller",
@@ -2177,7 +2177,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b06",
-    name: "Cuffed Fleece Jogger Shorts",
+    name: "Casual Shorts",
     category: "Shorts",
     subCategory: "Shorts",
     badge: "New Drop",
@@ -2205,7 +2205,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b07",
-    name: "Heavyweight Crew Sweatshirt",
+    name: "Boys Cotton Sweatshirt",
     category: "Sweatshirt",
     subCategory: "Sweatshirts",
     badge: "Trending",
@@ -2233,7 +2233,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b08",
-    name: "Color-Block Sweatshirt",
+    name: "Printed Sweatshirt",
     category: "Sweatshirt",
     subCategory: "Sweatshirts",
     badge: "New Drop",
@@ -2261,7 +2261,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b09",
-    name: "Kangaroo Pocket Zip Hoodie",
+    name: "Boys Zip-Up Hoodie",
     category: "Hoodie",
     subCategory: "Hoodies",
     badge: "Best Seller",
@@ -2290,7 +2290,7 @@ const BOYS_PRODUCTS = [
   },
   {
     id: "zmw-b10",
-    name: "Over-Head Fleece Hoodie",
+    name: "Boys Pullover Hoodie",
     category: "Hoodie",
     subCategory: "Hoodies",
     badge: "New Drop",
@@ -2327,7 +2327,7 @@ const BOYS_PRODUCTS = [
 const GIRLS_PRODUCTS = [
   {
     id: "zmw-g01",
-    name: "Buttercup Round Neck Tee",
+    name: "Printed T-Shirt",
     category: "T-Shirt",
     subCategory: "Round Neck",
     badge: "Best Seller",
@@ -2356,7 +2356,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g02",
-    name: "Heart Pop Round Neck Tee",
+    name: "Printed T-Shirt - Peony & Vanilla",
     category: "T-Shirt",
     subCategory: "Round Neck",
     badge: "Trending",
@@ -2384,7 +2384,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g03",
-    name: "Flutter Sleeve High Neck Top",
+    name: "Girls High Neck T-Shirt",
     category: "High Neck",
     subCategory: "High Neck",
     badge: "New Drop",
@@ -2412,7 +2412,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g04",
-    name: "Ribbed High Neck Long Sleeve",
+    name: "Full Sleeve High Neck",
     category: "High Neck",
     subCategory: "High Neck",
     badge: "Trending",
@@ -2440,7 +2440,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g05",
-    name: "Tiered Ruffle Play Shorts",
+    name: "Girls Cotton Shorts - Dusky Peach & Sage Mint",
     category: "Shorts",
     subCategory: "Shorts",
     badge: "Best Seller",
@@ -2468,7 +2468,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g06",
-    name: "Tulip Waist Cotton Shorts",
+    name: "Girls Cotton Shorts - Lavender & Off White",
     category: "Shorts",
     subCategory: "Shorts",
     badge: "New Drop",
@@ -2496,7 +2496,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g07",
-    name: "Cozy Heart Crew Sweatshirt",
+    name: "Printed Sweatshirt - Blush Pink & Stone Beige",
     category: "Sweatshirt",
     subCategory: "Sweatshirts",
     badge: "Best Seller",
@@ -2524,7 +2524,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g08",
-    name: "Rainbow Stripe Sweatshirt",
+    name: "Printed Sweatshirt - Rainbow Cream & Pastel Mix",
     category: "Sweatshirt",
     subCategory: "Sweatshirts",
     badge: "Trending",
@@ -2552,7 +2552,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g09",
-    name: "Hooded Cloud Zip Hoodie",
+    name: "Printed Hoodie - Lilac & Cream",
     category: "Hoodie",
     subCategory: "Hoodies",
     badge: "Trending",
@@ -2581,7 +2581,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g10",
-    name: "Softest Oversized Hoodie",
+    name: "Girls Pullover Hoodie",
     category: "Hoodie",
     subCategory: "Hoodies",
     badge: "New Drop",
@@ -2609,7 +2609,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g11",
-    name: "Satin Trim Pyjama Set",
+    name: "Girls Casual Top - Ice Pink & Mint",
     category: "Pyjama Set",
     subCategory: "Casual Wear",
     badge: "Best Seller",
@@ -2637,7 +2637,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g12",
-    name: "Sweet Dream Sleep Set",
+    name: "Girls Casual Top - Oatmeal & Dusty Grey",
     category: "Pyjama Set",
     subCategory: "Casual Wear",
     badge: "New Drop",
@@ -2665,7 +2665,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g13",
-    name: "Lace Collar Long Gown",
+    name: "Girls Party Gown",
     category: "Gown",
     subCategory: "Long Gown",
     badge: "Limited",
@@ -2693,7 +2693,7 @@ const GIRLS_PRODUCTS = [
   },
   {
     id: "zmw-g14",
-    name: "Tulle Party Long Gown",
+    name: "Girls Party Gown - Blush & Champagne",
     category: "Gown",
     subCategory: "Long Gown",
     badge: "New Drop",
@@ -2730,7 +2730,7 @@ const GIRLS_PRODUCTS = [
 const BABIES_PRODUCTS = [
   {
     id: "zmw-bab01",
-    name: "Snap Button Cotton Romper",
+    name: "Baby Cotton Romper",
     category: "Romper",
     subCategory: "Romper",
     badge: "Best Seller",
@@ -2759,7 +2759,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab02",
-    name: "Terry Knit Baby Romper",
+    name: "Baby Cotton Romper - Mustard & Off White",
     category: "Romper",
     subCategory: "Romper",
     badge: "Trending",
@@ -2787,7 +2787,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab03",
-    name: "Organic Cotton Baby T-Shirt",
+    name: "Baby Cotton T-Shirt",
     category: "T-Shirt",
     subCategory: "T-shirt",
     badge: "Best Seller",
@@ -2815,7 +2815,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab04",
-    name: "Tiny Hearts Baby Tee",
+    name: "Printed Baby T-Shirt",
     category: "T-Shirt",
     subCategory: "T-shirt",
     badge: "New Drop",
@@ -2843,7 +2843,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab05",
-    name: "Footed Fleece Pyjama",
+    name: "Printed Pyjama - Grey Stripe & Blue Stripe",
     category: "Pyjama",
     subCategory: "Babies Pyjama",
     badge: "New Drop",
@@ -2871,7 +2871,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab06",
-    name: "One-Piece Sleep Pyjama",
+    name: "Baby Cotton Pyjama",
     category: "Pyjama",
     subCategory: "Babies Pyjama",
     badge: "Trending",
@@ -2899,7 +2899,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab07",
-    name: "Quilted Baby Sweatshirt",
+    name: "Baby Cotton Sweatshirt",
     category: "Sweatshirt",
     subCategory: "Sweatshirts",
     badge: "Best Seller",
@@ -2927,7 +2927,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab08",
-    name: "Plush Hooded Baby Hoodie",
+    name: "Baby Pullover Hoodie",
     category: "Hoodie",
     subCategory: "Babies Hoodies",
     badge: "New Drop",
@@ -2955,7 +2955,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab09",
-    name: "Zip Front Baby Hoodie",
+    name: "Baby Zip-Up Hoodie",
     category: "Hoodie",
     subCategory: "Babies Hoodies",
     badge: "Trending",
@@ -2983,7 +2983,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab10",
-    name: "Elastic Waist Baby Bottoms",
+    name: "Baby Cotton Pants",
     category: "Bottoms",
     subCategory: "Babies Bottoms",
     badge: "Best Seller",
@@ -3011,7 +3011,7 @@ const BABIES_PRODUCTS = [
   },
   {
     id: "zmw-bab11",
-    name: "Cuffed Knit Pants Bottoms",
+    name: "Baby Joggers",
     category: "Bottoms",
     subCategory: "Babies Bottoms",
     badge: "New Drop",

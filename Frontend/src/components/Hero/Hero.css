@@ -7,8 +7,9 @@
 .hero-clean-banner {
   position: relative;
   width: 100%;
-  height: clamp(580px, calc(100vh - 90px), 880px);
-  height: clamp(580px, calc(100dvh - 90px), 880px);
+  min-height: 520px;
+  height: clamp(520px, calc(100vh - 68px), 640px);
+  height: clamp(520px, calc(100dvh - 68px), 640px);
   background-color: #06090F;
   overflow: hidden;
   contain: layout size paint;
@@ -476,7 +477,8 @@
 /* ── Responsive ── */
 @media (max-width: 1024px) {
   .hero-clean-banner {
-    height: 520px;
+    min-height: 580px;
+    height: clamp(580px, calc(90vh - 65px), 660px);
   }
 
   .hero-offer-heading {

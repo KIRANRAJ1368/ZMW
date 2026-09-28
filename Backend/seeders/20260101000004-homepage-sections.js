@@ -3,11 +3,11 @@
 const SECTIONS = [
   { section_key: "hero", title: null, subtitle: null, sort_order: 0, config: null },
   {
-    section_key: "category_visuals",
-    title: "Explore by Department",
-    subtitle: "Shop the edit made for every member of the family",
+    section_key: "new_arrivals",
+    title: "New Arrivals",
+    subtitle: "Fresh off the line",
     sort_order: 1,
-    config: null
+    config: { limit: 8 }
   },
   {
     section_key: "mens_categories",
@@ -45,18 +45,18 @@ const SECTIONS = [
     config: { categorySlug: "babies" }
   },
   {
-    section_key: "new_arrivals",
-    title: "New Arrivals",
-    subtitle: "Fresh off the line",
+    section_key: "best_sellers",
+    title: "Best Sellers",
+    subtitle: "Loved by 1 Lakh+ streetwear enthusiasts",
     sort_order: 7,
     config: { limit: 8 }
   },
   {
-    section_key: "best_sellers",
-    title: "Best Sellers",
-    subtitle: "Loved by 1 Lakh+ streetwear enthusiasts",
+    section_key: "category_visuals",
+    title: "Explore by Department",
+    subtitle: "Shop the edit made for every member of the family",
     sort_order: 8,
-    config: { limit: 8 }
+    config: null
   },
   { section_key: "newsletter", title: null, subtitle: null, sort_order: 9, config: null },
   { section_key: "instagram_showcase", title: "ZMW on Instagram", subtitle: null, sort_order: 10, config: null }

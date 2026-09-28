@@ -13,7 +13,9 @@
   align-items: center;
   overflow: hidden;
   background-color: var(--color-ink-deep);
-  min-height: clamp(600px, 80vh, 760px);
+  min-height: 520px;
+  height: clamp(520px, calc(100vh - 68px), 640px);
+  height: clamp(520px, calc(100dvh - 68px), 640px);
 }
 
 /* Kids-specific banner image positioning: shifts the kids toward the left so they are balanced & visible */

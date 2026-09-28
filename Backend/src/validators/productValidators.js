@@ -30,9 +30,16 @@ function productRules() {
     body("images.*.url").optional().isString().notEmpty(),
     body("colors").optional().isArray(),
     body("colors.*.name").optional().isString().notEmpty(),
-    body("colors.*.hex").optional().matches(/^#[0-9A-Fa-f]{6}$/),
+    body("colors.*.hex").optional().isString(),
+    body("colors.*.hex_code").optional().isString(),
     body("sizes").optional().isArray(),
-    body("sizes.*").optional().isString().notEmpty()
+    body("sizes.*").optional(),
+    body("variants").optional().isArray(),
+    body("variants.*.size").optional({ values: "null" }),
+    body("variants.*.color").optional({ values: "null" }),
+    body("variants.*.stock_count").optional().isInt({ min: 0 }),
+    body("variants.*.sku_suffix").optional({ values: "null" }),
+    body("variants.*.price_override").optional({ values: "null" })
   ];
 }
 

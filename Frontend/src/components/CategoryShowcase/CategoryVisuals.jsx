@@ -60,25 +60,48 @@ const CATEGORIES_DATA = [
 export default function CategoryVisuals() {
   const { homeData } = useShop();
   const section = homeData?.sections?.find((item) => item.section_key === "category_visuals");
-  const categories = homeData
-    ? (homeData.categories || []).map((category) => {
-        const existingCategory = CATEGORIES_DATA.find(
-          (item) => item.title.toLowerCase() === category.name.toLowerCase()
-        );
-        return {
-          id: category.id,
-          badge: category.description || existingCategory?.badge || "SHOP THE COLLECTION",
-          title: category.name,
-          subtitle: category.description || existingCategory?.subtitle || "Discover the latest ZMW styles.",
-          cta: `Shop ${category.name}`,
-          // Preserve the genuine existing department photography until the
-          // category has an Admin-managed image URL.
-          image: category.image_url || existingCategory?.image || "/images/dept-family-banner.jpg",
-          imagePosition: category.image_position || existingCategory?.imagePosition || "center 8%",
-          link: `/collection?category=${encodeURIComponent(category.slug)}`
-        };
-      })
-    : CATEGORIES_DATA;
+
+  const customDepts =
+    Array.isArray(section?.config?.departments) && section.config.departments.length > 0
+      ? section.config.departments
+          .filter((d) => d.is_active !== false)
+          .map((d, i) => {
+            const fallback =
+              CATEGORIES_DATA.find((c) => c.title.toLowerCase() === (d.title || "").toLowerCase()) ||
+              CATEGORIES_DATA[i] ||
+              {};
+            return {
+              id: d.id || fallback.id || `dept-${i}`,
+              badge: d.badge || fallback.badge || "SHOP THE COLLECTION",
+              title: d.title || fallback.title || "DEPARTMENT",
+              subtitle: d.subtitle || fallback.subtitle || "",
+              cta: d.cta || fallback.cta || `Shop ${d.title || "Now"}`,
+              image: d.image || fallback.image || "/images/dept-mens.jpg",
+              imagePosition: d.imagePosition || fallback.imagePosition || "center 6%",
+              link: d.link || fallback.link || "/collection"
+            };
+          })
+      : null;
+
+  const categories =
+    customDepts ||
+    (homeData?.categories?.length
+      ? homeData.categories.map((category) => {
+          const existingCategory = CATEGORIES_DATA.find(
+            (item) => item.title.toLowerCase() === category.name.toLowerCase()
+          );
+          return {
+            id: category.id,
+            badge: category.description || existingCategory?.badge || "SHOP THE COLLECTION",
+            title: category.name,
+            subtitle: category.description || existingCategory?.subtitle || "Discover the latest ZMW styles.",
+            cta: `Shop ${category.name}`,
+            image: category.image_url || existingCategory?.image || "/images/dept-family-banner.jpg",
+            imagePosition: category.image_position || existingCategory?.imagePosition || "center 8%",
+            link: existingCategory?.link || `/collection?category=${encodeURIComponent(category.slug)}`
+          };
+        })
+      : CATEGORIES_DATA);
   const topCategories = categories.slice(0, 2);
   const remainingCategories = categories.slice(2);
 

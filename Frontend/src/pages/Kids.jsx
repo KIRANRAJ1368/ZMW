@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import { KIDS_PRODUCTS, KIDS_SUBCATEGORIES } from "../data/products";
+import { KIDS_SUBCATEGORIES } from "../data/products";
+import { CURRENCY_SYMBOL, formatINRNumber } from "../utils/formatPrice";
 import ProductCard from "../components/ProductCard/ProductCard";
 import RecentlyViewed from "../components/RecentlyViewed/RecentlyViewed";
 import TrustFeatures from "../components/TrustFeatures/TrustFeatures";
@@ -23,18 +24,18 @@ const SORT_OPTIONS = [
 const INITIAL_PAGE_SIZE = 12;
 
 export default function Kids() {
-  const { formatPrice, currency, currencies } = useShop();
+  const { productsByCategory } = useShop();
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
   const hasCategorySelection = Boolean(categoryFromUrl);
 
-  const rate = (currencies && currencies[currency]?.rate) || 83;
-  const currencySymbol = (currencies && currencies[currency]?.symbol) || "₹";
+  // Always the Admin/backend catalog — never a separate static price list.
+  const KIDS_PRODUCTS = useMemo(() => productsByCategory("kids"), [productsByCategory]);
 
   // Calculate dynamic price ceiling
   const priceCeiling = useMemo(
-    () => Math.ceil(Math.max(...KIDS_PRODUCTS.map((p) => p.price * rate)) / 100) * 100,
-    [rate]
+    () => Math.ceil(Math.max(1, ...KIDS_PRODUCTS.map((p) => Number(p.price) || 0)) / 100) * 100,
+    [KIDS_PRODUCTS]
   );
 
   // Filter States
@@ -103,24 +104,24 @@ export default function Kids() {
       });
     });
     return Array.from(map.values()).sort((a, b) => b.count - a.count);
-  }, []);
+  }, [KIDS_PRODUCTS]);
 
   // Extract all available sizes
   const sizeOptions = useMemo(() => {
     const set = new Set();
     KIDS_PRODUCTS.forEach((p) => (p.sizes || []).forEach((s) => set.add(s)));
     return Array.from(set).sort((a, b) => {
-      const order = ["0-1Y", "1-2Y", "2-3Y", "3-4Y", "4-5Y", "5-6Y", "6-7Y", "7-8Y", "8-9Y", "9-10Y"];
+      const order = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
       const iA = order.indexOf(a);
       const iB = order.indexOf(b);
       if (iA !== -1 && iB !== -1) return iA - iB;
       return a.localeCompare(b);
     });
-  }, []);
+  }, [KIDS_PRODUCTS]);
 
   const inStockCount = useMemo(
     () => KIDS_PRODUCTS.filter((p) => p.inStock).length,
-    []
+    [KIDS_PRODUCTS]
   );
   const outOfStockCount = KIDS_PRODUCTS.length - inStockCount;
 
@@ -177,7 +178,7 @@ export default function Kids() {
         return false;
       if (availability === "inStock" && !p.inStock) return false;
       if (availability === "outOfStock" && p.inStock) return false;
-      const pPrice = Math.round(p.price * rate);
+      const pPrice = Number(p.price) || 0;
       if (pPrice < minPrice || pPrice > maxPrice) return false;
       return true;
     });
@@ -209,7 +210,7 @@ export default function Kids() {
         break;
     }
     return list;
-  }, [activeSubCategory, selectedColors, selectedSizes, availability, minPrice, maxPrice, sortBy, rate]);
+  }, [activeSubCategory, selectedColors, selectedSizes, availability, minPrice, maxPrice, sortBy, KIDS_PRODUCTS]);
 
   // Paginated visible slice
   const displayedProducts = useMemo(() => {
@@ -290,7 +291,7 @@ export default function Kids() {
           <div className="filter-accordion-content">
             <div className="price-inputs-row">
               <div className="price-input-group">
-                <span className="price-input-prefix">{currencySymbol}</span>
+                <span className="price-input-prefix">{CURRENCY_SYMBOL}</span>
                 <input
                   type="number"
                   min={0}
@@ -303,7 +304,7 @@ export default function Kids() {
               </div>
               <span className="price-separator">to</span>
               <div className="price-input-group">
-                <span className="price-input-prefix">{currencySymbol}</span>
+                <span className="price-input-prefix">{CURRENCY_SYMBOL}</span>
                 <input
                   type="number"
                   min={minPrice}
@@ -326,8 +327,8 @@ export default function Kids() {
               aria-label="Maximum price range"
             />
             <div className="price-range-labels">
-              <span>{currencySymbol}0</span>
-              <span>up to {currencySymbol}{maxPrice.toLocaleString("en-IN")}</span>
+              <span>{CURRENCY_SYMBOL}0</span>
+              <span>up to {CURRENCY_SYMBOL}{formatINRNumber(maxPrice)}</span>
             </div>
           </div>
         )}
@@ -690,7 +691,7 @@ export default function Kids() {
                     title="Reset price filter"
                   >
                     <span>
-                      {currencySymbol}{minPrice.toLocaleString("en-IN")} - {currencySymbol}{maxPrice.toLocaleString("en-IN")}
+                      {CURRENCY_SYMBOL}{formatINRNumber(minPrice)} - {CURRENCY_SYMBOL}{formatINRNumber(maxPrice)}
                     </span>
                     <span className="m-tag-close">✕</span>
                   </button>

@@ -253,7 +253,7 @@ export default function SearchModal() {
                           <span className="search-item-price">
                             {formatPrice(product.price)}
                           </span>
-                          {product.originalPrice && (
+                          {product.originalPrice && product.originalPrice > product.price && (
                             <span className="search-item-original-price">
                               {formatPrice(product.originalPrice)}
                             </span>

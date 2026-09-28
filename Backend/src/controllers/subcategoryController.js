@@ -135,7 +135,8 @@ async function create(req, res) {
     slug: req.body.slug,
     image_url: req.body.image_url || null,
     sort_order: req.body.sort_order ?? 0,
-    is_active: req.body.is_active ?? true
+    is_active: req.body.is_active ?? true,
+    show_on_homepage: req.body.show_on_homepage ?? true
   });
   return sendSuccess(res, { statusCode: 201, data: attachDefaultImage(subcategory.toJSON()) });
 }
@@ -149,7 +150,7 @@ async function update(req, res) {
     if (!category) throw ApiError.badRequest("category_id does not match an existing category");
   }
 
-  const fields = ["category_id", "name", "slug", "image_url", "sort_order", "is_active"];
+  const fields = ["category_id", "name", "slug", "image_url", "sort_order", "is_active", "show_on_homepage"];
   fields.forEach((f) => {
     if (req.body[f] !== undefined) subcategory[f] = req.body[f];
   });

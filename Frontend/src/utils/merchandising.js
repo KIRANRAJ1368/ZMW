@@ -38,8 +38,9 @@ export function enrichProductMetrics(product, index = 0) {
     product.salesVolume7d ?? Math.round(salesVolume30d * 0.28 + ((seed % 15) - 7));
   const conversionRate =
     product.conversionRate ?? Number((((seed % 35) + 18) / 10).toFixed(1)); // 1.8% to 5.2%
+  // Ranking only (never displayed) — always derived from the Admin price.
   const revenue30d =
-    product.revenue30d ?? salesVolume30d * (product.price || 50);
+    product.revenue30d ?? salesVolume30d * (Number(product.price) || 0);
 
   // Synthesize release date within last 45 days if missing
   const daysAgo = product.daysAgo ?? (seed % 42) + 1;
@@ -289,7 +290,7 @@ export function generateCatalogJsonLd(products = [], listName = "Featured Collec
         "category": product.category,
         "offers": {
           "@type": "Offer",
-          "priceCurrency": "USD",
+          "priceCurrency": "INR",
           "price": product.price,
           "availability": (product.inStock !== false) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
           "itemCondition": "https://schema.org/NewCondition",

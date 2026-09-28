@@ -9,7 +9,8 @@ import {
   Image as ImageIcon,
   RotateCcw,
   Search,
-  Tag
+  Tag,
+  Boxes
 } from "lucide-react";
 import { productsApi, categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
@@ -22,6 +23,7 @@ import LoadingState from "../../components/LoadingState/LoadingState";
 import ProductViewModal from "../../components/ProductViewModal/ProductViewModal";
 import ImageLightboxModal from "../../components/ImageLightboxModal/ImageLightboxModal";
 import { resolveImageUrl } from "../../utils/imageUrl";
+import { formatINR } from "../../utils/formatPrice";
 import "./ProductsPage.css";
 
 export default function ProductsPage() {
@@ -127,6 +129,14 @@ export default function ProductsPage() {
           </p>
         </div>
         <div className="page-header-actions">
+          <Link
+            to="/inventory"
+            className="btn btn-secondary btn-lg"
+            style={{ display: "inline-flex", alignItems: "center", gap: 7 }}
+          >
+            <Boxes size={17} />
+            <span>Stock &amp; Variants Hub</span>
+          </Link>
           <button type="button" className="btn btn-accent btn-lg" onClick={() => navigate("/products/new")}>
             <Plus size={17} />
             <span>Add New Product</span>
@@ -173,6 +183,7 @@ export default function ProductsPage() {
               >
                 <option value="">All Stock Statuses</option>
                 <option value="in-stock">In Stock Only</option>
+                <option value="low-stock">Low Stock (≤ 5 units)</option>
                 <option value="out-of-stock">Out of Stock</option>
               </select>
             </div>
@@ -326,9 +337,9 @@ export default function ProductsPage() {
                 width: "90px",
                 render: (row) => (
                   <div className="price-cell">
-                    <span className="price-current">₹{row.price}</span>
+                    <span className="price-current">{formatINR(row.price)}</span>
                     {row.originalPrice && row.originalPrice > row.price && (
-                      <span className="price-original">₹{row.originalPrice}</span>
+                      <span className="price-original">{formatINR(row.originalPrice)}</span>
                     )}
                   </div>
                 )
@@ -336,13 +347,39 @@ export default function ProductsPage() {
               {
                 key: "stockCount",
                 label: "Stock & Status",
-                width: "125px",
-                render: (row) => (
-                  <StatusBadge
-                    value={row.inStock ? "in stock" : "out of stock"}
-                    label={`${row.stockCount} in stock`}
-                  />
-                )
+                width: "145px",
+                render: (row) => {
+                  const stock = Number(row.stockCount ?? 0);
+                  const isOut = !row.inStock || stock === 0;
+                  const isLow = !isOut && stock <= 5;
+                  return (
+                    <span
+                      className={`pill-badge ${isOut ? "badge-red" : isLow ? "badge-gold" : "badge-green"}`}
+                      style={{
+                        fontSize: 11.5,
+                        fontWeight: 600,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "3px 9px",
+                        whiteSpace: "nowrap"
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          background: isOut ? "#ef4444" : isLow ? "#f59e0b" : "#10b981",
+                          flexShrink: 0
+                        }}
+                      />
+                      <span>
+                        {isOut ? "Out of Stock" : isLow ? `Low Stock (${stock})` : `In Stock (${stock})`}
+                      </span>
+                    </span>
+                  );
+                }
               },
               {
                 key: "isBestSeller",
@@ -405,6 +442,14 @@ export default function ProductsPage() {
                     >
                       <Edit2 size={13} />
                       <span>Edit</span>
+                    </Link>
+                    <Link
+                      to={`/inventory?productId=${row.id}`}
+                      className="btn btn-secondary btn-sm"
+                      title="Manage Sizes, Colors & Stock Variants"
+                    >
+                      <Boxes size={13} />
+                      <span>Stock</span>
                     </Link>
                     <button
                       type="button"

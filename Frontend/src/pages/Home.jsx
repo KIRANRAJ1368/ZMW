@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import Hero from "../components/Hero/Hero";
 import CategoryVisuals from "../components/CategoryShowcase/CategoryVisuals";
 import { NewArrivalsSection, BestSellersSection } from "../components/CuratedShowcase/CuratedShowcase";
@@ -28,17 +29,19 @@ export default function Home() {
   };
   // Explicit storefront Home Page sequence requested by user:
   // 1. Hero
-  // 2. Explore by Department (category_visuals)
-  // 3. New Arrivals (new_arrivals)
-  // 4. Men Categories (mens_categories)
-  // 5. Women Categories (womens_categories)
-  // 6. Boys Categories (boys_categories)
-  // 7. Girls Categories (girls_categories)
-  // 8. Babies Categories (babies_categories)
-  // 9. Best Sellers (best_sellers)
+  // 2. New Arrivals (new_arrivals)
+  // 3. Men Categories (mens_categories)
+  // 4. Women Categories (womens_categories)
+  // 5. Boys Categories (boys_categories)
+  // 6. Girls Categories (girls_categories)
+  // 7. Babies Categories (babies_categories)
+  // 8. Best Sellers (best_sellers)
+  //
+  // "Explore by Department" (category_visuals) is deliberately absent from this
+  // list so it never renders on the storefront. Its component, its admin
+  // controls and its database row are left untouched.
   const ORDERED_SECTION_KEYS = [
     "hero",
-    "category_visuals",
     "new_arrivals",
     "mens_categories",
     "womens_categories",
@@ -48,15 +51,50 @@ export default function Home() {
     "best_sellers"
   ];
 
-  const isEnabled = (key) => {
-    if (!homeData || !homeData.sections) return true;
-    const found = homeData.sections.find((s) => s.section_key === key);
-    return found ? (found.is_active ?? true) : true;
+  const SECTION_CATEGORY_SLUG_MAP = {
+    mens_categories: "mens",
+    womens_categories: "women",
+    boys_categories: "boys",
+    girls_categories: "girls",
+    babies_categories: "babies"
   };
+
+  const activeSectionKeys = useMemo(() => {
+    if (!homeData) {
+      return ORDERED_SECTION_KEYS;
+    }
+
+    const categoriesList = homeData.categories || [];
+    const sectionMap = new Map((homeData.sections || []).map((s) => [s.section_key, s]));
+
+    return ORDERED_SECTION_KEYS
+      .filter((key) => {
+        // Dynamically check category's show_on_homepage toggle from admin
+        const catSlug = SECTION_CATEGORY_SLUG_MAP[key];
+        if (catSlug) {
+          const matchedCategory = categoriesList.find(
+            (c) => c.slug === catSlug || (catSlug === "mens" && c.slug === "men")
+          );
+          if (matchedCategory) {
+            if (matchedCategory.show_on_homepage === false || matchedCategory.is_active === false) {
+              return false;
+            }
+          }
+        }
+
+        const found = sectionMap.get(key);
+        return found !== undefined ? Boolean(found.is_active) : true;
+      })
+      .sort((a, b) => {
+        const orderA = sectionMap.get(a)?.sort_order ?? ORDERED_SECTION_KEYS.indexOf(a);
+        const orderB = sectionMap.get(b)?.sort_order ?? ORDERED_SECTION_KEYS.indexOf(b);
+        return orderA - orderB;
+      });
+  }, [homeData]);
 
   return (
     <>
-      {ORDERED_SECTION_KEYS.filter(isEnabled).map((key) => {
+      {activeSectionKeys.map((key) => {
         const Section = sectionComponents[key];
         return Section ? <Section key={key} /> : null;
       })}

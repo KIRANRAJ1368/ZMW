@@ -10,6 +10,9 @@ import CategoriesPage from "./pages/Categories/CategoriesPage";
 import SubcategoriesPage from "./pages/Subcategories/SubcategoriesPage";
 import ProductsPage from "./pages/Products/ProductsPage";
 import ProductFormPage from "./pages/Products/ProductFormPage";
+import InventoryPage from "./pages/Inventory/InventoryPage";
+import VariantManagementPage from "./pages/Variants/VariantManagementPage";
+import StockManagementPage from "./pages/Stock/StockManagementPage";
 import BannersPage from "./pages/Banners/BannersPage";
 import HomepageSectionsPage from "./pages/HomepageSections/HomepageSectionsPage";
 import OrdersPage from "./pages/Orders/OrdersPage";
@@ -40,6 +43,9 @@ export default function App() {
             <Route path="products" element={<ProductsPage />} />
             <Route path="products/new" element={<ProductFormPage />} />
             <Route path="products/:id/edit" element={<ProductFormPage />} />
+            <Route path="inventory" element={<InventoryPage />} />
+            <Route path="variants" element={<VariantManagementPage />} />
+            <Route path="stock" element={<StockManagementPage />} />
             <Route path="banners" element={<BannersPage />} />
             <Route path="homepage-sections" element={<HomepageSectionsPage />} />
             <Route path="orders" element={<OrdersPage />} />

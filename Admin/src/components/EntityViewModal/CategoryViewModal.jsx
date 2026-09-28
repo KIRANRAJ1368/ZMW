@@ -118,6 +118,14 @@ export default function CategoryViewModal({ category, onEdit, onClose }) {
                   <span>{data.is_active ? "Live on Store" : "Hidden"}</span>
                 </span>
               </div>
+
+              <div className="ev-stat-card">
+                <span className="ev-stat-label">Show on Homepage</span>
+                <span className="ev-stat-value">
+                  <Eye size={14} style={{ color: data.show_on_homepage !== false ? "#059669" : "#94a3b8" }} />
+                  <span>{data.show_on_homepage !== false ? "Visible on Homepage" : "Hidden from Homepage"}</span>
+                </span>
+              </div>
             </div>
 
             {/* Editorial Description */}

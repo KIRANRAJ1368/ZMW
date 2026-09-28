@@ -1,8 +1,12 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
+import { FREE_SHIPPING_THRESHOLD } from "../utils/shopConfig";
 import ProductCard from "../components/ProductCard/ProductCard";
 import RecentlyViewed from "../components/RecentlyViewed/RecentlyViewed";
+import { CURRENCY_SYMBOL, formatINRNumber, formatPrice } from "../utils/formatPrice";
+
+const FREE_SHIPPING_LABEL = `Free Shipping ${formatPrice(FREE_SHIPPING_THRESHOLD)}+`;
 import "./Collection.css";
 
 const SORT_OPTIONS = [
@@ -21,6 +25,9 @@ const SORT_OPTIONS = [
 const INITIAL_PAGE_SIZE = 12;
 
 const CATEGORY_ALIASES = { men: "mens" };
+
+/** Lowercase and strip punctuation so a slug and its display name compare equal. */
+const normalizeToken = (value) => (value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
 function renderHeroIcon(name) {
   switch (name) {
@@ -136,14 +143,14 @@ const BANNER_CONFIG = {
     badge: "Playful Drops",
     badgeIcon: "bolt",
     subBadge: "Season 2026",
-    offer: "STARTING AT ₹599",
-    offerTag: "FREE SHIPPING ₹499+",
+    offer: "STARTING AT {{MIN_PRICE}}",
+    offerTag: `FREE SHIPPING ${formatPrice(FREE_SHIPPING_THRESHOLD)}+`,
     title: "BUILT FOR PLAY",
     subtitle: "High-energy graphic streetwear hoodies, durable reinforced seams, and super-soft bio-washed cotton.",
     perks: [
       { icon: "shield", label: "Reinforced Durability" },
       { icon: "star", label: "4.8★ Parent Approved" },
-      { icon: "truck", label: "Free Shipping ₹499+" }
+      { icon: "truck", label: FREE_SHIPPING_LABEL }
     ],
     ctaText: "EXPLORE NOW",
     urgencyTag: "⚡ Selling Out Fast",
@@ -176,7 +183,7 @@ const BANNER_CONFIG = {
     badge: "Tiny & Soft",
     badgeIcon: "heart",
     subBadge: "100% Baby-Safe",
-    offer: "STARTING AT ₹449",
+    offer: "STARTING AT {{MIN_PRICE}}",
     offerTag: "HYPOALLERGENIC COTTON",
     title: "GENTLE ESSENTIALS",
     subtitle: "Cozy ribbed rompers, buttery-soft pyjamas, and stretch bottoms crafted in pure hypoallergenic organic cotton.",
@@ -203,7 +210,7 @@ const BANNER_CONFIG = {
     perks: [
       { icon: "shield", label: "100% Bio-Wash Cotton" },
       { icon: "star", label: "4.9★ Customer Rating" },
-      { icon: "truck", label: "Free Shipping ₹499+" }
+      { icon: "truck", label: FREE_SHIPPING_LABEL }
     ],
     ctaText: "EXPLORE NOW",
     urgencyTag: "✨ Fresh Drop",
@@ -259,7 +266,7 @@ const BANNER_CONFIG = {
     title: "One Store, Every Style.",
     subtitle: "Men, Women, Boys, Girls, and Babies — explore our unified catalogue of premium wardrobe essentials.",
     perks: [
-      { icon: "truck", label: "Free Shipping ₹499+" },
+      { icon: "truck", label: FREE_SHIPPING_LABEL },
       { icon: "shield", label: "7-Day Easy Returns" },
       { icon: "tag", label: "100% Quality Checked" }
     ],
@@ -296,15 +303,12 @@ function GridIcon({ columns }) {
 export default function Collection() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { currency, currencies, allProducts, homeData } = useShop();
+  const { allProducts, homeData } = useShop();
   const catalog = allProducts || [];
 
-  const rate = (currencies && currencies[currency]?.rate) || 83;
-  const currencySymbol = (currencies && currencies[currency]?.symbol) || "₹";
-
   const priceCeiling = useMemo(
-    () => Math.ceil(Math.max(1, ...catalog.map((p) => p.price * rate)) / 100) * 100,
-    [catalog, rate]
+    () => Math.ceil(Math.max(1, ...catalog.map((p) => Number(p.price) || 0)) / 100) * 100,
+    [catalog]
   );
 
   const rawCategoryParam = (searchParams.get("category") || "all").toLowerCase();
@@ -366,26 +370,99 @@ export default function Collection() {
   const bannerKey = collectionParam !== "all" ? collectionParam : categoryParam !== "all" ? categoryParam : "default";
   const managedBanner = homeData?.banners?.[bannerKey]?.[0];
   const config = BANNER_CONFIG[bannerKey] || BANNER_CONFIG.default;
-  const banner = managedBanner
-    ? {
-        ...config,
-        image: managedBanner.image_url || config.image,
-        imagePosition: managedBanner.image_position || config.imagePosition || "85% top",
-        badge: config.badge,
-        badgeIcon: config.badgeIcon,
-        subBadge: config.subBadge,
-        offer: config.offer,
-        offerTag: config.offerTag,
-        title: config.title,
-        subtitle: config.subtitle,
-        ctaText: config.ctaText,
-        urgencyTag: config.urgencyTag,
-        perks: config.perks
-      }
-    : config;
+  // "Starting at" claims are generated from the real Admin catalog so a banner
+  // can never advertise an amount the storefront does not actually charge.
+  const categoryMinPrice = useMemo(() => {
+    const slugs = [bannerKey, bannerKey === "men" ? "mens" : bannerKey === "woman" ? "women" : bannerKey]
+      .filter(Boolean)
+      .map((s) => String(s).toLowerCase());
+    const scoped = catalog.filter((p) => slugs.includes(String(p?.category ?? "").toLowerCase()));
+    const source = scoped.length ? scoped : catalog;
+    const prices = source.map((p) => Number(p?.price)).filter((n) => Number.isFinite(n) && n > 0);
+    return prices.length ? formatPrice(Math.min(...prices)) : "";
+  }, [bannerKey, catalog]);
+  const applyMinPrice = (text) => (text || "").replace(/\{\{MIN_PRICE\}\}/g, categoryMinPrice);
+
+  const banner = {
+    ...(managedBanner
+      ? {
+          ...config,
+          image: managedBanner.image_url || config.image,
+          imagePosition: managedBanner.image_position || config.imagePosition || "85% top",
+          badge: config.badge,
+          badgeIcon: config.badgeIcon,
+          subBadge: config.subBadge,
+          ctaText: config.ctaText,
+          urgencyTag: config.urgencyTag,
+          perks: config.perks
+        }
+      : config),
+    offer: applyMinPrice(config.offer),
+    offerTag: applyMinPrice(config.offerTag)
+  };
 
   const currentCategoryKey = categoryParam === "all" ? "all" : categoryParam;
   const activeCategoryLabel = HERO_CATEGORY_TABS.find((t) => t.id === currentCategoryKey)?.label || "Collection";
+
+  // A subcategory is requested whenever ?type= is present. Its page shows the
+  // products directly, with no banner.
+  const isSubcategoryView = typeParam !== "all";
+
+  // Resolve ?type= to a real subcategory record. Links arrive in two forms: the
+  // navbar dropdown sends the display name, the homepage tiles send the slug, so
+  // both are accepted. Subcategory slugs repeat across departments
+  // (round-neck exists under women, boys and girls), which is why the category
+  // in the URL is what disambiguates.
+  const homeCategories = useMemo(() => homeData?.categories || [], [homeData]);
+
+  const activeSubcategory = useMemo(() => {
+    const needle = normalizeToken(typeParam);
+    if (!needle) return null;
+
+    const scoped = categoryParam === "all"
+      ? homeCategories
+      : homeCategories.filter((c) => c.slug === categoryParam || c.slug === CATEGORY_ALIASES[categoryParam]);
+
+    const pool = [];
+    scoped.forEach((c) => {
+      (c.subcategories || []).forEach((s) => {
+        pool.push({ name: s.name, slug: s.slug, categorySlug: c.slug });
+      });
+    });
+
+    return (
+      pool.find((s) => normalizeToken(s.slug) === needle)
+      || pool.find((s) => normalizeToken(s.name) === needle)
+      || pool.find((s) => {
+        const name = normalizeToken(s.name);
+        return Boolean(name) && (name.includes(needle) || needle.includes(name));
+      })
+      || null
+    );
+  }, [homeCategories, categoryParam, typeParam]);
+
+  /**
+   * True when a product belongs to the selected subcategory. Deliberately an
+   * exact comparison on the product's own subcategory name: a substring match
+   * on the loose product type would drag in sibling subcategories (a
+   * "T-shirt" subcategory matching every "T-Shirts" product), and an empty
+   * candidate would match anything at all.
+   */
+  const matchesActiveSubcategory = (p) => {
+    if (typeParam === "all") return true;
+
+    if (activeSubcategory) {
+      return (
+        normalizeToken(p.subCategory) === normalizeToken(activeSubcategory.name)
+        && p.category === activeSubcategory.categorySlug
+      );
+    }
+
+    // Home payload unavailable (offline / API error): fall back to comparing the
+    // type token with the product's subcategory name, still exactly.
+    const needle = normalizeToken(typeParam);
+    return Boolean(needle) && normalizeToken(p.subCategory) === needle;
+  };
 
   const updateParams = (updates) => {
     const next = new URLSearchParams(searchParams);
@@ -430,13 +507,6 @@ export default function Collection() {
     if (type && (type === categoryParam || type.includes(categoryParam) || categoryParam.includes(type))) return true;
     if (name && name.includes(categoryParam)) return true;
     return false;
-  };
-
-  const matchesType = (value, type) => {
-    const normalize = (input) => (input || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-    const needle = normalize(type);
-    const candidate = normalize(value);
-    return candidate.includes(needle) || needle.includes(candidate);
   };
 
   const baseCategoryProducts = useMemo(() => {
@@ -488,9 +558,7 @@ export default function Collection() {
       if (categoryParam !== "all" && !matchesCategory(p)) return false;
       if (collectionParam === "best-sellers" && !p.isBestSeller) return false;
       if (collectionParam === "new-arrivals" && !p.isNewArrival) return false;
-      if (typeParam !== "all") {
-        if (!matchesType(p.productType, typeParam) && !matchesType(p.subCategory, typeParam)) return false;
-      }
+      if (!matchesActiveSubcategory(p)) return false;
       if (colorParam.length > 0) {
         const pColors = (p.colors || p.color || []).map((c) => c.name.toLowerCase());
         if (!colorParam.some((col) => pColors.includes(col.toLowerCase()))) return false;
@@ -500,7 +568,7 @@ export default function Collection() {
       }
       if (availabilityParam === "inStock" && !p.inStock) return false;
       if (availabilityParam === "outOfStock" && p.inStock) return false;
-      const pPrice = Math.round(p.price * rate);
+      const pPrice = Number(p.price) || 0;
       if (pPrice < minPriceParam || pPrice > maxPriceParam) return false;
       return true;
     });
@@ -557,7 +625,7 @@ export default function Collection() {
         break;
     }
     return list;
-  }, [catalog, categoryParam, collectionParam, typeParam, colorParam, sizeParam, availabilityParam, minPriceParam, maxPriceParam, sortParam, rate]);
+  }, [catalog, categoryParam, collectionParam, typeParam, colorParam, sizeParam, availabilityParam, minPriceParam, maxPriceParam, sortParam, activeSubcategory]);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -645,7 +713,7 @@ export default function Collection() {
 
             <div className="coll-price-inputs-row">
               <div className="coll-price-box">
-                <span className="coll-price-prefix">{currencySymbol}</span>
+                <span className="coll-price-prefix">{CURRENCY_SYMBOL}</span>
                 <input
                   type="number"
                   min={0}
@@ -658,7 +726,7 @@ export default function Collection() {
               </div>
               <span className="coll-price-sep">–</span>
               <div className="coll-price-box">
-                <span className="coll-price-prefix">{currencySymbol}</span>
+                <span className="coll-price-prefix">{CURRENCY_SYMBOL}</span>
                 <input
                   type="number"
                   min={minPriceParam}
@@ -822,126 +890,146 @@ export default function Collection() {
     <div className="collection-page">
 
       {/* ── Collection Page Hero-Style Category Banner (Matching Home Hero Visuals & Proportions) ── */}
-      <section
-        id="collection-hero"
-        className="coll-hero-banner hero-clean-banner"
-        aria-label="Featured Collection Category Banner"
-      >
-        <div className="hero-slides-wrapper coll-hero-wrapper">
-          {/* Full-Bleed Backdrop Image with per-category positioning */}
-          <div className="hero-backdrop coll-hero-backdrop">
-            <img
-              src={banner.image}
-              alt={banner.title || "ZMW Apparel Collection"}
-              className="hero-backdrop-img coll-hero-backdrop-img"
-              style={{ objectPosition: banner.imagePosition || "85% top" }}
-              onError={(event) => { event.currentTarget.src = "/images/hero-family-banner.jpg"; }}
-            />
-            {/* Subtle balanced scrim: preserves bright, sharp model on right while text on left is ultra-crisp */}
-            <div className="hero-backdrop-scrim coll-hero-backdrop-scrim" />
-          </div>
+      {!isSubcategoryView && (
+        <section
+          id="collection-hero"
+          className="coll-hero-banner hero-clean-banner"
+          aria-label="Featured Collection Category Banner"
+        >
+          <div className="hero-slides-wrapper coll-hero-wrapper">
+            {/* Full-Bleed Backdrop Image with per-category positioning */}
+            <div className="hero-backdrop coll-hero-backdrop">
+              <img
+                src={banner.image}
+                alt={banner.title || "ZMW Apparel Collection"}
+                className="hero-backdrop-img coll-hero-backdrop-img"
+                style={{ objectPosition: banner.imagePosition || "85% top" }}
+                onError={(event) => { event.currentTarget.src = "/images/hero-family-banner.jpg"; }}
+              />
+              {/* Subtle balanced scrim: preserves bright, sharp model on right while text on left is ultra-crisp */}
+              <div className="hero-backdrop-scrim coll-hero-backdrop-scrim" />
+            </div>
 
-          {/* Visually rich ecommerce content container on the LEFT */}
-          <div className="container coll-hero-container">
-            {/* Breadcrumb Navigation */}
-            <nav className="coll-hero-breadcrumbs" aria-label="Breadcrumb">
-              <Link to="/" className="coll-hero-breadcrumb-link">Home</Link>
-              <span className="coll-hero-breadcrumb-sep">/</span>
-              <Link to="/collection" className="coll-hero-breadcrumb-link" onClick={clearAllFilters}>Collection</Link>
-              {categoryParam !== "all" && (
-                <>
-                  <span className="coll-hero-breadcrumb-sep">/</span>
-                  <span className="coll-hero-breadcrumb-active">{activeCategoryLabel}</span>
-                </>
-              )}
-            </nav>
-
-            <div className="hero-content-box coll-hero-content-box">
-              {/* Top Eyebrow Badges Row */}
-              {(banner.badge || banner.subBadge) && (
-                <div className="hero-tag-wrap coll-hero-tag-wrap">
-                  {banner.badge && (
-                    <span className="hero-tag-badge gold">
-                      {renderHeroIcon(banner.badgeIcon)}
-                      {banner.badge}
-                    </span>
-                  )}
-                  {banner.subBadge && (
-                    <span className="hero-tag-subbadge">
-                      {banner.subBadge}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* 1. PRIMARY OFFER HEADING (Strong Visual Hierarchy) */}
-              {banner.offer && (
-                <div className="hero-offer-block coll-hero-offer-block">
-                  <div className="hero-offer-heading coll-hero-offer-heading">
-                    {banner.offer}
-                  </div>
-                  {banner.offerTag && (
-                    <span className="hero-offer-tag coll-hero-offer-tag">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-                        <circle cx="7" cy="7" r="1.5" />
-                      </svg>
-                      {banner.offerTag}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* 2. SUPPORTING TEXT & CAMPAIGN HEADLINE */}
-              <div className="hero-campaign-info coll-hero-campaign-info">
-                {banner.title && (
-                  <h2 className="hero-campaign-headline coll-hero-campaign-headline">
-                    {banner.title}
-                  </h2>
+            {/* Visually rich ecommerce content container on the LEFT */}
+            <div className="container coll-hero-container">
+              {/* Breadcrumb Navigation */}
+              <nav className="coll-hero-breadcrumbs" aria-label="Breadcrumb">
+                <Link to="/" className="coll-hero-breadcrumb-link">Home</Link>
+                <span className="coll-hero-breadcrumb-sep">/</span>
+                <Link to="/collection" className="coll-hero-breadcrumb-link" onClick={clearAllFilters}>Collection</Link>
+                {categoryParam !== "all" && (
+                  <>
+                    <span className="coll-hero-breadcrumb-sep">/</span>
+                    <span className="coll-hero-breadcrumb-active">{activeCategoryLabel}</span>
+                  </>
                 )}
-                {banner.subtitle && (
-                  <p className="hero-subtitle coll-hero-subtitle">
-                    {banner.subtitle}
-                  </p>
-                )}
-              </div>
+              </nav>
 
-              {/* ECOMMERCE MICRO-PERKS BAR */}
-              {banner.perks && banner.perks.length > 0 && (
-                <div className="hero-perks-bar coll-hero-perks-bar">
-                  {banner.perks.map((perk, pIdx) => (
-                    <div key={pIdx} className="hero-perk-item coll-hero-perk-item">
-                      <span className="hero-perk-icon">
-                        {renderHeroIcon(perk.icon)}
+              <div className="hero-content-box coll-hero-content-box">
+                {/* Top Eyebrow Badges Row */}
+                {(banner.badge || banner.subBadge) && (
+                  <div className="hero-tag-wrap coll-hero-tag-wrap">
+                    {banner.badge && (
+                      <span className="hero-tag-badge gold">
+                        {renderHeroIcon(banner.badgeIcon)}
+                        {banner.badge}
                       </span>
-                      <span className="hero-perk-label">{perk.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* 3. CALL TO ACTION & URGENCY PILL */}
-              <div className="hero-cta-group coll-hero-cta-group">
-                <a href="#collection-catalog" className="hero-btn-primary coll-hero-btn-primary">
-                  <span>{banner.ctaText || "EXPLORE NOW"}</span>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </a>
-                {banner.urgencyTag && (
-                  <span className="hero-urgency-pill coll-hero-urgency-pill">
-                    {banner.urgencyTag}
-                  </span>
+                    )}
+                    {banner.subBadge && (
+                      <span className="hero-tag-subbadge">
+                        {banner.subBadge}
+                      </span>
+                    )}
+                  </div>
                 )}
+
+                {/* 1. PRIMARY OFFER HEADING (Strong Visual Hierarchy) */}
+                {banner.offer && (
+                  <div className="hero-offer-block coll-hero-offer-block">
+                    <div className="hero-offer-heading coll-hero-offer-heading">
+                      {banner.offer}
+                    </div>
+                    {banner.offerTag && (
+                      <span className="hero-offer-tag coll-hero-offer-tag">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                          <circle cx="7" cy="7" r="1.5" />
+                        </svg>
+                        {banner.offerTag}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* 2. SUPPORTING TEXT & CAMPAIGN HEADLINE */}
+                <div className="hero-campaign-info coll-hero-campaign-info">
+                  {banner.title && (
+                    <h2 className="hero-campaign-headline coll-hero-campaign-headline">
+                      {banner.title}
+                    </h2>
+                  )}
+                  {banner.subtitle && (
+                    <p className="hero-subtitle coll-hero-subtitle">
+                      {banner.subtitle}
+                    </p>
+                  )}
+                </div>
+
+                {/* ECOMMERCE MICRO-PERKS BAR */}
+                {banner.perks && banner.perks.length > 0 && (
+                  <div className="hero-perks-bar coll-hero-perks-bar">
+                    {banner.perks.map((perk, pIdx) => (
+                      <div key={pIdx} className="hero-perk-item coll-hero-perk-item">
+                        <span className="hero-perk-icon">
+                          {renderHeroIcon(perk.icon)}
+                        </span>
+                        <span className="hero-perk-label">{perk.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 3. CALL TO ACTION & URGENCY PILL */}
+                <div className="hero-cta-group coll-hero-cta-group">
+                  <a href="#collection-catalog" className="hero-btn-primary coll-hero-btn-primary">
+                    <span>{banner.ctaText || "EXPLORE NOW"}</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </a>
+                  {banner.urgencyTag && (
+                    <span className="hero-urgency-pill coll-hero-urgency-pill">
+                      {banner.urgencyTag}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section id="collection-catalog" className="coll-catalog-section section-padding" aria-label="Product catalog">
         <div className="container">
+
+          {/* Subcategory views have no banner, so the trail lives up here instead. */}
+          {isSubcategoryView && (
+            <nav className="coll-subcat-trail" aria-label="Breadcrumb">
+              <Link to="/" className="coll-subcat-trail-link">Home</Link>
+              <span className="coll-subcat-trail-sep">/</span>
+              <Link
+                to={`/collection?category=${encodeURIComponent(categoryParam)}`}
+                className="coll-subcat-trail-link"
+              >
+                {activeCategoryLabel}
+              </Link>
+              <span className="coll-subcat-trail-sep">/</span>
+              <h1 className="coll-subcat-trail-current">
+                {activeSubcategory?.name || typeParam}
+              </h1>
+            </nav>
+          )}
 
           <div className="coll-toolbar">
             <p className="coll-toolbar-count">
@@ -1035,7 +1123,7 @@ export default function Collection() {
             <div className="coll-active-chips" aria-label="Active filters">
               {(minPriceParam > 0 || maxPriceParam < priceCeiling) && (
                 <button type="button" className="coll-chip" onClick={() => updateParams({ minPrice: null, maxPrice: null })}>
-                  Price: {currencySymbol}{minPriceParam.toLocaleString()} – {currencySymbol}{maxPriceParam.toLocaleString()} <span>✕</span>
+                  Price: {CURRENCY_SYMBOL}{formatINRNumber(minPriceParam)} – {CURRENCY_SYMBOL}{formatINRNumber(maxPriceParam)} <span>✕</span>
                 </button>
               )}
               {colorParam.map((c) => (

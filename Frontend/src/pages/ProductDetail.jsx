@@ -19,7 +19,8 @@ export default function ProductDetail() {
     allProducts,
     findProduct,
     recentlyViewed,
-    trackRecentlyViewed
+    trackRecentlyViewed,
+    freeShippingThreshold
   } = useShop();
 
   const [product, setProduct] = useState(() => findProduct(productId));
@@ -127,6 +128,37 @@ export default function ProductDetail() {
     [recentlyViewed, product]
   );
 
+  // Active variant resolution based on user selection
+  const currentVariant = useMemo(() => {
+    if (!product?.variants || product.variants.length === 0) return null;
+    return product.variants.find((v) => {
+      const matchColor = !v.color || !selectedColor || v.color.toLowerCase() === selectedColor.toLowerCase();
+      const matchSize = !v.size || !selectedSize || v.size.toLowerCase() === selectedSize.toLowerCase();
+      return matchColor && matchSize;
+    });
+  }, [product, selectedColor, selectedSize]);
+
+  const activeStockCount = currentVariant != null ? (currentVariant.stockCount ?? 0) : (product?.stockCount ?? 0);
+  const isOutOfStock = currentVariant != null ? (currentVariant.stockCount <= 0) : !product?.inStock;
+  const isLowStock = !isOutOfStock && activeStockCount > 0 && activeStockCount <= 5;
+
+  // Map of unavailable sizes for the currently selected color
+  const unavailableSizes = useMemo(() => {
+    if (!product?.variants || product.variants.length === 0 || !selectedColor) return new Set();
+    const set = new Set();
+    product.sizes?.forEach((s) => {
+      const v = product.variants.find(
+        (item) =>
+          item.size?.toLowerCase() === s.toLowerCase() &&
+          item.color?.toLowerCase() === selectedColor.toLowerCase()
+      );
+      if (v && v.stockCount <= 0) {
+        set.add(s);
+      }
+    });
+    return set;
+  }, [product, selectedColor]);
+
   if (isLoading && !product) {
     return (
       <div className="pd-loading-screen" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -183,6 +215,7 @@ export default function ProductDetail() {
 
   // Add to Cart handler
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     addToCart(product, selectedColor, selectedSize, quantity);
     setAddedToCart(true);
     setTimeout(() => {
@@ -193,6 +226,7 @@ export default function ProductDetail() {
 
   // Instant Buy Now handler
   const handleBuyNow = () => {
+    if (isOutOfStock) return;
     addToCart(product, selectedColor, selectedSize, quantity);
     navigate("/checkout");
   };
@@ -384,14 +418,14 @@ export default function ProductDetail() {
               {/* Price & Savings Badge */}
               <div className="pd-price-row">
                 <span className="pd-price-current">{formatPrice(product.price)}</span>
-                {product.originalPrice && (
+                {product.originalPrice && product.originalPrice > product.price && (
                   <>
                     <span className="pd-price-original">{formatPrice(product.originalPrice)}</span>
-                    <span className="pd-discount-chip">SAVE {discountPct || 35}%</span>
+                    <span className="pd-discount-chip">SAVE {discountPct}%</span>
                   </>
                 )}
               </div>
-              <p className="pd-tax-caption">Price inclusive of all taxes. Free express shipping on orders over ₹4,150.</p>
+              <p className="pd-tax-caption">Price inclusive of all taxes. Free express shipping on orders over {formatPrice(freeShippingThreshold)}.</p>
 
               {/* Essential Product Description (Directly Visible) */}
               <div className="pd-main-description-box">
@@ -471,17 +505,22 @@ export default function ProductDetail() {
                     </button>
                   </div>
                   <div className="pd-size-chips">
-                    {product.sizes.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        className={`pd-size-chip ${selectedSize === s ? "active" : ""}`}
-                        onClick={() => setSelectedSize(s)}
-                        aria-pressed={selectedSize === s}
-                      >
-                        {s}
-                      </button>
-                    ))}
+                    {product.sizes.map((s) => {
+                      const isSoldOut = unavailableSizes.has(s);
+                      return (
+                        <button
+                          key={s}
+                          type="button"
+                          className={`pd-size-chip ${selectedSize === s ? "active" : ""} ${isSoldOut ? "sold-out" : ""}`}
+                          onClick={() => setSelectedSize(s)}
+                          aria-pressed={selectedSize === s}
+                          title={isSoldOut ? `${s} (Out of stock in ${selectedColor || "this color"})` : s}
+                        >
+                          {s}
+                          {isSoldOut && <span className="sold-out-tag">Sold Out</span>}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -495,16 +534,17 @@ export default function ProductDetail() {
                       type="button"
                       className="pd-qty-btn"
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      disabled={quantity <= 1}
+                      disabled={quantity <= 1 || isOutOfStock}
                       aria-label="Decrease quantity"
                     >
                       −
                     </button>
-                    <span className="pd-qty-display">{quantity}</span>
+                    <span className="pd-qty-display">{isOutOfStock ? 0 : quantity}</span>
                     <button
                       type="button"
                       className="pd-qty-btn"
-                      onClick={() => setQuantity((q) => q + 1)}
+                      onClick={() => setQuantity((q) => Math.min(activeStockCount || 99, q + 1))}
+                      disabled={isOutOfStock || (activeStockCount > 0 && quantity >= activeStockCount)}
                       aria-label="Increase quantity"
                     >
                       +
@@ -518,9 +558,11 @@ export default function ProductDetail() {
                     type="button"
                     className={`btn pd-add-to-cart-btn ${addedToCart ? "added" : ""}`}
                     onClick={handleAddToCart}
-                    disabled={!product.inStock}
+                    disabled={isOutOfStock}
                   >
-                    {addedToCart ? (
+                    {isOutOfStock ? (
+                      <span>Out of Stock</span>
+                    ) : addedToCart ? (
                       <>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polyline points="20 6 9 17 4 12" />
@@ -537,21 +579,29 @@ export default function ProductDetail() {
                     type="button"
                     className="btn btn-primary pd-buy-now-btn"
                     onClick={handleBuyNow}
-                    disabled={!product.inStock}
+                    disabled={isOutOfStock}
                   >
-                    Buy It Now • {formatPrice(product.price * quantity)}
+                    {isOutOfStock
+                      ? "Currently Sold Out"
+                      : `Buy It Now • ${formatPrice(product.price * quantity)}`}
                   </button>
                 </div>
               </div>
 
               {/* Delivery & In-Stock Availability Box */}
               <div className="pd-availability-box">
-                <div className={`pd-stock-badge ${product.inStock ? "in-stock" : "out-of-stock"}`}>
+                <div
+                  className={`pd-stock-badge ${
+                    isOutOfStock ? "out-of-stock" : isLowStock ? "low-stock" : "in-stock"
+                  }`}
+                >
                   <span className="pd-stock-indicator-dot" />
                   <span>
-                    {product.inStock
-                      ? `In Stock — Ready to ship (${product.stockCount || 18} units remaining)`
-                      : "Currently Out of Stock — Restock in progress"}
+                    {isOutOfStock
+                      ? "Currently Out of Stock — Restock in progress"
+                      : isLowStock
+                      ? `Low Stock — Only ${activeStockCount} units remaining. Order soon!`
+                      : `In Stock — Ready to ship (${activeStockCount} units available)`}
                   </span>
                 </div>
 

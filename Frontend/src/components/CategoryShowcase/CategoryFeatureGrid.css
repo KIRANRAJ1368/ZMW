@@ -213,6 +213,93 @@
   color: #FAA703;
 }
 
+/* ── Subcategory Carousel (>4 tiles) ──
+   Mirrors the CuratedShowcase product carousel: same 450ms track transition,
+   same floating side arrows, same hover-reveal on pointer devices. */
+.cat-feature-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.cat-feature-carousel-viewport {
+  overflow: hidden;
+  width: 100%;
+  padding: 6px 0 16px;
+}
+
+.cat-feature-carousel-track {
+  display: flex;
+  will-change: transform;
+}
+
+.cat-feature-carousel-slide {
+  box-sizing: border-box;
+  padding: 0 clamp(7px, 1vw, 12px);
+  flex-shrink: 0;
+}
+
+.cat-feature-carousel-slide .cat-feature-card {
+  height: 100%;
+}
+
+.cat-feature-arrow {
+  position: absolute;
+  top: 42%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #111827;
+  color: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cat-feature-arrow:hover {
+  background: #FAA703;
+  border-color: #FAA703;
+  color: #111827;
+  transform: translateY(-50%) scale(1.12);
+  box-shadow: 0 8px 24px rgba(250, 167, 3, 0.45);
+}
+
+.cat-feature-arrow.left {
+  left: -20px;
+}
+
+.cat-feature-arrow.right {
+  right: -20px;
+}
+
+/* Desktop (hover-capable) only: reveal the arrows on hover. Touch devices
+   keep them permanently visible so they remain usable. */
+@media (hover: hover) and (pointer: fine) {
+  .cat-feature-arrow {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease,
+                visibility 0.3s ease,
+                background-color 0.25s ease,
+                border-color 0.25s ease,
+                color 0.25s ease,
+                box-shadow 0.25s ease,
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cat-feature-carousel:hover .cat-feature-arrow,
+  .cat-feature-arrow:hover,
+  .cat-feature-arrow:focus-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
 /* ── Responsive ── */
 @media (max-width: 1200px) {
   .cat-feature-grid,
@@ -226,5 +313,37 @@
   .cat-feature-grid--four {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .cat-feature-carousel-slide {
+    padding: 0 6px;
+  }
+
+  .cat-feature-arrow {
+    width: 36px;
+    height: 36px;
+  }
+
+  .cat-feature-arrow.left {
+    left: -8px;
+  }
+
+  .cat-feature-arrow.right {
+    right: -8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cat-feature-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cat-feature-arrow.left {
+    left: -4px;
+  }
+
+  .cat-feature-arrow.right {
+    right: -4px;
   }
 }

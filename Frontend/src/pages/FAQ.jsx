@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from "../utils/shopConfig";
+import { formatPrice } from "../utils/formatPrice";
 import "./FAQ.css";
+
+const FREE_SHIPPING_AMOUNT = formatPrice(FREE_SHIPPING_THRESHOLD);
+const SHIPPING_FEE_AMOUNT = formatPrice(SHIPPING_FEE);
 
 const FAQ_CATEGORIES = [
   { id: "all", label: "All Questions" },
@@ -54,7 +59,7 @@ const FAQ_DATA = [
     categoryLabel: "Shipping & Delivery",
     question: "Do you provide Free Shipping?",
     answer:
-      "Yes! We provide Free Standard Shipping on all prepaid and COD orders exceeding ₹999 across India. For orders below ₹999, a nominal delivery charge is applied at checkout."
+      `Yes! We provide Free Standard Shipping on all prepaid and COD orders exceeding ${FREE_SHIPPING_AMOUNT} across India. For orders below ${FREE_SHIPPING_AMOUNT}, a delivery charge of ${SHIPPING_FEE_AMOUNT} is applied at checkout.`
   },
   {
     id: "shp-3",

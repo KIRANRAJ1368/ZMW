@@ -24,10 +24,8 @@ import LoadingState from "../../components/LoadingState/LoadingState";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import EmptyState from "../../components/EmptyState/EmptyState";
 import ProductViewModal from "../../components/ProductViewModal/ProductViewModal";
+import { formatINR } from "../../utils/formatPrice";
 import "./Dashboard.css";
-
-const formatINR = (value) =>
-  "₹" + Number(value ?? 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
 
 /* ── Animated count-up number display ── */
 function StatNumber({ value, prefix = "", suffix = "" }) {

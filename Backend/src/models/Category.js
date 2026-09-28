@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
       description: { type: DataTypes.TEXT, allowNull: true },
       image_url: { type: DataTypes.STRING(500), allowNull: true },
       sort_order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-      is_active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }
+      is_active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+      show_on_homepage: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }
     },
     { tableName: "categories" }
   );

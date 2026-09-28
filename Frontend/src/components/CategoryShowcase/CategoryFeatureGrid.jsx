@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import { imageUrl } from "../../utils/imageUrl";
+import useCarousel from "../../hooks/useCarousel";
+import {
+  CAROUSEL_BREAKPOINTS,
+  shouldShowCarousel,
+  shouldShowArrows,
+  trackOffset,
+  visibleCountForWidth
+} from "../../utils/carouselCore";
 import "./CategoryFeatureGrid.css";
 
 const MEN_CARDS = [
@@ -222,18 +230,65 @@ id: "babies-hoodies",
 
 const cleanCategoryTitle = (rawTitle, fallbackTitle) => {
   if (!rawTitle) return fallbackTitle;
-  if (/men('?s)?\s*edit/i.test(rawTitle)) return "Men Categories";
-  if (/women('?s)?\s*edit/i.test(rawTitle)) return "Women Categories";
-  if (/boys?('?s)?\s*edit/i.test(rawTitle)) return "Boys Categories";
-  if (/girls?('?s)?\s*edit/i.test(rawTitle)) return "Girls Categories";
-  if (/bab(?:y|ies)('?s)?\s*edit/i.test(rawTitle)) return "Babies Categories";
-  if (/edit/i.test(rawTitle)) return fallbackTitle;
+  if (rawTitle === "Men's Edit") return "Men Categories";
+  if (rawTitle === "Women's Edit") return "Women Categories";
+  if (rawTitle === "Boys' Edit") return "Boys Categories";
+  if (rawTitle === "Girls' Edit") return "Girls Categories";
+  if (rawTitle === "Babies' Edit") return "Babies Categories";
   return rawTitle;
 };
+
+function SubcategoryTile({ card }) {
+  return (
+    <Link to={card.link} className="cat-feature-card">
+      <div className="cat-feature-img-wrap">
+        <img
+          src={imageUrl(card.image) || "/images/photo-1521572163474-6864f9cf17ab.jpg"}
+          alt={card.title}
+          className="cat-feature-img"
+          loading="lazy"
+          style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/images/photo-1521572163474-6864f9cf17ab.jpg";
+          }}
+        />
+        <div className="cat-feature-overlay" />
+        <span className="cat-feature-tag">{card.tag}</span>
+      </div>
+      <div className="cat-feature-caption"><h3 className="cat-feature-name">{card.title}</h3></div>
+    </Link>
+  );
+}
+
+function CarouselArrow({ direction, onClick, label }) {
+  return (
+    <button
+      type="button"
+      className={`cat-feature-arrow ${direction}`}
+      onClick={onClick}
+      aria-label={label}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <polyline points={direction === "left" ? "15 18 9 12 15 6" : "9 18 15 12 9 6"}></polyline>
+      </svg>
+    </button>
+  );
+}
 
 function CategoryCards({ cards, categorySlug, defaultTag = "CATEGORY" }) {
   const { homeData, allProducts } = useShop();
   const category = homeData?.categories?.find((item) => item.slug === categorySlug);
+
+  // Same breakpoints as the static grid below, so a row does not change tile
+  // size when it tips over into carousel mode.
+  const [visibleCount, setVisibleCount] = useState(CAROUSEL_BREAKPOINTS.wide);
+  useEffect(() => {
+    const handleResize = () => setVisibleCount(visibleCountForWidth(window.innerWidth));
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fallbackCardFor = (subcategory) => {
     const subNameClean = subcategory.name.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -274,10 +329,15 @@ function CategoryCards({ cards, categorySlug, defaultTag = "CATEGORY" }) {
     return tag;
   };
 
-  let managedCards = [];
-  if (homeData && category?.subcategories?.length > 0) {
-    // 1. Map at most 4 subcategories from database
-    managedCards = category.subcategories.slice(0, 4).map((subcategory) => {
+  // The admin "Show on Homepage" toggle is authoritative: render exactly the
+  // enabled subcategories, never pad the row back out with placeholder cards.
+  const visibleSubcategories = (category?.subcategories || []).filter(
+    (subcategory) => subcategory.show_on_homepage !== false
+  );
+
+  let items;
+  if (visibleSubcategories.length > 0) {
+    items = visibleSubcategories.map((subcategory) => {
       const direct = fallbackCardFor(subcategory);
       return {
         id: subcategory.id,
@@ -285,59 +345,74 @@ function CategoryCards({ cards, categorySlug, defaultTag = "CATEGORY" }) {
         tag: direct?.tag ? sanitizeTag(direct.tag) : sanitizeTag(category.name.toUpperCase()),
         image: subcategory.image_url || fallbackImageFor(subcategory),
         imagePosition: subcategory.image_position || fallbackPositionFor(subcategory),
+        link: direct?.link || `/collection?category=${encodeURIComponent(category.slug)}&type=${encodeURIComponent(subcategory.slug || subcategory.name.toLowerCase())}`
       };
     });
-
-    // 2. If fewer than 4 subcategories exist in DB, supplement from curated cards to ensure exactly 4
-    if (managedCards.length < 4) {
-      for (const card of cards) {
-        if (managedCards.length >= 4) break;
-        const exists = managedCards.some(
-          (m) => m.title.toLowerCase().replace(/[^a-z0-9]/g, "") === card.title.toLowerCase().replace(/[^a-z0-9]/g, "")
-        );
-        if (!exists) {
-          managedCards.push({
-            ...card,
-            tag: sanitizeTag(card.tag)
-          });
-        }
-      }
-    }
   } else {
-    managedCards = cards.slice(0, 4).map((card) => ({
-      ...card,
-      tag: sanitizeTag(card.tag)
-    }));
+    // No subcategories configured (or every one toggled off): fall back to the
+    // curated static cards so the section is never empty.
+    items = cards.slice(0, 4).map((card) => ({ ...card, tag: sanitizeTag(card.tag) }));
   }
 
-  // Strictly enforce maximum 4 cards
-  managedCards = managedCards.slice(0, 4);
+  // Manual-only carousel: the tiles are links, so navigation is by arrow only.
+  const { index, next, prev, setPaused } = useCarousel(items.length, visibleCount, 0);
 
-  return managedCards.map((card) => (
-    <Link key={card.id} to={card.link} className="cat-feature-card">
-      <div className="cat-feature-img-wrap">
-        <img
-          src={imageUrl(card.image) || "/images/photo-1521572163474-6864f9cf17ab.jpg"}
-          alt={card.title}
-          className="cat-feature-img"
-          loading="lazy"
-          style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = "/images/photo-1521572163474-6864f9cf17ab.jpg";
-          }}
-        />
-        <div className="cat-feature-overlay" />
-        <span className="cat-feature-tag">{card.tag}</span>
+  if (!shouldShowCarousel(items.length, visibleCount)) {
+    return (
+      <div className="cat-feature-grid cat-feature-grid--four">
+        {items.map((card) => (
+          <SubcategoryTile key={card.id} card={card} />
+        ))}
       </div>
-      <div className="cat-feature-caption"><h3 className="cat-feature-name">{card.title}</h3></div>
-    </Link>
-  ));
+    );
+  }
+
+  const slideWidth = 100 / visibleCount;
+
+  return (
+    <div
+      className="cat-feature-carousel"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
+    >
+      {shouldShowArrows(items.length, visibleCount) && (
+        <CarouselArrow direction="left" onClick={prev} label="Previous subcategories" />
+      )}
+
+      <div className="cat-feature-carousel-viewport">
+        <div
+          className="cat-feature-carousel-track"
+          style={{
+            transform: `translateX(-${trackOffset(index, visibleCount)}%)`,
+            transition: "transform 450ms cubic-bezier(0.25, 1, 0.5, 1)"
+          }}
+        >
+          {items.map((card) => (
+            <div
+              key={card.id}
+              className="cat-feature-carousel-slide"
+              style={{ flex: `0 0 ${slideWidth}%`, maxWidth: `${slideWidth}%` }}
+            >
+              <SubcategoryTile card={card} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {shouldShowArrows(items.length, visibleCount) && (
+        <CarouselArrow direction="right" onClick={next} label="Next subcategories" />
+      )}
+    </div>
+  );
 }
 
 /* ── Section 3: Men Categories Export ── */
 export function MensCategoriesSection() {
   const { homeData } = useShop();
+  const category = homeData?.categories?.find((item) => item.slug === "mens" || item.slug === "men");
+  if (category && (category.show_on_homepage === false || category.is_active === false)) return null;
   const section = homeData?.sections?.find((item) => item.section_key === "mens_categories");
   return (
     <section className="category-feature-section mens-feature-section" aria-label="Men Categories">
@@ -353,9 +428,7 @@ export function MensCategoriesSection() {
           </p>
         </div>
 
-        <div className="cat-feature-grid cat-feature-grid--four">
-          <CategoryCards cards={MEN_CARDS} categorySlug={section?.config?.categorySlug || "mens"} defaultTag="MEN CATEGORIES" />
-        </div>
+        <CategoryCards cards={MEN_CARDS} categorySlug={section?.config?.categorySlug || "mens"} defaultTag="MEN CATEGORIES" />
       </div>
     </section>
   );
@@ -364,6 +437,8 @@ export function MensCategoriesSection() {
 /* ── Section 4: Women Categories Export ── */
 export function WomensCategoriesSection() {
   const { homeData } = useShop();
+  const category = homeData?.categories?.find((item) => item.slug === "women" || item.slug === "womens");
+  if (category && (category.show_on_homepage === false || category.is_active === false)) return null;
   const section = homeData?.sections?.find((item) => item.section_key === "womens_categories");
   return (
     <section className="category-feature-section womens-feature-section" aria-label="Women Categories">
@@ -373,15 +448,13 @@ export function WomensCategoriesSection() {
             <span className="eyebrow-dot" />
             <span className="eyebrow-text">WOMEN CATEGORIES</span>
           </div>
-          <h2 className="section-heading-title">Women's Categories</h2>
+          <h2 className="section-heading-title">{cleanCategoryTitle(section?.title, "Women Categories")}</h2>
           <p className="section-heading-subtitle">
             {section?.subtitle || "Round necks, v-necks, hoodies, and tees in soft combed cotton for an easy, elevated everyday look."}
           </p>
         </div>
 
-        <div className="cat-feature-grid cat-feature-grid--four">
-          <CategoryCards cards={WOMEN_CARDS} categorySlug={section?.config?.categorySlug || "women"} defaultTag="WOMEN CATEGORIES" />
-        </div>
+        <CategoryCards cards={WOMEN_CARDS} categorySlug={section?.config?.categorySlug || "women"} defaultTag="WOMEN CATEGORIES" />
       </div>
     </section>
   );
@@ -390,6 +463,8 @@ export function WomensCategoriesSection() {
 /* ── Section 5: Boys Categories Export ── */
 export function BoysCategoriesSection() {
   const { homeData } = useShop();
+  const category = homeData?.categories?.find((item) => item.slug === "boys");
+  if (category && (category.show_on_homepage === false || category.is_active === false)) return null;
   const section = homeData?.sections?.find((item) => item.section_key === "boys_categories");
   return (
     <section className="category-feature-section boys-feature-section" aria-label="Boys Categories">
@@ -405,9 +480,7 @@ export function BoysCategoriesSection() {
           </p>
         </div>
 
-        <div className="cat-feature-grid cat-feature-grid--four">
-          <CategoryCards cards={BOYS_CARDS} categorySlug={section?.config?.categorySlug || "boys"} defaultTag="BOYS CATEGORIES" />
-        </div>
+        <CategoryCards cards={BOYS_CARDS} categorySlug={section?.config?.categorySlug || "boys"} defaultTag="BOYS CATEGORIES" />
       </div>
     </section>
   );
@@ -416,6 +489,8 @@ export function BoysCategoriesSection() {
 /* ── Section 6: Girls Categories Export ── */
 export function GirlsCategoriesSection() {
   const { homeData } = useShop();
+  const category = homeData?.categories?.find((item) => item.slug === "girls");
+  if (category && (category.show_on_homepage === false || category.is_active === false)) return null;
   const section = homeData?.sections?.find((item) => item.section_key === "girls_categories");
   return (
     <section className="category-feature-section girls-feature-section" aria-label="Girls Categories">
@@ -431,9 +506,7 @@ export function GirlsCategoriesSection() {
           </p>
         </div>
 
-        <div className="cat-feature-grid cat-feature-grid--four">
-          <CategoryCards cards={GIRLS_CARDS} categorySlug={section?.config?.categorySlug || "girls"} defaultTag="GIRLS CATEGORIES" />
-        </div>
+        <CategoryCards cards={GIRLS_CARDS} categorySlug={section?.config?.categorySlug || "girls"} defaultTag="GIRLS CATEGORIES" />
       </div>
     </section>
   );
@@ -442,6 +515,8 @@ export function GirlsCategoriesSection() {
 /* ── Section 7: Babies Categories Export ── */
 export function BabiesCategoriesSection() {
   const { homeData } = useShop();
+  const category = homeData?.categories?.find((item) => item.slug === "babies");
+  if (category && (category.show_on_homepage === false || category.is_active === false)) return null;
   const section = homeData?.sections?.find((item) => item.section_key === "babies_categories");
   return (
     <section className="category-feature-section babies-feature-section" aria-label="Babies Categories">
@@ -457,9 +532,7 @@ export function BabiesCategoriesSection() {
           </p>
         </div>
 
-        <div className="cat-feature-grid cat-feature-grid--four">
-          <CategoryCards cards={BABIES_CARDS} categorySlug={section?.config?.categorySlug || "babies"} defaultTag="BABIES CATEGORIES" />
-        </div>
+        <CategoryCards cards={BABIES_CARDS} categorySlug={section?.config?.categorySlug || "babies"} defaultTag="BABIES CATEGORIES" />
       </div>
     </section>
   );

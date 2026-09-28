@@ -4,15 +4,9 @@ import "./Wishlist.css";
 
 export default function Wishlist() {
   const navigate = useNavigate();
-  const { wishlist, findProduct, toggleWishlist, addToCart } = useShop();
+  const { wishlist, findProduct, toggleWishlist, addToCart, formatPrice } = useShop();
 
   const wishlistProducts = wishlist.map((id) => findProduct(id)).filter(Boolean);
-
-  const formatINR = (usdAmount) => {
-    if (usdAmount === null || usdAmount === undefined) return "";
-    const inr = Math.round(usdAmount * 83);
-    return `₹${new Intl.NumberFormat("en-IN").format(inr)}`;
-  };
 
   return (
     <div className="wishlist-page">
@@ -113,11 +107,11 @@ export default function Wishlist() {
                     {/* Pricing */}
                     <div className="wishlist-card-pricing">
                       <span className="wishlist-card-price">
-                        {formatINR(product.price)}
+                        {formatPrice(product.price)}
                       </span>
-                      {product.originalPrice && (
+                      {product.originalPrice && product.originalPrice > product.price && (
                         <span className="wishlist-card-original">
-                          {formatINR(product.originalPrice)}
+                          {formatPrice(product.originalPrice)}
                         </span>
                       )}
                     </div>

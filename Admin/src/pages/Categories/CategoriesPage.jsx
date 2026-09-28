@@ -17,6 +17,7 @@ export default function CategoriesPage() {
   const [editing, setEditing] = useState(null); // null = closed, {} = new, {...} = edit
   const [viewing, setViewing] = useState(null);
   const [lightboxImg, setLightboxImg] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
 
@@ -36,6 +37,28 @@ export default function CategoriesPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function handleToggleHomepage(category, nextValue) {
+    setTogglingId(category.id);
+    setCategories((prev) =>
+      prev.map((c) => (c.id === category.id ? { ...c, show_on_homepage: nextValue } : c))
+    );
+    try {
+      await categoriesApi.update(category.id, { show_on_homepage: nextValue });
+      toast.success(
+        nextValue
+          ? `☑ ${category.name} → Show on Homepage (Enabled)`
+          : `☐ ${category.name} → Hide from Homepage (Disabled)`
+      );
+    } catch (err) {
+      setCategories((prev) =>
+        prev.map((c) => (c.id === category.id ? { ...c, show_on_homepage: !nextValue } : c))
+      );
+      toast.error(err.message || "Failed to update homepage category status");
+    } finally {
+      setTogglingId(null);
+    }
+  }
 
   async function handleDelete(category) {
     const ok = await confirm({
@@ -155,10 +178,54 @@ export default function CategoriesPage() {
             },
             {
               key: "is_active",
-              label: "Visibility",
+              label: "Catalog Status",
               width: "120px",
               align: "center",
               render: (row) => <StatusBadge value={row.is_active ? "active" : "inactive"} />
+            },
+            {
+              key: "show_on_homepage",
+              label: "Show on Homepage",
+              width: "185px",
+              align: "center",
+              render: (row) => {
+                const isShown = row.show_on_homepage !== false;
+                const isBusy = togglingId === row.id;
+                return (
+                  <label
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      cursor: isBusy ? "wait" : "pointer",
+                      padding: "4px 8px",
+                      borderRadius: 6,
+                      background: isShown ? "rgba(16, 185, 129, 0.08)" : "rgba(148, 163, 184, 0.08)",
+                      border: `1px solid ${isShown ? "rgba(16, 185, 129, 0.25)" : "rgba(148, 163, 184, 0.25)"}`,
+                      transition: "all 0.15s ease"
+                    }}
+                    title={isShown ? "Visible on Homepage (Click to hide)" : "Hidden from Homepage (Click to show)"}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isShown}
+                      disabled={isBusy}
+                      onChange={(e) => handleToggleHomepage(row, e.target.checked)}
+                      style={{ cursor: "pointer", accentColor: "#059669" }}
+                    />
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: isShown ? "#059669" : "#64748b"
+                      }}
+                    >
+                      {isShown ? "Show on Homepage" : "Hide from Homepage"}
+                    </span>
+                  </label>
+                );
+              }
             },
             {
               key: "actions",
