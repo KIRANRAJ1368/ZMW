@@ -1,4 +1,5 @@
 const { Op, fn, col, where: sequelizeWhere } = require("sequelize");
+const { randomBytes } = require("crypto");
 const { Product, Category, Subcategory, ProductImage, ProductColor, ProductSize, ProductVariant, sequelize } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getPagination, buildMeta } = require("../utils/pagination");
@@ -19,6 +20,47 @@ const PRODUCT_INCLUDES = [
   }
 ];
 
+function assertPriceRange(price, originalPrice) {
+  const selling = Number(price);
+  const original = Number(originalPrice);
+  if (!Number.isFinite(selling) || selling < 500) {
+    throw ApiError.badRequest("Selling price must be at least ₹500");
+  }
+  if (!Number.isFinite(original) || original <= selling) {
+    throw ApiError.badRequest("Original price must be higher than selling price");
+  }
+}
+
+function assertVariantPriceOverride(priceOverride, originalPrice) {
+  const selling = Number(priceOverride);
+  if (!Number.isFinite(selling) || selling < 500) {
+    throw ApiError.badRequest("Variant price override must be at least ₹500");
+  }
+  if (originalPrice !== null && originalPrice !== undefined) {
+    const original = Number(originalPrice);
+    if (Number.isFinite(original) && original > 0 && original <= selling) {
+      throw ApiError.badRequest("Original price must be higher than variant price override");
+    }
+  }
+}
+
+async function generateUniqueSku(name, transaction) {
+  const nameToken = String(name || "PRODUCT")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 32) || "PRODUCT";
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const sku = `ZMW-${nameToken}-${randomBytes(4).toString("hex").toUpperCase()}`;
+    const existing = await Product.findOne({ where: { sku }, transaction });
+    if (!existing) return sku;
+  }
+
+  throw ApiError.conflict("Could not generate a unique SKU. Please try again.");
+}
 const SORT_MAP = {
   "price-asc": [["price", "ASC"]],
   "price-desc": [["price", "DESC"]],
@@ -104,6 +146,20 @@ async function listProducts(query) {
 }
 
 async function replaceNestedCollections(product, body, transaction) {
+  if (Array.isArray(body.images) && body.images.length > 2) {
+    throw ApiError.badRequest("Maximum 2 images are allowed.");
+  }
+  if (Array.isArray(body.variants) && body.variants.some((variant) => {
+    const mainImageCount = variant.image_url || variant.imageUrl ? 1 : 0;
+    const galleryCount = Array.isArray(variant.gallery_images)
+      ? variant.gallery_images.length
+      : Array.isArray(variant.galleryImages)
+      ? variant.galleryImages.length
+      : 0;
+    return mainImageCount + galleryCount > 2;
+  })) {
+    throw ApiError.badRequest("Maximum 2 images are allowed.");
+  }
   if (Array.isArray(body.images)) {
     await ProductImage.destroy({ where: { product_id: product.id }, transaction });
     if (body.images.length > 0) {
@@ -202,13 +258,19 @@ async function replaceNestedCollections(product, body, transaction) {
         const colorVal = (v.color || "").trim();
         const sizeId = v.size_id || (sizeVal ? sizeMap.get(sizeVal.toLowerCase()) : null);
         const colorId = v.color_id || (colorVal ? colorMap.get(colorVal.toLowerCase()) : null);
+        const priceOverride = v.price_override ?? v.priceOverride;
+        if (priceOverride !== null && priceOverride !== undefined) {
+          assertPriceRange(priceOverride, product.original_price);
+        }
         return {
           product_id: product.id,
           size_id: sizeId || null,
           color_id: colorId || null,
           sku_suffix: v.sku_suffix || v.skuSuffix || null,
           stock_count: Math.max(0, Number(v.stock_count ?? v.stockCount ?? 0)),
-          price_override: v.price_override || v.priceOverride ? parseFloat(v.price_override || v.priceOverride) : null
+          price_override: priceOverride !== null && priceOverride !== undefined ? parseFloat(priceOverride) : null,
+          image_url: v.image_url || v.imageUrl || null,
+          gallery_images: v.gallery_images || v.galleryImages || []
         };
       });
 
@@ -227,9 +289,9 @@ async function replaceNestedCollections(product, body, transaction) {
 }
 
 async function createProduct(body) {
+  assertPriceRange(body.price, body.original_price);
   return sequelize.transaction(async (transaction) => {
-    const existingSku = await Product.findOne({ where: { sku: body.sku }, transaction });
-    if (existingSku) throw ApiError.conflict("A product with this SKU already exists");
+    const sku = await generateUniqueSku(body.name, transaction);
     const existingSlug = await Product.findOne({ where: { slug: body.slug }, transaction });
     if (existingSlug) throw ApiError.conflict("A product with this slug already exists");
 
@@ -237,7 +299,7 @@ async function createProduct(body) {
       {
         name: body.name,
         slug: body.slug,
-        sku: body.sku,
+        sku,
         category_id: body.category_id,
         subcategory_id: body.subcategory_id || null,
         product_type: body.product_type || null,
@@ -267,12 +329,13 @@ async function updateProduct(productOrId, body) {
       ? productOrId
       : await Product.findByPk(productOrId);
   if (!product) throw ApiError.notFound("Product not found");
+  const nextOriginalPrice = Object.prototype.hasOwnProperty.call(body, "original_price")
+    ? body.original_price
+    : product.original_price;
+  assertPriceRange(body.price ?? product.price, nextOriginalPrice);
 
   return sequelize.transaction(async (transaction) => {
-    if (body.sku && body.sku !== product.sku) {
-      const clash = await Product.findOne({ where: { sku: body.sku }, transaction });
-      if (clash) throw ApiError.conflict("A product with this SKU already exists");
-    }
+    const nextSku = product.sku;
     if (body.slug && body.slug !== product.slug) {
       const clash = await Product.findOne({ where: { slug: body.slug }, transaction });
       if (clash) throw ApiError.conflict("A product with this slug already exists");
@@ -281,7 +344,6 @@ async function updateProduct(productOrId, body) {
     const fields = [
       "name",
       "slug",
-      "sku",
       "category_id",
       "subcategory_id",
       "product_type",
@@ -297,6 +359,7 @@ async function updateProduct(productOrId, body) {
       "badge_type",
       "is_active"
     ];
+    product.sku = nextSku;
     fields.forEach((f) => {
       if (body[f] !== undefined) product[f] = body[f];
     });
@@ -307,4 +370,4 @@ async function updateProduct(productOrId, body) {
   });
 }
 
-module.exports = { listProducts, createProduct, updateProduct, PRODUCT_INCLUDES };
+module.exports = { listProducts, createProduct, updateProduct, PRODUCT_INCLUDES, assertPriceRange, assertVariantPriceOverride };

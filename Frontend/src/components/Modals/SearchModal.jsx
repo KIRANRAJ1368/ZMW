@@ -115,6 +115,14 @@ export default function SearchModal() {
     navigate(`/product/${productId}`);
   };
 
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (trimmed) {
+      setIsSearchOpen(false);
+      navigate(`/collection?q=${encodeURIComponent(trimmed)}`);
+    }
+  };
+
   return (
     <div className="search-dropdown-overlay" onClick={() => setIsSearchOpen(false)}>
       <div
@@ -126,7 +134,7 @@ export default function SearchModal() {
         aria-label="Search catalog"
       >
         {/* Search Bar Row */}
-        <div className="search-bar-row">
+        <form className="search-bar-row" onSubmit={handleSearchSubmit}>
           <div className="search-input-box">
             <svg
               className="search-bar-icon"
@@ -146,9 +154,14 @@ export default function SearchModal() {
               ref={inputRef}
               type="text"
               className="search-input-field"
-              placeholder="Search for products…"
+              placeholder="Search for products… (Press Enter to view all)"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchSubmit(e);
+                }
+              }}
               aria-label="Search for products"
               autoComplete="off"
             />
@@ -177,7 +190,7 @@ export default function SearchModal() {
           >
             Close
           </button>
-        </div>
+        </form>
 
         {/* Instant Suggestions / Results Dropdown */}
         <div className="search-dropdown-content">
@@ -266,6 +279,16 @@ export default function SearchModal() {
                       </span>
                     </div>
                   ))}
+                  <div style={{ padding: "12px 16px", textAlign: "center", borderTop: "1px solid var(--color-border, #e5e7eb)" }}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      style={{ width: "100%", justifyContent: "center" }}
+                      onClick={handleSearchSubmit}
+                    >
+                      View all results for "{trimmed}" in Collection &rarr;
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="search-no-results">

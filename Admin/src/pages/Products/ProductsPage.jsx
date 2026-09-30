@@ -129,14 +129,14 @@ export default function ProductsPage() {
           </p>
         </div>
         <div className="page-header-actions">
-          <Link
+          {/* <Link
             to="/inventory"
             className="btn btn-secondary btn-lg"
             style={{ display: "inline-flex", alignItems: "center", gap: 7 }}
           >
             <Boxes size={17} />
             <span>Stock &amp; Variants Hub</span>
-          </Link>
+          </Link> */}
           <button type="button" className="btn btn-accent btn-lg" onClick={() => navigate("/products/new")}>
             <Plus size={17} />
             <span>Add New Product</span>
@@ -443,14 +443,14 @@ export default function ProductsPage() {
                       <Edit2 size={13} />
                       <span>Edit</span>
                     </Link>
-                    <Link
+                    {/* <Link
                       to={`/inventory?productId=${row.id}`}
                       className="btn btn-secondary btn-sm"
                       title="Manage Sizes, Colors & Stock Variants"
                     >
                       <Boxes size={13} />
                       <span>Stock</span>
-                    </Link>
+                    </Link> */}
                     <button
                       type="button"
                       className="btn btn-danger btn-sm"

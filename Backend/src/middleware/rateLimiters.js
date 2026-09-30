@@ -1,9 +1,11 @@
 const rateLimit = require("express-rate-limit");
 const env = require("../config/env");
 
+const isDev = env.env === "development" || env.env === "test";
+
 const generalLimiter = rateLimit({
   windowMs: env.rateLimit.windowMin * 60 * 1000,
-  max: env.rateLimit.max,
+  max: isDev ? 10000 : env.rateLimit.max,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: { code: "TOO_MANY_REQUESTS", message: "Too many requests, please slow down." } }
@@ -13,7 +15,7 @@ const generalLimiter = rateLimit({
 // brute-forcing.
 const authLimiter = rateLimit({
   windowMs: env.rateLimit.authWindowMin * 60 * 1000,
-  max: env.rateLimit.authMax,
+  max: isDev ? 500 : env.rateLimit.authMax,
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true,

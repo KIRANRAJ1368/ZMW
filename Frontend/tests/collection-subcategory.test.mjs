@@ -1,8 +1,8 @@
-import { test, before, describe } from "node:test";
+import { test, before, after, describe } from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
 import { createRoot } from "react-dom/client";
-import { act } from "react-dom/test-utils";
+import { act } from "react";
 import { HOME_DATA, PRODUCTS, CATEGORIES, expectedProducts } from "./support/catalogFixture.js";
 
 /* ── jsdom environment ── */
@@ -35,11 +35,15 @@ before(async () => {
   root = createRoot(container);
 });
 
-const { buildCollectionTree, buildNavbarTree } = await import("./support/.build/entry.mjs");
+const { buildCollectionTree, buildNavbarTree, buildHeroTree } = await import("./support/.build/entry.mjs");
 
-async function mountCollection(url) {
+after(async () => {
+  if (root) await act(async () => root.unmount());
+});
+
+async function mountCollection(url, products = PRODUCTS) {
   await act(async () => {
-    root.render(buildCollectionTree({ url, homeData: HOME_DATA, allProducts: PRODUCTS }));
+    root.render(buildCollectionTree({ url, homeData: HOME_DATA, allProducts: products }));
   });
   return {
     banner: () => container.querySelector("#collection-hero"),
@@ -216,11 +220,39 @@ describe("No banner on subcategory pages", () => {
     assert.equal(view.banner(), null);
   });
 
-  test("category, collection and bare pages keep their banner", async () => {
+  test("category pages keep their banner and curated pages render as bannerless listings", async () => {
     assert.ok((await mountCollection("/collection?category=mens")).banner(), "category page keeps its banner");
-    assert.ok((await mountCollection("/collection?collection=best-sellers")).banner(), "best sellers keeps its banner");
+    for (const [slug, title] of [["best-sellers", "Best Sellers"], ["new-arrivals", "New Arrivals"]]) {
+      const view = await mountCollection(`/collection?collection=${slug}`);
+      assert.equal(view.banner(), null, `${title} must not render a banner`);
+      assert.equal(view.bannerImages().length, 0, `${title} must not load a banner image`);
+      assert.equal(container.querySelector(".coll-subcat-trail-current")?.textContent, title);
+      assert.ok(container.querySelector("#collection-catalog"), `${title} renders the standard catalog`);
+    }
     assert.ok((await mountCollection("/collection")).banner(), "unfiltered page keeps its banner");
     assert.ok((await mountCollection("/collection?category=mens&minPrice=200")).banner(), "filters alone do not hide it");
+  });
+
+  test("Best Sellers and New Arrivals retain category and product filters", async () => {
+    const curatedProducts = PRODUCTS.map((product) => ({
+      ...product,
+      isBestSeller: true,
+      isNewArrival: true
+    }));
+    for (const slug of ["best-sellers", "new-arrivals"]) {
+      const categoryView = await mountCollection(
+        `/collection?collection=${slug}&category=mens&size=M&color=Black&minPrice=101&maxPrice=101`,
+        curatedProducts
+      );
+      assert.deepEqual(renderedNames(), [PRODUCTS[0].name], `${slug} respects category, size, color and price filters`);
+
+      const subcategoryView = await mountCollection(
+        `/collection?collection=${slug}&category=mens&type=round-neck-t-shirt&size=M&color=Black&minPrice=101&maxPrice=101`,
+        curatedProducts
+      );
+      assert.deepEqual(renderedNames(), [PRODUCTS[0].name], `${slug} respects the subcategory filter`);
+      assert.equal(subcategoryView.banner(), null, `${slug} remains bannerless with a subcategory selected`);
+    }
   });
 });
 
@@ -303,5 +335,35 @@ describe("Filters, sorting and pagination still work on subcategory pages", () =
       await new Promise((r) => setTimeout(r, 450));
     });
     assert.equal(container.querySelectorAll(".coll-product-grid > *").length, 15, "all 15 load");
+  });
+});
+
+describe("Admin-managed homepage hero banners", () => {
+  test("active Admin hero banners render, including the legacy placement alias", async () => {
+    const activeBanner = {
+      id: 301,
+      placement: "hero",
+      title: "Admin Hero Slide",
+      subtitle: "Managed from Admin",
+      tag: "ZMW",
+      badge_promo: "New Drop",
+      image_url: "/uploads/admin-hero.jpg",
+      is_active: true
+    };
+    const legacyBanner = { ...activeBanner, id: 302, placement: "home_hero", title: "Legacy Hero Slide" };
+    const inactiveBanner = { ...activeBanner, id: 303, title: "Inactive Hero Slide", is_active: false };
+
+    await act(async () => {
+      root.render(buildHeroTree({
+        homeData: { banners: { hero: [activeBanner, inactiveBanner], home_hero: [legacyBanner] } },
+        allProducts: []
+      }));
+    });
+
+    assert.equal(container.querySelectorAll(".hero-slide-item").length, 2);
+    assert.match(container.textContent, /Admin Hero Slide/);
+    assert.match(container.textContent, /Legacy Hero Slide/);
+    assert.doesNotMatch(container.textContent, /Inactive Hero Slide/);
+    assert.equal(container.querySelector('.hero-slide-item img[src="http://localhost:5000/uploads/admin-hero.jpg"]') !== null, true);
   });
 });

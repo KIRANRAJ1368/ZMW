@@ -315,6 +315,7 @@ export default function Collection() {
   const categoryParam = CATEGORY_ALIASES[rawCategoryParam] || rawCategoryParam;
   const collectionParam = (searchParams.get("collection") || "all").toLowerCase();
   const typeParam = (searchParams.get("type") || "all").toLowerCase();
+  const searchParam = (searchParams.get("q") || searchParams.get("search") || "").trim().toLowerCase();
   const colorParam = searchParams.getAll("color");
   const sizeParam = searchParams.getAll("size");
   const availabilityParam = searchParams.get("availability") || "all";
@@ -407,6 +408,9 @@ export default function Collection() {
   // A subcategory is requested whenever ?type= is present. Its page shows the
   // products directly, with no banner.
   const isSubcategoryView = typeParam !== "all";
+  const isBannerlessCollection = collectionParam === "best-sellers" || collectionParam === "new-arrivals";
+  const isSearchListing = Boolean(searchParam);
+  const isBannerlessListing = isSubcategoryView || isBannerlessCollection || isSearchListing;
 
   // Resolve ?type= to a real subcategory record. Links arrive in two forms: the
   // navbar dropdown sends the display name, the homepage tiles send the slug, so
@@ -495,6 +499,22 @@ export default function Collection() {
   const toggleSection = (key) => setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const matchesCategory = (p) => {
+    if (searchParam) {
+      const pName = (p.name || "").toLowerCase();
+      const pCat = (p.category || "").toLowerCase();
+      const pSub = (p.subCategory || "").toLowerCase();
+      const pDesc = (p.description || "").toLowerCase();
+      const pSku = (p.sku || "").toLowerCase();
+      const pColors = (p.colors || p.color || []).map((c) => (c.name || "").toLowerCase()).join(" ");
+      const searchMatches =
+        pName.includes(searchParam) ||
+        pCat.includes(searchParam) ||
+        pSub.includes(searchParam) ||
+        pDesc.includes(searchParam) ||
+        pSku.includes(searchParam) ||
+        pColors.includes(searchParam);
+      if (!searchMatches) return false;
+    }
     if (categoryParam === "all") return true;
     if (categoryParam === "kids") return p.category === "boys" || p.category === "girls";
     if (p.category === categoryParam) return true;
@@ -511,7 +531,7 @@ export default function Collection() {
 
   const baseCategoryProducts = useMemo(() => {
     return catalog.filter(matchesCategory);
-  }, [catalog, categoryParam]);
+  }, [catalog, categoryParam, searchParam]);
 
   const availableColors = useMemo(() => {
     const map = new Map();
@@ -555,6 +575,22 @@ export default function Collection() {
 
   const filteredProducts = useMemo(() => {
     let list = catalog.filter((p) => {
+      if (searchParam) {
+        const pName = (p.name || "").toLowerCase();
+        const pCat = (p.category || "").toLowerCase();
+        const pSub = (p.subCategory || "").toLowerCase();
+        const pDesc = (p.description || "").toLowerCase();
+        const pSku = (p.sku || "").toLowerCase();
+        const pColors = (p.colors || p.color || []).map((c) => (c.name || "").toLowerCase()).join(" ");
+        const searchMatches =
+          pName.includes(searchParam) ||
+          pCat.includes(searchParam) ||
+          pSub.includes(searchParam) ||
+          pDesc.includes(searchParam) ||
+          pSku.includes(searchParam) ||
+          pColors.includes(searchParam);
+        if (!searchMatches) return false;
+      }
       if (categoryParam !== "all" && !matchesCategory(p)) return false;
       if (collectionParam === "best-sellers" && !p.isBestSeller) return false;
       if (collectionParam === "new-arrivals" && !p.isNewArrival) return false;
@@ -625,15 +661,16 @@ export default function Collection() {
         break;
     }
     return list;
-  }, [catalog, categoryParam, collectionParam, typeParam, colorParam, sizeParam, availabilityParam, minPriceParam, maxPriceParam, sortParam, activeSubcategory]);
+  }, [catalog, searchParam, categoryParam, collectionParam, typeParam, colorParam, sizeParam, availabilityParam, minPriceParam, maxPriceParam, sortParam, activeSubcategory]);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
+    if (searchParam) count += 1;
     count += colorParam.length + sizeParam.length;
     if (availabilityParam !== "all") count += 1;
     if (minPriceParam > 0 || maxPriceParam < priceCeiling) count += 1;
     return count;
-  }, [colorParam, sizeParam, availabilityParam, minPriceParam, maxPriceParam, priceCeiling]);
+  }, [searchParam, colorParam, sizeParam, availabilityParam, minPriceParam, maxPriceParam, priceCeiling]);
 
   const displayedProducts = useMemo(() => filteredProducts.slice(0, visibleCount), [filteredProducts, visibleCount]);
 
@@ -890,7 +927,7 @@ export default function Collection() {
     <div className="collection-page">
 
       {/* ── Collection Page Hero-Style Category Banner (Matching Home Hero Visuals & Proportions) ── */}
-      {!isSubcategoryView && (
+      {!isBannerlessListing && (
         <section
           id="collection-hero"
           className="coll-hero-banner hero-clean-banner"
@@ -1013,21 +1050,33 @@ export default function Collection() {
       <section id="collection-catalog" className="coll-catalog-section section-padding" aria-label="Product catalog">
         <div className="container">
 
-          {/* Subcategory views have no banner, so the trail lives up here instead. */}
-          {isSubcategoryView && (
+          {/* Bannerless listings keep their page context above the catalog. */}
+          {isBannerlessListing && (
             <nav className="coll-subcat-trail" aria-label="Breadcrumb">
-              <Link to="/" className="coll-subcat-trail-link">Home</Link>
-              <span className="coll-subcat-trail-sep">/</span>
-              <Link
-                to={`/collection?category=${encodeURIComponent(categoryParam)}`}
-                className="coll-subcat-trail-link"
-              >
-                {activeCategoryLabel}
-              </Link>
-              <span className="coll-subcat-trail-sep">/</span>
-              <h1 className="coll-subcat-trail-current">
-                {activeSubcategory?.name || typeParam}
-              </h1>
+              {/* <Link to="/" className="coll-subcat-trail-link">Home</Link> */}
+              {/* <span className="coll-subcat-trail-sep">/</span> */}
+              {isSearchListing ? (
+                <h1 className="coll-subcat-trail-current">
+                  Search results for "{searchParam}"
+                </h1>
+              ) : isBannerlessCollection ? (
+                <h1 className="coll-subcat-trail-current">
+                  {collectionParam === "best-sellers" ? "Best Sellers" : "New Arrivals"}
+                </h1>
+              ) : (
+                <>
+                  <Link
+                    to={`/collection?category=${encodeURIComponent(categoryParam)}`}
+                    className="coll-subcat-trail-link"
+                  >
+                    {activeCategoryLabel}
+                  </Link>
+                  <span className="coll-subcat-trail-sep">/</span>
+                  <h1 className="coll-subcat-trail-current">
+                    {activeSubcategory?.name || typeParam}
+                  </h1>
+                </>
+              )}
             </nav>
           )}
 
@@ -1121,6 +1170,11 @@ export default function Collection() {
 
           {activeFiltersCount > 0 && (
             <div className="coll-active-chips" aria-label="Active filters">
+              {searchParam && (
+                <button type="button" className="coll-chip" onClick={() => updateParams({ q: null, search: null })}>
+                  Search: "{searchParam}" <span>✕</span>
+                </button>
+              )}
               {(minPriceParam > 0 || maxPriceParam < priceCeiling) && (
                 <button type="button" className="coll-chip" onClick={() => updateParams({ minPrice: null, maxPrice: null })}>
                   Price: {CURRENCY_SYMBOL}{formatINRNumber(minPriceParam)} – {CURRENCY_SYMBOL}{formatINRNumber(maxPriceParam)} <span>✕</span>

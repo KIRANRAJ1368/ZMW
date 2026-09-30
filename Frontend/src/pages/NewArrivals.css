@@ -82,3 +82,13 @@
     font-size: 1.75rem;
   }
 }
+@media (max-width: 340px) {
+  .m-product-grid.density-3,
+  .m-product-grid.density-4 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .na-hero-title {
+    font-size: 1.5rem;
+  }
+}

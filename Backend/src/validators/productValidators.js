@@ -12,13 +12,15 @@ function productRules() {
       .notEmpty()
       .matches(/^[a-z0-9-]+$/)
       .withMessage("Slug may only contain lowercase letters, numbers and hyphens"),
-    body("sku").trim().notEmpty().withMessage("SKU is required").isLength({ max: 60 }),
+    body("sku").optional({ values: "falsy" }).trim().isLength({ max: 60 }),
     body("category_id").isInt().withMessage("category_id is required"),
     body("subcategory_id").optional({ values: "null" }).isInt(),
     body("product_type").optional({ values: "null" }).isString().isLength({ max: 60 }),
     body("description").optional({ values: "null" }).isString(),
-    body("price").isFloat({ min: 0 }).withMessage("Price must be a positive number"),
-    body("original_price").optional({ values: "null" }).isFloat({ min: 0 }),
+    body("price").isFloat({ min: 500 }).withMessage("Selling price must be at least ₹500"),
+    body("original_price").optional({ values: "null" }).isFloat({ min: 500 }).custom((value, { req }) =>
+      req.body.price === undefined || req.body.price === null || req.body.price === "" || Number(value) > Number(req.body.price)
+    ).withMessage("Original price must be higher than selling price"),
     body("stock_count").optional().isInt({ min: 0 }),
     body("in_stock").optional().isBoolean(),
     body("is_best_seller").optional().isBoolean(),
@@ -26,7 +28,7 @@ function productRules() {
     body("is_sale").optional().isBoolean(),
     body("badge_label").optional({ values: "null" }).isString().isLength({ max: 40 }),
     body("badge_type").optional({ values: "null" }).isIn(["hot", "new", "sale"]),
-    body("images").optional().isArray(),
+    body("images").optional().isArray({ max: 2 }).withMessage("Maximum 2 images are allowed."),
     body("images.*.url").optional().isString().notEmpty(),
     body("colors").optional().isArray(),
     body("colors.*.name").optional().isString().notEmpty(),

@@ -142,3 +142,9 @@
     padding: 22px 18px;
   }
 }
+
+@media (max-width: 340px) {
+  .testimonial-card {
+    padding: 16px 12px;
+  }
+}

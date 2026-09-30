@@ -418,6 +418,23 @@
   }
 }
 
+@media (max-width: 320px) {
+  .auth-modal-inner,
+  .auth-confirmation-view {
+    padding: 16px 10px 14px 10px;
+  }
+
+  .auth-title {
+    font-size: 1.05rem;
+  }
+
+  .auth-otp-input {
+    letter-spacing: 4px !important;
+    font-size: 1.15rem !important;
+    padding: 8px 6px !important;
+  }
+}
+
 /* ==========================================================================
    OTP Verification Flow Enhancements
    ========================================================================== */
@@ -426,6 +443,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
   background-color: #f7f6f2;
   border: 1px solid #e7e2d8;
   border-radius: 8px;

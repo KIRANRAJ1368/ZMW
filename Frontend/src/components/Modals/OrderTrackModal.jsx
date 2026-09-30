@@ -24,13 +24,13 @@ export default function OrderTrackModal() {
     try {
       const data = await storefrontApi.trackOrder(orderId.trim(), email.trim());
       setTrackingResult({
-        orderId: data.orderNumber,
+        orderId: data.orderNumber || data.orderId,
         status: data.status ? data.status.toUpperCase() : "PROCESSING",
-        carrier: data.trackingCarrier || "DHL Express Global",
-        trackingNumber: data.trackingNumber,
-        estimatedDelivery: data.estimatedDelivery ? new Date(data.estimatedDelivery).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "In 3-5 Business Days",
+        carrier: data.trackingCarrier || data.carrier || "BlueDart Express Global",
+        trackingNumber: data.trackingNumber || `BD-${(data.orderNumber || data.orderId || "").replace(/^ZMW-/, "")}`,
+        estimatedDelivery: data.estimatedDelivery ? new Date(data.estimatedDelivery).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }) : "In 3-5 Business Days",
         destination: data.destination || "Customer Address",
-        steps: data.steps || []
+        steps: data.steps || data.timeline || []
       });
     } catch (err) {
       setError(err.message || "Order not found. Please verify your Order Number and Email.");

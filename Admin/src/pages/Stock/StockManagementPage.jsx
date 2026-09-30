@@ -19,7 +19,10 @@ import { productsApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { resolveImageUrl } from "../../utils/imageUrl";
 import LoadingState from "../../components/LoadingState/LoadingState";
+import Pagination from "../../components/Pagination/Pagination";
 import "./StockManagementPage.css";
+
+const PRODUCTS_PER_PAGE = 20;
 
 export default function StockManagementPage() {
   const [searchParams] = useSearchParams();
@@ -29,7 +32,8 @@ export default function StockManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [collapsedMap, setCollapsedMap] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedMap, setExpandedMap] = useState({});
 
   // Adjust modal
   const [adjustingItem, setAdjustingItem] = useState(null);
@@ -60,19 +64,10 @@ export default function StockManagementPage() {
     loadData();
   }, [loadData]);
 
-  // Auto-expand highlighted product
+  // Reset page when search query changes
   useEffect(() => {
-    if (highlightProductId) {
-      setCollapsedMap((prev) => ({ ...prev, [highlightProductId]: false }));
-    }
-  }, [highlightProductId]);
-
-  function toggleCollapse(productId) {
-    setCollapsedMap((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-  }
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
@@ -89,6 +84,55 @@ export default function StockManagementPage() {
       return matchName || matchSku || matchVar;
     });
   }, [products, searchQuery]);
+
+  // Auto-expand and navigate to highlighted product if given
+  useEffect(() => {
+    if (highlightProductId && filteredProducts.length > 0) {
+      const idx = filteredProducts.findIndex(
+        (p) => String(p.id) === String(highlightProductId)
+      );
+      if (idx !== -1) {
+        const targetPage = Math.floor(idx / PRODUCTS_PER_PAGE) + 1;
+        setCurrentPage(targetPage);
+        setExpandedMap((prev) => ({ ...prev, [highlightProductId]: true }));
+      }
+    }
+  }, [highlightProductId, filteredProducts]);
+
+  const totalProducts = filteredProducts.length;
+  const totalPages = Math.max(1, Math.ceil(totalProducts / PRODUCTS_PER_PAGE));
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = Math.min(startIndex + PRODUCTS_PER_PAGE, totalProducts);
+
+  const paginatedProducts = useMemo(() => {
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, startIndex, endIndex]);
+
+  function isExpanded(productId, idx) {
+    if (expandedMap[productId] !== undefined) return expandedMap[productId];
+    if (highlightProductId && String(highlightProductId) === String(productId)) return true;
+    return idx === 0 && currentPage === 1;
+  }
+
+  function toggleExpand(productId, idx) {
+    setExpandedMap((prev) => ({
+      ...prev,
+      [productId]: !isExpanded(productId, idx),
+    }));
+  }
+
+  const allExpanded =
+    paginatedProducts.length > 0 &&
+    paginatedProducts.every((p, i) => isExpanded(p.id, i));
+
+  function handleToggleAll() {
+    const shouldExpand = !allExpanded;
+    const next = {};
+    paginatedProducts.forEach((p) => {
+      next[p.id] = shouldExpand;
+    });
+    setExpandedMap((prev) => ({ ...prev, ...next }));
+  }
 
   // Summary stats
   const stats = useMemo(() => {
@@ -270,12 +314,28 @@ export default function StockManagementPage() {
         )}
       </div>
 
+      {/* Product List Header / Pagination Info */}
+      <div className="s-pagination-bar-top">
+        <span className="s-pagination-summary">
+          Showing <strong>{totalProducts === 0 ? 0 : startIndex + 1}–{endIndex}</strong> of <strong>{totalProducts}</strong> products
+        </span>
+        {paginatedProducts.length > 0 && (
+          <button
+            type="button"
+            className="s-btn-ghost-sm"
+            onClick={handleToggleAll}
+          >
+            {allExpanded ? "Collapse All on Page" : "Expand All on Page"}
+          </button>
+        )}
+      </div>
+
       {/* Product Cards */}
       <div className="s-cards-list">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((prod) => {
+        {paginatedProducts.length > 0 ? (
+          paginatedProducts.map((prod, idx) => {
             const variants = prod.variants || [];
-            const isCollapsed = collapsedMap[prod.id] === true;
+            const expanded = isExpanded(prod.id, idx);
 
             return (
               <div
@@ -289,22 +349,33 @@ export default function StockManagementPage() {
                 {/* Product Card Header */}
                 <div
                   className="s-prod-header"
-                  onClick={() => toggleCollapse(prod.id)}
+                  onClick={() => toggleExpand(prod.id, idx)}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" && toggleCollapse(prod.id)
-                  }
-                  aria-expanded={!isCollapsed}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      toggleExpand(prod.id, idx);
+                    }
+                  }}
+                  aria-expanded={expanded}
                 >
                   <div className="s-prod-header-left">
-                    <span className="s-collapse-chevron">
-                      {isCollapsed ? (
-                        <ChevronRight size={16} />
-                      ) : (
+                    <button
+                      type="button"
+                      className="s-arrow-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpand(prod.id, idx);
+                      }}
+                      aria-label={expanded ? `Collapse ${prod.name}` : `Expand ${prod.name}`}
+                    >
+                      {expanded ? (
                         <ChevronDown size={16} />
+                      ) : (
+                        <ChevronRight size={16} />
                       )}
-                    </span>
+                    </button>
                     <img
                       src={resolveImageUrl(prod.image || prod.images?.[0])}
                       alt={prod.name}
@@ -313,10 +384,7 @@ export default function StockManagementPage() {
                         e.currentTarget.style.display = "none";
                       }}
                     />
-                    <div>
-                      <h2 className="s-prod-title">{prod.name}</h2>
-                      <span className="s-prod-sku">SKU: {prod.sku}</span>
-                    </div>
+                    <h2 className="s-prod-title">{prod.name}</h2>
                   </div>
 
                   <div className="s-prod-header-right">
@@ -324,38 +392,27 @@ export default function StockManagementPage() {
                       {variants.length}{" "}
                       {variants.length === 1 ? "variant" : "variants"}{" "}
                       <span className="s-mini-chevron">
-                        {isCollapsed ? "›" : "⌵"}
+                        {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                       </span>
                     </span>
                   </div>
                 </div>
 
                 {/* Stock Table */}
-                {!isCollapsed && (
+                {expanded && (
                   <div className="s-table-container">
                     {variants.length > 0 ? (
                       <table className="s-table">
                         <thead>
                           <tr>
-                            <th style={{ width: "5%" }}>S.NO</th>
-                            <th style={{ width: "22%" }}>VARIANT</th>
-                            <th style={{ width: "22%" }}>COLOR / SIZE</th>
-                            <th style={{ width: "14%" }}>SKU</th>
-                            <th
-                              style={{ width: "14%", textAlign: "center" }}
-                            >
-                              STOCK QTY
-                            </th>
-                            <th
-                              style={{ width: "12%", textAlign: "center" }}
-                            >
-                              LOW STOCK ALERT
-                            </th>
-                            <th
-                              style={{ width: "11%", textAlign: "right" }}
-                            >
-                              ACTIONS
-                            </th>
+                            <th className="s-th-sno">S.NO</th>
+                            <th className="s-th-variant">VARIANT</th>
+                            <th className="s-th-colorsize">COLOR / SIZE</th>
+                            <th className="s-th-sku">SKU</th>
+                            <th className="s-th-stock">STOCK QTY</th>
+                            <th className="s-th-sales">SALES STOCK</th>
+                            <th className="s-th-threshold">LOW STOCK THRESHOLD</th>
+                            <th className="s-th-actions">ACTIONS</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -364,7 +421,7 @@ export default function StockManagementPage() {
                             const stockCount = Number(
                               v.stockCount ?? v.stock_count ?? 0
                             );
-                            const threshold = v.lowStockThreshold ?? 5;
+                            const threshold = Number(v.lowStockThreshold ?? 2);
                             const isLow = stockCount > 0 && stockCount <= threshold;
                             const isOut = stockCount === 0;
                             const fullSku =
@@ -374,6 +431,9 @@ export default function StockManagementPage() {
                             const variantTitle =
                               v.color ||
                               (isDefault ? "Default" : `Variant ${vIdx + 1}`);
+                            const salesStock = Number(
+                              v.salesStock ?? v.salesCount ?? v.sales_stock ?? v.sales_count ?? 0
+                            );
 
                             return (
                               <tr
@@ -389,33 +449,23 @@ export default function StockManagementPage() {
                                 {/* S.NO */}
                                 <td className="s-cell-sno">{vIdx + 1}</td>
 
-                                {/* VARIANT: thumbnail + name + DEFAULT badge */}
+                                {/* VARIANT */}
                                 <td>
                                   <div className="s-variant-info-cell">
-                                    {v.imageUrl || v.image_url ? (
-                                      <img
-                                        src={resolveImageUrl(
-                                          v.imageUrl || v.image_url
-                                        )}
-                                        alt={variantTitle}
-                                        className="s-variant-thumb"
-                                        onError={(e) => {
-                                          e.currentTarget.style.display = "none";
-                                        }}
-                                      />
-                                    ) : (
-                                      <img
-                                        src={resolveImageUrl(
-                                          prod.image || prod.images?.[0]
-                                        )}
-                                        alt={variantTitle}
-                                        className="s-variant-thumb"
-                                        onError={(e) => {
-                                          e.currentTarget.style.display = "none";
-                                        }}
-                                      />
-                                    )}
-                                    <div>
+                                    <img
+                                      src={resolveImageUrl(
+                                        v.imageUrl ||
+                                          v.image_url ||
+                                          prod.image ||
+                                          prod.images?.[0]
+                                      )}
+                                      alt={variantTitle}
+                                      className="s-variant-thumb"
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = "none";
+                                      }}
+                                    />
+                                    <div className="s-variant-meta">
                                       <span className="s-variant-name">
                                         {variantTitle}
                                       </span>
@@ -450,26 +500,14 @@ export default function StockManagementPage() {
                                   <span className="s-sku-tag">{fullSku}</span>
                                 </td>
 
-                                {/* STOCK QTY - Editable inline */}
+                                {/* STOCK QTY */}
                                 <td style={{ textAlign: "center" }}>
                                   <div className="s-stock-qty-wrap">
-                                    {isOut && (
-                                      <span className="s-out-badge">OUT</span>
-                                    )}
-                                    {isLow && !isOut && (
-                                      <AlertTriangle
-                                        size={12}
-                                        className="s-low-icon"
-                                        title="Low stock"
-                                      />
-                                    )}
                                     <input
                                       type="number"
                                       min="0"
                                       value={stockCount}
                                       onChange={(e) => {
-                                        // Debounce: only save on blur to avoid excess API calls
-                                        // Optimistic local update via state
                                         const newQty = parseInt(e.target.value, 10) || 0;
                                         setProducts((prev) =>
                                           prev.map((p) => {
@@ -495,17 +533,22 @@ export default function StockManagementPage() {
                                           e.target.value
                                         );
                                       }}
-                                      className={`s-stock-qty-input ${isOut ? "is-out" : isLow ? "is-low" : ""}`}
-                                      aria-label={`Stock for ${prod.name} ${v.color} ${v.size}`}
+                                      className="s-stock-qty-input"
+                                      aria-label={`Stock for ${prod.name} ${variantTitle}`}
                                     />
                                   </div>
+                                </td>
+
+                                {/* SALES STOCK */}
+                                <td style={{ textAlign: "center" }}>
+                                  <span className="s-sales-stock-val">{salesStock}</span>
                                 </td>
 
                                 {/* LOW STOCK THRESHOLD */}
                                 <td style={{ textAlign: "center" }}>
                                   <input
                                     type="number"
-                                    min="1"
+                                    min="0"
                                     defaultValue={threshold}
                                     className="s-threshold-input"
                                     aria-label="Low stock threshold"
@@ -557,6 +600,21 @@ export default function StockManagementPage() {
           </div>
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="s-pagination-card">
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            total={totalProducts}
+            onChange={(newPage) => {
+              setCurrentPage(newPage);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
+        </div>
+      )}
 
       {/* Quick Adjust Stock Modal */}
       {adjustingItem && (

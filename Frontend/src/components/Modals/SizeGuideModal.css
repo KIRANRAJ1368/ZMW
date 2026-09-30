@@ -327,3 +327,56 @@
 .sg-footer-note strong {
   color: #0F172A;
 }
+
+@media (max-width: 560px) {
+  .sg-modal-overlay {
+    padding: 12px;
+  }
+
+  .sg-modal-header {
+    padding: 16px 18px;
+  }
+
+  .sg-modal-title {
+    font-size: 1.15rem;
+  }
+
+  .sg-modal-body {
+    padding: 18px 16px;
+  }
+
+  .sg-modal-footer {
+    padding: 14px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .sg-fit-banner {
+    padding: 12px 14px;
+  }
+}
+
+@media (max-width: 340px) {
+  .sg-modal-overlay {
+    padding: 8px;
+  }
+
+  .sg-modal-header {
+    padding: 12px 12px;
+  }
+
+  .sg-modal-body {
+    padding: 14px 10px;
+  }
+
+  .sg-modal-footer {
+    padding: 12px 10px;
+  }
+
+  .sg-size-table th,
+  .sg-size-table td {
+    padding: 10px 10px;
+    font-size: 0.8rem;
+  }
+}

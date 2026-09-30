@@ -27,7 +27,7 @@ export default function Wishlist() {
             </div>
 
             {wishlistProducts.length > 0 && (
-              <Link to="/" className="wishlist-continue-top">
+              <Link to="/collection?category=mens" className="wishlist-continue-top">
                 Continue Shopping &rarr;
               </Link>
             )}
@@ -132,7 +132,7 @@ export default function Wishlist() {
 
             {/* Bottom Continue Shopping Button */}
             <div className="wishlist-footer-cta">
-              <Link to="/" className="btn btn-secondary wishlist-continue-btn">
+              <Link to="/collection?category=mens" className="btn btn-secondary wishlist-continue-btn">
                 Continue Shopping
               </Link>
             </div>
@@ -156,7 +156,7 @@ export default function Wishlist() {
             <p className="wishlist-empty-text">
               You haven't saved any items to your wishlist yet. Explore our latest collections and tap the heart icon on any piece you love.
             </p>
-            <Link to="/" className="btn btn-primary wishlist-empty-btn">
+            <Link to="/collection?category=mens" className="btn btn-primary wishlist-empty-btn">
               Continue Shopping
             </Link>
           </div>

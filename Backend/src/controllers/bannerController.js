@@ -11,7 +11,8 @@ async function list(req, res) {
 }
 
 async function create(req, res) {
-  if (req.body.placement === "hero") {
+  const placement = req.body.placement === "home_hero" ? "hero" : req.body.placement;
+  if (placement === "hero") {
     const heroCount = await Banner.count({ where: { placement: "hero" } });
     if (heroCount >= 3) {
       throw ApiError.badRequest("Maximum 3 Hero Banners can be added.");
@@ -19,7 +20,7 @@ async function create(req, res) {
   }
 
   const banner = await Banner.create({
-    placement: req.body.placement,
+    placement,
     tag: req.body.tag || null,
     title: req.body.title,
     subtitle: req.body.subtitle || null,
@@ -40,7 +41,8 @@ async function update(req, res) {
   const banner = await Banner.findByPk(req.params.id);
   if (!banner) throw ApiError.notFound("Banner not found");
 
-  if (req.body.placement === "hero" && banner.placement !== "hero") {
+  const placement = req.body.placement === "home_hero" ? "hero" : req.body.placement;
+  if (placement === "hero" && banner.placement !== "hero") {
     const heroCount = await Banner.count({ where: { placement: "hero" } });
     if (heroCount >= 3) {
       throw ApiError.badRequest("Maximum 3 Hero Banners can be added.");
@@ -63,7 +65,7 @@ async function update(req, res) {
     "is_active"
   ];
   fields.forEach((f) => {
-    if (req.body[f] !== undefined) banner[f] = req.body[f];
+    if (req.body[f] !== undefined) banner[f] = f === "placement" ? placement : req.body[f];
   });
   await banner.save();
   return sendSuccess(res, { data: banner });

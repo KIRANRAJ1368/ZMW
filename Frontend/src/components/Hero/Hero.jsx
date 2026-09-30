@@ -141,7 +141,10 @@ const HERO_BANNERS = [
 
 export default function Hero() {
   const { homeData, allProducts } = useShop();
-  const managedBanners = homeData?.banners?.hero || [];
+  const managedBanners = [
+    ...(homeData?.banners?.hero || []),
+    ...(homeData?.banners?.home_hero || [])
+  ].filter((banner) => banner?.is_active !== false);
 
   // Any "starting at" claim is generated from the real Admin catalog minimum so
   // it can never advertise an amount the storefront does not actually charge.

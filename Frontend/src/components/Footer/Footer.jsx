@@ -5,7 +5,6 @@ import SizeGuideModal from "../Modals/SizeGuideModal";
 import "./Footer.css";
 
 const QUICK_LINKS = [
-  { label: "Shop All", href: "/collection" },
   { label: "Best Sellers", href: "/collection?collection=best-sellers" },
   { label: "New Arrivals", href: "/collection?collection=new-arrivals" }
 ];
@@ -25,26 +24,9 @@ const SUPPORT_LINKS = [
   { label: "Terms & Conditions", href: "/terms-conditions" }
 ];
 
-const PAYMENT_ICONS = ["UPI", "COD", "VISA", "MC", "RUPAY", "NET BANKING", "GPAY"];
-
-
 export default function Footer() {
   const { setIsOrderTrackOpen } = useShop();
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-  const [emailError, setEmailError] = useState("");
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (!email || !email.includes("@")) {
-      setEmailError("Please enter a valid email address.");
-      return;
-    }
-    setSubscribed(true);
-    setEmailError("");
-    setEmail("");
-  };
 
   return (
     <footer className="site-footer" id="footer">
@@ -166,40 +148,6 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-
-          {/* Newsletter Column */}
-          <div className="footer-newsletter-col">
-            <h4 className="footer-col-heading">Private Client Circle</h4>
-            <p className="footer-newsletter-desc">
-              Subscribe for early access to new collections, exclusive lookbooks, and VIP member promotions.
-            </p>
-
-            {subscribed ? (
-              <div className="newsletter-success">
-                <span className="success-check">✓</span>
-                <span>Thank you — welcome to the circle!</span>
-              </div>
-            ) : (
-              <form className="newsletter-form" onSubmit={handleSubscribe}>
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="newsletter-input"
-                  aria-label="Email for newsletter"
-                />
-                {emailError && <p className="newsletter-error">{emailError}</p>}
-                <button type="submit" className="btn btn-primary btn-sm newsletter-btn">
-                  Subscribe
-                </button>
-              </form>
-            )}
-
-            <p className="privacy-note">
-              By subscribing you agree to our Privacy Policy. Unsubscribe at any time.
-            </p>
-          </div>
         </div>
       </div>
 
@@ -210,12 +158,17 @@ export default function Footer() {
             Copyright © 2026 ZWMStore
           </p>
 
-          {/* Payment Icons */}
-          <div className="payment-icons-strip">
-            {PAYMENT_ICONS.map((pm) => (
-              <span key={pm} className="payment-icon-tag">{pm}</span>
-            ))}
-          </div>
+          <p className="footer-credit">
+            <span className="footer-credit-label">Developed by</span>{" "}
+            <a
+              href="https://saitechnosolutions.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-credit-link"
+            >
+              Sai Techno Solutions
+            </a>
+          </p>
         </div>
       </div>
 

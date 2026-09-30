@@ -2,7 +2,7 @@ const ApiError = require("../utils/ApiError");
 const { sendSuccess } = require("../utils/apiResponse");
 const { publicUrlFor } = require("../middleware/upload");
 
-const ALLOWED_FOLDERS = new Set(["products", "categories", "subcategories", "banners"]);
+const ALLOWED_FOLDERS = new Set(["products", "variants", "categories", "subcategories", "banners"]);
 
 async function upload(req, res) {
   const { folder } = req.params;

@@ -19,7 +19,10 @@ import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../components/ConfirmDialog/ConfirmDialog";
 import { resolveImageUrl } from "../../utils/imageUrl";
 import LoadingState from "../../components/LoadingState/LoadingState";
+import Pagination from "../../components/Pagination/Pagination";
 import "./VariantManagementPage.css";
+
+const PRODUCTS_PER_PAGE = 20;
 
 const SIZE_PRESETS = ["Free Size", "XS", "S", "M", "L", "XL", "XXL", "3XL"];
 
@@ -50,7 +53,8 @@ export default function VariantManagementPage() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [collapsedMap, setCollapsedMap] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedMap, setExpandedMap] = useState({});
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,19 +79,10 @@ export default function VariantManagementPage() {
     loadData();
   }, [loadData]);
 
-  // Auto-expand highlighted product
+  // Reset page when search query changes
   useEffect(() => {
-    if (highlightProductId) {
-      setCollapsedMap((prev) => ({ ...prev, [highlightProductId]: false }));
-    }
-  }, [highlightProductId]);
-
-  function toggleCollapse(productId) {
-    setCollapsedMap((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-  }
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
@@ -108,6 +103,55 @@ export default function VariantManagementPage() {
     });
   }, [products, searchQuery]);
 
+  // Auto-expand and navigate to highlighted product if given
+  useEffect(() => {
+    if (highlightProductId && filteredProducts.length > 0) {
+      const idx = filteredProducts.findIndex(
+        (p) => String(p.id) === String(highlightProductId)
+      );
+      if (idx !== -1) {
+        const targetPage = Math.floor(idx / PRODUCTS_PER_PAGE) + 1;
+        setCurrentPage(targetPage);
+        setExpandedMap((prev) => ({ ...prev, [highlightProductId]: true }));
+      }
+    }
+  }, [highlightProductId, filteredProducts]);
+
+  const totalProducts = filteredProducts.length;
+  const totalPages = Math.max(1, Math.ceil(totalProducts / PRODUCTS_PER_PAGE));
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = Math.min(startIndex + PRODUCTS_PER_PAGE, totalProducts);
+
+  const paginatedProducts = useMemo(() => {
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, startIndex, endIndex]);
+
+  function isExpanded(productId, idx) {
+    if (expandedMap[productId] !== undefined) return expandedMap[productId];
+    if (highlightProductId && String(highlightProductId) === String(productId)) return true;
+    return idx === 0 && currentPage === 1;
+  }
+
+  function toggleExpand(productId, idx) {
+    setExpandedMap((prev) => ({
+      ...prev,
+      [productId]: !isExpanded(productId, idx),
+    }));
+  }
+
+  const allExpanded =
+    paginatedProducts.length > 0 &&
+    paginatedProducts.every((p, i) => isExpanded(p.id, i));
+
+  function handleToggleAll() {
+    const shouldExpand = !allExpanded;
+    const next = {};
+    paginatedProducts.forEach((p) => {
+      next[p.id] = shouldExpand;
+    });
+    setExpandedMap((prev) => ({ ...prev, ...next }));
+  }
+
   function handleOpenAdd(targetProduct = null) {
     setEditingVariant(
       targetProduct ? { productId: String(targetProduct.id) } : null
@@ -125,9 +169,7 @@ export default function VariantManagementPage() {
       colorHex: variant.colorHex || "#181715",
       sku: variant.skuSuffix || variant.sku_suffix || "",
       price: variant.priceOverride ?? product.price,
-      originalPrice:
-        product.originalPrice ||
-        Math.round((variant.priceOverride ?? product.price) * 1.3),
+      originalPrice: product.originalPrice ?? "",
       stockCount: Number(variant.stockCount ?? variant.stock_count ?? 0),
       lowStockThreshold: variant.lowStockThreshold ?? 10,
       gstRate: variant.gstRate || "5",
@@ -309,17 +351,28 @@ export default function VariantManagementPage() {
         </div>
       </div>
 
+      {/* Product List Header / Pagination Info */}
+      <div className="v-pagination-bar-top">
+        <span className="v-pagination-summary">
+          Showing <strong>{totalProducts === 0 ? 0 : startIndex + 1}–{endIndex}</strong> of <strong>{totalProducts}</strong> products
+        </span>
+        {paginatedProducts.length > 0 && (
+          <button
+            type="button"
+            className="v-btn-ghost-sm"
+            onClick={handleToggleAll}
+          >
+            {allExpanded ? "Collapse All on Page" : "Expand All on Page"}
+          </button>
+        )}
+      </div>
+
       {/* Product Cards */}
       <div className="v-cards-list">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((prod) => {
+        {paginatedProducts.length > 0 ? (
+          paginatedProducts.map((prod, idx) => {
             const variants = prod.variants || [];
-            const isCollapsed = collapsedMap[prod.id] === true;
-            const categoryDisplay = prod.category
-              ? prod.subCategory
-                ? `${prod.category.toUpperCase()} › ${prod.subCategory.toUpperCase()}`
-                : prod.category.toUpperCase()
-              : "APPAREL";
+            const expanded = isExpanded(prod.id, idx);
 
             return (
               <div
@@ -333,22 +386,33 @@ export default function VariantManagementPage() {
                 {/* Product Card Header */}
                 <div
                   className="v-prod-header"
-                  onClick={() => toggleCollapse(prod.id)}
+                  onClick={() => toggleExpand(prod.id, idx)}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" && toggleCollapse(prod.id)
-                  }
-                  aria-expanded={!isCollapsed}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      toggleExpand(prod.id, idx);
+                    }
+                  }}
+                  aria-expanded={expanded}
                 >
                   <div className="v-prod-header-left">
-                    <span className="v-collapse-chevron">
-                      {isCollapsed ? (
-                        <ChevronRight size={16} />
-                      ) : (
+                    <button
+                      type="button"
+                      className="v-arrow-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpand(prod.id, idx);
+                      }}
+                      aria-label={expanded ? `Collapse ${prod.name}` : `Expand ${prod.name}`}
+                    >
+                      {expanded ? (
                         <ChevronDown size={16} />
+                      ) : (
+                        <ChevronRight size={16} />
                       )}
-                    </span>
+                    </button>
                     <img
                       src={resolveImageUrl(prod.image || prod.images?.[0])}
                       alt={prod.name}
@@ -357,10 +421,7 @@ export default function VariantManagementPage() {
                         e.currentTarget.style.display = "none";
                       }}
                     />
-                    <div>
-                      <h2 className="v-prod-title">{prod.name}</h2>
-                      <div className="v-prod-category">{categoryDisplay}</div>
-                    </div>
+                    <h2 className="v-prod-title">{prod.name}</h2>
                   </div>
 
                   <div className="v-prod-header-right">
@@ -374,33 +435,33 @@ export default function VariantManagementPage() {
                       title="Add variant to this product"
                     >
                       <Plus size={13} />
-                      <span>Add</span>
+                      <span>Add Variant</span>
                     </button>
                     <span className="v-variants-count-badge">
                       {variants.length}{" "}
                       {variants.length === 1 ? "variant" : "variants"}{" "}
                       <span className="v-mini-chevron">
-                        {isCollapsed ? "›" : "⌵"}
+                        {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                       </span>
                     </span>
                   </div>
                 </div>
 
                 {/* Variants Table */}
-                {!isCollapsed && (
+                {expanded && (
                   <div className="v-table-container">
                     {variants.length > 0 ? (
                       <table className="v-table">
                         <thead>
                           <tr>
-                            <th style={{ width: "4%" }}>#</th>
-                            <th style={{ width: "38%" }}>VARIANT</th>
-                            <th style={{ width: "14%" }}>MRP</th>
-                            <th style={{ width: "18%" }}>SELLING PRICE</th>
-                            <th style={{ width: "10%" }}>STOCK</th>
-                            <th style={{ width: "16%", textAlign: "right" }}>
-                              ACTIONS
-                            </th>
+                            <th className="v-th-sno">S.NO</th>
+                            <th className="v-th-variant">VARIANT</th>
+                            <th className="v-th-colorsize">COLOR / SIZE</th>
+                            <th className="v-th-sku">SKU</th>
+                            <th className="v-th-mrp">MRP</th>
+                            <th className="v-th-price">SELLING PRICE</th>
+                            <th className="v-th-stock">STOCK</th>
+                            <th className="v-th-actions">ACTIONS</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -409,10 +470,7 @@ export default function VariantManagementPage() {
                             const sellingPrice = Number(
                               v.priceOverride ?? prod.price
                             );
-                            const mrp = Number(
-                              prod.originalPrice ||
-                                Math.round(sellingPrice * 1.35)
-                            );
+                            const mrp = Number(prod.originalPrice ?? 0);
                             const discountPct =
                               mrp > sellingPrice
                                 ? Math.round(
@@ -424,53 +482,67 @@ export default function VariantManagementPage() {
                             );
                             const isLowStock = stockCount > 0 && stockCount <= 5;
                             const isOutOfStock = stockCount === 0;
+                            const fullSku =
+                              v.skuSuffix || v.sku_suffix
+                                ? `${prod.sku}-${v.skuSuffix || v.sku_suffix}`
+                                : prod.sku;
+                            const variantTitle =
+                              v.color ||
+                              (isDefault ? "Default" : `Variant ${vIdx + 1}`);
 
                             return (
                               <tr key={v.id || vIdx}>
-                                <td className="v-cell-index">{vIdx + 1}</td>
+                                <td className="v-cell-sno">{vIdx + 1}</td>
 
                                 {/* VARIANT */}
                                 <td>
-                                  <div className="v-variant-name-cell">
-                                    {/* Variant image or color swatch */}
-                                    {v.imageUrl || v.image_url ? (
-                                      <img
-                                        src={resolveImageUrl(
-                                          v.imageUrl || v.image_url
-                                        )}
-                                        alt={v.color}
-                                        className="v-variant-thumb"
-                                        onError={(e) => {
-                                          e.currentTarget.style.display = "none";
-                                        }}
-                                      />
-                                    ) : (
-                                      <span
-                                        className="v-swatch-circle"
-                                        style={{
-                                          backgroundColor:
-                                            v.colorHex || "#181715",
-                                        }}
-                                      />
-                                    )}
-                                    <div className="v-variant-label-group">
-                                      <span className="v-variant-label">
-                                        {v.color || "Standard"} /{" "}
-                                        {v.size || "Free Size"}
+                                  <div className="v-variant-info-cell">
+                                    <img
+                                      src={resolveImageUrl(
+                                        v.imageUrl ||
+                                          v.image_url ||
+                                          prod.image ||
+                                          prod.images?.[0]
+                                      )}
+                                      alt={variantTitle}
+                                      className="v-variant-thumb"
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = "none";
+                                      }}
+                                    />
+                                    <div className="v-variant-meta">
+                                      <span className="v-variant-name">
+                                        {variantTitle}
                                       </span>
-                                      {v.skuSuffix || v.sku_suffix ? (
-                                        <span className="v-sku-tag">
-                                          {prod.sku}-
-                                          {v.skuSuffix || v.sku_suffix}
+                                      {isDefault && (
+                                        <span className="v-badge-default">
+                                          DEFAULT
                                         </span>
-                                      ) : null}
+                                      )}
                                     </div>
-                                    {isDefault && (
-                                      <span className="v-badge-default">
-                                        DEFAULT
-                                      </span>
-                                    )}
                                   </div>
+                                </td>
+
+                                {/* COLOR / SIZE */}
+                                <td>
+                                  <div className="v-color-size-cell">
+                                    <span
+                                      className="v-color-dot"
+                                      style={{
+                                        backgroundColor:
+                                          v.colorHex || "#181715",
+                                      }}
+                                    />
+                                    <span className="v-color-size-label">
+                                      {v.color || "Standard"} /{" "}
+                                      {v.size || "Free Size"}
+                                    </span>
+                                  </div>
+                                </td>
+
+                                {/* SKU */}
+                                <td>
+                                  <span className="v-sku-tag">{fullSku}</span>
                                 </td>
 
                                 {/* MRP */}
@@ -493,7 +565,7 @@ export default function VariantManagementPage() {
                                 </td>
 
                                 {/* STOCK */}
-                                <td>
+                                <td style={{ textAlign: "center" }}>
                                   <span
                                     className={`v-stock-badge ${
                                       isOutOfStock
@@ -514,23 +586,24 @@ export default function VariantManagementPage() {
                                   <div className="v-actions-group">
                                     <button
                                       type="button"
-                                      className="v-icon-btn v-btn-edit-icon"
+                                      className="v-btn-action-edit"
                                       onClick={() =>
                                         handleOpenEdit(prod, v, vIdx)
                                       }
                                       title="Edit Variant"
                                     >
-                                      <Edit2 size={14} />
+                                      <Edit2 size={13} />
+                                      <span>Edit</span>
                                     </button>
                                     <button
                                       type="button"
-                                      className="v-icon-btn v-btn-delete-icon"
+                                      className="v-btn-action-delete"
                                       onClick={() =>
                                         handleDeleteVariant(prod, v, vIdx)
                                       }
                                       title="Delete Variant"
                                     >
-                                      <Trash2 size={14} />
+                                      <Trash2 size={13} />
                                     </button>
                                   </div>
                                 </td>
@@ -566,6 +639,21 @@ export default function VariantManagementPage() {
           </div>
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="v-pagination-card">
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            total={totalProducts}
+            onChange={(newPage) => {
+              setCurrentPage(newPage);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
+        </div>
+      )}
 
       {/* Add / Edit Variant Modal */}
       {isModalOpen && (
@@ -619,9 +707,9 @@ function VariantModal({ editingData, products, onClose, onSave }) {
   const [originalPrice, setOriginalPrice] = useState(
     editingData?.originalPrice !== undefined
       ? String(editingData.originalPrice)
-      : selectedProduct?.originalPrice
+      : selectedProduct?.originalPrice != null
       ? String(selectedProduct.originalPrice)
-      : "0"
+      : ""
   );
   const [stockQty, setStockQty] = useState(
     editingData?.stockCount !== undefined
@@ -661,7 +749,7 @@ function VariantModal({ editingData, products, onClose, onSave }) {
   useEffect(() => {
     if (!isEdit && selectedProduct) {
       setPrice(String(selectedProduct.price || "0"));
-      setOriginalPrice(String(selectedProduct.originalPrice || "0"));
+      setOriginalPrice(String(selectedProduct.originalPrice ?? ""));
     }
   }, [selectedProduct, isEdit]);
 
@@ -695,6 +783,10 @@ function VariantModal({ editingData, products, onClose, onSave }) {
       toast.error("Please select a valid image file");
       return;
     }
+    if (!imageUrl && galleryImages.length >= 2) {
+      toast.error("Maximum 2 images are allowed.");
+      return;
+    }
     setIsUploadingMain(true);
     try {
       const { data } = await uploadApi.upload("variants", imageFiles.slice(0, 1));
@@ -716,6 +808,10 @@ function VariantModal({ editingData, products, onClose, onSave }) {
       f.type.startsWith("image/")
     );
     if (imageFiles.length === 0) return;
+    if (galleryImages.length + (imageUrl ? 1 : 0) + imageFiles.length > 2) {
+      toast.error("Maximum 2 images are allowed.");
+      return;
+    }
     setIsUploadingGallery(true);
     try {
       const { data } = await uploadApi.upload("variants", imageFiles);
@@ -742,8 +838,10 @@ function VariantModal({ editingData, products, onClose, onSave }) {
     if (!colorName.trim()) newErrors.colorName = "Color name is required";
     if (!size.trim()) newErrors.size = "Size is required";
     if (!sku.trim()) newErrors.sku = "SKU is required";
-    if (!price || isNaN(parseFloat(price)) || parseFloat(price) < 0)
-      newErrors.price = "Enter a valid price";
+    if (!price || isNaN(parseFloat(price)) || parseFloat(price) < 500)
+      newErrors.price = "Selling price must be at least ₹500";
+    if (!originalPrice || isNaN(parseFloat(originalPrice)) || parseFloat(originalPrice) <= parseFloat(price))
+      newErrors.originalPrice = "Original price must be higher than selling price";
     if (
       !stockQty ||
       isNaN(parseInt(stockQty, 10)) ||
@@ -1030,8 +1128,8 @@ function VariantModal({ editingData, products, onClose, onSave }) {
                   id="v-input-price"
                   type="number"
                   step="1"
-                  min="0"
-                  placeholder="0"
+                  min="500"
+                  placeholder="500"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   className={`v-input ${errors.price ? "is-invalid" : ""}`}
@@ -1045,18 +1143,24 @@ function VariantModal({ editingData, products, onClose, onSave }) {
 
               <div className="v-field-group">
                 <label className="v-label" htmlFor="v-input-mrp">
-                  MRP / Original Price (₹)
+                  MRP / Original Price (₹) *
                 </label>
                 <input
                   id="v-input-mrp"
                   type="number"
                   step="1"
-                  min="0"
-                  placeholder="0"
+                  min="500"
+                  placeholder="600"
                   value={originalPrice}
                   onChange={(e) => setOriginalPrice(e.target.value)}
                   className="v-input"
+                  required
                 />
+                {errors.originalPrice && (
+                  <span className="v-field-error">
+                    <AlertCircle size={12} /> {errors.originalPrice}
+                  </span>
+                )}
                 {discountPreview && (
                   <span className="v-field-hint v-hint-success">
                     {discountPreview}% off will be displayed

@@ -146,3 +146,16 @@
     padding: 24px;
   }
 }
+@media (max-width: 360px) {
+  .split-card {
+    padding: 18px 14px;
+    min-height: 290px;
+  }
+  .split-title {
+    font-size: 1.3rem;
+  }
+  .btn-split-cta {
+    padding: 10px 18px;
+    font-size: 0.76rem;
+  }
+}

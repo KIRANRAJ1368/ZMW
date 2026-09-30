@@ -206,3 +206,58 @@
     max-width: 100%;
   }
 }
+
+@media (max-width: 480px) {
+  .vip-coupon-card {
+    padding: 24px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .vip-title {
+    font-size: 1.55rem;
+  }
+
+  .vip-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 340px) {
+  .vip-coupon-card {
+    padding: 20px 12px;
+  }
+
+  .coupon-box {
+    padding: 6px 6px 6px 12px;
+  }
+
+  .coupon-code {
+    font-size: 1rem;
+  }
+
+  .copy-btn {
+    padding: 6px 12px;
+    font-size: 0.68rem;
+  }
+
+  .vip-email-form {
+    flex-direction: column;
+    border-radius: 12px;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .vip-input {
+    width: 100%;
+    text-align: center;
+    padding: 4px 0;
+    font-size: 0.82rem;
+  }
+
+  .vip-submit-btn {
+    width: 100%;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+  }
+}

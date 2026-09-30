@@ -135,6 +135,15 @@ export default function ProductFormPage() {
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+    setErrors((previous) => {
+      const fieldsToClear = field === "price" || field === "original_price"
+        ? ["price", "original_price"]
+        : [field];
+      if (!fieldsToClear.some((key) => previous[key])) return previous;
+      const next = { ...previous };
+      fieldsToClear.forEach((key) => delete next[key]);
+      return next;
+    });
   }
 
   function handleNameChange(value) {
@@ -162,6 +171,10 @@ export default function ProductFormPage() {
       toast.error("Please select valid image files (JPG, PNG, WEBP, GIF)");
       return;
     }
+    if (form.images.length + files.length > 2) {
+      toast.error("Maximum 2 images are allowed.");
+      return;
+    }
     setIsUploading(true);
     try {
       const { data } = await uploadApi.upload("products", files);
@@ -186,13 +199,23 @@ export default function ProductFormPage() {
   }
 
   const isValid = useMemo(
-    () => form.name && form.slug && form.sku && form.category_id && form.price !== "",
+    () => form.name && form.slug && form.category_id && form.price !== "",
     [form]
   );
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setErrors({});
+    const validationErrors = {};
+    const sellingPrice = Number(form.price);
+    const originalPrice = Number(form.original_price);
+    if (!Number.isFinite(sellingPrice) || sellingPrice < 500) {
+      validationErrors.price = "Selling price must be at least ₹500";
+    }
+    if (!Number.isFinite(originalPrice) || originalPrice <= sellingPrice) {
+      validationErrors.original_price = "Original price must be higher than selling price";
+    }
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
 
     setIsSaving(true);
     try {
@@ -282,15 +305,6 @@ export default function ProductFormPage() {
               />
             </FormField>
 
-            <FormField label="SKU (Stock Keeping Unit) *" htmlFor="p-sku" error={errors.sku} hint="Unique store identifier">
-              <input
-                id="p-sku"
-                placeholder="e.g. ZMW-HD-OVR-001"
-                value={form.sku}
-                onChange={(e) => update("sku", e.target.value)}
-                required
-              />
-            </FormField>
           </div>
 
           <div className="form-grid">
@@ -379,9 +393,9 @@ export default function ProductFormPage() {
               <input
                 id="p-price"
                 type="number"
-                min="0"
+                min="500"
                 step="0.01"
-                placeholder="e.g. 42"
+                placeholder="e.g. 500"
                 value={form.price}
                 onChange={(e) => update("price", e.target.value)}
                 required
@@ -389,8 +403,9 @@ export default function ProductFormPage() {
             </FormField>
 
             <FormField
-              label="Original / MRP Price (₹)"
+              label="Original / MRP Price (₹) *"
               htmlFor="p-original-price"
+              error={errors.original_price}
               hint={
                 form.original_price && Number(form.original_price) > Number(form.price)
                   ? `Discount: ${Math.round(((Number(form.original_price) - Number(form.price)) / Number(form.original_price)) * 100)}% OFF (Save ${formatINR(Number(form.original_price) - Number(form.price))})`
@@ -400,11 +415,12 @@ export default function ProductFormPage() {
               <input
                 id="p-original-price"
                 type="number"
-                min="0"
+                min="500"
                 step="0.01"
-                placeholder="e.g. 58"
+                placeholder="e.g. 600"
                 value={form.original_price}
                 onChange={(e) => update("original_price", e.target.value)}
+                required
               />
             </FormField>
           </div>

@@ -124,11 +124,7 @@ export default function ContactUs() {
                     <p>123, Avinashi Road, Peelamedu, Coimbatore, Tamil Nadu – 641004, India</p>
                   </div>
                 </div>
-              </div>
 
-              {/* Support Availability */}
-              <div className="contact-info-card">
-                <h3>Support Availability</h3>
                 <div className="contact-detail-row">
                   <div className="contact-detail-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -138,10 +134,7 @@ export default function ContactUs() {
                   </div>
                   <div className="contact-detail-text">
                     <strong>Business Hours</strong>
-                    <p>10:00 AM to 5:00 PM IST</p>
-                    <p style={{ marginTop: "4px", fontSize: "0.82rem", color: "#6B7280" }}>
-                      Monday through Saturday (IST)
-                    </p>
+                    <p>10:00 AM to 5:00 PM IST (Monday – Saturday)</p>
                   </div>
                 </div>
               </div>
@@ -396,23 +389,7 @@ export default function ContactUs() {
             </div>
           </div>
 
-          {/* Google Map Embed Section */}
-          <div className="contact-map-section">
-            <div className="contact-map-header">
-              <h3>Operating Region & Dispatch Hub</h3>
-              <p>
-                Serving customers nationwide across India. Hub: 123, Avinashi Road, Peelamedu, Coimbatore, Tamil Nadu – 641004, India.
-              </p>
-            </div>
-            <iframe
-              title="ZMW Operating Hub Location"
-              src="https://www.google.com/maps?q=123%20Avinashi%20Road%2C%20Peelamedu%2C%20Coimbatore%2C%20Tamil%20Nadu%20641004%2C%20India&output=embed"
-              className="contact-map-frame"
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
+
         </div>
       </section>
     </div>

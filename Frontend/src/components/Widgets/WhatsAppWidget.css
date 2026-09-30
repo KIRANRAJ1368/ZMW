@@ -37,7 +37,8 @@
 
 /* Popup Window */
 .whatsapp-popup {
-  width: 320px;
+  width: min(320px, calc(100vw - 24px));
+  max-width: 100%;
   background-color: var(--color-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
@@ -228,6 +229,16 @@
 @media (max-width: 320px) {
   .whatsapp-widget-wrapper {
     bottom: 12px;
-    right: 12px;
+    right: 8px;
+  }
+
+  .whatsapp-popup {
+    width: calc(100vw - 16px);
+    max-width: 100%;
+  }
+
+  .whatsapp-fab {
+    width: 46px;
+    height: 46px;
   }
 }

@@ -135,8 +135,9 @@ export default function Navbar() {
   };
 
   return (
-    <header className="site-header">
-      <nav className={`main-navbar ${isScrolled ? "navbar-scrolled" : ""}`}>
+    <>
+      <header className="site-header">
+        <nav className={`main-navbar ${isScrolled ? "navbar-scrolled" : ""}`}>
         <div className="container navbar-inner" ref={desktopNavRef}>
           <button
             className={`hamburger-btn ${mobileMenuOpen ? "active" : ""}`}
@@ -881,5 +882,7 @@ export default function Navbar() {
         </div>
       </div>
     </header>
+    <div className="site-header-spacer" aria-hidden="true" />
+  </>
   );
 }

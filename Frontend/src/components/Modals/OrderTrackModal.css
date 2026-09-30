@@ -198,3 +198,22 @@
     font-size: 1.35rem;
   }
 }
+
+@media (max-width: 340px) {
+  .order-track-container {
+    padding: 20px 12px;
+  }
+
+  .order-track-title {
+    font-size: 1.2rem;
+  }
+
+  .tracking-results-card {
+    padding: 14px 10px;
+  }
+
+  .tracking-meta-banner {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

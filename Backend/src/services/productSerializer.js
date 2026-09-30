@@ -54,6 +54,8 @@ function serializeProduct(product) {
         skuSuffix: v.sku_suffix,
         stockCount: vStock,
         priceOverride: v.price_override !== null && v.price_override !== undefined ? Number(v.price_override) : null,
+        imageUrl: v.image_url || null,
+        galleryImages: Array.isArray(v.gallery_images) ? v.gallery_images : [],
         inStock: vStock > 0,
         stockStatus: vStock === 0 ? "out_of_stock" : vStock <= 5 ? "low_stock" : "in_stock"
       };

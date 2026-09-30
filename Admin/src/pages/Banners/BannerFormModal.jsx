@@ -20,10 +20,24 @@ const PLACEMENTS = [
   { value: "default", label: "Default Fallback Banner" }
 ];
 
+/**
+ * Destinations for the primary "Explore Now" button — one per department.
+ * Paths mirror the public routes in Frontend/src/App.jsx and use the same
+ * /collection?category=... query format as the Navbar so the click stays a
+ * client-side navigation.
+ */
+const CTA_DEPARTMENTS = [
+  { value: "/collection?category=mens", label: "Men" },
+  { value: "/collection?category=women", label: "Women" },
+  { value: "/collection?category=boys", label: "Boys" },
+  { value: "/collection?category=girls", label: "Girls" },
+  { value: "/collection?category=babies", label: "Babies" }
+];
+
+const CTA_DEPARTMENT_VALUES = CTA_DEPARTMENTS.map((option) => option.value);
+
 export default function BannerFormModal({ banner, heroCount = 0, onClose, onSaved }) {
   const isEdit = !!banner.id;
-  const isHeroCapped =
-    formPlacement() === "hero" && (!isEdit || banner.placement !== "hero") && heroCount >= 3;
 
   function defaultPlacement() {
     if (banner.placement) return banner.placement;
@@ -50,10 +64,6 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
   const [isSaving, setIsSaving] = useState(false);
   const toast = useToast();
 
-  function formPlacement() {
-    return form?.placement || banner.placement || "hero";
-  }
-
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
     if (errors[field]) {
@@ -76,11 +86,15 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
     setErrors({});
     setIsSaving(true);
     try {
+      // Keep an existing non-department link unless the admin actively chose a
+      // department, so simply opening and saving cannot drop it.
+      const payload = ctaLinkChanged ? form : { ...form, primary_cta_link: storedCtaLink };
+
       if (isEdit) {
-        await bannersApi.update(banner.id, form);
+        await bannersApi.update(banner.id, payload);
         toast.success("Banner updated successfully");
       } else {
-        await bannersApi.create(form);
+        await bannersApi.create(payload);
         toast.success("Banner created successfully");
       }
       onSaved();
@@ -96,6 +110,17 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
 
   const currentIsHeroCapped =
     form.placement === "hero" && (!isEdit || banner.placement !== "hero") && heroCount >= 3;
+
+  // Banners saved before the dropdown existed may point somewhere that is not a
+  // department (e.g. the seeded "#collection-catalog"). Those have no matching
+  // <option>, so the select falls back to the placeholder for display and the
+  // stored value is preserved on save unless the admin actually picks one.
+  const storedCtaLink = banner.primary_cta_link || "";
+  const ctaLinkValue = form.primary_cta_link || "";
+  const ctaLinkSelectValue = CTA_DEPARTMENT_VALUES.includes(ctaLinkValue) ? ctaLinkValue : "";
+  const ctaLinkIsUnmapped =
+    isEdit && ctaLinkValue !== "" && !CTA_DEPARTMENT_VALUES.includes(ctaLinkValue);
+  const ctaLinkChanged = ctaLinkValue !== storedCtaLink;
 
   return (
     <Modal
@@ -244,13 +269,29 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
             />
           </FormField>
 
-          <FormField label="Primary CTA Link" htmlFor="b-cta1-link">
-            <input
+          <FormField
+            label="Primary CTA Link"
+            htmlFor="b-cta1-link"
+            hint="Department the Explore Now button opens"
+            error={
+              errors.primary_cta_link ||
+              (ctaLinkIsUnmapped
+                ? `Currently set to "${ctaLinkValue}" — pick a department to change it.`
+                : null)
+            }
+          >
+            <select
               id="b-cta1-link"
-              placeholder="e.g. /collection?category=mens"
-              value={form.primary_cta_link}
+              value={ctaLinkSelectValue}
               onChange={(e) => update("primary_cta_link", e.target.value)}
-            />
+            >
+              <option value="">— Select department —</option>
+              {CTA_DEPARTMENTS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </FormField>
         </div>
 

@@ -409,9 +409,11 @@
 }
 
 .pd-color-swatches {
+
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .pd-color-dot {
@@ -1373,5 +1375,39 @@
 
   .pd-offer-card {
     padding: 10px 12px;
+  }
+}
+@media (max-width: 320px) {
+  .pd-title {
+    font-size: 1.15rem;
+  }
+
+  .pd-price-current {
+    font-size: 1.2rem;
+  }
+
+  .pd-size-chip {
+    min-width: 44px;
+    padding: 7px 10px;
+    font-size: 0.72rem;
+  }
+
+  .pd-buttons-stack {
+    gap: 8px;
+  }
+
+  .pd-add-to-cart-btn,
+  .pd-buy-now-btn {
+    height: 42px;
+    font-size: 0.7rem;
+    padding: 0 10px;
+  }
+
+  .pd-offer-card {
+    padding: 8px 10px;
+  }
+
+  .pd-offer-detail {
+    font-size: 10.5px;
   }
 }

@@ -348,16 +348,42 @@
     width: 52px;
     height: 64px;
   }
-}
 
-@media (max-width: 340px) {
   .quickview-actions {
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
   }
 
   .btn-add-bag {
     order: 2;
     flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 340px) {
+  .quickview-gallery {
+    padding: 12px;
+  }
+
+  .quickview-details {
+    padding: 16px 12px;
+  }
+
+  .quickview-title {
+    font-size: 1.15rem;
+  }
+
+  .quickview-actions {
+    gap: 8px;
+  }
+
+  .btn-wishlist-round {
+    width: 40px;
+    height: 40px;
+  }
+
+  .thumb-btn {
+    width: 44px;
+    height: 56px;
   }
 }

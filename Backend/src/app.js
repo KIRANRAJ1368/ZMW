@@ -29,7 +29,11 @@ app.use(
     origin(origin, callback) {
       // Allow non-browser requests (curl, server-to-server, no Origin header).
       if (!origin) return callback(null, true);
-      if (env.corsOrigins.length === 0 || env.corsOrigins.includes(origin)) {
+      if (
+        env.corsOrigins.length === 0 ||
+        env.corsOrigins.includes(origin) ||
+        (env.env === "development" && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin))
+      ) {
         return callback(null, true);
       }
       return callback(new Error("Not allowed by CORS"));

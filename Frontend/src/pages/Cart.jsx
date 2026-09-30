@@ -94,7 +94,7 @@ export default function Cart() {
                 Explore our curated luxury collections and find your signature style.
               </p>
 
-              <Link to="/collection" className="cp-empty-cta">
+              <Link to="/collection?category=mens" className="cp-empty-cta">
                 Continue Shopping <ArrowRightIcon />
               </Link>
 
@@ -269,7 +269,7 @@ export default function Cart() {
 
             {/* Bottom Continue Shopping Link */}
             <div className="cp-items-bottom-action">
-              <Link to="/collection" className="cp-continue-shopping-link">
+              <Link to="/collection?category=mens" className="cp-continue-shopping-link">
                 <ArrowLeftIcon />
                 Continue Shopping
               </Link>

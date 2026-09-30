@@ -26,15 +26,15 @@ import "./AdminLayout.css";
 
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/banners", label: "Hero & Banners", icon: ImageIcon },
+  { to: "/categories", label: "Categories", icon: FolderTree },
+  { to: "/subcategories", label: "Subcategories", icon: Tags },
   { to: "/products", label: "Products", icon: Shirt },
   { to: "/variants", label: "Variant Management", icon: Layers },
   { to: "/stock", label: "Stock Management", icon: Package2 },
-  { to: "/categories", label: "Categories", icon: FolderTree },
-  { to: "/subcategories", label: "Subcategories", icon: Tags },
-  { to: "/banners", label: "Hero & Banners", icon: ImageIcon },
-  { to: "/orders", label: "Orders & Shipping", icon: ShoppingBag },
   { to: "/coupons", label: "Coupons & Discounts", icon: Tag },
   { to: "/reports", label: "Reports & Analytics", icon: TrendingUp },
+  { to: "/orders", label: "Orders & Shipping", icon: ShoppingBag },
   { to: "/customers", label: "Customers", icon: Users },
   { to: "/contact", label: "Customer Inquiries", icon: Mail }
 ];

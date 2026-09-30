@@ -199,7 +199,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 13px 18px;
+  padding: 12px 18px;
   background: var(--surface);
   cursor: pointer;
   user-select: none;
@@ -224,6 +224,26 @@
   flex: 1;
 }
 
+.v-arrow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-xs);
+  border: none;
+  background: transparent;
+  color: var(--text-subtle);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.v-arrow-btn:hover {
+  background: var(--surface-alt);
+  color: var(--text-main);
+}
+
 .v-collapse-chevron {
   color: var(--text-subtle);
   display: flex;
@@ -232,8 +252,8 @@
 }
 
 .v-prod-avatar {
-  width: 42px;
-  height: 50px;
+  width: 38px;
+  height: 38px;
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid var(--border);
@@ -242,21 +262,14 @@
 }
 
 .v-prod-title {
-  font-size: 14.5px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text-main);
-  margin: 0 0 2px;
-  line-height: 1.25;
+  margin: 0;
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.v-prod-category {
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--text-subtle);
-  letter-spacing: 0.05em;
 }
 
 .v-prod-header-right {
@@ -276,13 +289,50 @@
   border: 1px solid var(--border);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   white-space: nowrap;
 }
 
 .v-mini-chevron {
-  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
   color: var(--text-subtle);
+}
+
+/* ── Pagination Bar Top ── */
+.v-pagination-bar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 4px 2px;
+}
+
+.v-pagination-summary {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.v-pagination-summary strong {
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.v-btn-ghost-sm {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  transition: all 0.15s ease;
+}
+
+.v-btn-ghost-sm:hover {
+  background: var(--primary-light);
 }
 
 /* ── Table ── */
@@ -297,7 +347,7 @@
   border-collapse: collapse;
   font-size: 13px;
   text-align: left;
-  min-width: 600px;
+  min-width: 760px;
 }
 
 .v-table thead {
@@ -305,18 +355,27 @@
 }
 
 .v-table th {
-  padding: 11px 16px;
+  padding: 10px 14px;
   font-size: 10.5px;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 
+.v-th-sno { width: 5%; text-align: center; }
+.v-th-variant { width: 22%; text-align: left; }
+.v-th-colorsize { width: 20%; text-align: left; }
+.v-th-sku { width: 13%; text-align: left; }
+.v-th-mrp { width: 11%; text-align: left; }
+.v-th-price { width: 12%; text-align: left; }
+.v-th-stock { width: 9%; text-align: center; }
+.v-th-actions { width: 8%; text-align: right; }
+
 .v-table td {
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-bottom: 1px solid var(--border-light);
   vertical-align: middle;
   color: var(--text-main);
@@ -330,21 +389,22 @@
   background: var(--surface-hover);
 }
 
-.v-cell-index {
+.v-cell-sno {
   font-weight: 600;
   color: var(--text-muted);
   font-size: 12px;
+  text-align: center;
 }
 
-.v-variant-name-cell {
+.v-variant-info-cell {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .v-variant-thumb {
-  width: 32px;
-  height: 38px;
+  width: 28px;
+  height: 32px;
   object-fit: cover;
   border-radius: var(--radius-xs);
   border: 1px solid var(--border);
@@ -352,42 +412,23 @@
   flex-shrink: 0;
 }
 
-.v-swatch-circle {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border-hover);
-  flex-shrink: 0;
-  display: inline-block;
-}
-
-.v-variant-label-group {
+.v-variant-meta {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.v-variant-label {
+.v-variant-name {
   font-weight: 600;
   color: var(--text-main);
-  white-space: nowrap;
-}
-
-.v-sku-tag {
-  font-family: monospace;
-  font-size: 10.5px;
-  color: var(--text-muted);
-  background: var(--surface-alt);
-  border: 1px solid var(--border);
-  padding: 1px 5px;
-  border-radius: var(--radius-xs);
+  font-size: 13px;
   display: inline-block;
 }
 
 .v-badge-default {
   display: inline-block;
-  padding: 2px 7px;
+  padding: 1px 6px;
   background: var(--success-bg);
   color: var(--success-text);
   border-radius: var(--radius-xs);
@@ -395,12 +436,41 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.v-color-size-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.v-color-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-hover);
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.v-color-size-label {
+  font-weight: 500;
+  color: var(--text-main);
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.v-sku-tag {
+  font-family: monospace;
+  font-size: 11.5px;
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
 .v-cell-mrp {
   font-weight: 500;
   color: var(--text-muted);
+  font-size: 13px;
 }
 
 .v-price-cell {
@@ -412,24 +482,81 @@
 .v-selling-val {
   font-weight: 700;
   color: var(--text-main);
+  font-size: 13px;
 }
 
 .v-discount-badge {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   color: var(--success-text);
   background: var(--success-bg);
-  padding: 2px 5px;
+  padding: 1px 5px;
   border-radius: var(--radius-xs);
 }
 
-/* Stock badges */
 .v-stock-badge {
   display: inline-block;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 6px;
+  text-align: center;
+}
+
+.v-actions-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.v-btn-action-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.v-btn-action-edit:hover {
+  background: var(--surface-alt);
+  border-color: var(--border-hover);
+}
+
+.v-btn-action-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.v-btn-action-delete:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+/* ── Pagination Card ── */
+.v-pagination-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
 .v-stock-ok {

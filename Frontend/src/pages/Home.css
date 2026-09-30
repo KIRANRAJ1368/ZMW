@@ -122,3 +122,28 @@
     font-size: 11px;
   }
 }
+@media (max-width: 360px) {
+  .home-benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .home-benefit-card {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 12px;
+  }
+
+  .home-benefit-icon-box {
+    width: 36px;
+    height: 36px;
+  }
+
+  .home-benefit-title {
+    font-size: 12px;
+  }
+
+  .home-benefit-desc {
+    font-size: 11px;
+  }
+}

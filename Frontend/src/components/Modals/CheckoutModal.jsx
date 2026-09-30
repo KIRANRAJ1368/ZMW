@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import { storefrontApi } from "../../services/storefrontApi";
 import "./CheckoutModal.css";
@@ -11,6 +12,7 @@ const PAYMENT_METHODS = [
 ];
 
 export default function CheckoutModal() {
+  const navigate = useNavigate();
   const {
     isCheckoutOpen,
     setIsCheckoutOpen,
@@ -127,6 +129,11 @@ export default function CheckoutModal() {
     setSubmitError("");
   };
 
+  const handleContinueShopping = () => {
+    handleClose();
+    navigate("/collection?category=mens");
+  };
+
   return (
     <div className="modal-overlay active" onClick={handleClose}>
       <div className="checkout-modal-container" onClick={(e) => e.stopPropagation()}>
@@ -162,7 +169,7 @@ export default function CheckoutModal() {
               </div>
             </div>
 
-            <button className="btn btn-primary" onClick={handleClose}>
+            <button className="btn btn-primary" onClick={handleContinueShopping}>
               Continue Shopping
             </button>
           </div>

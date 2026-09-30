@@ -298,7 +298,7 @@ export default function Checkout() {
             </div>
 
             <div className="cko-success-actions">
-              <Link to="/collection" className="cko-btn-primary">
+              <Link to="/collection?category=mens" className="cko-btn-primary">
                 CONTINUE SHOPPING →
               </Link>
             </div>

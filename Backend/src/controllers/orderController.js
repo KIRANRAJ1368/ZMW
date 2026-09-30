@@ -427,20 +427,27 @@ async function trackOrder(req, res) {
     }
   ];
 
+  const estimatedDelivery = new Date(createdAt.getTime() + 72 * 3600 * 1000);
+
   return sendSuccess(res, {
     data: {
       orderId: order.order_number,
+      orderNumber: order.order_number,
       status: order.status,
       isCancelled,
       isReturned,
       carrier: "BlueDart Express Global",
+      trackingCarrier: "BlueDart Express Global",
+      trackingNumber: `BD-${order.order_number.replace(/^ZMW-/, "")}`,
+      estimatedDelivery,
       origin: "ZMW Dispatch Hub, 123, Avinashi Road, Peelamedu, Coimbatore, Tamil Nadu, India",
       destination: `${order.shipping_address}, ${order.city || ""}, ${order.state || ""} - ${order.pincode || ""}`.trim(),
       customerName: order.customer_name,
       total: order.total,
       paymentMethod: order.payment_method,
       items: order.items,
-      timeline
+      timeline,
+      steps: timeline
     }
   });
 }

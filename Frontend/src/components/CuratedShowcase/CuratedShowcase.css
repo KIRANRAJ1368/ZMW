@@ -669,6 +669,12 @@
     max-width: 210px;
   }
 
+  .carousel-slide-item .curated-card {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
   .curated-info {
     padding: 10px 2px 2px;
   }
@@ -694,6 +700,29 @@
 
   .curated-price-discount {
     font-size: 14px;
+  }
+}
+
+@media (max-width: 340px) {
+  .curated-title {
+    font-size: 0.82rem;
+  }
+
+  .curated-price-current {
+    font-size: 16px;
+  }
+
+  .curated-price-original {
+    font-size: 12px;
+  }
+
+  .curated-price-discount {
+    font-size: 12px;
+  }
+
+  .curated-dept-pill {
+    padding: 6px 14px;
+    font-size: 0.72rem;
   }
 }
 

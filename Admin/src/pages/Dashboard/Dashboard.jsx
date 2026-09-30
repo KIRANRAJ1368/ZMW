@@ -64,7 +64,12 @@ export default function Dashboard() {
       productsApi.list({ limit: 8 })
     ]).then(([sumRes, prodsRes]) => {
       if (sumRes.status === "fulfilled") setSummary(sumRes.value.data);
-      if (prodsRes.status === "fulfilled") setRecentProducts(prodsRes.value.data?.data || []);
+      if (prodsRes.status === "fulfilled") {
+        const prods = Array.isArray(prodsRes.value?.data)
+          ? prodsRes.value.data
+          : prodsRes.value?.data?.data || [];
+        setRecentProducts(prods);
+      }
       setLastRefreshed(new Date());
     }).finally(() => setIsLoading(false));
   };

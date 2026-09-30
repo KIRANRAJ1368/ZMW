@@ -25,7 +25,9 @@ export default function BannersPage() {
     setIsLoading(true);
     try {
       const { data } = await bannersApi.list();
-      setBanners(data || []);
+      setBanners((data || []).map((banner) =>
+        banner.placement === "home_hero" ? { ...banner, placement: "hero" } : banner
+      ));
     } catch (err) {
       toast.error(err.message);
     } finally {

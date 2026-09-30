@@ -2,6 +2,30 @@ const nodemailer = require("nodemailer");
 const env = require("../config/env");
 
 let transporter = null;
+let smtpAuthNoticeLogged = false;
+let smtpAuthDisabled = false;
+
+function handleSmtpAuthError(err, context = "dispatch") {
+  const isAuthError =
+    err.code === "EAUTH" ||
+    (err.message && (err.message.includes("534") || err.message.includes("Invalid login") || err.message.includes("WebLoginRequired")));
+
+  if (isAuthError) {
+    smtpAuthDisabled = true;
+    if (!smtpAuthNoticeLogged) {
+      smtpAuthNoticeLogged = true;
+      // eslint-disable-next-line no-console
+      console.warn(
+        `\n[ZMW NODEMAILER] ⚠️ Gmail SMTP authentication notice: ${err.message}\n` +
+        `[ZMW NODEMAILER] 💡 To send live emails, generate an App Password in Google Account Security and configure SMTP_PASS in Backend/.env.\n` +
+        `[ZMW NODEMAILER] ℹ️ Outgoing emails will be recorded in simulation mode so checkout and OTP flows execute smoothly without terminal errors.\n`
+      );
+    }
+  } else {
+    // eslint-disable-next-line no-console
+    console.error(`[ZMW NODEMAILER] ❌ Failed to ${context} via SMTP:`, err.message);
+  }
+}
 
 function getTransporter() {
   if (transporter) return transporter;
@@ -110,9 +134,8 @@ async function sendPasswordResetOtp(email, otp) {
   console.log(`[Expires In]: 10 minutes`);
   console.log("=======================================================\n");
 
-  if (!user || !pass) {
-    console.log(`[ZMW NODEMAILER] ℹ️ SMTP_USER / SMTP_PASS not set in Backend/.env.`);
-    console.log(`[ZMW NODEMAILER] 💡 To send real emails, set SMTP_USER and SMTP_PASS (e.g. Gmail App Password) in Backend/.env.`);
+  if (!user || !pass || smtpAuthDisabled) {
+    console.log(`[ZMW NODEMAILER] ℹ️ SMTP is not configured or in simulated mode. OTP code displayed in terminal above.`);
     return { success: true, simulated: true };
   }
 
@@ -129,15 +152,15 @@ async function sendPasswordResetOtp(email, otp) {
     console.log(`[ZMW NODEMAILER] ✅ Real email sent successfully to ${email}. (Message ID: ${info.messageId})`);
     return { success: true, messageId: info.messageId };
   } catch (err) {
-    console.error(`[ZMW NODEMAILER] ❌ Failed to dispatch email via SMTP:`, err.message);
-    return { success: false, error: err.message };
+    handleSmtpAuthError(err, "dispatch OTP");
+    return { success: false, error: err.message, simulated: true };
   }
 }
 
 async function sendOrderConfirmationEmail(email, order) {
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const from = process.env.SMTP_FROM;
+  const user = env.smtp.user || process.env.SMTP_USER;
+  const pass = env.smtp.pass || process.env.SMTP_PASS;
+  const from = env.smtp.from || process.env.SMTP_FROM;
 
   const orderNumber = order.order_number || `#${order.id}`;
   const customerName = order.customer_name || "Valued Client";
@@ -258,8 +281,8 @@ async function sendOrderConfirmationEmail(email, order) {
 
   console.log(`\n[ZMW NODEMAILER] 📦 ORDER CONFIRMATION EMAIL PREPARED for ${email} (Order ${orderNumber})`);
 
-  if (!user || !pass) {
-    console.log(`[ZMW NODEMAILER] ℹ️ SMTP credentials not configured. Email simulated.`);
+  if (!user || !pass || smtpAuthDisabled) {
+    console.log(`[ZMW NODEMAILER] ℹ️ SMTP not active or in simulated mode. Order confirmation recorded for ${email}.`);
     return { success: true, simulated: true };
   }
 
@@ -275,8 +298,8 @@ async function sendOrderConfirmationEmail(email, order) {
     console.log(`[ZMW NODEMAILER] ✅ Order confirmation dispatched to ${email}. (Message ID: ${info.messageId})`);
     return { success: true, messageId: info.messageId };
   } catch (err) {
-    console.error(`[ZMW NODEMAILER] ❌ Failed to dispatch order confirmation:`, err.message);
-    return { success: false, error: err.message };
+    handleSmtpAuthError(err, "dispatch order confirmation");
+    return { success: false, error: err.message, simulated: true };
   }
 }
 

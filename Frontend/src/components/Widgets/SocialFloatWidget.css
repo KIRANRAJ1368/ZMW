@@ -111,6 +111,23 @@
   }
 }
 
+@media (max-width: 320px) {
+  .social-float {
+    right: 6px;
+    gap: 8px;
+  }
+
+  .social-float-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .social-float-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
 /* Floating animation — keeps the translateY(-50%) centering intact */
 @keyframes social-float-float {
   0%, 100% {

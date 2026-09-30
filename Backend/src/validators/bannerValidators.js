@@ -1,12 +1,21 @@
 const { body, param } = require("express-validator");
 
 const create = [
-  body("placement").trim().notEmpty().withMessage("Placement is required").isLength({ max: 60 }),
+  body("placement")
+    .customSanitizer((val, { req }) => val || req.body.position || "hero")
+    .trim()
+    .notEmpty()
+    .withMessage("Placement is required")
+    .isLength({ max: 60 }),
   body("title").trim().notEmpty().withMessage("Title is required").isLength({ max: 200 }),
   body("subtitle").optional({ nullable: true }).isString(),
   body("tag").optional({ nullable: true }).isString(),
   body("badge_promo").optional({ nullable: true }).isString(),
-  body("image_url").trim().notEmpty().withMessage("Image URL is required"),
+  body("image_url")
+    .customSanitizer((val, { req }) => val || req.body.imageUrl || "")
+    .trim()
+    .notEmpty()
+    .withMessage("Image URL is required"),
   body("image_position").optional({ nullable: true }).isString(),
   body("primary_cta_text").optional({ nullable: true }).isString(),
   body("primary_cta_link").optional({ nullable: true }).isString(),

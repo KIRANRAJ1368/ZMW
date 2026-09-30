@@ -62,19 +62,17 @@ async function list(req, res) {
 }
 
 async function create(req, res) {
-  const {
-    code,
-    description,
-    discount_type,
-    discount_value,
-    min_spend,
-    max_discount,
-    usage_limit,
-    expires_at,
-    is_active
-  } = req.body;
+  const code = req.body.code;
+  const description = req.body.description;
+  const discount_type = req.body.discount_type || req.body.discountType || "percentage";
+  const discount_value = req.body.discount_value !== undefined ? req.body.discount_value : req.body.discountValue;
+  const min_spend = req.body.min_spend !== undefined ? req.body.min_spend : req.body.minSpend;
+  const max_discount = req.body.max_discount !== undefined ? req.body.max_discount : req.body.maxDiscount;
+  const usage_limit = req.body.usage_limit !== undefined ? req.body.usage_limit : req.body.usageLimit;
+  const expires_at = req.body.expires_at !== undefined ? req.body.expires_at : req.body.expiresAt;
+  const is_active = req.body.is_active !== undefined ? req.body.is_active : req.body.isActive;
 
-  if (!code || !discount_value) {
+  if (!code || discount_value === undefined || discount_value === null || discount_value === "") {
     throw ApiError.badRequest("Coupon code and discount value are required");
   }
 
@@ -84,7 +82,7 @@ async function create(req, res) {
   }
 
   const coupon = await Coupon.create({
-    code,
+    code: code.trim().toUpperCase(),
     description: description || null,
     discount_type: discount_type || "percentage",
     discount_value: Number(discount_value),
@@ -102,25 +100,28 @@ async function update(req, res) {
   const coupon = await Coupon.findByPk(req.params.id);
   if (!coupon) throw ApiError.notFound("Coupon not found");
 
-  const fields = [
-    "description",
-    "discount_type",
-    "discount_value",
-    "min_spend",
-    "max_discount",
-    "usage_limit",
-    "expires_at",
-    "is_active"
-  ];
+  const fieldMap = {
+    description: ["description"],
+    discount_type: ["discount_type", "discountType"],
+    discount_value: ["discount_value", "discountValue"],
+    min_spend: ["min_spend", "minSpend"],
+    max_discount: ["max_discount", "maxDiscount"],
+    usage_limit: ["usage_limit", "usageLimit"],
+    expires_at: ["expires_at", "expiresAt"],
+    is_active: ["is_active", "isActive"]
+  };
 
-  fields.forEach((field) => {
-    if (req.body[field] !== undefined) {
-      coupon[field] = req.body[field];
+  Object.entries(fieldMap).forEach(([modelField, aliases]) => {
+    for (const alias of aliases) {
+      if (req.body[alias] !== undefined) {
+        coupon[modelField] = req.body[alias];
+        break;
+      }
     }
   });
 
   if (req.body.code) {
-    coupon.code = req.body.code;
+    coupon.code = req.body.code.trim().toUpperCase();
   }
 
   await coupon.save();

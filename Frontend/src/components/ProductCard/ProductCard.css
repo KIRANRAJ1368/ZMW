@@ -281,3 +281,34 @@
     height: 14px;
   }
 }
+
+@media (max-width: 360px) {
+  .product-name {
+    font-size: 12px;
+  }
+
+  .price-current {
+    font-size: 13.5px;
+  }
+
+  .price-original {
+    font-size: 11px;
+  }
+
+  .card-action-icon-btn {
+    width: 26px;
+    height: 26px;
+  }
+
+  .card-action-icon-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .product-badge {
+    top: 6px;
+    left: 6px;
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+}

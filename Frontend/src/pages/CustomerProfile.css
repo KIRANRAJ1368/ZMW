@@ -607,3 +607,55 @@
   justify-content: flex-end;
   gap: 10px;
 }
+@media (max-width: 425px) {
+  .account-page-wrapper {
+    padding: 20px 12px 50px 12px;
+  }
+
+  .account-hero {
+    padding: 18px 16px;
+  }
+
+  .account-unauth-box {
+    padding: 32px 18px;
+  }
+
+  .cancel-confirm-modal-overlay {
+    padding: 10px;
+  }
+
+  .cancel-confirm-modal {
+    padding: 20px 16px;
+  }
+
+  .cancel-modal-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 320px) {
+  .account-page-wrapper {
+    padding: 16px 8px 40px 8px;
+  }
+
+  .account-hero {
+    padding: 14px 12px;
+  }
+
+  .account-hero-title {
+    font-size: 1.35rem;
+  }
+
+  .account-unauth-box {
+    padding: 24px 12px;
+  }
+
+  .account-unauth-title {
+    font-size: 1.4rem;
+  }
+
+  .cancel-confirm-modal {
+    padding: 16px 12px;
+  }
+}

@@ -9,14 +9,18 @@ export function imageUrl(value) {
   if (!value || typeof value !== "string") return "";
   const normalized = value.trim().replace(/\\/g, "/");
   if (!normalized) return "";
-  if (normalized.startsWith("http://") || normalized.startsWith("https://") || normalized.startsWith("data:")) {
+  if (normalized.startsWith("data:") || normalized.startsWith("blob:")) {
     return normalized;
   }
-  if (normalized.startsWith("/uploads/")) {
-    return `${API_URL}${normalized}`;
+  if (normalized.includes("/uploads/")) {
+    const idx = normalized.indexOf("/uploads/");
+    return `${API_URL}${normalized.slice(idx)}`;
   }
   if (normalized.startsWith("uploads/")) {
     return `${API_URL}/${normalized}`;
+  }
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    return normalized;
   }
   if (normalized.startsWith("/images/") || normalized.startsWith("/")) {
     return normalized;

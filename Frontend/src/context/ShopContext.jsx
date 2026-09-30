@@ -34,15 +34,16 @@ export const ShopProvider = ({ children }) => {
   const [storefrontStatus, setStorefrontStatus] = useState("loading");
 
   const refreshHomeData = useCallback(async () => {
-    try {
-      const [home, productPayload] = await Promise.all([storefrontApi.home(), storefrontApi.products()]);
-      setHomeData(home);
-      if (Array.isArray(productPayload) && productPayload.length) setAllProducts(productPayload);
-      setStorefrontStatus("ready");
-      return home;
-    } catch {
-      setStorefrontStatus("fallback");
+    const [homeResult, productResult] = await Promise.allSettled([
+      storefrontApi.home(),
+      storefrontApi.products()
+    ]);
+    if (homeResult.status === "fulfilled") setHomeData(homeResult.value);
+    if (productResult.status === "fulfilled" && Array.isArray(productResult.value)) {
+      setAllProducts(productResult.value);
     }
+    setStorefrontStatus(productResult.status === "fulfilled" ? "ready" : "fallback");
+    return homeResult.status === "fulfilled" ? homeResult.value : null;
   }, []);
 
   useEffect(() => {
@@ -54,8 +55,12 @@ export const ShopProvider = ({ children }) => {
 
     window.addEventListener("focus", handleFocus);
     document.addEventListener("visibilitychange", handleFocus);
+    const refreshInterval = window.setInterval(() => {
+      if (document.visibilityState === "visible") refreshHomeData();
+    }, 30000);
 
     return () => {
+      window.clearInterval(refreshInterval);
       window.removeEventListener("focus", handleFocus);
       document.removeEventListener("visibilitychange", handleFocus);
     };
@@ -345,22 +350,26 @@ export const ShopProvider = ({ children }) => {
 
   // Cart operations
   const addToCart = (product, selectedColor = null, selectedSize = null, quantity = 1) => {
-    const color = selectedColor || (product.colors && product.colors[0]?.name) || "Standard";
-    const size = selectedSize || (product.sizes && product.sizes[0]) || "Standard";
-    const image = (product.images && product.images[0]) || "";
-
-    // Find variant max stock if available
-    let maxStock = product.stockCount ?? null;
-    if (product.variants && product.variants.length > 0) {
-      const match = product.variants.find(
-        (v) =>
-          (!v.color || v.color.toLowerCase() === color.toLowerCase()) &&
-          (!v.size || v.size.toLowerCase() === size.toLowerCase())
-      );
-      if (match != null) {
-        maxStock = match.stockCount ?? match.stock_count ?? null;
-      }
+    const color = selectedColor || (product.colors && product.colors[0]?.name) || "";
+    const size = selectedSize || (product.sizes && product.sizes[0]) || "";
+    // Variant stock and price always come from the Admin-managed variant.
+    const hasVariants = Array.isArray(product.variants) && product.variants.length > 0;
+    const match = hasVariants
+      ? product.variants.find(
+          (v) =>
+            (!v.color || v.color.toLowerCase() === color.toLowerCase()) &&
+            (!v.size || v.size.toLowerCase() === size.toLowerCase())
+        )
+      : null;
+    const image = match?.imageUrl || match?.image_url || (product.images && product.images[0]) || "";
+    const maxStock = hasVariants
+      ? Number(match?.stockCount ?? match?.stock_count ?? 0)
+      : Number(product.stockCount ?? 0);
+    if (maxStock <= 0) {
+      addToast("This variant is currently out of stock.", "warning");
+      return;
     }
+    const price = Number(match?.priceOverride ?? match?.price_override ?? product.price);
 
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
@@ -370,7 +379,7 @@ export const ShopProvider = ({ children }) => {
       if (existingIndex > -1) {
         const updated = [...prevCart];
         const currentQty = updated[existingIndex].quantity;
-        const availableMax = maxStock !== null ? maxStock : (updated[existingIndex].maxStock ?? 99);
+        const availableMax = maxStock !== null ? maxStock : (updated[existingIndex].maxStock ?? 0);
         const newQty = Math.min(availableMax, currentQty + quantity);
         updated[existingIndex] = {
           ...updated[existingIndex],
@@ -385,7 +394,7 @@ export const ShopProvider = ({ children }) => {
           {
             id: product.id,
             name: product.name,
-            price: product.price,
+            price,
             originalPrice: product.originalPrice,
             color,
             size,
@@ -406,7 +415,7 @@ export const ShopProvider = ({ children }) => {
       prev
         .map((item) => {
           if (String(item.id) === String(id) && item.color === color && item.size === size) {
-            let maxLimit = item.maxStock ?? 99;
+            let maxLimit = item.maxStock ?? 0;
             const prod = allProducts.find((p) => String(p.id) === String(id));
             if (prod?.variants?.length > 0) {
               const mv = prod.variants.find(
@@ -414,11 +423,9 @@ export const ShopProvider = ({ children }) => {
                   (!v.color || v.color.toLowerCase() === color.toLowerCase()) &&
                   (!v.size || v.size.toLowerCase() === size.toLowerCase())
               );
-              if (mv != null && mv.stockCount !== undefined) {
-                maxLimit = mv.stockCount;
-              }
+              maxLimit = Number(mv?.stockCount ?? mv?.stock_count ?? 0);
             } else if (prod?.stockCount !== undefined) {
-              maxLimit = prod.stockCount;
+              maxLimit = Number(prod.stockCount);
             }
 
             const newQty = item.quantity + delta;
@@ -522,15 +529,32 @@ export const ShopProvider = ({ children }) => {
       const key = String(item.id);
       const live = allProductsMap.get(key) || allProductsMap.get(key.toLowerCase());
       if (!live) return item;
-      const price = Number(live.price);
+      const hasVariants = Array.isArray(live.variants) && live.variants.length > 0;
+      const variant = hasVariants
+        ? live.variants.find(
+            (v) =>
+              (!v.color || v.color.toLowerCase() === item.color.toLowerCase()) &&
+              (!v.size || v.size.toLowerCase() === item.size.toLowerCase())
+          )
+        : null;
+      const price = Number(variant?.priceOverride ?? live.price);
       if (!Number.isFinite(price)) return item;
-      const originalPrice =
-        live.originalPrice === null || live.originalPrice === undefined
-          ? item.originalPrice
-          : Number(live.originalPrice);
-      if (price === Number(item.price) && originalPrice === Number(item.originalPrice)) return item;
-      return { ...item, price, originalPrice };
-    });
+      const originalPrice = Number(live.originalPrice) > price
+        ? Number(live.originalPrice)
+        : null;
+      const maxStock = hasVariants
+        ? Number(variant?.stockCount ?? variant?.stock_count ?? 0)
+        : Number(live.stockCount ?? 0);
+      if (maxStock <= 0) return null;
+      const liveImage = variant?.imageUrl || variant?.image_url || (live.images && live.images[0]) || item.image;
+      if (
+        price === Number(item.price) &&
+        originalPrice === Number(item.originalPrice) &&
+        maxStock === Number(item.maxStock) &&
+        liveImage === item.image
+      ) return item;
+      return { ...item, price, originalPrice, maxStock, image: liveImage, quantity: Math.min(item.quantity, maxStock) };
+    }).filter((item) => item && item.quantity > 0);
   }, [cart, allProductsMap]);
 
   // Cart Calculations

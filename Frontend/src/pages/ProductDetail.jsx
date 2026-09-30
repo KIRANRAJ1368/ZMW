@@ -7,6 +7,27 @@ import { imageUrl } from "../utils/imageUrl";
 import { storefrontApi } from "../services/storefrontApi";
 import "./ProductDetail.css";
 
+function availableColors(product) {
+  if (product?.variants?.length) {
+    const colors = new Map();
+    product.variants.forEach((variant) => {
+      if (variant.color) {
+        const key = variant.color.toLowerCase();
+        if (!colors.has(key)) colors.set(key, { name: variant.color, hex: variant.colorHex });
+      }
+    });
+    return [...colors.values()];
+  }
+  return product?.colors || [];
+}
+
+function availableSizes(product) {
+  if (product?.variants?.length) {
+    return [...new Set(product.variants.map((variant) => variant.size).filter(Boolean))];
+  }
+  return product?.sizes || [];
+}
+
 export default function ProductDetail() {
   const { productId } = useParams();
   const navigate = useNavigate();
@@ -64,8 +85,8 @@ export default function ProductDetail() {
 
     if (initialMatch) {
       setProduct(initialMatch);
-      setSelectedColor(initialMatch.colors?.[0]?.name ?? "Standard");
-      setSelectedSize(initialMatch.sizes?.[1] || initialMatch.sizes?.[0] || "M");
+      setSelectedColor(availableColors(initialMatch)[0]?.name ?? null);
+      setSelectedSize(availableSizes(initialMatch)[0] || null);
       trackRecentlyViewed(initialMatch.id);
       setIsLoading(false);
     } else {
@@ -80,12 +101,12 @@ export default function ProductDetail() {
         if (!isMounted || !data) return;
         setProduct(data);
         setSelectedColor((prev) => {
-          if (prev && data.colors?.some((c) => c.name === prev)) return prev;
-          return data.colors?.[0]?.name ?? "Standard";
+          if (prev && availableColors(data).some((c) => c.name === prev)) return prev;
+          return availableColors(data)[0]?.name ?? null;
         });
         setSelectedSize((prev) => {
-          if (prev && data.sizes?.includes(prev)) return prev;
-          return data.sizes?.[1] || data.sizes?.[0] || "M";
+          if (prev && availableSizes(data).includes(prev)) return prev;
+          return availableSizes(data)[0] || null;
         });
         trackRecentlyViewed(data.id);
         setIsLoading(false);
@@ -103,32 +124,12 @@ export default function ProductDetail() {
     };
   }, [productId, findProduct, trackRecentlyViewed]);
 
-  // Build clean, accurate gallery images using ONLY this product's actual images
-  const galleryImages = useMemo(() => {
-    if (!product) return [];
-    const imgs = [];
-    if (Array.isArray(product.images) && product.images.length > 0) {
-      product.images.forEach((img) => {
-        if (img && typeof img === "string") imgs.push(img);
-        else if (img && typeof img.url === "string") imgs.push(img.url);
-      });
-    } else if (product.image) {
-      imgs.push(product.image);
-    }
+  useEffect(() => {
+    const latestProduct = findProduct(productId);
+    if (latestProduct) setProduct(latestProduct);
+  }, [allProducts, findProduct, productId]);
 
-    const unique = [...new Set(imgs)].filter(Boolean);
-    if (unique.length === 0) {
-      return ["/images/photo-1521572163474-6864f9cf17ab.jpg"];
-    }
-    return unique;
-  }, [product]);
-
-  const recentlyViewedProducts = useMemo(
-    () => recentlyViewed.filter((p) => String(p.id) !== String(product?.id)).slice(0, 8),
-    [recentlyViewed, product]
-  );
-
-  // Active variant resolution based on user selection
+  // Resolve one active variant for images, stock, and price alike.
   const currentVariant = useMemo(() => {
     if (!product?.variants || product.variants.length === 0) return null;
     return product.variants.find((v) => {
@@ -138,21 +139,54 @@ export default function ProductDetail() {
     });
   }, [product, selectedColor, selectedSize]);
 
-  const activeStockCount = currentVariant != null ? (currentVariant.stockCount ?? 0) : (product?.stockCount ?? 0);
-  const isOutOfStock = currentVariant != null ? (currentVariant.stockCount <= 0) : !product?.inStock;
+  // Put the active variant's images first so the selected color/size is visible immediately.
+  const galleryImages = useMemo(() => {
+    if (!product) return [];
+    const productImages = [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      product.images.forEach((img) => {
+        if (img && typeof img === "string") productImages.push(img);
+        else if (img && typeof img.url === "string") productImages.push(img.url);
+      });
+    } else if (product.image) {
+      productImages.push(product.image);
+    }
+
+    const variantImages = [currentVariant?.imageUrl, ...(currentVariant?.galleryImages || [])]
+      .filter((image) => typeof image === "string" && image);
+    const unique = [...new Set([...variantImages, ...productImages])];
+    return unique.length > 0 ? unique : ["/images/photo-1521572163474-6864f9cf17ab.jpg"];
+  }, [product, currentVariant]);
+
+  const recentlyViewedProducts = useMemo(
+    () => recentlyViewed.filter((p) => String(p.id) !== String(product?.id)).slice(0, 8),
+    [recentlyViewed, product]
+  );
+
+  const hasVariants = Array.isArray(product?.variants) && product.variants.length > 0;
+  const activeStockCount = hasVariants
+    ? Number(currentVariant?.stockCount ?? 0)
+    : Number(product?.stockCount ?? 0);
+  const isOutOfStock = hasVariants
+    ? !currentVariant || Number(currentVariant.stockCount ?? 0) <= 0
+    : !product?.inStock;
+  const activePrice = Number(currentVariant?.priceOverride ?? product?.price ?? 0);
+  const displayOriginalPrice = Number(product?.originalPrice ?? 0) > activePrice
+    ? Number(product.originalPrice)
+    : null;
   const isLowStock = !isOutOfStock && activeStockCount > 0 && activeStockCount <= 5;
 
   // Map of unavailable sizes for the currently selected color
   const unavailableSizes = useMemo(() => {
     if (!product?.variants || product.variants.length === 0 || !selectedColor) return new Set();
     const set = new Set();
-    product.sizes?.forEach((s) => {
+    availableSizes(product).forEach((s) => {
       const v = product.variants.find(
         (item) =>
           item.size?.toLowerCase() === s.toLowerCase() &&
           item.color?.toLowerCase() === selectedColor.toLowerCase()
       );
-      if (v && v.stockCount <= 0) {
+      if (!v || Number(v.stockCount ?? 0) <= 0) {
         set.add(s);
       }
     });
@@ -190,8 +224,8 @@ export default function ProductDetail() {
   }
 
   const isSaved = wishlist.includes(product.id);
-  const discountPct = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  const discountPct = displayOriginalPrice
+    ? Math.round(((displayOriginalPrice - activePrice) / displayOriginalPrice) * 100)
     : null;
 
   // Determine category page navigation
@@ -411,16 +445,16 @@ export default function ProductDetail() {
                     <span className="pd-rating-val">{product.rating}</span>
                     <span className="pd-rating-count">({product.reviewCount} customer reviews)</span>
                   </div>
-                  <span className="pd-sku-label">SKU: <strong>{product.sku}</strong></span>
+                  <span className="pd-sku-label">SKU: <strong>{currentVariant?.skuSuffix ? `${product.sku}-${currentVariant.skuSuffix}` : product.sku}</strong></span>
                 </div>
               </div>
 
               {/* Price & Savings Badge */}
               <div className="pd-price-row">
-                <span className="pd-price-current">{formatPrice(product.price)}</span>
-                {product.originalPrice && product.originalPrice > product.price && (
+                <span className="pd-price-current">{formatPrice(activePrice)}</span>
+                {displayOriginalPrice && (
                   <>
-                    <span className="pd-price-original">{formatPrice(product.originalPrice)}</span>
+                    <span className="pd-price-original">{formatPrice(displayOriginalPrice)}</span>
                     <span className="pd-discount-chip">SAVE {discountPct}%</span>
                   </>
                 )}
@@ -464,13 +498,13 @@ export default function ProductDetail() {
               </div>
 
               {/* Color Selector */}
-              {product.colors && product.colors.length > 0 && (
+              {availableColors(product).length > 0 && (
                 <div className="pd-selector-block">
                   <span className="pd-selector-heading">
                     Color: <strong>{selectedColor}</strong>
                   </span>
                   <div className="pd-color-swatches">
-                    {product.colors.map((c) => (
+                    {availableColors(product).map((c) => (
                       <button
                         key={c.name}
                         type="button"
@@ -486,7 +520,7 @@ export default function ProductDetail() {
               )}
 
               {/* Size Selector with Size Guide */}
-              {product.sizes && product.sizes.length > 0 && (
+              {availableSizes(product).length > 0 && (
                 <div className="pd-selector-block">
                   <div className="pd-size-header">
                     <span className="pd-selector-heading">
@@ -505,7 +539,7 @@ export default function ProductDetail() {
                     </button>
                   </div>
                   <div className="pd-size-chips">
-                    {product.sizes.map((s) => {
+                    {availableSizes(product).map((s) => {
                       const isSoldOut = unavailableSizes.has(s);
                       return (
                         <button
@@ -583,7 +617,7 @@ export default function ProductDetail() {
                   >
                     {isOutOfStock
                       ? "Currently Sold Out"
-                      : `Buy It Now • ${formatPrice(product.price * quantity)}`}
+                      : `Buy It Now • ${formatPrice(activePrice * quantity)}`}
                   </button>
                 </div>
               </div>

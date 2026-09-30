@@ -97,3 +97,11 @@
     padding: 12px 14px;
   }
 }
+
+@media (max-width: 320px) {
+  .toast-container {
+    bottom: 76px;
+    right: 10px;
+    width: calc(100% - 20px);
+  }
+}

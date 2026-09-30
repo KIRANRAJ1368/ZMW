@@ -10,7 +10,7 @@ import { test, before, describe } from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
 import { createRoot } from "react-dom/client";
-import { act } from "react-dom/test-utils";
+import { act } from "react";
 import { formatPrice, formatINRNumber, CURRENCY_SYMBOL } from "../src/utils/formatPrice.js";
 import {
   FREE_SHIPPING_THRESHOLD,

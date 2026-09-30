@@ -445,7 +445,7 @@ function SectionCard({
 // ── Preview Content Renderer ──
 function SectionPreviewContent({ sectionKey, section, allProducts, categories, heroBanners }) {
   if (sectionKey === "hero") {
-    const activeBanners = heroBanners.filter((b) => b.is_active && b.placement === "home_hero");
+    const activeBanners = heroBanners.filter((b) => b.is_active && ["hero", "home_hero"].includes(b.placement));
     return (
       <div className="preview-hero-strip">
         <span className="preview-summary-label">
@@ -1041,7 +1041,7 @@ function CategoryModal({ section, categories, isSaving, onClose, onSave }) {
 
 // ── Modal 4: Hero Banners Helper Modal ──
 function HeroModal({ heroBanners, onClose }) {
-  const activeBanners = heroBanners.filter((b) => b.is_active && b.placement === "home_hero");
+  const activeBanners = heroBanners.filter((b) => b.is_active && ["hero", "home_hero"].includes(b.placement));
 
   return (
     <div className="modal-backdrop" onClick={onClose}>

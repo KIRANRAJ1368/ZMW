@@ -56,6 +56,21 @@ function CategoryRedirect({ defaultCategory, defaultCollection }) {
   return <Navigate to={`/collection${query ? `?${query}` : ""}`} replace />;
 }
 
+/** Keep the unfiltered catalog from exposing the former Shop All page. */
+function CollectionEntry() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const category = searchParams.get("category");
+  const collection = searchParams.get("collection");
+
+  if ((!category || category.toLowerCase() === "all") && !collection) {
+    searchParams.set("category", "mens");
+    return <Navigate to={`/collection?${searchParams.toString()}`} replace />;
+  }
+
+  return <Collection />;
+}
+
 export default function App() {
   return (
     <ShopProvider>
@@ -65,7 +80,8 @@ export default function App() {
       <main id="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/collection" element={<Collection />} />
+          <Route path="/collection" element={<CollectionEntry />} />
+          <Route path="/shop-all" element={<Navigate to="/collection?category=mens" replace />} />
 
           {/* Query-preserving category redirects */}
           <Route path="/men" element={<CategoryRedirect defaultCategory="mens" />} />

@@ -9,6 +9,7 @@ import {
 } from "../../src/components/CategoryShowcase/CategoryFeatureGrid";
 import Collection from "../../src/pages/Collection";
 import Navbar from "../../src/components/Navbar/Navbar";
+import Hero from "../../src/components/Hero/Hero";
 import { __setShop } from "./mockShopContext.js";
 
 export const SECTION_COMPONENTS = {
@@ -54,7 +55,7 @@ export function buildSectionTree({ section, categories, subcategories = [], visi
 
   const Component = SECTION_COMPONENTS[section];
   return (
-    <MemoryRouter>
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Component />
     </MemoryRouter>
   );
@@ -84,7 +85,7 @@ export { __setShop };
 export function buildCollectionTree({ url, homeData, allProducts }) {
   __setShop({ homeData, allProducts });
   return (
-    <MemoryRouter key={url} initialEntries={[url]}>
+    <MemoryRouter key={url} initialEntries={[url]} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Collection />
     </MemoryRouter>
   );
@@ -94,8 +95,18 @@ export function buildCollectionTree({ url, homeData, allProducts }) {
 export function buildNavbarTree({ url = "/", homeData, allProducts = [] }) {
   __setShop({ homeData, allProducts });
   return (
-    <MemoryRouter key={url} initialEntries={[url]}>
+    <MemoryRouter key={url} initialEntries={[url]} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Navbar />
+    </MemoryRouter>
+  );
+}
+
+/** Builds the storefront hero against a real-shaped Admin homepage payload. */
+export function buildHeroTree({ homeData, allProducts = [] }) {
+  __setShop({ homeData, allProducts });
+  return (
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <Hero />
     </MemoryRouter>
   );
 }

@@ -236,3 +236,15 @@
     font-size: var(--text-xs);
   }
 }
+@media (max-width: 480px) {
+  .showcase-tabs-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px;
+  }
+  .showcase-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

@@ -104,6 +104,9 @@ async function createVariant(req, res) {
   const product = await Product.findByPk(req.params.id);
   if (!product) throw ApiError.notFound("Product not found");
 
+  if (req.body.price_override !== undefined && req.body.price_override !== null) {
+    productService.assertVariantPriceOverride(req.body.price_override, product.original_price);
+  }
   const variant = await ProductVariant.create({
     product_id: product.id,
     size_id: req.body.size_id || null,
@@ -141,6 +144,10 @@ async function updateVariant(req, res) {
     where: { id: req.params.variantId, product_id: req.params.id }
   });
   if (!variant) throw ApiError.notFound("Variant not found");
+  if (req.body.price_override !== undefined && req.body.price_override !== null) {
+    const product = await Product.findByPk(req.params.id);
+    productService.assertVariantPriceOverride(req.body.price_override, product.original_price);
+  }
 
   const fields = ["size_id", "color_id", "sku_suffix", "stock_count", "price_override"];
   fields.forEach((f) => {

@@ -31,8 +31,9 @@ async function getHomePayload(req, res) {
 
   const bannersByPlacement = {};
   banners.forEach((b) => {
-    if (!bannersByPlacement[b.placement]) bannersByPlacement[b.placement] = [];
-    bannersByPlacement[b.placement].push(b);
+    const placement = b.placement === "home_hero" ? "hero" : b.placement;
+    if (!bannersByPlacement[placement]) bannersByPlacement[placement] = [];
+    bannersByPlacement[placement].push(b);
   });
 
   const newArrivalsSection = sections.find((s) => s.section_key === "new_arrivals");

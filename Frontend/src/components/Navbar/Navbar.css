@@ -5,14 +5,26 @@
    Only the navbar is styled here. No other section is affected.
    ============================================================ */
 
-/* ---------- Header & Sticky ---------- */
+/* ---------- Header & Fixed Top ---------- */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   width: 100%;
   z-index: var(--z-sticky-nav);
   background-color: var(--color-cream);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.site-header-spacer {
+  height: 72px;
+  width: 100%;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 /* ---------- Announcement Bar ---------- */
@@ -751,8 +763,8 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: 320px;
-  max-width: 85vw;
+  width: min(320px, 85vw);
+  max-width: calc(100vw - 32px);
   background: var(--color-white);
   z-index: calc(var(--z-drawer) + 1);
   transform: translateX(-100%);
@@ -995,6 +1007,10 @@
     height: 56px;
   }
 
+  .site-header-spacer {
+    height: 56px;
+  }
+
   .brand-logo-img {
     height: 34px;
   }
@@ -1043,6 +1059,10 @@
     height: 52px;
   }
 
+  .site-header-spacer {
+    height: 52px;
+  }
+
   .navbar-scrolled .navbar-inner {
     height: 50px;
   }
@@ -1086,6 +1106,10 @@
     height: 50px;
   }
 
+  .site-header-spacer {
+    height: 50px;
+  }
+
   .brand-logo-img {
     height: 28px;
   }
@@ -1113,6 +1137,9 @@
 
   .hamburger-btn {
     gap: 4px;
+    width: 30px;
+    height: 30px;
+    padding: 4px;
   }
 
   .hamburger-line {
@@ -1121,14 +1148,34 @@
 
   .navbar-inner {
     gap: 4px;
+    height: 50px;
+  }
+
+  .site-header-spacer {
+    height: 50px;
+  }
+
+  .nav-actions {
+    gap: 3px;
+  }
+
+  .action-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .action-btn svg {
+    width: 16px;
+    height: 16px;
   }
 
   .brand-logo-img {
-    height: 26px;
+    height: 24px;
+    max-width: 110px;
   }
 
   .brand-main {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .brand-sub {
@@ -1136,17 +1183,19 @@
   }
 
   .mobile-nav-drawer {
-    padding: 16px 14px;
+    width: min(280px, calc(100vw - 16px));
+    max-width: calc(100vw - 16px);
+    padding: 16px 12px;
   }
 
   .mobile-nav-list > li > a,
   .mobile-nav-list > li > .mobile-nav-expand-row > a {
-    padding: 9px 12px;
-    font-size: 0.98rem;
+    padding: 8px 10px;
+    font-size: 0.92rem;
   }
 
   .mobile-nav-submenu a {
-    padding: 8px 12px;
-    font-size: 0.85rem;
+    padding: 7px 10px;
+    font-size: 0.82rem;
   }
 }

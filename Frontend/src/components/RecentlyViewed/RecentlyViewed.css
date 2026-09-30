@@ -198,3 +198,9 @@
     font-size: 14px;
   }
 }
+@media (max-width: 340px) {
+  .recently-viewed-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
