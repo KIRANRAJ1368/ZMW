@@ -16,6 +16,8 @@ router.get("/my-orders", requireCustomerAuth, orderController.getMyOrders);
 router.post("/:id/cancel", requireCustomerAuth, v.idParam, validate, orderController.cancelOrder);
 
 // Storefront checkout (Guest or Authenticated Customer)
+router.post("/razorpay/create-order", optionalCustomerAuth, orderController.createRazorpayOrder);
+router.post("/razorpay/verify-payment", optionalCustomerAuth, orderController.verifyRazorpayPayment);
 router.post("/", optionalCustomerAuth, v.create, validate, orderController.create);
 
 // Order Invoice (Customer or Admin)

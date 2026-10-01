@@ -68,5 +68,10 @@ module.exports = {
     user: process.env.SMTP_USER || "",
     pass: process.env.SMTP_PASS || "",
     from: process.env.SMTP_FROM || "ZMW Clothing <no-reply@zmwclothing.com>"
+  },
+
+  razorpay: {
+    keyId: process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY || "",
+    keySecret: process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_SECRET || ""
   }
 };

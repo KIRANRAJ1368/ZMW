@@ -98,6 +98,7 @@ export default function Navbar() {
   const closeAllMenus = useCallback(() => {
     setOpenDesktopMenu(null);
     setOpenFlyout(null);
+    setUserDropdownOpen(false);
   }, []);
 
   const handleSectionClick = (e, sectionId) => {
@@ -114,8 +115,15 @@ export default function Navbar() {
     }
   };
 
+  // Close menus & drawer on route / search changes
   useEffect(() => {
-    if (!openDesktopMenu) return;
+    setMobileMenuOpen(false);
+    closeAllMenus();
+  }, [location.pathname, location.search, closeAllMenus]);
+
+  // Close menus & user dropdown on outside click
+  useEffect(() => {
+    if (!openDesktopMenu && !userDropdownOpen) return;
     const handleClickOutside = (e) => {
       if (desktopNavRef.current && !desktopNavRef.current.contains(e.target)) {
         closeAllMenus();
@@ -123,7 +131,43 @@ export default function Navbar() {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [openDesktopMenu, closeAllMenus]);
+  }, [openDesktopMenu, userDropdownOpen, closeAllMenus]);
+
+  // Close menus on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setMobileMenuOpen(false);
+        closeAllMenus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [closeAllMenus]);
+
+  // Automatically close mobile menu if window resizes to desktop width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 992) {
+        setMobileMenuOpen(false);
+      } else {
+        closeAllMenus();
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [closeAllMenus]);
+
+  // Lock body scroll when mobile menu drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [mobileMenuOpen]);
 
   const toggleDesktopMenu = (menu) => {
     setOpenDesktopMenu((prev) => (prev === menu ? null : menu));
@@ -141,8 +185,13 @@ export default function Navbar() {
         <div className="container navbar-inner" ref={desktopNavRef}>
           <button
             className={`hamburger-btn ${mobileMenuOpen ? "active" : ""}`}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {
+              setMobileMenuOpen((prev) => !prev);
+              closeAllMenus();
+            }}
             aria-label="Toggle navigation menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav-drawer"
           >
             <span className="hamburger-line"></span>
             <span className="hamburger-line"></span>
@@ -550,7 +599,14 @@ export default function Navbar() {
         className={`drawer-backdrop ${mobileMenuOpen ? "active" : ""}`}
         onClick={() => setMobileMenuOpen(false)}
       />
-      <div className={`mobile-nav-drawer ${mobileMenuOpen ? "open" : ""}`}>
+      <div
+        id="mobile-nav-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+        aria-hidden={!mobileMenuOpen}
+        className={`mobile-nav-drawer ${mobileMenuOpen ? "open" : ""}`}
+      >
         <div className="mobile-nav-header">
           <Link
             to="/"

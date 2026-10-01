@@ -47,6 +47,24 @@ export const storefrontApi = {
       body: JSON.stringify(order)
     });
   },
+  createRazorpayOrder: (payload, token = null) => {
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    return request("/orders/razorpay/create-order", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload)
+    });
+  },
+  verifyRazorpayPayment: (payload, token = null) => {
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    return request("/orders/razorpay/verify-payment", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload)
+    });
+  },
   loginCustomer: (credentials) =>
     request("/auth/customer/login", {
       method: "POST",

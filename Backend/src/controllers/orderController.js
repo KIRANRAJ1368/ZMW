@@ -1,8 +1,10 @@
-const { Order, OrderItem, Product, ProductImage, ProductVariant, ProductSize, ProductColor, User, sequelize } = require("../models");
+const { Op } = require("sequelize");
+const { Order, OrderItem, Product, ProductImage, ProductVariant, ProductSize, ProductColor, User, Coupon, sequelize } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { sendSuccess } = require("../utils/apiResponse");
 const { getPagination, buildMeta } = require("../utils/pagination");
 const mailer = require("../utils/mailer");
+const razorpayService = require("../services/razorpayService");
 
 function generateOrderNumber() {
   const stamp = Date.now().toString(36).toUpperCase();
@@ -73,8 +75,12 @@ async function create(req, res) {
       let matchingVariant = null;
       if (variants.length > 0) {
         matchingVariant = variants.find((v) => {
-          const matchSize = !v.size || !item.size || v.size.label.toLowerCase() === String(item.size).toLowerCase();
-          const matchColor = !v.color || !item.color || v.color.name.toLowerCase() === String(item.color).toLowerCase();
+          const matchSize = item.size
+            ? (v.size && v.size.label.toLowerCase() === String(item.size).toLowerCase())
+            : (!v.size || v.stock_count >= item.quantity);
+          const matchColor = item.color
+            ? (v.color && v.color.name.toLowerCase() === String(item.color).toLowerCase())
+            : (!v.color || v.stock_count >= item.quantity);
           return matchSize && matchColor;
         });
 
@@ -452,4 +458,299 @@ async function trackOrder(req, res) {
   });
 }
 
-module.exports = { create, list, getById, getMyOrders, updateStatus, cancelOrder, trackOrder };
+async function calculateOrderFinancials({ items, couponCode, transaction }) {
+  if (!Array.isArray(items) || items.length === 0) {
+    throw ApiError.badRequest("At least one item is required");
+  }
+
+  const productIds = items.map((i) => i.product_id);
+  const products = await Product.findAll({ where: { id: productIds }, transaction });
+  const productById = Object.fromEntries(products.map((p) => [p.id, p]));
+
+  let subtotal = 0;
+  const itemRows = [];
+
+  for (const item of items) {
+    const product = productById[item.product_id];
+    if (!product) throw ApiError.badRequest(`Product ${item.product_id} does not exist`);
+    if (!product.is_active) throw ApiError.badRequest(`"${product.name}" is no longer available`);
+
+    const qty = parseInt(item.quantity, 10);
+    if (!qty || qty < 1) throw ApiError.badRequest("Item quantity must be at least 1");
+
+    const variants = await ProductVariant.findAll({
+      where: { product_id: product.id },
+      include: [
+        { model: ProductSize, as: "size" },
+        { model: ProductColor, as: "color" }
+      ],
+      transaction
+    });
+
+    let matchingVariant = null;
+    if (variants.length > 0) {
+      matchingVariant = variants.find((v) => {
+        const matchSize = item.size
+          ? (v.size && v.size.label.toLowerCase() === String(item.size).toLowerCase())
+          : (!v.size || v.stock_count >= qty);
+        const matchColor = item.color
+          ? (v.color && v.color.name.toLowerCase() === String(item.color).toLowerCase())
+          : (!v.color || v.stock_count >= qty);
+        return matchSize && matchColor;
+      });
+
+      if (matchingVariant) {
+        if (matchingVariant.stock_count < qty) {
+          throw ApiError.badRequest(
+            `"${product.name} (${item.size || ''} ${item.color || ''})" only has ${matchingVariant.stock_count} units left in stock`
+          );
+        }
+      } else if (product.stock_count < qty || product.in_stock === false) {
+        throw ApiError.badRequest(`"${product.name}" does not have enough stock`);
+      }
+    } else if (product.in_stock === false || product.stock_count < qty) {
+      throw ApiError.badRequest(`"${product.name}" does not have enough stock`);
+    }
+
+    const unitPrice = Number(product.price);
+    const lineTotal = unitPrice * qty;
+    subtotal += lineTotal;
+
+    itemRows.push({
+      product_id: product.id,
+      product_name_snapshot: product.name,
+      sku_snapshot: product.sku,
+      size: item.size || null,
+      color: item.color || null,
+      unit_price: unitPrice,
+      quantity: qty,
+      line_total: lineTotal,
+      matchingVariant,
+      product
+    });
+  }
+
+  let discountAmount = 0;
+  let coupon = null;
+  if (couponCode) {
+    const cleanCode = String(couponCode).trim().toUpperCase();
+    coupon = await Coupon.findOne({ where: { code: cleanCode, is_active: true }, transaction });
+    if (coupon) {
+      const isExpired = coupon.expires_at && new Date() > new Date(coupon.expires_at);
+      const isLimitReached = coupon.usage_limit && coupon.times_used >= coupon.usage_limit;
+      const minSpend = Number(coupon.min_spend) || 0;
+      if (!isExpired && !isLimitReached && subtotal >= minSpend) {
+        const discountVal = Number(coupon.discount_value);
+        if (coupon.discount_type === "percentage") {
+          discountAmount = (subtotal * discountVal) / 100;
+          if (coupon.max_discount && Number(coupon.max_discount) > 0) {
+            discountAmount = Math.min(discountAmount, Number(coupon.max_discount));
+          }
+        } else {
+          discountAmount = Math.min(subtotal, discountVal);
+        }
+        discountAmount = Math.round(discountAmount * 100) / 100;
+      }
+    }
+  }
+
+  const shippingFee = subtotal === 0 || subtotal >= 75 ? 0 : 15;
+  const total = Math.max(0, Math.round((subtotal - discountAmount + shippingFee) * 100) / 100);
+
+  return {
+    subtotal: Math.round(subtotal * 100) / 100,
+    discountAmount,
+    shippingFee,
+    total,
+    itemRows,
+    coupon
+  };
+}
+
+async function createRazorpayOrder(req, res) {
+  const items = req.body.items;
+  if (!items || !items.length) {
+    throw ApiError.badRequest("At least one item is required");
+  }
+
+  const financials = await calculateOrderFinancials({
+    items,
+    couponCode: req.body.coupon_code || req.body.couponCode
+  });
+
+  const amountInPaise = Math.round(financials.total * 100);
+  if (amountInPaise <= 0) {
+    throw ApiError.badRequest("Order total must be greater than zero for online payment");
+  }
+
+  const receipt = generateOrderNumber();
+  const rzpOrder = await razorpayService.createOrder({
+    amountInPaise,
+    currency: "INR",
+    receipt,
+    notes: {
+      customer_name: (req.body.customer_name || "").slice(0, 40),
+      email: (req.body.email || "").slice(0, 40),
+      phone: (req.body.phone || "").slice(0, 30),
+      receipt
+    }
+  });
+
+  return sendSuccess(res, {
+    data: {
+      razorpay_order_id: rzpOrder.id,
+      amount: rzpOrder.amount,
+      currency: rzpOrder.currency,
+      key_id: razorpayService.getKeyId(),
+      calculated_total: financials.total,
+      subtotal: financials.subtotal,
+      discount_amount: financials.discountAmount,
+      shipping_fee: financials.shippingFee
+    }
+  });
+}
+
+async function verifyRazorpayPayment(req, res) {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_data } = req.body;
+
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    throw ApiError.badRequest("Missing required Razorpay payment verification parameters.");
+  }
+  if (!order_data || !Array.isArray(order_data.items) || order_data.items.length === 0) {
+    throw ApiError.badRequest("Missing required order data items.");
+  }
+
+  // 1. Verify HMAC signature securely
+  const isValid = razorpayService.verifySignature({
+    razorpayOrderId: razorpay_order_id,
+    razorpayPaymentId: razorpay_payment_id,
+    razorpaySignature: razorpay_signature
+  });
+
+  if (!isValid) {
+    throw ApiError.badRequest("Payment signature verification failed. Untrusted or tampered transaction.");
+  }
+
+  // 2. Idempotency check: prevent duplicate order creation on network retries
+  const existingOrder = await Order.findOne({
+    where: {
+      notes: { [Op.like]: `%${razorpay_payment_id}%` }
+    },
+    include: [
+      { model: OrderItem, as: "items" },
+      { model: User, as: "user", attributes: ["id", "name", "email", "phone"] }
+    ]
+  });
+  if (existingOrder) {
+    return sendSuccess(res, { statusCode: 200, data: existingOrder });
+  }
+
+  const isGuest = !req.user;
+  const userId = req.user ? req.user.id : null;
+
+  // 3. Database transaction to create order, deduct stock, increment coupon
+  const result = await sequelize.transaction(async (transaction) => {
+    const financials = await calculateOrderFinancials({
+      items: order_data.items,
+      couponCode: order_data.coupon_code || order_data.couponCode,
+      transaction
+    });
+
+    for (const row of financials.itemRows) {
+      if (row.matchingVariant) {
+        row.matchingVariant.stock_count = Math.max(0, row.matchingVariant.stock_count - row.quantity);
+        await row.matchingVariant.save({ transaction });
+      }
+
+      row.product.stock_count = Math.max(0, row.product.stock_count - row.quantity);
+      if (row.product.stock_count <= 0) {
+        row.product.stock_count = 0;
+        row.product.in_stock = false;
+      }
+      await row.product.save({ transaction });
+    }
+
+    if (financials.coupon) {
+      financials.coupon.times_used = (financials.coupon.times_used || 0) + 1;
+      await financials.coupon.save({ transaction });
+    }
+
+    const orderNumber = generateOrderNumber();
+    const orderNotes = [
+      `Razorpay Payment Verified`,
+      `Payment ID: ${razorpay_payment_id}`,
+      `Order ID: ${razorpay_order_id}`,
+      order_data.notes ? `Customer Note: ${order_data.notes}` : null
+    ]
+      .filter(Boolean)
+      .join(" | ");
+
+    const order = await Order.create(
+      {
+        order_number: orderNumber,
+        customer_name: order_data.customer_name,
+        email: order_data.email,
+        phone: order_data.phone,
+        shipping_address: order_data.shipping_address,
+        city: order_data.city || null,
+        state: order_data.state || null,
+        pincode: order_data.pincode || null,
+        payment_method: "PREPAID",
+        status: "confirmed",
+        subtotal: financials.subtotal,
+        discount_amount: financials.discountAmount,
+        shipping_fee: financials.shippingFee,
+        total: financials.total,
+        notes: orderNotes,
+        user_id: userId,
+        is_guest: isGuest
+      },
+      { transaction }
+    );
+
+    await OrderItem.bulkCreate(
+      financials.itemRows.map((row) => ({
+        order_id: order.id,
+        product_id: row.product_id,
+        product_name_snapshot: row.product_name_snapshot,
+        sku_snapshot: row.sku_snapshot,
+        size: row.size,
+        color: row.color,
+        unit_price: row.unit_price,
+        quantity: row.quantity,
+        line_total: row.line_total
+      })),
+      { transaction }
+    );
+
+    return order;
+  });
+
+  const full = await Order.findByPk(result.id, {
+    include: [
+      { model: OrderItem, as: "items" },
+      { model: User, as: "user", attributes: ["id", "name", "email", "phone"] }
+    ]
+  });
+
+  // Asynchronously dispatch luxury order confirmation email
+  if (full && full.email) {
+    mailer.sendOrderConfirmationEmail(full.email, full).catch((err) => {
+      console.error("[ZMW NODEMAILER] Failed to send order confirmation email:", err.message);
+    });
+  }
+
+  return sendSuccess(res, { statusCode: 201, data: full });
+}
+
+module.exports = {
+  create,
+  list,
+  getById,
+  getMyOrders,
+  updateStatus,
+  cancelOrder,
+  trackOrder,
+  createRazorpayOrder,
+  verifyRazorpayPayment
+};

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import { storefrontApi } from "../services/storefrontApi";
 import { imageUrl } from "../utils/imageUrl";
+import { ZMW_LOGO_DATA_URI } from "../utils/zmwLogo";
 import "./Checkout.css";
 
 /* ─────────────────────────────────────────────
@@ -41,6 +42,21 @@ const PAYMENT_METHODS = [
   }
 ];
 
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
 export default function Checkout() {
   const navigate = useNavigate();
 
@@ -61,7 +77,8 @@ export default function Checkout() {
     customerUser,
     customerToken,
     setAuthModalState,
-    logoutCustomer
+    logoutCustomer,
+    setIsOrderTrackOpen
   } = useShop();
 
   // Progress Step: 1 = Contact, 2 = Delivery, 3 = Payment
@@ -93,6 +110,7 @@ export default function Checkout() {
   const [submitError, setSubmitError] = useState("");
   const [isOrdered, setIsOrdered] = useState(false);
   const [orderReceipt, setOrderReceipt] = useState(null);
+  const [copiedOrder, setCopiedOrder] = useState(false);
 
   // Auto-populate customer fields if signed in
   useEffect(() => {
@@ -200,62 +218,211 @@ export default function Checkout() {
     setIsSubmitting(true);
     setSubmitError("");
 
+    const fullAddress = formData.apartment
+      ? `${formData.address}, ${formData.apartment}`
+      : formData.address;
+
+    const orderItems = cart.map((item) => ({
+      product_id: Number(item.id),
+      quantity: item.quantity,
+      size: item.size || null,
+      color: item.color || null
+    }));
+
+    const itemsSnapshot = cart.map((item) => ({
+      id: item.id,
+      name: item.name,
+      image: item.image,
+      price: item.price,
+      quantity: item.quantity,
+      size: item.size,
+      color: item.color,
+      lineTotal: item.price * item.quantity
+    }));
+
+    const orderDateFormatted = new Date().toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
+
+    // ─────────────────────────────────────────────
+    // CASH ON DELIVERY (COD) FLOW
+    // ─────────────────────────────────────────────
+    if (paymentMethod === "cod") {
+      try {
+        const canSubmitToApi = cart.every((item) => Number.isInteger(Number(item.id)));
+        let orderNumber;
+
+        if (canSubmitToApi) {
+          const order = await storefrontApi.createOrder(
+            {
+              customer_name: formData.fullName.trim(),
+              email: formData.email.trim(),
+              phone: formData.phone.trim(),
+              shipping_address: fullAddress,
+              city: formData.city.trim(),
+              state: formData.state.trim() || null,
+              pincode: formData.postalCode.trim(),
+              payment_method: "COD",
+              discount_amount: discountAmount,
+              shipping_fee: shippingCost,
+              items: orderItems
+            },
+            customerToken
+          );
+          orderNumber = order.order_number;
+        } else {
+          // Fallback reference for static catalog items
+          orderNumber = "ZMW-" + Math.floor(10000 + Math.random() * 90000);
+        }
+
+        const receipt = {
+          orderNumber,
+          customerName: formData.fullName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          address: `${fullAddress}, ${formData.city.trim()}, ${formData.state.trim()} - ${formData.postalCode.trim()}`,
+          paymentMethod: "Cash on Delivery",
+          paymentStatus: "Payment Due on Delivery",
+          subtotal: cartSubtotal,
+          discountAmount,
+          shippingFee: shippingCost,
+          totalAmount: cartTotal,
+          itemsCount: cartItemCount,
+          items: itemsSnapshot,
+          orderDate: orderDateFormatted
+        };
+
+        setOrderReceipt(receipt);
+        setIsOrdered(true);
+        clearCart();
+        addToast(`Order ${orderNumber} placed successfully!`, "success");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        setSubmitError(err.message || "Failed to process order. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
+    // ─────────────────────────────────────────────
+    // RAZORPAY ONLINE PAYMENT FLOW (UPI, Card, NetBanking, Wallet)
+    // ─────────────────────────────────────────────
     try {
-      const canSubmitToApi = cart.every((item) => Number.isInteger(Number(item.id)));
-      let orderNumber;
-
-      if (canSubmitToApi) {
-        const fullAddress = formData.apartment
-          ? `${formData.address}, ${formData.apartment}`
-          : formData.address;
-
-        const order = await storefrontApi.createOrder(
-          {
-            customer_name: formData.fullName.trim(),
-            email: formData.email.trim(),
-            phone: formData.phone.trim(),
-            shipping_address: fullAddress,
-            city: formData.city.trim(),
-            state: formData.state.trim() || null,
-            pincode: formData.postalCode.trim(),
-            payment_method: paymentMethod === "cod" ? "COD" : "PREPAID",
-            discount_amount: discountAmount,
-            shipping_fee: shippingCost,
-            items: cart.map((item) => ({
-              product_id: Number(item.id),
-              quantity: item.quantity,
-              size: item.size,
-              color: item.color
-            }))
-          },
-          customerToken
-        );
-        orderNumber = order.order_number;
-      } else {
-        // Fallback reference for static catalog items
-        orderNumber = "ZMW-" + Math.floor(10000 + Math.random() * 90000);
+      // 1. Ensure Razorpay Checkout script is loaded
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        throw new Error("Razorpay payment gateway failed to load. Please check your internet connection.");
       }
 
-      const receipt = {
-        orderNumber,
-        customerName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        address: `${formData.address}${formData.apartment ? ", " + formData.apartment : ""}, ${formData.city}, ${formData.state} - ${formData.postalCode}`,
-        paymentMethod: PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name || paymentMethod.toUpperCase(),
-        totalAmount: cartTotal,
-        itemsCount: cartItemCount
+      // 2. Create Razorpay Order securely on the backend
+      const rzpData = await storefrontApi.createRazorpayOrder(
+        {
+          items: orderItems,
+          couponCode: appliedCoupon?.code || null,
+          customer_name: formData.fullName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim()
+        },
+        customerToken
+      );
+
+      const razorpayKey =
+        process.env.VITE_RAZORPAY_KEY ||
+        process.env.REACT_APP_RAZORPAY_KEY ||
+        rzpData.key_id ||
+        "rzp_test_TBPx9EL1T1aqhC";
+
+      // 3. Configure Razorpay Standard Checkout modal
+      const options = {
+        key: razorpayKey,
+        amount: rzpData.amount, // in paise calculated securely by backend
+        currency: rzpData.currency || "INR",
+        name: "ZMW Clothing",
+        description: `Order Checkout (${cartItemCount} ${cartItemCount === 1 ? "item" : "items"})`,
+        image: ZMW_LOGO_DATA_URI,
+        order_id: rzpData.razorpay_order_id,
+        prefill: {
+          name: formData.fullName.trim(),
+          email: formData.email.trim(),
+          contact: formData.phone.trim()
+        },
+        theme: {
+          color: "#FAA703" // ZMW signature gold accent
+        },
+        modal: {
+          ondismiss: () => {
+            setIsSubmitting(false);
+            setSubmitError("Payment was cancelled or closed. Your order was not confirmed. You can retry when ready.");
+          }
+        },
+        handler: async (response) => {
+          setIsSubmitting(true);
+          setSubmitError("");
+          try {
+            // 4. Verify payment signature securely on backend before confirming order
+            const verifyPayload = {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              order_data: {
+                customer_name: formData.fullName.trim(),
+                email: formData.email.trim(),
+                phone: formData.phone.trim(),
+                shipping_address: fullAddress,
+                city: formData.city.trim(),
+                state: formData.state.trim() || null,
+                pincode: formData.postalCode.trim(),
+                coupon_code: appliedCoupon?.code || null,
+                items: orderItems
+              }
+            };
+
+            const confirmedOrder = await storefrontApi.verifyRazorpayPayment(verifyPayload, customerToken);
+
+            const receipt = {
+              orderNumber: confirmedOrder.order_number,
+              customerName: formData.fullName.trim(),
+              email: formData.email.trim(),
+              phone: formData.phone.trim(),
+              address: `${fullAddress}, ${formData.city.trim()}, ${formData.state.trim()} - ${formData.postalCode.trim()}`,
+              paymentMethod: PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.name || "Online (Razorpay)",
+              paymentId: response.razorpay_payment_id,
+              paymentStatus: "Paid",
+              subtotal: confirmedOrder.subtotal ?? rzpData.subtotal ?? cartSubtotal,
+              discountAmount: confirmedOrder.discount_amount ?? rzpData.discount_amount ?? discountAmount,
+              shippingFee: confirmedOrder.shipping_fee ?? rzpData.shipping_fee ?? shippingCost,
+              totalAmount: confirmedOrder.total ?? rzpData.calculated_total ?? cartTotal,
+              itemsCount: cartItemCount,
+              items: itemsSnapshot,
+              orderDate: orderDateFormatted
+            };
+
+            setOrderReceipt(receipt);
+            setIsOrdered(true);
+            clearCart();
+            addToast(`Payment verified! Order ${confirmedOrder.order_number} confirmed.`, "success");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          } catch (verifyErr) {
+            setSubmitError(verifyErr.message || "Payment signature verification failed. Please contact support.");
+          } finally {
+            setIsSubmitting(false);
+          }
+        }
       };
 
-      setOrderReceipt(receipt);
-      setIsOrdered(true);
-      clearCart();
-      addToast(`Order ${orderNumber} placed successfully!`, "success");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      const rzpInstance = new window.Razorpay(options);
+      rzpInstance.on("payment.failed", (resp) => {
+        setIsSubmitting(false);
+        const failureReason = resp.error?.description || resp.error?.reason || "Payment declined or failed.";
+        setSubmitError(`Payment failed: ${failureReason}`);
+      });
+      rzpInstance.open();
     } catch (err) {
-      setSubmitError(err.message || "Failed to process order. Please try again.");
-    } finally {
       setIsSubmitting(false);
+      setSubmitError(err.message || "Failed to initiate Razorpay checkout. Please try again.");
     }
   };
 
@@ -263,6 +430,14 @@ export default function Checkout() {
      RENDER: ORDER SUCCESSFUL CONFIRMATION VIEW
   ───────────────────────────────────────────── */
   if (isOrdered && orderReceipt) {
+    const handleCopyOrderNumber = () => {
+      if (orderReceipt.orderNumber && navigator.clipboard) {
+        navigator.clipboard.writeText(orderReceipt.orderNumber);
+        setCopiedOrder(true);
+        setTimeout(() => setCopiedOrder(false), 2000);
+      }
+    };
+
     return (
       <div className="cko-page">
         <div className="container">
@@ -271,17 +446,92 @@ export default function Checkout() {
             <span className="cko-kicker">SECURE ORDER CONFIRMED</span>
             <h1 className="cko-success-title">Thank You For Your Order!</h1>
             <p className="cko-success-subtitle">
-              Your order <strong className="cko-highlight">{orderReceipt.orderNumber}</strong> has been received and routed to our central dispatch hub.
+              Your order <strong className="cko-highlight">#{orderReceipt.orderNumber}</strong> has been received and routed to our central dispatch hub.
             </p>
 
+            {/* Quick Summary Strip */}
+            <div className="cko-order-quick-strip">
+              <div className="cko-oqs-item">
+                <span className="cko-oqs-label">Order Number</span>
+                <span className="cko-oqs-value font-mono">
+                  #{orderReceipt.orderNumber}
+                  <button
+                    type="button"
+                    className="cko-copy-btn"
+                    onClick={handleCopyOrderNumber}
+                    title="Copy Order Number"
+                  >
+                    {copiedOrder ? "COPIED ✓" : "COPY"}
+                  </button>
+                </span>
+              </div>
+              <div className="cko-oqs-item">
+                <span className="cko-oqs-label">Order Date</span>
+                <span className="cko-oqs-value">{orderReceipt.orderDate || "Today"}</span>
+              </div>
+              <div className="cko-oqs-item">
+                <span className="cko-oqs-label">Payment Status</span>
+                <span className="cko-oqs-value">
+                  {orderReceipt.paymentStatus === "Paid" ? (
+                    <span className="cko-status-pill --paid">● Paid (Razorpay)</span>
+                  ) : (
+                    <span className="cko-status-pill --cod">● Cash On Delivery</span>
+                  )}
+                </span>
+              </div>
+              <div className="cko-oqs-item">
+                <span className="cko-oqs-label">Estimated Delivery</span>
+                <span className="cko-oqs-value">3–5 Business Days</span>
+              </div>
+            </div>
+
+            {/* Ordered Items Snapshot */}
+            {orderReceipt.items && orderReceipt.items.length > 0 && (
+              <>
+                <div className="cko-receipt-section-title">ITEMS ORDERED ({orderReceipt.items.length})</div>
+                <div className="cko-receipt-items">
+                  {orderReceipt.items.map((item, idx) => (
+                    <div key={`${item.id}-${idx}`} className="cko-receipt-item-row">
+                      <img
+                        src={imageUrl(item.image) || "/images/photo-1521572163474-6864f9cf17ab.jpg"}
+                        alt={item.name}
+                        className="cko-receipt-item-thumb"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "/images/photo-1521572163474-6864f9cf17ab.jpg";
+                        }}
+                      />
+                      <div className="cko-receipt-item-info">
+                        <div className="cko-receipt-item-name">{item.name}</div>
+                        <div className="cko-receipt-item-meta">
+                          {item.size && <span>Size: <strong>{item.size}</strong></span>}
+                          {item.color && <span>Color: <strong>{item.color}</strong></span>}
+                          <span>Qty: <strong>{item.quantity}</strong></span>
+                        </div>
+                      </div>
+                      <div className="cko-receipt-item-price">
+                        {formatPrice(item.lineTotal || (item.price * item.quantity))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Delivery & Customer Info */}
+            <div className="cko-receipt-section-title">DELIVERY & PAYMENT DETAILS</div>
             <div className="cko-receipt-table">
               <div className="cko-receipt-row">
-                <span className="cko-rr-label">Order Number</span>
-                <span className="cko-rr-value font-mono">#{orderReceipt.orderNumber}</span>
+                <span className="cko-rr-label">Recipient Name</span>
+                <span className="cko-rr-value">{orderReceipt.customerName}</span>
               </div>
               <div className="cko-receipt-row">
-                <span className="cko-rr-label">Confirmation Dispatched To</span>
+                <span className="cko-rr-label">Contact Email</span>
                 <span className="cko-rr-value">{orderReceipt.email}</span>
+              </div>
+              <div className="cko-receipt-row">
+                <span className="cko-rr-label">Contact Phone</span>
+                <span className="cko-rr-value">{orderReceipt.phone}</span>
               </div>
               <div className="cko-receipt-row">
                 <span className="cko-rr-label">Delivery Address</span>
@@ -291,16 +541,51 @@ export default function Checkout() {
                 <span className="cko-rr-label">Payment Mode</span>
                 <span className="cko-rr-value">{orderReceipt.paymentMethod}</span>
               </div>
+              {orderReceipt.paymentId && (
+                <div className="cko-receipt-row">
+                  <span className="cko-rr-label">Razorpay Payment ID</span>
+                  <span className="cko-rr-value font-mono">{orderReceipt.paymentId}</span>
+                </div>
+              )}
+              <div className="cko-receipt-row">
+                <span className="cko-rr-label">Subtotal</span>
+                <span className="cko-rr-value">{formatPrice(orderReceipt.subtotal)}</span>
+              </div>
+              {orderReceipt.discountAmount > 0 && (
+                <div className="cko-receipt-row">
+                  <span className="cko-rr-label">Coupon Discount</span>
+                  <span className="cko-rr-value text-emerald-600">-{formatPrice(orderReceipt.discountAmount)}</span>
+                </div>
+              )}
+              <div className="cko-receipt-row">
+                <span className="cko-rr-label">Shipping / Delivery Fee</span>
+                <span className="cko-rr-value">
+                  {orderReceipt.shippingFee === 0 ? "FREE" : formatPrice(orderReceipt.shippingFee)}
+                </span>
+              </div>
               <div className="cko-receipt-row cko-receipt-total">
                 <span className="cko-rr-label">Total Amount Paid</span>
                 <span className="cko-rr-value">{formatPrice(orderReceipt.totalAmount)}</span>
               </div>
             </div>
 
+            {/* Action Buttons */}
             <div className="cko-success-actions">
               <Link to="/collection?category=mens" className="cko-btn-primary">
                 CONTINUE SHOPPING →
               </Link>
+              <button
+                type="button"
+                className="cko-btn-outline"
+                onClick={() => setIsOrderTrackOpen(true)}
+              >
+                TRACK ORDER 🔍
+              </button>
+              {customerUser && (
+                <Link to="/my-orders" className="cko-btn-outline">
+                  VIEW MY ORDERS 📦
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -820,8 +1105,12 @@ export default function Checkout() {
                         disabled={isSubmitting || !cart.length}
                       >
                         {isSubmitting
-                          ? "PROCESSING ORDER..."
-                          : `PLACE ORDER • ${formatPrice(cartTotal)} →`}
+                          ? paymentMethod === "cod"
+                            ? "PLACING ORDER..."
+                            : "PROCESSING PAYMENT..."
+                          : paymentMethod === "cod"
+                            ? `PLACE ORDER • ${formatPrice(cartTotal)} →`
+                            : `PAY WITH RAZORPAY • ${formatPrice(cartTotal)} →`}
                       </button>
                     </div>
                   </form>
