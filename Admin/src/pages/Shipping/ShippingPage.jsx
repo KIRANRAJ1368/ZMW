@@ -161,19 +161,25 @@ export default function ShippingPage() {
               key: "order_number",
               label: "Shipment / Order",
               width: "160px",
-              render: (row) => (
-                <div>
-                  <Link
-                    to={`/shipping/${row.id}`}
-                    style={{ fontWeight: 700, color: "var(--primary, #c5a880)", fontSize: 13.5 }}
-                  >
-                    {row.order_number}
-                  </Link>
-                  <div className="cell-muted" style={{ fontSize: 11.5, marginTop: 2 }}>
-                    Placed: {new Date(row.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
+              render: (row) => {
+                const dateVal = row.createdAt || row.created_at;
+                const formattedDate = dateVal && !isNaN(new Date(dateVal).getTime())
+                  ? new Date(dateVal).toLocaleDateString("en-IN", { month: "short", day: "numeric" })
+                  : "—";
+                return (
+                  <div>
+                    <Link
+                      to={`/shipping/${row.id}`}
+                      style={{ fontWeight: 700, color: "var(--primary, #c5a880)", fontSize: 13.5 }}
+                    >
+                      {row.order_number}
+                    </Link>
+                    <div className="cell-muted" style={{ fontSize: 11.5, marginTop: 2 }}>
+                      Placed: {formattedDate}
+                    </div>
                   </div>
-                </div>
-              )
+                );
+              }
             },
             {
               key: "recipient",

@@ -89,6 +89,8 @@ export default function ShippingDetailPage() {
   const currentStatus = order.shipping_status || "pending_dispatch";
   const awb = order.awb_code || order.tracking_number;
   const statusIndex = SHIPPING_STAGES.findIndex((s) => s.value === currentStatus);
+  const isDelivered = currentStatus === "delivered";
+  const isDispatched = currentStatus === "in_transit" || currentStatus === "manifested";
 
   return (
     <div className="shipping-detail-page">

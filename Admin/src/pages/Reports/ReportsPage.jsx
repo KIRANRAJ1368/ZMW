@@ -161,7 +161,7 @@ export default function ReportsPage() {
             onClick={() => setActiveTab("orders")}
           >
             <FileSpreadsheet size={16} />
-            <span>Orders Ledger</span>
+            <span>Orders Report</span>
           </button>
         </div>
 
