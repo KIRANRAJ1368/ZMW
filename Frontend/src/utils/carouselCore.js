@@ -8,17 +8,18 @@
 
 /** How many items a category carousel shows at each viewport size. */
 export const CAROUSEL_BREAKPOINTS = {
-  mobile: 1,
+  mobile: 2,
   tablet: 2,
-  desktop: 2,
+  desktop: 3,
   wide: 4
 };
 
 /** Mirrors the CategoryFeatureGrid static-grid breakpoints so switching a
  *  row from grid to carousel does not change the tile size. */
 export function visibleCountForWidth(width) {
-  if (width <= 768) return CAROUSEL_BREAKPOINTS.mobile;
-  if (width <= 1200) return CAROUSEL_BREAKPOINTS.tablet;
+  if (width <= 520) return CAROUSEL_BREAKPOINTS.mobile;
+  if (width <= 820) return CAROUSEL_BREAKPOINTS.tablet;
+  if (width <= 1100) return CAROUSEL_BREAKPOINTS.desktop;
   return CAROUSEL_BREAKPOINTS.wide;
 }
 

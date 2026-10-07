@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
-import { FREE_SHIPPING_THRESHOLD } from "../../utils/shopConfig";
 import { imageUrl } from "../../utils/imageUrl";
 import { formatPrice } from "../../utils/formatPrice";
 import "./Hero.css";
 
-const FREE_SHIPPING_LABEL = `Free Shipping ${formatPrice(FREE_SHIPPING_THRESHOLD)}+`;
+const SHIPPING_LABEL = "Pan-India Express Shipping";
 
 function renderHeroIcon(name) {
   switch (name) {
@@ -81,7 +80,7 @@ const HERO_BANNERS = [
     link: "/collection",
     urgencyTag: "⚡ Selling Out Fast",
     perks: [
-      { icon: "truck", label: FREE_SHIPPING_LABEL },
+      { icon: "truck", label: SHIPPING_LABEL },
       { icon: "refresh", label: "7-Day Easy Returns" },
       { icon: "shield", label: "100% Quality Checked" }
     ],
@@ -157,29 +156,39 @@ export default function Hero() {
   const withMinPrice = (text) => (text || "").replace(/\{\{MIN_PRICE\}\}/g, minPrice);
 
   const banners = managedBanners.length
-    ? managedBanners.map((banner, index) => ({
-        id: banner.id,
-        badge: banner.tag || "ZMW",
-        badgeIcon: "sparkle",
-        subBadge: banner.badge_promo || "",
-        offer: banner.badge_promo || banner.title,
-        offerTag: banner.badge_promo ? (banner.tag || "LIMITED DROP") : "",
-        headline: banner.title,
-        support: banner.subtitle || "",
-        cta: banner.primary_cta_text || "Shop Now",
-        link: banner.primary_cta_link || "/collection",
-        urgencyTag: banner.secondary_cta_text || "✨ Fresh Drop",
-        perks: [
-          { icon: "truck", label: FREE_SHIPPING_LABEL },
-          { icon: "refresh", label: "7-Day Easy Returns" },
-          { icon: "shield", label: "100% Quality Checked" }
-        ],
-        image: banner.image_url,
-        imagePosition: banner.image_position || "75% 10%",
-        alt: banner.title,
-        slideLabel: banner.title,
-        themeClass: `hero-theme-${(index % 3) + 1}`
-      }))
+    ? managedBanners.map((banner, index) => {
+        const promo = banner.badge_promo?.trim() || "";
+        const tag = banner.tag?.trim() || "";
+        const title = banner.title?.trim() || "ZMW Clothing";
+        const subtitle = banner.subtitle?.trim() || "";
+        const offer = promo || title;
+        const subBadge = promo && promo.toLowerCase() !== tag.toLowerCase() && promo.toLowerCase() !== offer.toLowerCase() ? promo : "";
+        const offerTag = banner.secondary_cta_text && banner.secondary_cta_text.toLowerCase() !== tag.toLowerCase() ? banner.secondary_cta_text : "";
+
+        return {
+          id: banner.id,
+          badge: tag || "ZMW",
+          badgeIcon: "sparkle",
+          subBadge,
+          offer,
+          offerTag,
+          headline: promo && promo.toLowerCase() === title.toLowerCase() ? (tag || "Special Edition") : title,
+          support: subtitle,
+          cta: banner.primary_cta_text || "Shop Now",
+          link: banner.primary_cta_link || "/collection",
+          urgencyTag: banner.secondary_cta_text || "✨ Fresh Drop",
+          perks: [
+            { icon: "truck", label: SHIPPING_LABEL },
+            { icon: "refresh", label: "7-Day Easy Returns" },
+            { icon: "shield", label: "100% Quality Checked" }
+          ],
+          image: banner.image_url,
+          imagePosition: banner.image_position || "75% 10%",
+          alt: title,
+          slideLabel: title,
+          themeClass: `hero-theme-${(index % 3) + 1}`
+        };
+      })
     : HERO_BANNERS.map((banner) => ({
         ...banner,
         offerTag: withMinPrice(banner.offerTag),
@@ -274,9 +283,11 @@ export default function Hero() {
                       {renderHeroIcon(banner.badgeIcon)}
                       {banner.badge}
                     </span>
-                    <span className="hero-tag-subbadge">
-                      {banner.subBadge}
-                    </span>
+                    {banner.subBadge && (
+                      <span className="hero-tag-subbadge">
+                        {banner.subBadge}
+                      </span>
+                    )}
                   </div>
 
                   {/* 1. PRIMARY OFFER (Strong Visual Hierarchy) */}

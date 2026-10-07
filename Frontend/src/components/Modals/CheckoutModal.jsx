@@ -5,10 +5,8 @@ import { storefrontApi } from "../../services/storefrontApi";
 import "./CheckoutModal.css";
 
 const PAYMENT_METHODS = [
-  { id: "cod", name: "Cash on Delivery", icon: "📦", desc: "Pay upon physical receipt" },
-  { id: "card", name: "Credit / Debit Card", icon: "💳", desc: "Visa, Mastercard, RuPay" },
-  { id: "upi", name: "UPI / QR Payment", icon: "⚡", desc: "Google Pay, PhonePe, Paytm" },
-  { id: "netbanking", name: "Net Banking", icon: "🏦", desc: "All major Indian banks" }
+  { id: "razorpay", name: "Razorpay (Online Payment)", icon: "⚡", desc: "UPI, Cards, Net Banking & Wallets" },
+  { id: "cod", name: "Cash on Delivery", icon: "📦", desc: "Pay upon physical delivery" }
 ];
 
 export default function CheckoutModal() {
@@ -417,7 +415,7 @@ export default function CheckoutModal() {
                 )}
                 <div className="breakdown-row">
                   <span>Express Shipping</span>
-                  <span>{shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}</span>
+                  <span>{formatPrice(shippingCost)}</span>
                 </div>
                 <div className="breakdown-row total-highlight">
                   <span>Total Amount</span>

@@ -38,7 +38,7 @@ export default function VipCouponBanner() {
               Join The Squad. Get <span className="vip-highlight">Flat 10% OFF</span>
             </h2>
             <p className="vip-subtitle">
-              Apply code at checkout on your first order. Free pan-India shipping & instant cash on delivery included!
+              Apply code at checkout on your first order. Pan-India express shipping & instant cash on delivery included!
             </p>
 
             <div className="vip-actions">

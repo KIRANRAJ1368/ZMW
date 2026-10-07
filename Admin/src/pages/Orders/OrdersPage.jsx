@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Eye, Filter, IndianRupee, Clock, CheckCircle2, UserCheck, UserX } from "lucide-react";
+import { ShoppingBag, Eye, Filter, IndianRupee, Clock, CheckCircle2, UserCheck, UserX, Truck } from "lucide-react";
 import { ordersApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import DataTable from "../../components/DataTable/DataTable";
@@ -49,11 +49,11 @@ export default function OrdersPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">
-            <span>Customer Orders & Fulfillment</span>
+            <span>Customer Orders</span>
             <span className="pill-badge badge-gold">{meta.total} Order{meta.total === 1 ? "" : "s"}</span>
           </h1>
           <p className="page-subtitle">
-            Track customer checkouts, dispatch shipments, verify payments, and inspect invoice snapshots.
+            Review customer orders, item details, payment status, and order invoices.
           </p>
         </div>
       </div>
@@ -285,17 +285,26 @@ export default function OrdersPage() {
             {
               key: "actions",
               label: "Actions",
-              width: "90px",
+              width: "150px",
               align: "right",
               render: (row) => (
-                <div className="table-actions">
+                <div className="table-actions" style={{ display: "flex", gap: "6px", justifyContent: "flex-end" }}>
                   <Link
                     to={`/orders/${row.id}`}
                     className="btn btn-secondary btn-sm"
                     title="View Order Details"
                   >
                     <Eye size={13} />
-                    <span>View</span>
+                    <span>Order</span>
+                  </Link>
+                  <Link
+                    to={`/shipping/${row.id}`}
+                    className="btn btn-secondary btn-sm"
+                    title="View Shipping & Tracking"
+                    style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+                  >
+                    <Truck size={13} />
+                    <span>Shipping</span>
                   </Link>
                 </div>
               )

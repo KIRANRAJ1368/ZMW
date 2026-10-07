@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
+import { storefrontApi } from "../services/storefrontApi";
 import { imageUrl } from "../utils/imageUrl";
 import "./Cart.css";
 
@@ -56,6 +57,58 @@ export default function Cart() {
 
   const [couponInput, setCouponInput] = useState("");
 
+  // Shiprocket Pincode Shipping Estimator State
+  const [shippingPincode, setShippingPincode] = useState("");
+  const [shippingEstimate, setShippingEstimate] = useState(null);
+  const [isEstimatingShipping, setIsEstimatingShipping] = useState(false);
+  const [shippingEstimateError, setShippingEstimateError] = useState("");
+
+  const fetchShippingEstimate = async (cleanPin) => {
+    if (!cleanPin || cleanPin.length !== 6) return;
+    setShippingEstimateError("");
+    setIsEstimatingShipping(true);
+    try {
+      const res = await storefrontApi.calculateShippingRate({
+        pincode: cleanPin
+      });
+      const rate = res?.data?.is_serviceable !== undefined ? res.data : (res?.data || res);
+      if (rate) {
+        if (rate.is_serviceable && rate.shipping_fee !== null) {
+          setShippingEstimate(rate);
+          setShippingEstimateError("");
+        } else {
+          setShippingEstimate(null);
+          setShippingEstimateError(rate.message || "This PIN code is not serviceable by Shiprocket.");
+        }
+      }
+    } catch (err) {
+      setShippingEstimate(null);
+      setShippingEstimateError(err.message || "Failed to calculate shipping for this PIN code");
+    } finally {
+      setIsEstimatingShipping(false);
+    }
+  };
+
+  const handleEstimateShipping = (e) => {
+    e?.preventDefault();
+    const cleanPin = shippingPincode.trim().replace(/\D/g, "");
+    if (cleanPin.length !== 6) {
+      setShippingEstimateError("Please enter a valid 6-digit PIN code");
+      return;
+    }
+    fetchShippingEstimate(cleanPin);
+  };
+
+  useEffect(() => {
+    const cleanPin = shippingPincode.trim().replace(/\D/g, "");
+    if (cleanPin.length === 6) {
+      fetchShippingEstimate(cleanPin);
+    } else {
+      setShippingEstimate(null);
+      if (cleanPin.length === 0) setShippingEstimateError("");
+    }
+  }, [shippingPincode]);
+
   const handleCouponSubmit = (e) => {
     e.preventDefault();
     if (couponInput.trim()) {
@@ -65,7 +118,11 @@ export default function Cart() {
   };
 
   const handleProceedToCheckout = () => {
-    navigate("/checkout");
+    navigate("/checkout", {
+      state: {
+        pincode: shippingPincode.trim().length === 6 ? shippingPincode.trim() : undefined
+      }
+    });
   };
 
   /* ─── EMPTY STATE ─── */
@@ -296,9 +353,17 @@ export default function Cart() {
                 </div>
 
                 <div className="cp-summary-row">
-                  <span className="cp-sr-label">Estimated Shipping</span>
+                  <span className="cp-sr-label">
+                    Estimated Shipping {shippingEstimate?.courier_name ? `(${shippingEstimate.courier_name})` : "(Shiprocket)"}
+                  </span>
                   <span className="cp-sr-value --shipping-val">
-                    {shippingCost === 0 ? "Calculated at checkout" : formatPrice(shippingCost)}
+                    {isEstimatingShipping ? (
+                      "Calculating..."
+                    ) : shippingEstimate ? (
+                      formatPrice(shippingEstimate.shipping_fee)
+                    ) : (
+                      formatPrice(shippingCost)
+                    )}
                   </span>
                 </div>
 
@@ -313,6 +378,46 @@ export default function Cart() {
                     <span className="cp-sr-value --discount-val">−{formatPrice(discountAmount)}</span>
                   </div>
                 )}
+              </div>
+
+              {/* Shiprocket Pincode Shipping Estimator */}
+              <div className="cp-pincode-estimator-box">
+                <div className="cp-estimator-box-title">ESTIMATE SHIPPING BY PIN CODE</div>
+                <form onSubmit={handleEstimateShipping} className="cp-estimator-form">
+                  <div className="cp-estimator-input-wrap">
+                    <input
+                      type="text"
+                      maxLength="6"
+                      placeholder="ENTER 6-DIGIT PIN CODE"
+                      value={shippingPincode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        setShippingPincode(val);
+                        if (shippingEstimateError) setShippingEstimateError("");
+                      }}
+                      className="cp-estimator-input"
+                      aria-label="Delivery PIN code"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isEstimatingShipping || shippingPincode.length !== 6}
+                      className="cp-estimator-apply-btn"
+                    >
+                      {isEstimatingShipping ? "..." : "ESTIMATE"}
+                    </button>
+                  </div>
+                  {shippingEstimateError && <p className="cp-estimator-error">{shippingEstimateError}</p>}
+                  {shippingEstimate && (
+                    <div className="cp-estimator-result">
+                      <div className="cp-estimator-result-header">
+                        <span className="cp-estimator-badge">✓ {shippingEstimate.courier_name || "Shiprocket Express"}</span>
+                      </div>
+                      <p className="cp-estimator-fee-line">
+                        Shipping Charge: <strong>{formatPrice(shippingEstimate.shipping_fee)}</strong>
+                      </p>
+                    </div>
+                  )}
+                </form>
               </div>
 
               {/* 4. Coupon Section Inside Order Summary */}
@@ -355,7 +460,18 @@ export default function Cart() {
               {/* Grand Total */}
               <div className="cp-grand-total-row">
                 <span className="cp-grand-total-label">Grand Total</span>
-                <span className="cp-grand-total-value">{formatPrice(cartTotal)}</span>
+                <span className="cp-grand-total-value">
+                  {formatPrice(
+                    Math.max(
+                      0,
+                      cartSubtotal -
+                        discountAmount +
+                        (shippingEstimate !== null
+                          ? shippingEstimate.shipping_fee
+                          : shippingCost)
+                    )
+                  )}
+                </span>
               </div>
               <p className="cp-tax-inclusive-note">Inclusive of all taxes</p>
 

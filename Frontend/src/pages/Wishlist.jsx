@@ -1,12 +1,21 @@
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import "./Wishlist.css";
 
 export default function Wishlist() {
   const navigate = useNavigate();
-  const { wishlist, findProduct, toggleWishlist, addToCart, formatPrice } = useShop();
+  const { wishlist, findProduct, toggleWishlist, addToCart, formatPrice, storefrontStatus, clearWishlist } = useShop();
 
   const wishlistProducts = wishlist.map((id) => findProduct(id)).filter(Boolean);
+  const isLoading = storefrontStatus === "loading" && wishlist.length > 0 && wishlistProducts.length === 0;
+
+  // If catalogue is fully loaded and wishlist has orphaned ghost IDs, auto-clear them
+  useEffect(() => {
+    if (storefrontStatus === "ready" && wishlist.length > 0 && wishlistProducts.length === 0) {
+      clearWishlist();
+    }
+  }, [storefrontStatus, wishlist.length, wishlistProducts.length, clearWishlist]);
 
   return (
     <div className="wishlist-page">
@@ -24,6 +33,9 @@ export default function Wishlist() {
           <div className="wishlist-title-row">
             <div className="wishlist-heading-wrap">
               <h1 className="wishlist-title">My Wishlist</h1>
+              {wishlistProducts.length > 0 && (
+                <span className="wishlist-count-badge">{wishlistProducts.length} items</span>
+              )}
             </div>
 
             {wishlistProducts.length > 0 && (
@@ -35,7 +47,11 @@ export default function Wishlist() {
         </header>
 
         {/* ── Products Grid ── */}
-        {wishlistProducts.length > 0 ? (
+        {isLoading ? (
+          <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--color-gold, #c5a880)" }}>
+            <p>Loading your saved pieces...</p>
+          </div>
+        ) : wishlistProducts.length > 0 ? (
           <>
             <div className="wishlist-grid">
               {wishlistProducts.map((product) => (
@@ -73,8 +89,12 @@ export default function Wishlist() {
                       type="button"
                       className="wishlist-card-remove-btn"
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         toggleWishlist(product.id);
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
                       }}
                       title="Remove from Wishlist"
                       aria-label={`Remove ${product.name} from wishlist`}
@@ -120,7 +140,11 @@ export default function Wishlist() {
                     <button
                       type="button"
                       className="wishlist-card-add-btn"
-                      onClick={() => addToCart(product)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        addToCart(product);
+                      }}
                       aria-label={`Add ${product.name} to bag`}
                     >
                       Add to Bag

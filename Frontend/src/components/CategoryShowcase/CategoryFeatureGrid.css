@@ -311,17 +311,33 @@
 @media (max-width: 768px) {
   .cat-feature-grid,
   .cat-feature-grid--four {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .cat-feature-caption {
+    padding: 10px 6px;
+  }
+
+  .cat-feature-name {
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+  }
+
+  .cat-feature-tag {
+    top: 8px;
+    left: 8px;
+    font-size: 0.58rem;
+    padding: 3px 7px;
   }
 
   .cat-feature-carousel-slide {
-    padding: 0 6px;
+    padding: 0 5px;
   }
 
   .cat-feature-arrow {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
   }
 
   .cat-feature-arrow.left {

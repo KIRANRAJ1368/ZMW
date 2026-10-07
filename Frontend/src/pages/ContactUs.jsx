@@ -1,6 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { storefrontApi } from "../services/storefrontApi";
 import "./ContactUs.css";
+
+const CATEGORY_OPTIONS = [
+  { value: "general", label: "General Question" },
+  { value: "sizing", label: "Product Sizing & Fit" },
+  { value: "order", label: "Order Status & Tracking" },
+  { value: "returns", label: "Returns & Refunds" },
+  { value: "payment", label: "Payment & COD Availability" }
+];
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -14,10 +22,48 @@ export default function ContactUs() {
   const [submittedData, setSubmittedData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const categoryDropdownRef = useRef(null);
+
+  // Close custom dropdown when clicking outside or pressing Escape
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
+        setIsCategoryOpen(false);
+      }
+    }
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        setIsCategoryOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside, { passive: true });
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectCategory = (val) => {
+    setFormData((prev) => ({ ...prev, category: val }));
+    setIsCategoryOpen(false);
+  };
+
+  const handleDropdownKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+      e.preventDefault();
+      setIsCategoryOpen((prev) => !prev);
+    } else if (e.key === "Escape") {
+      setIsCategoryOpen(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -51,6 +97,7 @@ export default function ContactUs() {
 
   const handleReset = () => {
     setSubmittedData(null);
+    setIsCategoryOpen(false);
     setFormData({
       name: "",
       email: "",
@@ -329,20 +376,76 @@ export default function ContactUs() {
                         onChange={handleChange}
                       />
                     </div>
-                    <div className="contact-input-group">
-                      <label htmlFor="contact-category">Inquiry Topic</label>
-                      <select
-                        id="contact-category"
-                        name="category"
-                        value={formData.category}
-                        onChange={handleChange}
-                      >
-                        <option value="general">General Question</option>
-                        <option value="sizing">Product Sizing & Fit</option>
-                        <option value="order">Order Status & Tracking</option>
-                        <option value="returns">Returns & Refunds</option>
-                        <option value="payment">Payment & COD Availability</option>
-                      </select>
+                    <div className="contact-input-group contact-select-group" ref={categoryDropdownRef}>
+                      <label id="contact-category-label" htmlFor="contact-category-trigger">
+                        Inquiry Topic
+                      </label>
+                      <div className="contact-custom-select-wrapper">
+                        <button
+                          id="contact-category-trigger"
+                          type="button"
+                          className={`contact-custom-select-trigger ${isCategoryOpen ? "active" : ""}`}
+                          onClick={() => setIsCategoryOpen((prev) => !prev)}
+                          onKeyDown={handleDropdownKeyDown}
+                          aria-haspopup="listbox"
+                          aria-expanded={isCategoryOpen}
+                          aria-labelledby="contact-category-label contact-category-trigger"
+                        >
+                          <span className="contact-custom-select-label">
+                            {CATEGORY_OPTIONS.find((c) => c.value === formData.category)?.label || "Select a topic"}
+                          </span>
+                          <span className={`contact-custom-select-arrow ${isCategoryOpen ? "open" : ""}`} aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </span>
+                        </button>
+
+                        {/* Hidden native select for standard accessibility / form serialization */}
+                        <select
+                          id="contact-category"
+                          name="category"
+                          value={formData.category}
+                          onChange={handleChange}
+                          tabIndex={-1}
+                          aria-hidden="true"
+                          className="contact-native-select-hidden"
+                        >
+                          {CATEGORY_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+
+                        {isCategoryOpen && (
+                          <ul
+                            className="contact-custom-select-menu"
+                            role="listbox"
+                            aria-labelledby="contact-category-label"
+                          >
+                            {CATEGORY_OPTIONS.map((opt) => {
+                              const isSelected = formData.category === opt.value;
+                              return (
+                                <li
+                                  key={opt.value}
+                                  role="option"
+                                  aria-selected={isSelected}
+                                  className={`contact-custom-select-option ${isSelected ? "selected" : ""}`}
+                                  onClick={() => handleSelectCategory(opt.value)}
+                                >
+                                  <span>{opt.label}</span>
+                                  {isSelected && (
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="contact-option-check">
+                                      <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                  )}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -390,6 +493,47 @@ export default function ContactUs() {
           </div>
 
 
+        </div>
+      </section>
+
+      {/* Google Map Section */}
+      <section className="contact-map-section" aria-label="Visit Our Flagship Store">
+        <div className="container">
+          <div className="contact-map-card">
+            <div className="contact-map-header">
+              <div className="contact-map-header-text">
+                <span className="contact-map-eyebrow">STORE LOCATION</span>
+                <h2 className="contact-map-title">Visit Our Flagship Atelier</h2>
+                <p className="contact-map-desc">
+                  Experience the craftsmanship in person. 123, Avinashi Road, Peelamedu, Coimbatore, Tamil Nadu – 641004
+                </p>
+              </div>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=123+Avinashi+Road+Peelamedu+Coimbatore+641004"
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-secondary contact-directions-btn"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                </svg>
+                <span>Get Directions</span>
+              </a>
+            </div>
+
+            <div className="contact-map-frame-wrapper">
+              <iframe
+                title="ZMW Luxury Flagship Store Location"
+                src="https://maps.google.com/maps?q=123,%20Avinashi%20Road,%20Peelamedu,%20Coimbatore%20641004&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                width="100%"
+                height="420"
+                style={{ border: 0, display: "block" }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </div>
         </div>
       </section>
     </div>

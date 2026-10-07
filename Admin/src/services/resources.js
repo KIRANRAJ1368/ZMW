@@ -50,7 +50,16 @@ export const homepageApi = {
 export const ordersApi = {
   list: (params) => api.get("/orders", params),
   getById: (id) => api.get(`/orders/${id}`),
+  syncTracking: (id) => api.post(`/shipping/shipments/${id}/sync`),
   updateStatus: (id, status) => api.patch(`/orders/${id}/status`, { status })
+};
+
+export const shippingApi = {
+  list: (params) => api.get("/shipping/shipments", params),
+  getById: (id) => api.get(`/shipping/shipments/${id}`),
+  generateAwb: (id) => api.post(`/shipping/shipments/${id}/generate-awb`),
+  syncTracking: (id) => api.post(`/shipping/shipments/${id}/sync`),
+  updateStatus: (id, data) => api.patch(`/shipping/shipments/${id}/status`, data)
 };
 
 export const contactApi = {

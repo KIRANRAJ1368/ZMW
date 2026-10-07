@@ -14,6 +14,7 @@ export default function TabbedShowcase() {
     formatPrice,
     addToCart,
     wishlist,
+    isInWishlist,
     toggleWishlist,
     setQuickViewProduct
   } = useShop();
@@ -58,7 +59,7 @@ export default function TabbedShowcase() {
         {/* Product Grid */}
         <div className="tabbed-product-grid">
           {filteredProducts.map((product) => {
-            const isSaved = wishlist.includes(product.id);
+            const isSaved = isInWishlist ? isInWishlist(product.id) : wishlist.some((id) => String(id) === String(product.id));
 
             return (
               <div key={product.id} className="tabbed-product-card">
@@ -75,10 +76,18 @@ export default function TabbedShowcase() {
                     loading="lazy"
                   />
 
-                  <div className="tabbed-actions">
+                  <div className="tabbed-actions" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                     <button
+                      type="button"
                       className="tabbed-action-btn"
-                      onClick={() => setQuickViewProduct(product)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setQuickViewProduct(product);
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                      }}
                       title="Quick View"
                     >
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -87,8 +96,16 @@ export default function TabbedShowcase() {
                       </svg>
                     </button>
                     <button
+                      type="button"
                       className={`tabbed-action-btn ${isSaved ? "saved" : ""}`}
-                      onClick={() => toggleWishlist(product.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleWishlist(product.id);
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                      }}
                       title={isSaved ? "Remove from Wishlist" : "Add to Wishlist"}
                     >
                       <svg width="18" height="18" viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">

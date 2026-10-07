@@ -110,7 +110,14 @@
 
 .wishlist-item-remove {
   color: var(--color-grey-400);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
   transition: color var(--dur-fast);
 }
 

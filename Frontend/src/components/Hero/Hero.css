@@ -545,16 +545,7 @@
   }
 
   .hero-nav-arrow {
-    width: 38px;
-    height: 38px;
-  }
-
-  .hero-nav-arrow-prev {
-    left: 12px;
-  }
-
-  .hero-nav-arrow-next {
-    right: 12px;
+    display: none !important;
   }
 }
 
@@ -586,18 +577,6 @@
     display: none; /* Keep mobile view clean while offer & CTA take center stage */
   }
 
-  .hero-nav-arrow {
-    width: 34px;
-    height: 34px;
-  }
-
-  .hero-nav-arrow-prev {
-    left: 8px;
-  }
-
-  .hero-nav-arrow-next {
-    right: 8px;
-  }
 }
 
 @media (max-width: 360px) {

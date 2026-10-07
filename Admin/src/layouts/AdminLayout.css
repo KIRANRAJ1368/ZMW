@@ -165,6 +165,139 @@
   display: block;
 }
 
+/* ── Product Dropdown Accordion Navigation ── */
+.admin-nav-dropdown-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+}
+
+.admin-nav-dropdown-toggle {
+  width: 100%;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  border: 1px solid transparent;
+  font-family: inherit;
+  user-select: none;
+}
+
+.admin-nav-dropdown-toggle.active {
+  background: #F8FAFC;
+  color: #1E293B;
+  border-color: #E2E8F0;
+  font-weight: 600;
+}
+
+.admin-nav-dropdown-toggle.active .admin-nav-icon-wrap {
+  color: #4F46E5;
+}
+
+.admin-nav-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #94A3B8;
+  margin-left: auto;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), color 0.18s ease;
+  transform: rotate(-90deg);
+}
+
+.admin-nav-chevron.open {
+  transform: rotate(0deg);
+  color: #4F46E5;
+}
+
+.admin-nav-dropdown-toggle:hover .admin-nav-chevron {
+  color: #475569;
+}
+
+.admin-nav-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 0 6px 12px;
+  margin: 2px 0 4px 18px;
+  border-left: 2px solid #E2E8F0;
+  transition: border-color 0.2s ease;
+}
+
+.admin-nav-dropdown-group.has-active .admin-nav-dropdown-menu {
+  border-left-color: rgba(79, 70, 229, 0.4);
+}
+
+.admin-nav-sub-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #64748B;
+  transition: all 0.16s ease;
+  text-decoration: none;
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.admin-nav-sub-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  flex-shrink: 0;
+  color: #94A3B8;
+  transition: color 0.16s ease, transform 0.16s ease;
+}
+
+.admin-nav-sub-text {
+  flex: 1;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.admin-nav-sub-pip {
+  display: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4F46E5;
+  margin-left: auto;
+}
+
+.admin-nav-sub-link:hover {
+  background: #F8FAFC;
+  color: #0F172A;
+  border-color: #E2E8F0;
+  transform: translateX(2px);
+}
+
+.admin-nav-sub-link:hover .admin-nav-sub-icon-wrap {
+  color: #4F46E5;
+  transform: scale(1.08);
+}
+
+.admin-nav-sub-link.active {
+  background: #EEF2FF;
+  color: #4F46E5;
+  font-weight: 600;
+  border-color: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.08);
+  transform: translateX(2px);
+}
+
+.admin-nav-sub-link.active .admin-nav-sub-icon-wrap {
+  color: #4F46E5;
+}
+
+.admin-nav-sub-link.active .admin-nav-sub-pip {
+  display: block;
+}
+
 /* ── Redesigned Sidebar Footer (Sign Out Action) ── */
 .admin-sidebar-footer {
   padding: 14px 14px 16px;

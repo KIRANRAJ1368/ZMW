@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import { storefrontApi } from "../services/storefrontApi";
 import { imageUrl } from "../utils/imageUrl";
@@ -11,41 +11,32 @@ import "./Checkout.css";
 ───────────────────────────────────────────── */
 const PAYMENT_METHODS = [
   {
-    id: "upi",
-    name: "UPI / Instant Pay",
+    id: "razorpay",
+    name: "Razorpay (Online Payment)",
     icon: "⚡",
-    desc: "Google Pay, PhonePe, Paytm, BHIM & UPI ID"
-  },
-  {
-    id: "card",
-    name: "Credit / Debit Card",
-    icon: "💳",
-    desc: "Visa, Mastercard, RuPay & Corporate Cards"
+    badge: "Recommended",
+    desc: "UPI (Google Pay, PhonePe, Paytm), Credit & Debit Cards, Net Banking & Wallets"
   },
   {
     id: "cod",
-    name: "Cash on Delivery",
+    name: "Cash on Delivery (COD)",
     icon: "📦",
     desc: "Pay in cash upon physical receipt at your door"
-  },
-  {
-    id: "netbanking",
-    name: "Net Banking",
-    icon: "🏦",
-    desc: "HDFC, ICICI, SBI, Axis & all major Indian banks"
-  },
-  {
-    id: "wallet",
-    name: "Wallets / Cash Cards",
-    icon: "👛",
-    desc: "Paytm, PhonePe Wallet, Amazon Pay & Mobikwik"
   }
 ];
 
 function loadRazorpayScript() {
   return new Promise((resolve) => {
-    if (window.Razorpay) {
+    if (typeof window !== "undefined" && window.Razorpay) {
       resolve(true);
+      return;
+    }
+    const existing = document.querySelector('script[src*="checkout.razorpay.com"]');
+    if (existing) {
+      if (typeof window !== "undefined" && window.Razorpay) return resolve(true);
+      existing.addEventListener("load", () => resolve(true));
+      existing.addEventListener("error", () => resolve(false));
+      setTimeout(() => resolve(Boolean(window.Razorpay)), 1500);
       return;
     }
     const script = document.createElement("script");
@@ -59,6 +50,8 @@ function loadRazorpayScript() {
 
 export default function Checkout() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const initialPostalCode = (location.state?.pincode || "").trim();
 
   const {
     cart,
@@ -94,14 +87,14 @@ export default function Checkout() {
     apartment: "",
     city: "",
     state: "",
-    postalCode: "",
+    postalCode: initialPostalCode,
     country: "India",
     cardNumber: "•••• •••• •••• 4242",
     cardExp: "12/28",
     cardCvc: "888"
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("upi");
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
   const [couponInput, setCouponInput] = useState("");
   const [stepErrors, setStepErrors] = useState({});
 
@@ -123,6 +116,63 @@ export default function Checkout() {
       }));
     }
   }, [customerUser]);
+
+  // Shiprocket Shipping Rate State
+  const [shippingRateData, setShippingRateData] = useState(null);
+  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
+  const [calculatedShippingCost, setCalculatedShippingCost] = useState(null);
+
+  // Dynamic Shiprocket shipping calculation when postal code is entered
+  useEffect(() => {
+    const pin = (formData.postalCode || "").trim().replace(/\D/g, "");
+    if (pin.length === 6 && cart.length > 0) {
+      let isMounted = true;
+      setIsCalculatingShipping(true);
+      storefrontApi
+        .calculateShippingRate({
+          pincode: pin,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state
+        })
+        .then((res) => {
+          if (!isMounted) return;
+          const rate = res?.data?.is_serviceable !== undefined ? res.data : (res?.data || res);
+          if (rate && rate.is_serviceable && rate.shipping_fee !== null) {
+            setShippingRateData(rate);
+            setCalculatedShippingCost(rate.shipping_fee);
+            if (stepErrors.postalCode) {
+              setStepErrors((prev) => ({ ...prev, postalCode: null }));
+            }
+          } else {
+            setShippingRateData(rate || { is_serviceable: false, message: "PIN code is not serviceable by Shiprocket." });
+            setCalculatedShippingCost(null);
+            setStepErrors((prev) => ({
+              ...prev,
+              postalCode: rate?.message || "Delivery PIN code is not serviceable by Shiprocket."
+            }));
+          }
+        })
+        .catch((err) => {
+          console.warn("[CHECKOUT] Shipping rate calculation notice:", err.message);
+        })
+        .finally(() => {
+          if (isMounted) setIsCalculatingShipping(false);
+        });
+      return () => {
+        isMounted = false;
+      };
+    } else if (pin.length !== 6) {
+      setShippingRateData(null);
+      setCalculatedShippingCost(null);
+    }
+  }, [formData.postalCode, cart]);
+
+  const hasValidPincode = (formData.postalCode || "").trim().replace(/\D/g, "").length === 6;
+  const effectiveShippingCost = calculatedShippingCost !== null
+    ? calculatedShippingCost
+    : shippingCost;
+  const effectiveTotal = Math.max(0, cartSubtotal - discountAmount + effectiveShippingCost);
 
   // Form change handler
   const handleInputChange = (e) => {
@@ -166,7 +216,7 @@ export default function Checkout() {
   };
 
   /* ── Step 2 Validation & Proceed ── */
-  const handleContinueToPayment = (e) => {
+  const handleContinueToPayment = async (e) => {
     e.preventDefault();
     const errors = {};
 
@@ -185,15 +235,49 @@ export default function Checkout() {
     if (!formData.state.trim()) {
       errors.state = "State is required";
     }
-    if (!formData.postalCode.trim()) {
+    const cleanPin = (formData.postalCode || "").trim().replace(/\D/g, "");
+    if (!cleanPin) {
       errors.postalCode = "PIN code is required";
-    } else if (formData.postalCode.trim().length < 5) {
-      errors.postalCode = "Please enter a valid PIN code";
+    } else if (cleanPin.length !== 6) {
+      errors.postalCode = "Please enter a valid 6-digit PIN code";
+    } else if (shippingRateData && !shippingRateData.is_serviceable) {
+      errors.postalCode = shippingRateData.message || "This PIN code is not serviceable by Shiprocket.";
     }
 
     if (Object.keys(errors).length > 0) {
       setStepErrors(errors);
       return;
+    }
+
+    // Verify shipping calculation if not yet completed
+    if (calculatedShippingCost === null) {
+      setIsCalculatingShipping(true);
+      try {
+        const res = await storefrontApi.calculateShippingRate({
+          pincode: cleanPin,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state
+        });
+        const rate = res?.data?.is_serviceable !== undefined ? res.data : (res?.data || res);
+        if (rate && rate.is_serviceable && rate.shipping_fee !== null) {
+          setShippingRateData(rate);
+          setCalculatedShippingCost(rate.shipping_fee);
+        } else {
+          setShippingRateData(rate || { is_serviceable: false });
+          setCalculatedShippingCost(null);
+          setStepErrors({
+            postalCode: rate?.message || "Delivery PIN code is not serviceable by Shiprocket."
+          });
+          setIsCalculatingShipping(false);
+          return;
+        }
+      } catch (rateErr) {
+        setStepErrors({ postalCode: rateErr.message || "Failed to calculate Shiprocket rate." });
+        setIsCalculatingShipping(false);
+        return;
+      }
+      setIsCalculatingShipping(false);
     }
 
     setStepErrors({});
@@ -266,7 +350,9 @@ export default function Checkout() {
               pincode: formData.postalCode.trim(),
               payment_method: "COD",
               discount_amount: discountAmount,
-              shipping_fee: shippingCost,
+              shipping_fee: effectiveShippingCost,
+              courier_name: shippingRateData?.courier_name || "Shiprocket Express",
+              estimated_delivery: shippingRateData?.estimated_delivery || "3–5 Business Days",
               items: orderItems
             },
             customerToken
@@ -287,8 +373,8 @@ export default function Checkout() {
           paymentStatus: "Payment Due on Delivery",
           subtotal: cartSubtotal,
           discountAmount,
-          shippingFee: shippingCost,
-          totalAmount: cartTotal,
+          shippingFee: effectiveShippingCost,
+          totalAmount: effectiveTotal,
           itemsCount: cartItemCount,
           items: itemsSnapshot,
           orderDate: orderDateFormatted
@@ -324,7 +410,11 @@ export default function Checkout() {
           couponCode: appliedCoupon?.code || null,
           customer_name: formData.fullName.trim(),
           email: formData.email.trim(),
-          phone: formData.phone.trim()
+          phone: formData.phone.trim(),
+          pincode: formData.postalCode.trim(),
+          shipping_fee: effectiveShippingCost,
+          courier_name: shippingRateData?.courier_name || "Shiprocket Express",
+          estimated_delivery: shippingRateData?.estimated_delivery || "3–5 Business Days"
         },
         customerToken
       );
@@ -342,12 +432,12 @@ export default function Checkout() {
         currency: rzpData.currency || "INR",
         name: "ZMW Clothing",
         description: `Order Checkout (${cartItemCount} ${cartItemCount === 1 ? "item" : "items"})`,
-        image: ZMW_LOGO_DATA_URI,
+        image: typeof window !== "undefined" ? `${window.location.origin}/favicon-48x48.png` : "",
         order_id: rzpData.razorpay_order_id,
         prefill: {
           name: formData.fullName.trim(),
           email: formData.email.trim(),
-          contact: formData.phone.trim()
+          contact: (formData.phone || "").replace(/\D/g, "").slice(-10) || formData.phone.trim()
         },
         theme: {
           color: "#FAA703" // ZMW signature gold accent
@@ -365,8 +455,11 @@ export default function Checkout() {
             // 4. Verify payment signature securely on backend before confirming order
             const verifyPayload = {
               razorpay_order_id: response.razorpay_order_id,
+              razorpayOrderId: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
+              razorpayPaymentId: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
+              razorpaySignature: response.razorpay_signature,
               order_data: {
                 customer_name: formData.fullName.trim(),
                 email: formData.email.trim(),
@@ -376,6 +469,9 @@ export default function Checkout() {
                 state: formData.state.trim() || null,
                 pincode: formData.postalCode.trim(),
                 coupon_code: appliedCoupon?.code || null,
+                shipping_fee: effectiveShippingCost,
+                courier_name: shippingRateData?.courier_name || "Shiprocket Express",
+                estimated_delivery: shippingRateData?.estimated_delivery || "3–5 Business Days",
                 items: orderItems
               }
             };
@@ -393,8 +489,8 @@ export default function Checkout() {
               paymentStatus: "Paid",
               subtotal: confirmedOrder.subtotal ?? rzpData.subtotal ?? cartSubtotal,
               discountAmount: confirmedOrder.discount_amount ?? rzpData.discount_amount ?? discountAmount,
-              shippingFee: confirmedOrder.shipping_fee ?? rzpData.shipping_fee ?? shippingCost,
-              totalAmount: confirmedOrder.total ?? rzpData.calculated_total ?? cartTotal,
+              shippingFee: confirmedOrder.shipping_fee ?? rzpData.shipping_fee ?? effectiveShippingCost,
+              totalAmount: confirmedOrder.total ?? rzpData.calculated_total ?? effectiveTotal,
               itemsCount: cartItemCount,
               items: itemsSnapshot,
               orderDate: orderDateFormatted
@@ -560,7 +656,7 @@ export default function Checkout() {
               <div className="cko-receipt-row">
                 <span className="cko-rr-label">Shipping / Delivery Fee</span>
                 <span className="cko-rr-value">
-                  {orderReceipt.shippingFee === 0 ? "FREE" : formatPrice(orderReceipt.shippingFee)}
+                  {formatPrice(orderReceipt.shippingFee)}
                 </span>
               </div>
               <div className="cko-receipt-row cko-receipt-total">
@@ -953,12 +1049,32 @@ export default function Checkout() {
                       <div className="cko-dob-left">
                         <span className="cko-dob-radio">●</span>
                         <div>
-                          <strong className="cko-dob-title">Standard Express Delivery</strong>
-                          <span className="cko-dob-sub">Estimated Delivery: 3–5 Business Days (Insured Dispatch)</span>
+                          <strong className="cko-dob-title">
+                            {shippingRateData?.courier_name
+                              ? shippingRateData.courier_name
+                              : "Shiprocket Express Logistics"}
+                          </strong>
+                          <span className="cko-dob-sub">
+                            {isCalculatingShipping
+                              ? "Calculating real-time Shiprocket freight rates for your PIN code..."
+                              : shippingRateData && !shippingRateData.is_serviceable
+                              ? (shippingRateData.message || "Delivery PIN code is not serviceable by Shiprocket.")
+                              : shippingRateData
+                              ? `Delivery to ${shippingRateData.delivery_pincode} via Shiprocket (${shippingRateData.estimated_delivery || '3–5 Days'})`
+                              : "Enter 6-digit PIN code above to calculate real-time Shiprocket rates"}
+                          </span>
                         </div>
                       </div>
                       <span className="cko-dob-price">
-                        {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
+                        {isCalculatingShipping ? (
+                          "..."
+                        ) : shippingRateData && !shippingRateData.is_serviceable ? (
+                          <span style={{ fontSize: "0.82rem", color: "#EF4444" }}>Not Serviceable</span>
+                        ) : !hasValidPincode ? (
+                          <span style={{ fontSize: "0.85rem", color: "#64748B" }}>By PIN Code</span>
+                        ) : (
+                          formatPrice(effectiveShippingCost)
+                        )}
                       </span>
                     </div>
 
@@ -1010,7 +1126,7 @@ export default function Checkout() {
                   </div>
 
                   <form onSubmit={handlePlaceOrder} className="cko-form">
-                    {/* Selectable Payment Cards */}
+                    {/* Selectable Payment Cards — Razorpay and Cash on Delivery */}
                     <div className="cko-payment-methods-grid">
                       {PAYMENT_METHODS.map((pm) => {
                         const isSelected = paymentMethod === pm.id;
@@ -1029,7 +1145,10 @@ export default function Checkout() {
                             />
                             <span className="cko-pm-icon">{pm.icon}</span>
                             <div className="cko-pm-details">
-                              <span className="cko-pm-name">{pm.name}</span>
+                              <div className="cko-pm-title-row">
+                                <span className="cko-pm-name">{pm.name}</span>
+                                {pm.badge && <span className="cko-pm-badge">{pm.badge}</span>}
+                              </div>
                               <span className="cko-pm-desc">{pm.desc}</span>
                             </div>
                             <span className="cko-pm-check">{isSelected ? "●" : "○"}</span>
@@ -1038,48 +1157,34 @@ export default function Checkout() {
                       })}
                     </div>
 
-                    {/* Credit / Debit Card Interactive Mock */}
-                    {paymentMethod === "card" && (
-                      <div className="cko-card-details-box">
-                        <div className="cko-form-group">
-                          <label className="cko-label">CARD NUMBER</label>
-                          <input
-                            type="text"
-                            name="cardNumber"
-                            value={formData.cardNumber}
-                            onChange={handleInputChange}
-                            className="cko-input"
-                          />
+                    {/* Razorpay Online Payment Info Box */}
+                    {paymentMethod === "razorpay" && (
+                      <div className="cko-razorpay-info-box">
+                        <div className="cko-razorpay-header">
+                          <span className="cko-razorpay-badge-lock">🔒 256-bit SSL Secure</span>
+                          <span className="cko-razorpay-powered">Powered by <strong>Razorpay</strong></span>
                         </div>
-                        <div className="cko-grid-2">
-                          <div className="cko-form-group">
-                            <label className="cko-label">EXPIRY (MM/YY)</label>
-                            <input
-                              type="text"
-                              name="cardExp"
-                              value={formData.cardExp}
-                              onChange={handleInputChange}
-                              className="cko-input"
-                            />
-                          </div>
-                          <div className="cko-form-group">
-                            <label className="cko-label">CVV</label>
-                            <input
-                              type="text"
-                              name="cardCvc"
-                              value={formData.cardCvc}
-                              onChange={handleInputChange}
-                              className="cko-input"
-                            />
-                          </div>
+                        <div className="cko-razorpay-tags">
+                          <span className="cko-rzp-tag">⚡ UPI (GPay, PhonePe, Paytm, BHIM)</span>
+                          <span className="cko-rzp-tag">💳 Credit & Debit Cards (Visa, Mastercard, RuPay)</span>
+                          <span className="cko-rzp-tag">🏦 Net Banking (SBI, HDFC, ICICI, Axis & more)</span>
+                          <span className="cko-rzp-tag">👛 Digital Wallets (Paytm, Mobikwik, Amazon Pay)</span>
                         </div>
+                        <p className="cko-razorpay-instruction">
+                          Clicking below will securely open the official Razorpay checkout modal where you can select your preferred payment option.
+                        </p>
                       </div>
                     )}
 
-                    {paymentMethod === "upi" && (
-                      <div className="cko-upi-box">
-                        <p className="cko-upi-instruction">
-                          Scan the QR code or accept the authorization request on your preferred UPI App (GPay, PhonePe, Paytm) upon clicking Place Order.
+                    {/* Cash on Delivery (COD) Info Box */}
+                    {paymentMethod === "cod" && (
+                      <div className="cko-cod-info-box">
+                        <div className="cko-cod-header">
+                          <span className="cko-cod-icon-badge">📦 Cash on Delivery</span>
+                          <span className="cko-cod-pay-tag">Pay at Doorstep</span>
+                        </div>
+                        <p className="cko-cod-instruction">
+                          Pay directly in cash to our courier delivery partner upon receiving your order package. Please keep exact change ready.
                         </p>
                       </div>
                     )}
@@ -1107,10 +1212,10 @@ export default function Checkout() {
                         {isSubmitting
                           ? paymentMethod === "cod"
                             ? "PLACING ORDER..."
-                            : "PROCESSING PAYMENT..."
+                            : "OPENING RAZORPAY..."
                           : paymentMethod === "cod"
-                            ? `PLACE ORDER • ${formatPrice(cartTotal)} →`
-                            : `PAY WITH RAZORPAY • ${formatPrice(cartTotal)} →`}
+                            ? `PLACE ORDER (COD) • ${formatPrice(effectiveTotal)} →`
+                            : `PAY WITH RAZORPAY • ${formatPrice(effectiveTotal)} →`}
                       </button>
                     </div>
                   </form>
@@ -1212,9 +1317,15 @@ export default function Checkout() {
                 </div>
 
                 <div className="cko-price-row">
-                  <span className="cko-pr-label">Shipping (Express Courier)</span>
+                  <span className="cko-pr-label">
+                    Shipping {shippingRateData?.courier_name ? `(${shippingRateData.courier_name})` : "(Shiprocket)"}
+                  </span>
                   <span className="cko-pr-value cko-pr-green">
-                    {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
+                    {isCalculatingShipping ? (
+                      "Calculating..."
+                    ) : (
+                      formatPrice(effectiveShippingCost)
+                    )}
                   </span>
                 </div>
 
@@ -1231,7 +1342,7 @@ export default function Checkout() {
 
               <div className="cko-total-row">
                 <span className="cko-total-label">TOTAL AMOUNT</span>
-                <span className="cko-total-value">{formatPrice(cartTotal)}</span>
+                <span className="cko-total-value">{formatPrice(effectiveTotal)}</span>
               </div>
               <p className="cko-total-subnote">Inclusive of all applicable taxes & GST</p>
 

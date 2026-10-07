@@ -186,6 +186,9 @@
   border: 1px solid var(--color-grey-200);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
   transition: all var(--dur-fast) var(--ease-smooth);
 }
 

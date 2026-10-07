@@ -1,4 +1,5 @@
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const RAW_API_URL = (process.env.REACT_APP_API_URL || process.env.VITE_API_URL || "http://localhost:5000").trim().replace(/\/+$/, "");
+const API_URL = RAW_API_URL.replace(/\/api$/, "");
 
 async function request(path, options = {}, includeMeta = false) {
   // Catalog/home content is admin-managed, so never reuse a browser cache.
@@ -130,6 +131,14 @@ export const storefrontApi = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
-    })
+    }),
+  calculateShippingRate: async (payload) => {
+    const res = await request("/shipping/calculate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return res && typeof res === "object" ? { ...res, data: res } : res;
+  }
 };
 

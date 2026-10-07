@@ -33,7 +33,7 @@ export default function WishlistDrawer() {
         <div className="wishlist-drawer-header">
           <div className="wishlist-title-row">
             <h2 className="wishlist-heading">Saved Pieces</h2>
-            <span className="wishlist-count">({wishlist.length} saved)</span>
+            <span className="wishlist-count">({wishlistProducts.length} saved)</span>
           </div>
           <button
             className="drawer-close-btn"
@@ -68,7 +68,14 @@ export default function WishlistDrawer() {
                     <h4 className="wishlist-item-name">{item.name}</h4>
                     <button
                       className="wishlist-item-remove"
-                      onClick={() => toggleWishlist(item.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleWishlist(item.id);
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                      }}
                       title="Remove from saved"
                       aria-label="Remove from saved"
                     >
@@ -81,7 +88,14 @@ export default function WishlistDrawer() {
                   <div className="wishlist-item-actions">
                     <button
                       className="btn btn-primary btn-xs"
-                      onClick={() => moveToCartFromWishlist(item.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        moveToCartFromWishlist(item.id);
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                      }}
                     >
                       + Move to Bag
                     </button>

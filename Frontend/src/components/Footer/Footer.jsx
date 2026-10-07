@@ -59,14 +59,14 @@ export default function Footer() {
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"></path>
                 </svg>
-                <span>+91 9876543210</span>
+                <a href="tel:+919876543210" className="footer-contact-link">+91 9876543210</a>
               </div>
               <div className="footer-contact-item">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                   <polyline points="22,6 12,13 2,6"></polyline>
                 </svg>
-                <span>zmw@gmail.com</span>
+                <a href="mailto:zmw@gmail.com" className="footer-contact-link">zmw@gmail.com</a>
               </div>
             </div>
 

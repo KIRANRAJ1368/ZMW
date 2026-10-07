@@ -35,6 +35,7 @@ export default function ProductDetail() {
     formatPrice,
     addToCart,
     wishlist,
+    isInWishlist,
     toggleWishlist,
     setIsCartOpen,
     allProducts,
@@ -63,6 +64,42 @@ export default function ProductDetail() {
     care: false,
     shipping: false
   });
+
+  // Shiprocket Pincode Delivery Checker State
+  const [pincodeCheck, setPincodeCheck] = useState("");
+  const [pincodeResult, setPincodeResult] = useState(null);
+  const [isCheckingPincode, setIsCheckingPincode] = useState(false);
+  const [pincodeError, setPincodeError] = useState("");
+
+  const handleCheckPincode = async (e) => {
+    e.preventDefault();
+    const cleanPin = pincodeCheck.trim().replace(/\D/g, "");
+    if (cleanPin.length !== 6) {
+      setPincodeError("Please enter a valid 6-digit PIN code");
+      return;
+    }
+    setPincodeError("");
+    setIsCheckingPincode(true);
+    try {
+      const res = await storefrontApi.calculateShippingRate({
+        pincode: cleanPin
+      });
+      const rate = res?.data?.is_serviceable !== undefined ? res.data : (res?.data || res);
+      if (rate) {
+        if (rate.is_serviceable && rate.shipping_fee !== null) {
+          setPincodeResult(rate);
+          setPincodeError("");
+        } else {
+          setPincodeResult(null);
+          setPincodeError(rate.message || "Delivery is not serviceable for this PIN code.");
+        }
+      }
+    } catch (err) {
+      setPincodeError(err.message || "Unable to check delivery for this PIN code");
+    } finally {
+      setIsCheckingPincode(false);
+    }
+  };
 
   const toggleAccordion = (key) => {
     setOpenAccordions((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -223,7 +260,7 @@ export default function ProductDetail() {
     );
   }
 
-  const isSaved = wishlist.includes(product.id);
+  const isSaved = isInWishlist ? isInWishlist(product.id) : wishlist.some((id) => String(id) === String(product.id));
   const discountPct = displayOriginalPrice
     ? Math.round(((displayOriginalPrice - activePrice) / displayOriginalPrice) * 100)
     : null;
@@ -424,7 +461,14 @@ export default function ProductDetail() {
                   <button
                     type="button"
                     className={`pd-wishlist-icon-btn ${isSaved ? "saved" : ""}`}
-                    onClick={() => toggleWishlist(product.id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleWishlist(product.id);
+                    }}
+                    onTouchEnd={(e) => {
+                      e.stopPropagation();
+                    }}
                     aria-label={isSaved ? "Remove from wishlist" : "Save to wishlist"}
                     title={isSaved ? "Saved to Wishlist" : "Save to Wishlist"}
                   >
@@ -459,7 +503,7 @@ export default function ProductDetail() {
                   </>
                 )}
               </div>
-              <p className="pd-tax-caption">Price inclusive of all taxes. Free express shipping on orders over {formatPrice(freeShippingThreshold)}.</p>
+              <p className="pd-tax-caption">Price inclusive of all taxes. Real-time courier shipping calculated by delivery PIN code.</p>
 
               {/* Essential Product Description (Directly Visible) */}
               <div className="pd-main-description-box">
@@ -653,8 +697,56 @@ export default function ProductDetail() {
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                     </svg>
-                    <span><strong>Free Shipping & 14-Day Returns:</strong> Hassle-free doorstep exchanges</span>
+                    <span><strong>Doorstep Delivery & 14-Day Returns:</strong> Hassle-free exchanges</span>
                   </div>
+                </div>
+
+                {/* Shiprocket Pincode Delivery & Shipping Estimator */}
+                <div className="pd-pincode-checker-box">
+                  <span className="pd-pincode-label">CHECK DELIVERY & SHIPROCKET SHIPPING CHARGE</span>
+                  <form onSubmit={handleCheckPincode} className="pd-pincode-form">
+                    <input
+                      type="text"
+                      maxLength="6"
+                      placeholder="Enter 6-digit PIN Code (e.g. 641004)"
+                      value={pincodeCheck}
+                      onChange={(e) => {
+                        setPincodeCheck(e.target.value.replace(/\D/g, ""));
+                        if (pincodeError) setPincodeError("");
+                      }}
+                      className="pd-pincode-input"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isCheckingPincode || pincodeCheck.length !== 6}
+                      className="pd-pincode-btn"
+                    >
+                      {isCheckingPincode ? "Checking..." : "Check"}
+                    </button>
+                  </form>
+
+                  {pincodeError && <p className="pd-pincode-error">{pincodeError}</p>}
+
+                  {pincodeResult && (
+                    <div className="pd-pincode-result">
+                      <div className="pd-pincode-res-row">
+                        <span className="pd-pincode-res-icon">✓</span>
+                        <div className="pd-pincode-res-content">
+                          <strong>
+                            Delivery Available to {pincodeResult.delivery_pincode}
+                          </strong>
+                          <p className="pd-pincode-res-fee">
+                            Shipping Charge: <strong>{formatPrice(pincodeResult.shipping_fee)}</strong>
+                          </p>
+                          {pincodeResult.courier_name && (
+                            <p className="pd-pincode-courier-note">
+                              Courier Partner: {pincodeResult.courier_name}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

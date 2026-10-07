@@ -17,6 +17,8 @@ import BannersPage from "./pages/Banners/BannersPage";
 import HomepageSectionsPage from "./pages/HomepageSections/HomepageSectionsPage";
 import OrdersPage from "./pages/Orders/OrdersPage";
 import OrderDetailPage from "./pages/Orders/OrderDetailPage";
+import ShippingPage from "./pages/Shipping/ShippingPage";
+import ShippingDetailPage from "./pages/Shipping/ShippingDetailPage";
 import CustomersPage from "./pages/Customers/CustomersPage";
 import ContactPage from "./pages/Contact/ContactPage";
 import CouponsPage from "./pages/Coupons/CouponsPage";
@@ -50,6 +52,8 @@ export default function App() {
             <Route path="homepage-sections" element={<HomepageSectionsPage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="orders/:id" element={<OrderDetailPage />} />
+            <Route path="shipping" element={<ShippingPage />} />
+            <Route path="shipping/:id" element={<ShippingDetailPage />} />
             <Route path="coupons" element={<CouponsPage />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="customers" element={<CustomersPage />} />

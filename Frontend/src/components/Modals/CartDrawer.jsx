@@ -65,25 +65,12 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        {/* Free Shipping Progress Bar */}
+        {/* Pan-India Shipping Info */}
         <div className="free-shipping-bar">
           <div className="shipping-text">
-            {isFreeShipping ? (
-              <span className="shipping-unlocked">
-                🎉 <strong>Congratulations!</strong> You have unlocked Free Express Shipping!
-              </span>
-            ) : (
-              <span>
-                Add <strong>{formatPrice(freeShippingRemaining)}</strong> more to get{" "}
-                <strong>Free Shipping</strong>
-              </span>
-            )}
-          </div>
-          <div className="progress-track">
-            <div
-              className="progress-fill"
-              style={{ width: `${freeShippingPercent}%` }}
-            />
+            <span>
+              🚚 <strong>Shiprocket Express Delivery</strong> across India
+            </span>
           </div>
         </div>
 
@@ -198,7 +185,7 @@ export default function CartDrawer() {
               <div className="summary-row">
                 <span>Estimated Shipping</span>
                 <span>
-                  {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
+                  {formatPrice(shippingCost)}
                 </span>
               </div>
               <div className="summary-row total-row">

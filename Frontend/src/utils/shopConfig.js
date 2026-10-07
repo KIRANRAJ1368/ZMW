@@ -7,10 +7,10 @@
  * numbers without depending on a component.
  */
 
-/** Cart subtotal at or above which shipping is free. */
-export const FREE_SHIPPING_THRESHOLD = 75;
+/** Standard base shipping fee (calculated dynamically by delivery PIN code via Shiprocket). */
+export const SHIPPING_FEE = 60;
 
-/** Flat shipping fee charged below the free-shipping threshold. */
-export const SHIPPING_FEE = 15;
+/** Free shipping is disabled. Shipping is calculated solely by delivery PIN code. */
+export const FREE_SHIPPING_THRESHOLD = Infinity;
 
 export default { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE };

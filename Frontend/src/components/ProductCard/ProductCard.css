@@ -148,6 +148,9 @@
   cursor: pointer;
   color: #0F172A;
   padding: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
   transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 

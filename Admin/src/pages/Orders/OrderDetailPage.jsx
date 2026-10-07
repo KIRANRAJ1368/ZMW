@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CheckCircle, Package, User, MapPin, FileText, IndianRupee, Truck, Printer } from "lucide-react";
+import { ArrowLeft, CheckCircle, Package, User, MapPin, FileText, IndianRupee, Truck, Printer, RefreshCw } from "lucide-react";
 import { ordersApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import LoadingState from "../../components/LoadingState/LoadingState";
@@ -16,6 +16,7 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const toast = useToast();
 
   async function load() {
@@ -49,6 +50,19 @@ export default function OrderDetailPage() {
     }
   }
 
+  async function handleSyncTracking() {
+    setIsSyncing(true);
+    try {
+      const res = await ordersApi.syncTracking(id);
+      setOrder(res.data);
+      toast.success(res.message || "Tracking status updated from Shiprocket!");
+    } catch (err) {
+      toast.error(err.message || "Failed to sync tracking with Shiprocket.");
+    } finally {
+      setIsSyncing(false);
+    }
+  }
+
   if (isLoading) return <LoadingState label="Loading order invoice details..." />;
   if (!order) return null;
 
@@ -66,18 +80,28 @@ export default function OrderDetailPage() {
               <h1 className="page-title">{order.order_number}</h1>
               <StatusBadge value={order.status} />
             </div>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => window.print()}
-              style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
-            >
-              <Printer size={16} />
-              <span>Print Tax Invoice</span>
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Link
+                to={`/shipping/${order.id}`}
+                className="btn btn-secondary"
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+              >
+                <Truck size={16} />
+                <span>Shipping Details</span>
+              </Link>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => window.print()}
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+              >
+                <Printer size={16} />
+                <span>Print Tax Invoice</span>
+              </button>
+            </div>
           </div>
           <p className="page-subtitle">
-            Placed on {new Date(order.created_at).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}
+            Placed on {new Date(order.created_at || order.createdAt || Date.now()).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}
           </p>
         </div>
       </div>
@@ -156,25 +180,77 @@ export default function OrderDetailPage() {
 
         {/* Right Column: Status Updater, Customer & Destination */}
         <div className="order-detail-side">
-          {/* Status Pipeline Updater */}
+          {/* Automated Fulfillment Pipeline */}
           <div className="card order-panel-card status-updater-card">
-            <div className="panel-title-wrap">
-              <Truck size={17} className="panel-icon" />
-              <h3 className="panel-title">Fulfillment Pipeline</h3>
+            <div className="panel-title-wrap" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Truck size={17} className="panel-icon" />
+                <h3 className="panel-title">Fulfillment Pipeline</h3>
+              </div>
+              <span
+                className="pill-badge"
+                style={{
+                  background: "#ecfdf5",
+                  color: "#059669",
+                  border: "1px solid #a7f3d0",
+                  fontSize: 11,
+                  fontWeight: 600
+                }}
+              >
+                ⚡ Automated
+              </span>
             </div>
-            <p className="panel-sub">Advance customer delivery state:</p>
-            <select
-              value={order.status}
-              disabled={isSaving}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              className="status-selector"
-            >
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </option>
-              ))}
-            </select>
+
+            <div style={{ margin: "14px 0 10px 0" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 500 }}>Customer Order State:</span>
+                <span
+                  className="pill-badge"
+                  style={{
+                    textTransform: "capitalize",
+                    fontWeight: 700,
+                    fontSize: 12.5,
+                    background: order.status === "delivered" ? "#ecfdf5" : order.status === "shipped" || order.status === "packed" ? "#eff6ff" : "#fffbeb",
+                    color: order.status === "delivered" ? "#059669" : order.status === "shipped" || order.status === "packed" ? "#2563eb" : "#d97706",
+                    border: `1px solid ${order.status === "delivered" ? "#a7f3d0" : order.status === "shipped" || order.status === "packed" ? "#bfdbfe" : "#fde68a"}`
+                  }}
+                >
+                  {order.status}
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 500 }}>Shiprocket Status:</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-main)", textTransform: "capitalize" }}>
+                  {(order.shipping_status || "pending_dispatch").replace(/_/g, " ")}
+                </span>
+              </div>
+            </div>
+
+            <p className="panel-sub" style={{ fontSize: 11.5, color: "var(--text-muted)", lineHeight: 1.4, margin: "10px 0 14px 0" }}>
+              Milestones update automatically in real-time as Shiprocket scans courier tracking checkpoints.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                disabled={isSyncing}
+                onClick={handleSyncTracking}
+                style={{ width: "100%", justifyContent: "center", gap: 6, fontSize: 12.5 }}
+              >
+                <RefreshCw size={13} className={isSyncing ? "spin-icon" : ""} />
+                <span>{isSyncing ? "Syncing with Shiprocket..." : "Sync Live Tracking"}</span>
+              </button>
+
+              <Link
+                to={`/shipping/${order.id}`}
+                className="btn btn-secondary btn-sm"
+                style={{ width: "100%", justifyContent: "center", gap: 6, fontSize: 12 }}
+              >
+                <Truck size={13} />
+                <span>View Logistics & AWB</span>
+              </Link>
+            </div>
           </div>
 
           {/* Customer Information Card */}

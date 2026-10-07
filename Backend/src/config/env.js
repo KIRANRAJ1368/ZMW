@@ -21,7 +21,9 @@ if (process.env.NODE_ENV === "production" && process.env.JWT_SECRET.length < 32)
 module.exports = {
   env: process.env.NODE_ENV || "development",
   port: parseInt(process.env.PORT, 10) || 5000,
-  appUrl: process.env.APP_URL || `http://localhost:${process.env.PORT || 5000}`,
+  appUrl: process.env.APP_URL
+    ? (/^https?:\/\//i.test(process.env.APP_URL) ? process.env.APP_URL.trim() : `https://${process.env.APP_URL.trim()}`)
+    : `http://localhost:${process.env.PORT || 5000}`,
 
   db: {
     host: process.env.DB_HOST,
@@ -42,7 +44,13 @@ module.exports = {
   corsOrigins: (process.env.CORS_ORIGIN || "")
     .split(",")
     .map((origin) => origin.trim())
-    .filter(Boolean),
+    .filter(Boolean)
+    .flatMap((origin) => {
+      if (/^https?:\/\//i.test(origin)) {
+        return [origin];
+      }
+      return [`https://${origin}`, `http://${origin}`, origin];
+    }),
 
   rateLimit: {
     windowMin: parseInt(process.env.RATE_LIMIT_WINDOW_MIN, 10) || 15,
@@ -73,5 +81,15 @@ module.exports = {
   razorpay: {
     keyId: process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY || "",
     keySecret: process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_SECRET || ""
+  },
+
+  shiprocket: {
+    email: process.env.SHIPROCKET_EMAIL || "",
+    password: process.env.SHIPROCKET_PASSWORD || "",
+    token: process.env.SHIPROCKET_TOKEN || "",
+    apiUrl: process.env.SHIPROCKET_API_URL || "https://apiv2.shiprocket.in/v1/external",
+    pickupLocation: process.env.SHIPROCKET_PICKUP_LOCATION || "warehouse",
+    pickupPincode: process.env.SHIPROCKET_PICKUP_PIN || process.env.SHIPROCKET_PICKUP_PINCODE || "641004",
+    defaultWeightKg: parseFloat(process.env.SHIPROCKET_DEFAULT_WEIGHT || "0.5")
   }
 };

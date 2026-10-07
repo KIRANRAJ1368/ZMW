@@ -9,11 +9,12 @@ export default function CuratedCard({ product, badgeLabel, badgeTone = "hot" }) 
     formatPrice,
     addToCart,
     wishlist,
+    isInWishlist,
     toggleWishlist,
     setQuickViewProduct
   } = useShop();
 
-  const isSaved = wishlist.includes(product.id);
+  const isSaved = isInWishlist ? isInWishlist(product.id) : wishlist.some((id) => String(id) === String(product.id));
   const [addedAnimation, setAddedAnimation] = useState(false);
 
   const primaryImg =
@@ -92,13 +93,17 @@ export default function CuratedCard({ product, badgeLabel, badgeTone = "hot" }) 
         )}
 
         {/* Quick Action Floating Bar */}
-        <div className="curated-action-bar" onClick={(e) => e.stopPropagation()}>
+        <div className="curated-action-bar" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
           <button
             type="button"
             className="curated-action-btn"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               setQuickViewProduct(product);
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
             }}
             title="Quick View"
             aria-label={`Quick view ${product.name}`}
@@ -113,8 +118,12 @@ export default function CuratedCard({ product, badgeLabel, badgeTone = "hot" }) 
             type="button"
             className={`curated-action-btn ${isSaved ? "saved" : ""}`}
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               toggleWishlist(product.id);
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
             }}
             title={isSaved ? "Remove from Wishlist" : "Add to Wishlist"}
             aria-label="Wishlist toggle"
@@ -127,7 +136,14 @@ export default function CuratedCard({ product, badgeLabel, badgeTone = "hot" }) 
           <button
             type="button"
             className={`curated-action-btn quick-buy-btn ${addedAnimation ? "added" : ""}`}
-            onClick={handleQuickAdd}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleQuickAdd(e);
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+            }}
             title="Quick Add to Bag"
             aria-label={`Add ${product.name} to bag`}
           >

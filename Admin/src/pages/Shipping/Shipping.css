@@ -1,0 +1,131 @@
+/* Shipping Section Styling */
+.shipping-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shipping-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .shipping-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.shipping-timeline-card {
+  padding: 24px;
+}
+
+.shipping-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  margin-top: 16px;
+  padding-left: 28px;
+}
+
+.shipping-timeline::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 11px;
+  width: 2px;
+  background: var(--border, #e2e8f0);
+}
+
+.shipping-timeline-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shipping-timeline-dot {
+  position: absolute;
+  left: -28px;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--surface, #ffffff);
+  border: 2px solid var(--border, #cbd5e1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+}
+
+.shipping-timeline-step.completed .shipping-timeline-dot {
+  background: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+.shipping-timeline-step.active .shipping-timeline-dot {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+}
+
+.shipping-step-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main, #1e293b);
+}
+
+.shipping-step-desc {
+  font-size: 12.5px;
+  color: var(--text-muted, #64748b);
+}
+
+.shipping-step-time {
+  font-size: 11.5px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.awb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.carrier-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #bfdbfe;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}

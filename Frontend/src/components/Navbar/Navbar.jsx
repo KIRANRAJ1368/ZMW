@@ -9,6 +9,7 @@ export default function Navbar() {
     homeData,
     cartItemCount,
     wishlist,
+    wishlistCount,
     setIsCartOpen,
     setIsWishlistOpen,
     setIsSearchOpen,
@@ -564,14 +565,14 @@ export default function Navbar() {
             <Link
               to="/wishlist"
               className="action-btn wishlist-nav-link"
-              aria-label={`View Wishlist (${wishlist.length} items)`}
+              aria-label={`View Wishlist (${wishlistCount} items)`}
               title="Wishlist"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
-              {wishlist.length > 0 && (
-                <span className="badge-count">{wishlist.length}</span>
+              {wishlistCount > 0 && (
+                <span className="badge-count">{wishlistCount}</span>
               )}
             </Link>
 
@@ -880,7 +881,7 @@ export default function Navbar() {
               to="/wishlist"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Wishlist {wishlist.length > 0 ? `(${wishlist.length})` : ""}
+              Wishlist {wishlistCount > 0 ? `(${wishlistCount})` : ""}
             </Link>
           </li>
         </ul>

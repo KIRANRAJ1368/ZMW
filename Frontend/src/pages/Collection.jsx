@@ -1,12 +1,11 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import { FREE_SHIPPING_THRESHOLD } from "../utils/shopConfig";
 import ProductCard from "../components/ProductCard/ProductCard";
 import RecentlyViewed from "../components/RecentlyViewed/RecentlyViewed";
 import { CURRENCY_SYMBOL, formatINRNumber, formatPrice } from "../utils/formatPrice";
 
-const FREE_SHIPPING_LABEL = `Free Shipping ${formatPrice(FREE_SHIPPING_THRESHOLD)}+`;
+const SHIPPING_LABEL = "Pan-India Express Delivery";
 import "./Collection.css";
 
 const SORT_OPTIONS = [
@@ -144,13 +143,13 @@ const BANNER_CONFIG = {
     badgeIcon: "bolt",
     subBadge: "Season 2026",
     offer: "STARTING AT {{MIN_PRICE}}",
-    offerTag: `FREE SHIPPING ${formatPrice(FREE_SHIPPING_THRESHOLD)}+`,
+    offerTag: "PREMIUM STREETWEAR",
     title: "BUILT FOR PLAY",
     subtitle: "High-energy graphic streetwear hoodies, durable reinforced seams, and super-soft bio-washed cotton.",
     perks: [
       { icon: "shield", label: "Reinforced Durability" },
       { icon: "star", label: "4.8★ Parent Approved" },
-      { icon: "truck", label: FREE_SHIPPING_LABEL }
+      { icon: "truck", label: SHIPPING_LABEL }
     ],
     ctaText: "EXPLORE NOW",
     urgencyTag: "⚡ Selling Out Fast",
@@ -210,7 +209,7 @@ const BANNER_CONFIG = {
     perks: [
       { icon: "shield", label: "100% Bio-Wash Cotton" },
       { icon: "star", label: "4.9★ Customer Rating" },
-      { icon: "truck", label: FREE_SHIPPING_LABEL }
+      { icon: "truck", label: SHIPPING_LABEL }
     ],
     ctaText: "EXPLORE NOW",
     urgencyTag: "✨ Fresh Drop",
@@ -266,7 +265,7 @@ const BANNER_CONFIG = {
     title: "One Store, Every Style.",
     subtitle: "Men, Women, Boys, Girls, and Babies — explore our unified catalogue of premium wardrobe essentials.",
     perks: [
-      { icon: "truck", label: FREE_SHIPPING_LABEL },
+      { icon: "truck", label: SHIPPING_LABEL },
       { icon: "shield", label: "7-Day Easy Returns" },
       { icon: "tag", label: "100% Quality Checked" }
     ],

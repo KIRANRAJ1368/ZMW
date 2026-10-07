@@ -11,6 +11,7 @@ export default function QuickViewModal() {
     formatPrice,
     addToCart,
     wishlist,
+    isInWishlist,
     toggleWishlist
   } = useShop();
 
@@ -41,7 +42,9 @@ export default function QuickViewModal() {
 
   if (!quickViewProduct) return null;
 
-  const isSaved = wishlist.includes(quickViewProduct.id);
+  const isSaved = isInWishlist
+    ? isInWishlist(quickViewProduct.id)
+    : wishlist.some((id) => String(id) === String(quickViewProduct.id));
 
   const handleAddToCart = () => {
     addToCart(quickViewProduct, selectedColor, selectedSize, quantity);
@@ -197,8 +200,16 @@ export default function QuickViewModal() {
               </button>
 
               <button
+                type="button"
                 className={`btn-wishlist-round ${isSaved ? "saved" : ""}`}
-                onClick={() => toggleWishlist(quickViewProduct.id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleWishlist(quickViewProduct.id);
+                }}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                }}
                 title={isSaved ? "Saved to Wishlist" : "Save to Wishlist"}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">

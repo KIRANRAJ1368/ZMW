@@ -566,6 +566,133 @@
   color: #DC2626;
 }
 
+/* Shiprocket Pincode Shipping Estimator Box */
+.cp-pincode-estimator-box {
+  margin: 16px 0 14px 0;
+  padding: 14px 0 12px 0;
+  border-top: 1px solid #E2E8F0;
+}
+
+.cp-estimator-box-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #475569;
+  margin-bottom: 10px;
+}
+
+.cp-estimator-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.cp-estimator-input-wrap {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.cp-estimator-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  outline: none;
+  background-color: #FFFFFF;
+  color: var(--color-ink, #0F172A);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.cp-estimator-input:focus {
+  border-color: #FAA703;
+  box-shadow: 0 0 0 2px rgba(250, 167, 3, 0.15);
+}
+
+.cp-estimator-apply-btn {
+  padding: 0 16px;
+  height: 40px;
+  background-color: var(--color-ink, #0F172A);
+  color: #FFFFFF;
+  border: 1px solid var(--color-ink, #0F172A);
+  border-radius: 4px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 180ms ease;
+  white-space: nowrap;
+}
+
+.cp-estimator-apply-btn:hover:not(:disabled) {
+  background-color: var(--color-accent, #FAA703);
+  border-color: var(--color-accent, #FAA703);
+  color: #0F172A;
+}
+
+.cp-estimator-apply-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cp-estimator-error {
+  color: #DC2626;
+  font-size: 0.74rem;
+  margin: 6px 0 0 0;
+}
+
+.cp-estimator-result {
+  margin-top: 10px;
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  animation: fadeIn 200ms ease-out;
+}
+
+.cp-estimator-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.cp-estimator-badge {
+  font-weight: 700;
+  color: #059669;
+}
+
+.cp-estimator-zone {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #E2E8F0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #334155;
+}
+
+.cp-estimator-fee-line {
+  margin: 2px 0 3px 0;
+  color: #1E293B;
+}
+
+.cp-estimator-fee {
+  color: #0F172A;
+}
+
+.cp-estimator-etd {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748B;
+}
+
 /* Total Section */
 .cp-summary-divider {
   height: 1px;
@@ -750,11 +877,11 @@
    RESPONSIVE DESIGN (Tablets & Mobile)
    ═══════════════════════════════════════════════════════════ */
 
-/* Tablet Landscape / Medium Screens (901px to 1100px) */
-@media (max-width: 1100px) and (min-width: 901px) {
+/* Tablet Landscape / Medium Screens (1025px to 1200px) */
+@media (max-width: 1200px) and (min-width: 1025px) {
   .cp-layout {
-    grid-template-columns: 1fr 340px;
-    gap: 24px;
+    grid-template-columns: 1fr 350px;
+    gap: 26px;
   }
 
   .cp-summary-card {
@@ -762,19 +889,70 @@
   }
 }
 
-/* Tablet Portrait & below (<= 900px) */
-@media (max-width: 900px) {
+/* All iPad Models & Tablets (741px to 1024px — Portrait & Landscape) */
+@media (max-width: 1024px) and (min-width: 741px) {
+  .cp-layout {
+    grid-template-columns: 1fr 310px;
+    gap: 20px;
+  }
+
+  .cp-summary-col {
+    position: sticky;
+    top: 92px;
+  }
+
+  .cp-summary-card {
+    padding: 20px 18px 22px;
+  }
+
+  .cp-cart-card {
+    grid-template-columns: 88px 1fr;
+    gap: 14px;
+    padding: 14px 16px;
+  }
+
+  .cp-card-img-wrap {
+    width: 88px;
+    height: 114px;
+  }
+
+  .cp-estimator-input {
+    font-size: 0.78rem;
+    padding: 8px 10px;
+  }
+
+  .cp-estimator-apply-btn {
+    padding: 8px 12px;
+    font-size: 0.72rem;
+  }
+
+  .cp-coupon-input {
+    font-size: 0.78rem;
+    padding: 8px 10px;
+  }
+
+  .cp-coupon-apply-btn {
+    padding: 8px 12px;
+    font-size: 0.72rem;
+  }
+}
+
+/* Mobile Devices (<= 740px) */
+@media (max-width: 740px) {
   .cp-layout {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 24px;
   }
 
   .cp-summary-col {
     position: static;
+    max-width: 540px;
+    margin: 0 auto;
+    width: 100%;
   }
 
   .cp-summary-card {
-    padding: 24px 22px;
+    padding: 20px 18px;
   }
 }
 

@@ -2,14 +2,13 @@
 
 .social-float {
   position: fixed;
-  top: 75%;
-  right: 24px;
-  transform: translateY(-50%);
+  bottom: 24px;
+  right: 20px;
   z-index: var(--z-fab);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   animation: social-float-float 3.6s ease-in-out infinite;
   pointer-events: none;
 }
@@ -128,13 +127,13 @@
   }
 }
 
-/* Floating animation — keeps the translateY(-50%) centering intact */
+/* Floating animation */
 @keyframes social-float-float {
   0%, 100% {
-    transform: translateY(-50%);
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(calc(-50% - 10px));
+    transform: translateY(-6px);
   }
 }
 

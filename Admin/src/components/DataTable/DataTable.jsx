@@ -10,15 +10,23 @@ import "./DataTable.css";
 export default function DataTable({
   columns,
   rows,
+  data,
   rowKey,
   isLoading,
+  loading,
   emptyTitle = "Nothing here yet",
+  emptyMessage,
   emptyDescription,
   emptyAction
 }) {
-  if (isLoading) return <LoadingState />;
-  if (!rows || rows.length === 0) {
-    return <EmptyState title={emptyTitle} description={emptyDescription} action={emptyAction} />;
+  const tableRows = rows || data || [];
+  const isTableLoading = isLoading ?? loading ?? false;
+  const getKey = typeof rowKey === "function" ? rowKey : (row, idx) => row?.id ?? row?._id ?? row?.key ?? idx;
+  const title = emptyMessage || emptyTitle;
+
+  if (isTableLoading) return <LoadingState />;
+  if (!tableRows || tableRows.length === 0) {
+    return <EmptyState title={title} description={emptyDescription} action={emptyAction} />;
   }
 
   return (
@@ -44,8 +52,8 @@ export default function DataTable({
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, idx) => (
-            <tr key={rowKey(row)}>
+          {tableRows.map((row, idx) => (
+            <tr key={getKey(row, idx)}>
               {columns.map((col, colIdx) => {
                 const key = col.key ?? col.id ?? col.label ?? col.header ?? colIdx;
                 const cellContent = col.render

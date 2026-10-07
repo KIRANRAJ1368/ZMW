@@ -1411,3 +1411,128 @@
     font-size: 10.5px;
   }
 }
+
+/* Shiprocket Pincode Delivery Checker Styles */
+.pd-pincode-checker-box {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-grey-200);
+}
+
+.pd-pincode-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-grey-600);
+  margin-bottom: 8px;
+}
+
+.pd-pincode-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pd-pincode-input {
+  flex: 1;
+  max-width: 220px;
+  height: 38px;
+  padding: 0 12px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.pd-pincode-input:focus {
+  border-color: #FAA703;
+}
+
+.pd-pincode-btn {
+  height: 38px;
+  padding: 0 18px;
+  background-color: var(--color-ink);
+  color: #FFFFFF;
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius-xs);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.pd-pincode-btn:hover:not(:disabled) {
+  background-color: #FAA703;
+  border-color: #FAA703;
+  color: var(--color-ink);
+}
+
+.pd-pincode-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pd-pincode-error {
+  font-size: 0.78rem;
+  color: #DC2626;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.pd-pincode-result {
+  margin-top: 10px;
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: var(--radius-xs);
+  padding: 10px 12px;
+  animation: fadeIn 200ms ease-out;
+}
+
+.pd-pincode-res-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.pd-pincode-res-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #16A34A;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pd-pincode-res-content strong {
+  font-size: 0.82rem;
+  color: #166534;
+  display: block;
+}
+
+.pd-pincode-res-fee {
+  font-size: 0.78rem;
+  color: #1F2937;
+  margin: 3px 0 2px 0;
+}
+
+.pd-pincode-courier-note {
+  font-size: 0.72rem;
+  color: #64748B;
+  margin: 0;
+}

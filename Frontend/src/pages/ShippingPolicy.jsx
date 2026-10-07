@@ -1,5 +1,5 @@
 import React from "react";
-import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from "../utils/shopConfig";
+import { SHIPPING_FEE } from "../utils/shopConfig";
 import { formatPrice } from "../utils/formatPrice";
 import "./PolicyPages.css";
 
@@ -38,7 +38,7 @@ export default function ShippingPolicy() {
 
             <h2>3. Shipping Charges</h2>
             <p>
-              We offer <strong>Free Standard Shipping</strong> on all prepaid and COD orders exceeding {formatPrice(FREE_SHIPPING_THRESHOLD)} across India. For orders below {formatPrice(FREE_SHIPPING_THRESHOLD)}, a standard delivery fee of {formatPrice(SHIPPING_FEE)} is applied at checkout.
+              Shipping charges are calculated directly based on your destination delivery PIN code via our Shiprocket logistics network. Enter your 6-digit PIN code on the product page, in your shopping bag, or during checkout to view the exact courier rate for your delivery address.
             </p>
 
             <h2>4. Cash on Delivery (COD)</h2>

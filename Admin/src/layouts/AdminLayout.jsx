@@ -13,30 +13,45 @@ import {
   Menu,
   X,
   ChevronRight,
+  ChevronDown,
   Tag,
   TrendingUp,
   ExternalLink,
   ShieldCheck,
   Boxes,
   Layers,
-  Package2
+  Package2,
+  Truck
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import "./AdminLayout.css";
 
-const NAV_ITEMS = [
+const TOP_NAV_ITEMS = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/banners", label: "Hero & Banners", icon: ImageIcon },
+  { to: "/banners", label: "Hero & Banners", icon: ImageIcon }
+];
+
+const PRODUCT_SUB_ITEMS = [
   { to: "/categories", label: "Categories", icon: FolderTree },
-  { to: "/subcategories", label: "Subcategories", icon: Tags },
+  { to: "/subcategories", label: "Sub Categories", icon: Tags },
   { to: "/products", label: "Products", icon: Shirt },
-  { to: "/variants", label: "Variant Management", icon: Layers },
-  { to: "/stock", label: "Stock Management", icon: Package2 },
+  { to: "/variants", label: "Variants", icon: Layers },
+  { to: "/stock", label: "Stock", icon: Package2 }
+];
+
+const BOTTOM_NAV_ITEMS = [
   { to: "/coupons", label: "Coupons & Discounts", icon: Tag },
   { to: "/reports", label: "Reports & Analytics", icon: TrendingUp },
-  { to: "/orders", label: "Orders & Shipping", icon: ShoppingBag },
+  { to: "/orders", label: "Orders", icon: ShoppingBag },
+  { to: "/shipping", label: "Shipping", icon: Truck },
   { to: "/customers", label: "Customers", icon: Users },
   { to: "/contact", label: "Customer Inquiries", icon: Mail }
+];
+
+const ALL_NAV_ITEMS = [
+  ...TOP_NAV_ITEMS,
+  ...PRODUCT_SUB_ITEMS,
+  ...BOTTOM_NAV_ITEMS
 ];
 
 export default function AdminLayout() {
@@ -44,13 +59,31 @@ export default function AdminLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
 
+  const isProductRouteActive = PRODUCT_SUB_ITEMS.some((item) =>
+    location.pathname.startsWith(item.to)
+  );
+
+  const [productDropdownOpen, setProductDropdownOpen] = useState(() => isProductRouteActive);
+
+  // Auto-expand Product dropdown whenever navigating to a product route
+  useEffect(() => {
+    if (isProductRouteActive) {
+      setProductDropdownOpen(true);
+    }
+  }, [location.pathname, isProductRouteActive]);
+
+  const toggleProductDropdown = (e) => {
+    e.preventDefault();
+    setProductDropdownOpen((prev) => !prev);
+  };
+
   // Close mobile drawer on route change
   useEffect(() => {
     setMobileNavOpen(false);
   }, [location.pathname]);
 
   // Current section title for breadcrumb
-  const currentItem = NAV_ITEMS.find((item) =>
+  const currentItem = ALL_NAV_ITEMS.find((item) =>
     item.end ? location.pathname === item.to : location.pathname.startsWith(item.to)
   );
 
@@ -94,7 +127,73 @@ export default function AdminLayout() {
 
         {/* Navigation links */}
         <nav className="admin-nav">
-          {NAV_ITEMS.map((item) => {
+          {/* Top navigation items */}
+          {TOP_NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) => "admin-nav-link" + (isActive ? " active" : "")}
+              >
+                <span className="admin-nav-icon-wrap">
+                  <Icon size={18} className="admin-nav-icon" />
+                </span>
+                <span className="admin-nav-text">{item.label}</span>
+                <span className="admin-nav-active-pip" />
+              </NavLink>
+            );
+          })}
+
+          {/* Product Collapsible Dropdown */}
+          <div className={`admin-nav-dropdown-group ${productDropdownOpen ? "open" : ""} ${isProductRouteActive ? "has-active" : ""}`}>
+            <button
+              type="button"
+              className={`admin-nav-link admin-nav-dropdown-toggle ${isProductRouteActive ? "active" : ""}`}
+              onClick={toggleProductDropdown}
+              aria-expanded={productDropdownOpen}
+              aria-controls="admin-product-dropdown-menu"
+              title="Product Menu"
+            >
+              <span className="admin-nav-icon-wrap">
+                <Boxes size={18} className="admin-nav-icon" />
+              </span>
+              <span className="admin-nav-text">Product</span>
+              <span className={`admin-nav-chevron ${productDropdownOpen ? "open" : ""}`}>
+                <ChevronDown size={15} />
+              </span>
+            </button>
+
+            {/* Dropdown Menu Container */}
+            <div
+              id="admin-product-dropdown-menu"
+              className={`admin-nav-dropdown-menu ${productDropdownOpen ? "open" : ""}`}
+              style={{ display: productDropdownOpen ? "flex" : "none" }}
+            >
+              {PRODUCT_SUB_ITEMS.map((sub) => {
+                const SubIcon = sub.icon;
+                return (
+                  <NavLink
+                    key={sub.to}
+                    to={sub.to}
+                    className={({ isActive }) =>
+                      "admin-nav-sub-link" + (isActive ? " active" : "")
+                    }
+                  >
+                    <span className="admin-nav-sub-icon-wrap">
+                      <SubIcon size={16} className="admin-nav-sub-icon" />
+                    </span>
+                    <span className="admin-nav-sub-text">{sub.label}</span>
+                    <span className="admin-nav-sub-pip" />
+                  </NavLink>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Bottom navigation items */}
+          {BOTTOM_NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             return (
               <NavLink

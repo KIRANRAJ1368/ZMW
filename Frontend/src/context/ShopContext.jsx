@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { INSTAGRAM_SHOWCASE } from "../data/products";
 import { storefrontApi } from "../services/storefrontApi";
 import { formatPrice as formatINR, CURRENCY_SYMBOL, CURRENCY_LOCALE } from "../utils/formatPrice";
@@ -154,7 +154,19 @@ export const ShopProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => {
     try {
       const saved = localStorage.getItem("zmw_wishlist");
-      return saved ? JSON.parse(saved) : ["zmw-002", "zmw-005"];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .map(String)
+        .filter((id) => {
+          if (!id) return false;
+          const clean = id.trim().toLowerCase();
+          // Discard any legacy mock IDs (e.g. zmw-001, zmw-002, zmw-m01)
+          if (clean.startsWith("zmw-")) return false;
+          // Genuine database IDs are positive integer numbers
+          return /^\d+$/.test(clean);
+        });
     } catch {
       return [];
     }
@@ -322,6 +334,30 @@ export const ShopProvider = ({ children }) => {
     }
   }, [wishlist]);
 
+  // Auto-prune orphaned or phantom IDs from wishlist when catalogue loads
+  useEffect(() => {
+    if (storefrontStatus === "ready" && allProducts.length > 0 && wishlist.length > 0) {
+      setWishlist((prev) => {
+        const clean = prev.filter((id) => {
+          const str = String(id).trim();
+          if (!str || str.toLowerCase().startsWith("zmw-") || !/^\d+$/.test(str)) {
+            return false;
+          }
+          return allProductsMap.has(str) || allProductsMap.has(str.toLowerCase());
+        });
+        if (clean.length !== prev.length) {
+          try {
+            localStorage.setItem("zmw_wishlist", JSON.stringify(clean));
+          } catch (e) {
+            console.warn("Storage error", e);
+          }
+          return clean;
+        }
+        return prev;
+      });
+    }
+  }, [storefrontStatus, allProducts, allProductsMap]);
+
   useEffect(() => {
     try {
       localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewedIds));
@@ -350,23 +386,37 @@ export const ShopProvider = ({ children }) => {
 
   // Cart operations
   const addToCart = (product, selectedColor = null, selectedSize = null, quantity = 1) => {
-    const color = selectedColor || (product.colors && product.colors[0]?.name) || "";
-    const size = selectedSize || (product.sizes && product.sizes[0]) || "";
+    let color = selectedColor || (product.colors && (product.colors[0]?.name || product.colors[0])) || "";
+    let size = selectedSize || (product.sizes && (product.sizes[0]?.label || product.sizes[0])) || "";
     // Variant stock and price always come from the Admin-managed variant.
     const hasVariants = Array.isArray(product.variants) && product.variants.length > 0;
-    const match = hasVariants
-      ? product.variants.find(
+    let match = null;
+    if (hasVariants) {
+      if (color && size) {
+        match = product.variants.find(
           (v) =>
             (!v.color || v.color.toLowerCase() === color.toLowerCase()) &&
-            (!v.size || v.size.toLowerCase() === size.toLowerCase())
-        )
-      : null;
+            (!v.size || v.size.toLowerCase() === size.toLowerCase()) &&
+            Number(v.stockCount ?? v.stock_count ?? 0) > 0
+        );
+      }
+      if (!match) {
+        match =
+          product.variants.find((v) => Number(v.stockCount ?? v.stock_count ?? 0) > 0) ||
+          product.variants[0];
+      }
+      if (match) {
+        if (match.color) color = match.color;
+        if (match.size) size = match.size;
+      }
+    }
+
     const image = match?.imageUrl || match?.image_url || (product.images && product.images[0]) || "";
     const maxStock = hasVariants
       ? Number(match?.stockCount ?? match?.stock_count ?? 0)
       : Number(product.stockCount ?? 0);
     if (maxStock <= 0) {
-      addToast("This variant is currently out of stock.", "warning");
+      addToast("This item is currently out of stock.", "warning");
       return;
     }
     const price = Number(match?.priceOverride ?? match?.price_override ?? product.price);
@@ -406,7 +456,7 @@ export const ShopProvider = ({ children }) => {
       }
     });
 
-    addToast(`Added "${product.name}" (${size} / ${color}) to your bag!`, "success");
+    addToast(`Added "${product.name}" (${size || "Std"} / ${color || "Std"}) to your bag!`, "success");
     setIsCartOpen(true);
   };
 
@@ -452,29 +502,77 @@ export const ShopProvider = ({ children }) => {
     setCart([]);
   };
 
+  // Last action timestamp ref to shield against mobile double-tap / shifted-item ghost clicks
+  const lastWishlistActionRef = useRef(0);
+
   // Wishlist operations
+  const isInWishlist = (productId) => {
+    if (productId === undefined || productId === null) return false;
+    const target = String(productId).trim().toLowerCase();
+    return wishlist.some((id) => String(id).trim().toLowerCase() === target);
+  };
+
   const toggleWishlist = (productId) => {
+    if (productId === undefined || productId === null) return;
+    const target = String(productId).trim();
+    if (!target) return;
+
+    // Mobile ghost-click & double-tap shield: throttle rapid invocations within 400ms
+    const now = Date.now();
+    if (now - lastWishlistActionRef.current < 400) {
+      return;
+    }
+    lastWishlistActionRef.current = now;
+
     const product = findProduct(productId);
     const name = product ? product.name : "Product";
+    const exists = wishlist.some((id) => String(id).trim().toLowerCase() === target.toLowerCase());
 
-    setWishlist((prev) => {
-      if (prev.includes(productId)) {
-        addToast(`Removed "${name}" from Wishlist`, "info");
-        return prev.filter((id) => id !== productId);
-      } else {
-        addToast(`Saved "${name}" to your Wishlist ❤️`, "success");
-        return [...prev, productId];
-      }
-    });
+    if (exists) {
+      setWishlist((prev) => prev.filter((id) => String(id).trim().toLowerCase() !== target.toLowerCase()));
+      addToast(`Removed "${name}" from Wishlist`, "info");
+    } else {
+      setWishlist((prev) => [...prev, target]);
+      addToast(`Saved "${name}" to your Wishlist ❤️`, "success");
+    }
   };
 
   const moveToCartFromWishlist = (productId) => {
+    if (productId === undefined || productId === null) return;
+    const target = String(productId).trim().toLowerCase();
+
+    // Mobile ghost-click shield
+    const now = Date.now();
+    if (now - lastWishlistActionRef.current < 400) {
+      return;
+    }
+    lastWishlistActionRef.current = now;
+
     const product = findProduct(productId);
     if (product) {
       addToCart(product);
-      setWishlist((prev) => prev.filter((id) => id !== productId));
+      setWishlist((prev) => prev.filter((id) => String(id).trim().toLowerCase() !== target));
     }
   };
+
+  const clearWishlist = useCallback(() => {
+    setWishlist([]);
+    try {
+      localStorage.removeItem("zmw_wishlist");
+    } catch (e) {
+      console.warn("Storage error", e);
+    }
+  }, []);
+
+  const wishlistCount = useMemo(() => {
+    if (storefrontStatus === "loading") {
+      return wishlist.filter((id) => /^\d+$/.test(String(id).trim())).length;
+    }
+    return wishlist.filter((id) => {
+      const p = findProduct(id);
+      return p !== null && p !== undefined;
+    }).length;
+  }, [wishlist, storefrontStatus, findProduct]);
 
   // Coupon code
   const applyCoupon = async (code) => {
@@ -565,11 +663,11 @@ export const ShopProvider = ({ children }) => {
       ? appliedCoupon.discountAmount
       : (cartSubtotal * (appliedCoupon.discountPercent || 0)) / 100
     : 0;
-  const isFreeShipping = cartSubtotal >= FREE_SHIPPING_THRESHOLD;
-  const shippingCost = cartSubtotal === 0 || isFreeShipping ? 0 : SHIPPING_FEE;
+  const isFreeShipping = false;
+  const shippingCost = cartSubtotal === 0 ? 0 : SHIPPING_FEE;
   const cartTotal = Math.max(0, cartSubtotal - discountAmount + shippingCost);
-  const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - cartSubtotal);
-  const freeShippingPercent = Math.min(100, Math.round((cartSubtotal / FREE_SHIPPING_THRESHOLD) * 100));
+  const freeShippingRemaining = 0;
+  const freeShippingPercent = 0;
 
   // Lightbox helpers
   const openLightbox = (index) => setLightboxIndex(index);
@@ -624,8 +722,11 @@ export const ShopProvider = ({ children }) => {
         setIsCartOpen,
         // Wishlist
         wishlist,
+        wishlistCount,
+        isInWishlist,
         toggleWishlist,
         moveToCartFromWishlist,
+        clearWishlist,
         isWishlistOpen,
         setIsWishlistOpen,
         // Currency & Lang

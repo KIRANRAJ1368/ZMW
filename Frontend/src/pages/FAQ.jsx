@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from "../utils/shopConfig";
+import { SHIPPING_FEE } from "../utils/shopConfig";
 import { formatPrice } from "../utils/formatPrice";
 import "./FAQ.css";
 
-const FREE_SHIPPING_AMOUNT = formatPrice(FREE_SHIPPING_THRESHOLD);
 const SHIPPING_FEE_AMOUNT = formatPrice(SHIPPING_FEE);
 
 const FAQ_CATEGORIES = [
@@ -57,9 +56,9 @@ const FAQ_DATA = [
     id: "shp-2",
     category: "shipping",
     categoryLabel: "Shipping & Delivery",
-    question: "Do you provide Free Shipping?",
+    question: "How are shipping charges calculated?",
     answer:
-      `Yes! We provide Free Standard Shipping on all prepaid and COD orders exceeding ${FREE_SHIPPING_AMOUNT} across India. For orders below ${FREE_SHIPPING_AMOUNT}, a delivery charge of ${SHIPPING_FEE_AMOUNT} is applied at checkout.`
+      "Shipping charges are dynamically calculated based on your delivery PIN code using our integrated Shiprocket courier network. Simply enter your 6-digit PIN code on any product page, in your cart, or at checkout to see the exact rate for your destination."
   },
   {
     id: "shp-3",

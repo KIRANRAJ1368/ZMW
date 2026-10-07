@@ -22,12 +22,27 @@ module.exports = (sequelize, DataTypes) => {
       shipping_fee: { type: DataTypes.DECIMAL(10, 2), allowNull: false, defaultValue: 0 },
       total: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
       notes: { type: DataTypes.TEXT, allowNull: true },
+      shipping_status: { type: DataTypes.STRING(50), allowNull: false, defaultValue: "pending_dispatch" },
+      tracking_number: { type: DataTypes.STRING(100), allowNull: true },
+      courier_name: { type: DataTypes.STRING(100), allowNull: true },
+      shiprocket_order_id: { type: DataTypes.STRING(100), allowNull: true },
+      shipment_id: { type: DataTypes.STRING(100), allowNull: true },
+      awb_code: { type: DataTypes.STRING(100), allowNull: true },
+      shipping_label_url: { type: DataTypes.TEXT, allowNull: true },
+      estimated_delivery: { type: DataTypes.STRING(100), allowNull: true },
       user_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
       is_guest: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }
     },
     {
       tableName: "orders",
-      indexes: [{ fields: ["status"] }, { fields: ["email"] }, { fields: ["user_id"] }, { fields: ["is_guest"] }]
+      indexes: [
+        { fields: ["status"] },
+        { fields: ["shipping_status"] },
+        { fields: ["tracking_number"] },
+        { fields: ["email"] },
+        { fields: ["user_id"] },
+        { fields: ["is_guest"] }
+      ]
     }
   );
 

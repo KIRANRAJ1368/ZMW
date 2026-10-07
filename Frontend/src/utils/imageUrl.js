@@ -1,4 +1,5 @@
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const RAW_API_URL = (process.env.REACT_APP_API_URL || process.env.VITE_API_URL || "http://localhost:5000").trim().replace(/\/+$/, "");
+const API_URL = RAW_API_URL.replace(/\/api$/, "");
 
 /**
  * Public catalogue images (/images/...) belong to the storefront build,

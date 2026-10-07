@@ -5,6 +5,8 @@ const { sendSuccess } = require("../utils/apiResponse");
 const { getPagination, buildMeta } = require("../utils/pagination");
 const mailer = require("../utils/mailer");
 const razorpayService = require("../services/razorpayService");
+const shiprocketService = require("../services/shiprocketService");
+const env = require("../config/env");
 
 function generateOrderNumber() {
   const stamp = Date.now().toString(36).toUpperCase();
@@ -127,9 +129,27 @@ async function create(req, res) {
       await product.save({ transaction });
     }
 
-    const discountAmount = req.body.discount_amount || 0;
-    const shippingFee = req.body.shipping_fee || 0;
-    const total = subtotal - discountAmount + shippingFee;
+    const discountAmount = Number(req.body.discount_amount) || 0;
+    let shippingFee = 60;
+    let courierName = req.body.courier_name || "Shiprocket Express";
+    let estimatedDelivery = req.body.estimated_delivery || "3–5 Business Days";
+
+    if (req.body.pincode) {
+      const pinRate = await shiprocketService.calculateShippingRate({
+        deliveryPincode: req.body.pincode
+      });
+      if (pinRate.is_serviceable && pinRate.shipping_fee !== null) {
+        shippingFee = pinRate.shipping_fee;
+        if (pinRate.courier_name) courierName = pinRate.courier_name;
+        if (pinRate.estimated_delivery) estimatedDelivery = pinRate.estimated_delivery;
+      } else {
+        throw ApiError.badRequest(pinRate.message || "Delivery PIN code is not serviceable by Shiprocket.");
+      }
+    } else if (req.body.shipping_fee !== undefined && req.body.shipping_fee !== null) {
+      shippingFee = Number(req.body.shipping_fee);
+    }
+
+    const total = Math.max(0, Math.round((subtotal - discountAmount + shippingFee) * 100) / 100);
 
     const order = await Order.create(
       {
@@ -143,7 +163,10 @@ async function create(req, res) {
         pincode: req.body.pincode || null,
         payment_method: req.body.payment_method || "COD",
         status: "pending",
-        subtotal,
+        shipping_status: "pending_dispatch",
+        courier_name: courierName,
+        estimated_delivery: estimatedDelivery,
+        subtotal: Math.round(subtotal * 100) / 100,
         discount_amount: discountAmount,
         shipping_fee: shippingFee,
         total,
@@ -168,6 +191,24 @@ async function create(req, res) {
       { model: User, as: "user", attributes: ["id", "name", "email", "phone"] }
     ]
   });
+
+  // After DB order is created, create corresponding shipment in Shiprocket
+  try {
+    const shipmentResult = await shiprocketService.createShipment(full);
+    if (shipmentResult && (shipmentResult.shiprocket_order_id || shipmentResult.order_id || shipmentResult.shipment_id)) {
+      full.shiprocket_order_id = String(shipmentResult.shiprocket_order_id || shipmentResult.order_id || "");
+      full.shipment_id = String(shipmentResult.shipment_id || "");
+      if (shipmentResult.awb_code) {
+        full.awb_code = shipmentResult.awb_code;
+        full.tracking_number = shipmentResult.awb_code;
+      }
+      if (shipmentResult.courier_name) full.courier_name = shipmentResult.courier_name;
+      full.shipping_status = shipmentResult.shipping_status || "manifested";
+      await full.save();
+    }
+  } catch (shipErr) {
+    console.warn("[SHIPROCKET CREATE SHIPMENT (COD)] Notice:", shipErr.message);
+  }
 
   // Asynchronously dispatch luxury order confirmation email without blocking API response
   if (full && full.email) {
@@ -458,12 +499,12 @@ async function trackOrder(req, res) {
   });
 }
 
-async function calculateOrderFinancials({ items, couponCode, transaction }) {
+async function calculateOrderFinancials({ items, couponCode, pincode, isCod = false, shippingFeeOverride, transaction }) {
   if (!Array.isArray(items) || items.length === 0) {
     throw ApiError.badRequest("At least one item is required");
   }
 
-  const productIds = items.map((i) => i.product_id);
+  const productIds = items.map((i) => i.product_id || i.productId);
   const products = await Product.findAll({ where: { id: productIds }, transaction });
   const productById = Object.fromEntries(products.map((p) => [p.id, p]));
 
@@ -471,8 +512,9 @@ async function calculateOrderFinancials({ items, couponCode, transaction }) {
   const itemRows = [];
 
   for (const item of items) {
-    const product = productById[item.product_id];
-    if (!product) throw ApiError.badRequest(`Product ${item.product_id} does not exist`);
+    const pId = item.product_id || item.productId;
+    const product = productById[pId];
+    if (!product) throw ApiError.badRequest(`Product ${pId} does not exist`);
     if (!product.is_active) throw ApiError.badRequest(`"${product.name}" is no longer available`);
 
     const qty = parseInt(item.quantity, 10);
@@ -489,15 +531,29 @@ async function calculateOrderFinancials({ items, couponCode, transaction }) {
 
     let matchingVariant = null;
     if (variants.length > 0) {
+      // 1. Try exact match on size and color
       matchingVariant = variants.find((v) => {
         const matchSize = item.size
           ? (v.size && v.size.label.toLowerCase() === String(item.size).toLowerCase())
-          : (!v.size || v.stock_count >= qty);
+          : true;
         const matchColor = item.color
           ? (v.color && v.color.name.toLowerCase() === String(item.color).toLowerCase())
-          : (!v.color || v.stock_count >= qty);
-        return matchSize && matchColor;
+          : true;
+        return matchSize && matchColor && v.stock_count >= qty;
       });
+
+      // 2. Fallback to matching size with any in-stock color variant
+      if (!matchingVariant && item.size) {
+        matchingVariant = variants.find((v) => {
+          const matchSize = v.size && v.size.label.toLowerCase() === String(item.size).toLowerCase();
+          return matchSize && v.stock_count >= qty;
+        });
+      }
+
+      // 3. Fallback to any available variant with sufficient stock
+      if (!matchingVariant) {
+        matchingVariant = variants.find((v) => v.stock_count >= qty);
+      }
 
       if (matchingVariant) {
         if (matchingVariant.stock_count < qty) {
@@ -506,7 +562,7 @@ async function calculateOrderFinancials({ items, couponCode, transaction }) {
           );
         }
       } else if (product.stock_count < qty || product.in_stock === false) {
-        throw ApiError.badRequest(`"${product.name}" does not have enough stock`);
+        throw ApiError.badRequest(`"${product.name}" is currently out of stock`);
       }
     } else if (product.in_stock === false || product.stock_count < qty) {
       throw ApiError.badRequest(`"${product.name}" does not have enough stock`);
@@ -554,13 +610,33 @@ async function calculateOrderFinancials({ items, couponCode, transaction }) {
     }
   }
 
-  const shippingFee = subtotal === 0 || subtotal >= 75 ? 0 : 15;
+  let shippingFee = 60;
+  let courierName = "Shiprocket Express";
+  let estimatedDelivery = "3–5 Business Days";
+
+  if (pincode) {
+    const pinRate = await shiprocketService.calculateShippingRate({
+      deliveryPincode: pincode
+    });
+    if (pinRate.is_serviceable && pinRate.shipping_fee !== null) {
+      shippingFee = pinRate.shipping_fee;
+      if (pinRate.courier_name) courierName = pinRate.courier_name;
+      if (pinRate.estimated_delivery) estimatedDelivery = pinRate.estimated_delivery;
+    } else {
+      throw ApiError.badRequest(pinRate.message || "Delivery PIN code is not serviceable by Shiprocket.");
+    }
+  } else if (shippingFeeOverride !== undefined && shippingFeeOverride !== null) {
+    shippingFee = Number(shippingFeeOverride);
+  }
+
   const total = Math.max(0, Math.round((subtotal - discountAmount + shippingFee) * 100) / 100);
 
   return {
     subtotal: Math.round(subtotal * 100) / 100,
     discountAmount,
     shippingFee,
+    courierName,
+    estimatedDelivery,
     total,
     itemRows,
     coupon
@@ -573,9 +649,15 @@ async function createRazorpayOrder(req, res) {
     throw ApiError.badRequest("At least one item is required");
   }
 
+  const pincode = req.body.pincode || req.body.postalCode || req.body.postal_code;
+  const shippingFeeOverride = req.body.shipping_fee !== undefined ? req.body.shipping_fee : req.body.shippingFee;
+
   const financials = await calculateOrderFinancials({
     items,
-    couponCode: req.body.coupon_code || req.body.couponCode
+    couponCode: req.body.coupon_code || req.body.couponCode,
+    pincode,
+    isCod: false,
+    shippingFeeOverride
   });
 
   const amountInPaise = Math.round(financials.total * 100);
@@ -611,7 +693,10 @@ async function createRazorpayOrder(req, res) {
 }
 
 async function verifyRazorpayPayment(req, res) {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_data } = req.body;
+  const razorpay_order_id = req.body.razorpay_order_id || req.body.razorpayOrderId;
+  const razorpay_payment_id = req.body.razorpay_payment_id || req.body.razorpayPaymentId;
+  const razorpay_signature = req.body.razorpay_signature || req.body.razorpaySignature;
+  const order_data = req.body.order_data || req.body.orderData || req.body;
 
   if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
     throw ApiError.badRequest("Missing required Razorpay payment verification parameters.");
@@ -653,6 +738,9 @@ async function verifyRazorpayPayment(req, res) {
     const financials = await calculateOrderFinancials({
       items: order_data.items,
       couponCode: order_data.coupon_code || order_data.couponCode,
+      pincode: order_data.pincode,
+      isCod: false,
+      shippingFeeOverride: order_data.shipping_fee,
       transaction
     });
 
@@ -697,6 +785,9 @@ async function verifyRazorpayPayment(req, res) {
         pincode: order_data.pincode || null,
         payment_method: "PREPAID",
         status: "confirmed",
+        shipping_status: "pending_dispatch",
+        courier_name: order_data.courier_name || financials.courierName || "Shiprocket Express",
+        estimated_delivery: order_data.estimated_delivery || financials.estimatedDelivery || "3–5 Business Days",
         subtotal: financials.subtotal,
         discount_amount: financials.discountAmount,
         shipping_fee: financials.shippingFee,
@@ -732,6 +823,24 @@ async function verifyRazorpayPayment(req, res) {
       { model: User, as: "user", attributes: ["id", "name", "email", "phone"] }
     ]
   });
+
+  // After DB order is created, create corresponding shipment in Shiprocket
+  try {
+    const shipmentResult = await shiprocketService.createShipment(full);
+    if (shipmentResult && (shipmentResult.shiprocket_order_id || shipmentResult.order_id || shipmentResult.shipment_id)) {
+      full.shiprocket_order_id = String(shipmentResult.shiprocket_order_id || shipmentResult.order_id || "");
+      full.shipment_id = String(shipmentResult.shipment_id || "");
+      if (shipmentResult.awb_code) {
+        full.awb_code = shipmentResult.awb_code;
+        full.tracking_number = shipmentResult.awb_code;
+      }
+      if (shipmentResult.courier_name) full.courier_name = shipmentResult.courier_name;
+      full.shipping_status = shipmentResult.shipping_status || "manifested";
+      await full.save();
+    }
+  } catch (shipErr) {
+    console.warn("[SHIPROCKET CREATE SHIPMENT (PREPAID)] Notice:", shipErr.message);
+  }
 
   // Asynchronously dispatch luxury order confirmation email
   if (full && full.email) {

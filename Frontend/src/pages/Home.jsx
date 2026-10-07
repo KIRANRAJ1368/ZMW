@@ -113,8 +113,8 @@ export default function Home() {
                 </svg>
               </div>
               <div className="home-benefit-content">
-                <h3 className="home-benefit-title">Free Shipping</h3>
-                <p className="home-benefit-desc">On all prepaid orders</p>
+                <h3 className="home-benefit-title">Pan-India Shipping</h3>
+                <p className="home-benefit-desc">Fast courier delivery</p>
               </div>
             </div>
 

@@ -23,9 +23,9 @@ function getProductBadge(product) {
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
-  const { formatPrice, addToCart, wishlist, toggleWishlist, setQuickViewProduct } = useShop();
+  const { formatPrice, addToCart, wishlist, isInWishlist, toggleWishlist, setQuickViewProduct } = useShop();
 
-  const isSaved = wishlist.includes(product.id);
+  const isSaved = isInWishlist ? isInWishlist(product.id) : wishlist.some((id) => String(id) === String(product.id));
   const hasSecondaryImg = product.images && product.images.length > 1;
   const badgeInfo = getProductBadge(product);
 
@@ -83,14 +83,18 @@ export default function ProductCard({ product }) {
         )}
 
         {/* Vertical Icon-Only Action Stack (Eye, Heart, Bag) */}
-        <div className="product-card-actions-stack" onClick={(e) => e.stopPropagation()}>
+        <div className="product-card-actions-stack" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
           {/* 1. Eye = Quick View */}
           <button
             type="button"
             className="card-action-icon-btn"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               setQuickViewProduct(product);
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
             }}
             title="Quick View"
             aria-label={`Quick view ${product.name}`}
@@ -106,8 +110,12 @@ export default function ProductCard({ product }) {
             type="button"
             className={`card-action-icon-btn card-wishlist-icon-btn ${isSaved ? "saved" : ""}`}
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               toggleWishlist(product.id);
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
             }}
             title={isSaved ? "Remove from Wishlist" : "Add to Wishlist"}
             aria-label={isSaved ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -122,8 +130,12 @@ export default function ProductCard({ product }) {
             type="button"
             className="card-action-icon-btn card-cart-icon-btn"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               addToCart(product);
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
             }}
             title="Add to Cart"
             aria-label={`Add ${product.name} to cart`}

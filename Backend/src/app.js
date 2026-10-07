@@ -27,18 +27,21 @@ app.use(
 app.use(
   cors({
     origin(origin, callback) {
-      // Allow non-browser requests (curl, server-to-server, no Origin header).
+      // Allow non-browser requests (curl, server-to-server, mobile apps, no Origin header).
       if (!origin) return callback(null, true);
-      if (
-        env.corsOrigins.length === 0 ||
-        env.corsOrigins.includes(origin) ||
-        (env.env === "development" && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin))
-      ) {
+
+      const isConfigured = env.corsOrigins.length === 0 || env.corsOrigins.includes(origin);
+      const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+      const isSaiTechno = /^https?:\/\/([a-zA-Z0-9-]+\.)*saitechnosolutions\.co\.in(:\d+)?$/.test(origin);
+
+      if (isConfigured || isLocalhost || isSaiTechno) {
         return callback(null, true);
       }
-      return callback(new Error("Not allowed by CORS"));
+      return callback(null, false);
     },
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
   })
 );
 

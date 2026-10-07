@@ -32,9 +32,7 @@ function ProductCarousel({
   useEffect(() => {
     const handleResize = () => {
       const w = window.innerWidth;
-      if (w <= 520) {
-        setVisibleCount(1);
-      } else if (w <= 768) {
+      if (w <= 768) {
         setVisibleCount(2);
       } else if (w <= 1100) {
         setVisibleCount(3);

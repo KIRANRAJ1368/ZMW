@@ -11,8 +11,8 @@ const FEATURES = [
         <circle cx="18.5" cy="18.5" r="2.5"></circle>
       </svg>
     ),
-    title: "Free Express Shipping",
-    description: "Across India on all orders. Dispatched in 24 hours"
+    title: "Express Courier Shipping",
+    description: "Pan-India delivery via Shiprocket. Dispatched in 24 hours"
   },
   {
     icon: (
