@@ -8,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
       // the ?category= query param the existing frontend already sends.
       slug: { type: DataTypes.STRING(80), allowNull: false, unique: true },
       description: { type: DataTypes.TEXT, allowNull: true },
-      image_url: { type: DataTypes.STRING(500), allowNull: true },
       sort_order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
       is_active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
       show_on_homepage: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }

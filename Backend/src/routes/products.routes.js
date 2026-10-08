@@ -1,5 +1,6 @@
 const express = require("express");
 const productController = require("../controllers/productController");
+const reviewController = require("../controllers/reviewController");
 const { requireAuth } = require("../middleware/auth");
 const validate = require("../middleware/validate");
 const v = require("../validators/productValidators");
@@ -7,6 +8,11 @@ const v = require("../validators/productValidators");
 const router = express.Router();
 
 router.get("/", productController.list);
+
+// Customer Reviews API
+router.get("/:idOrSlug/reviews", reviewController.listByProduct);
+router.post("/:idOrSlug/reviews", reviewController.createForProduct);
+
 // Admin edit forms need a database-ID lookup. Keep the public slug route
 // separate so a numeric ID is never interpreted as a product slug.
 router.get("/admin/:id", requireAuth, v.idParam, validate, productController.getById);

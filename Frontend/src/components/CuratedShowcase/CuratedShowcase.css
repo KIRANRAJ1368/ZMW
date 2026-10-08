@@ -138,20 +138,42 @@
 }
 
 .carousel-viewport {
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   width: 100%;
   padding: 6px 0 16px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.carousel-viewport:active {
+  cursor: grabbing;
+}
+
+.carousel-viewport::-webkit-scrollbar {
+  display: none;
 }
 
 .carousel-slider-track {
   display: flex;
-  will-change: transform;
 }
 
 .carousel-slide-item {
   box-sizing: border-box;
   padding: 0 10px;
   flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+.carousel-slide-item img,
+.curated-card-img {
+  -webkit-user-drag: none;
+  user-drag: none;
 }
 
 /* Side Floating Navigation Arrows */

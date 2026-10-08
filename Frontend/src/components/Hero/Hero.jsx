@@ -174,8 +174,8 @@ export default function Hero() {
           offerTag,
           headline: promo && promo.toLowerCase() === title.toLowerCase() ? (tag || "Special Edition") : title,
           support: subtitle,
-          cta: banner.primary_cta_text || "Shop Now",
-          link: banner.primary_cta_link || "/collection",
+          cta: banner.primary_cta_text?.trim() || "Shop Now",
+          link: (banner.primary_cta_link && !banner.primary_cta_link.startsWith("#")) ? banner.primary_cta_link : "/collection",
           urgencyTag: banner.secondary_cta_text || "✨ Fresh Drop",
           perks: [
             { icon: "truck", label: SHIPPING_LABEL },

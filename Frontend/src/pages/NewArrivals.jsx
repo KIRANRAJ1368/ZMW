@@ -19,29 +19,32 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Customer Rating" }
 ];
 
-const GENDER_TABS = ["All", "Men", "Women", "Kids"];
-
 const INITIAL_PAGE_SIZE = 12;
 
-// Department grouping: slugs come from the Admin catalog's category slugs.
-const GENDER_SLUGS = [
-  { label: "Men", slugs: ["mens"] },
-  { label: "Women", slugs: ["women"] },
-  { label: "Kids", slugs: ["kids", "boys", "girls", "babies"] }
-];
+export default function NewArrivals() {
+  const { allProducts, categories } = useShop();
 
-const tagByDepartment = (products) =>
-  GENDER_SLUGS.flatMap(({ label, slugs }) =>
-    products
-      .filter((p) => slugs.includes(String(p?.category ?? "").toLowerCase()))
-      .map((p) => ({ ...p, gender: label }))
+  const activeCategories = useMemo(
+    () => (categories || []).filter((c) => c.is_active),
+    [categories]
   );
 
-export default function NewArrivals() {
-  const { allProducts } = useShop();
+  const categoryTabs = useMemo(
+    () => ["All", ...activeCategories.map((c) => c.name)],
+    [activeCategories]
+  );
 
-  // Always the Admin/backend catalog — never a separate static price list.
-  const ALL_GENDER_PRODUCTS = useMemo(() => tagByDepartment(allProducts || []), [allProducts]);
+  const ALL_GENDER_PRODUCTS = useMemo(() => {
+    return (allProducts || []).map((p) => {
+      const catSlug = String(p?.category ?? "").toLowerCase();
+      // Strict exact-slug match only. Each product belongs to exactly the
+      // category it was assigned to in Admin. No cross-category aliases.
+      const matched = activeCategories.find(
+        (c) => c.slug.toLowerCase() === catSlug
+      );
+      return { ...p, gender: matched ? matched.name : "Other" };
+    });
+  }, [allProducts, activeCategories]);
 
   // Pre-compute best seller IDs from the full catalog for strict exclusion
   const ALL_BEST_SELLER_IDS = useMemo(
@@ -275,7 +278,7 @@ export default function NewArrivals() {
         {openFilters.gender && (
           <div className="filter-accordion-content">
             <ul className="filter-category-list">
-              {GENDER_TABS.map((g) => {
+              {categoryTabs.map((g) => {
                 const count = g === "All"
                   ? ALL_GENDER_PRODUCTS.length
                   : ALL_GENDER_PRODUCTS.filter((p) => p.gender === g).length;
@@ -493,7 +496,7 @@ export default function NewArrivals() {
             Freshly dropped silhouettes directly from our design atelier — zero overlap with our best-seller lineup.
           </p>
           <div className="bs-gender-tabs" role="tablist" aria-label="Filter by category">
-            {GENDER_TABS.map((g) => (
+            {categoryTabs.map((g) => (
               <button
                 key={g}
                 type="button"

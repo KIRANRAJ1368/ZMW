@@ -26,7 +26,7 @@ async function getHomePayload(req, res) {
       ],
       include: [{ model: Subcategory, as: "subcategories", where: { is_active: true }, required: false }]
     }),
-    Banner.findAll({ where: { is_active: true }, order: [["sort_order", "ASC"]] })
+    Banner.findAll({ where: { is_active: true }, order: [["sort_order", "ASC"], ["updated_at", "DESC"]] })
   ]);
 
   const bannersByPlacement = {};
@@ -35,6 +35,18 @@ async function getHomePayload(req, res) {
     if (!bannersByPlacement[placement]) bannersByPlacement[placement] = [];
     bannersByPlacement[placement].push(b);
   });
+
+  // Alias placements so queries by 'men' or 'mens', 'women' or 'womens' always resolve
+  if (bannersByPlacement["mens"] && !bannersByPlacement["men"]) {
+    bannersByPlacement["men"] = bannersByPlacement["mens"];
+  } else if (bannersByPlacement["men"] && !bannersByPlacement["mens"]) {
+    bannersByPlacement["mens"] = bannersByPlacement["men"];
+  }
+  if (bannersByPlacement["women"] && !bannersByPlacement["womens"]) {
+    bannersByPlacement["womens"] = bannersByPlacement["women"];
+  } else if (bannersByPlacement["womens"] && !bannersByPlacement["women"]) {
+    bannersByPlacement["women"] = bannersByPlacement["womens"];
+  }
 
   const newArrivalsSection = sections.find((s) => s.section_key === "new_arrivals");
   const bestSellersSection = sections.find((s) => s.section_key === "best_sellers");

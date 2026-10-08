@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, ZoomIn, ArrowUpRight, Hash, Layers, Eye, Edit2, Compass } from "lucide-react";
+import { Sparkles, ZoomIn, ArrowUpRight, Layers, Eye, Edit2, Compass } from "lucide-react";
 import Modal from "../Modal/Modal";
 import StatusBadge from "../StatusBadge/StatusBadge";
 import ImageLightboxModal from "../ImageLightboxModal/ImageLightboxModal";
@@ -101,11 +101,6 @@ export default function BannerViewModal({ banner, onEdit, onClose }) {
                     <ArrowUpRight size={12} />
                   </span>
                 )}
-                {data.secondary_cta_text && (
-                  <span className="ev-banner-preview-btn ev-banner-preview-btn-secondary">
-                    <span>{data.secondary_cta_text}</span>
-                  </span>
-                )}
               </div>
             </div>
 
@@ -126,8 +121,8 @@ export default function BannerViewModal({ banner, onEdit, onClose }) {
           </div>
         </div>
 
-        {/* Interactive Specs & CTA Link Routing */}
-        <div className="ev-stat-grid-4">
+        {/* Interactive Specs & Storefront Settings */}
+        <div className="ev-stat-grid-3">
           <div className="ev-stat-card">
             <span className="ev-stat-label">Slide Placement</span>
             <span className="ev-stat-value">
@@ -136,21 +131,13 @@ export default function BannerViewModal({ banner, onEdit, onClose }) {
             </span>
           </div>
 
-          <div className="ev-stat-card">
-            <span className="ev-stat-label">Slide Sequence</span>
-            <span className="ev-stat-value">
-              <Hash size={14} style={{ color: "var(--indigo)" }} />
-              <span>Priority #{data.sort_order ?? 0}</span>
-            </span>
-          </div>
-
-          <div className="ev-stat-card">
+          {/* <div className="ev-stat-card">
             <span className="ev-stat-label">Focal Position</span>
             <span className="ev-stat-value" style={{ fontSize: 13 }}>
               <Compass size={13} style={{ color: "var(--text-subtle)" }} />
               <span>{data.image_position || "center center"}</span>
             </span>
-          </div>
+          </div> */}
 
           <div className="ev-stat-card">
             <span className="ev-stat-label">Storefront Visibility</span>
@@ -163,34 +150,18 @@ export default function BannerViewModal({ banner, onEdit, onClose }) {
 
         {/* Call to Action Navigation Links */}
         <div>
-          <div className="ev-section-label">Interactive Call-to-Action Destinations</div>
-          <div className="ev-stat-grid">
-            <div className="ev-stat-card">
-              <span className="ev-stat-label">Primary Action Button</span>
-              <div style={{ marginTop: 4 }}>
-                <strong style={{ fontSize: 14, color: "var(--text-main)" }}>
-                  {data.primary_cta_text || "—"}
-                </strong>
-                {data.primary_cta_link && (
-                  <div style={{ marginTop: 4 }}>
-                    <code style={{ fontSize: 11.5 }}>{data.primary_cta_link}</code>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="ev-stat-card">
-              <span className="ev-stat-label">Secondary Action Button</span>
-              <div style={{ marginTop: 4 }}>
-                <strong style={{ fontSize: 14, color: "var(--text-main)" }}>
-                  {data.secondary_cta_text || "— (Optional)"}
-                </strong>
-                {data.secondary_cta_link && (
-                  <div style={{ marginTop: 4 }}>
-                    <code style={{ fontSize: 11.5 }}>{data.secondary_cta_link}</code>
-                  </div>
-                )}
-              </div>
+          <div className="ev-section-label">Interactive Call-to-Action Destination</div>
+          <div className="ev-stat-card">
+            <span className="ev-stat-label">Primary Action Button</span>
+            <div style={{ marginTop: 4 }}>
+              <strong style={{ fontSize: 14, color: "var(--text-main)" }}>
+                {data.primary_cta_text || "—"}
+              </strong>
+              {data.primary_cta_link && data.primary_cta_link !== "#collection-catalog" && !data.primary_cta_link.startsWith("#") && (
+                <div style={{ marginTop: 4 }}>
+                  <code style={{ fontSize: 11.5 }}>{data.primary_cta_link}</code>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -60,49 +60,42 @@
   align-items: start;
 }
 
-/* ── Left: 2×2 High-Quality Product Image Gallery ────────────── */
+/* ── Left: Dual-Image (Two Side-by-Side) Fashion Grid ────────── */
 .pd-gallery-col {
   position: sticky;
   top: 115px; /* Clear sticky navbar without clipping */
+  width: 100%;
 }
 
-.pd-image-grid-2x2 {
+.pd-dual-images-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: clamp(10px, 1.2vw, 16px);
+  width: 100%;
+  align-items: start;
 }
 
-/* Dynamic Gallery Grid Layouts */
-.pd-gallery-count-1 {
-  grid-template-columns: 1fr;
-}
-.pd-gallery-count-1 .pd-grid-item {
-  aspect-ratio: 4 / 5;
-  max-width: 580px;
-  margin: 0 auto;
-}
-
-.pd-gallery-count-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.pd-gallery-count-3 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.pd-gallery-count-3 .pd-grid-item-0 {
-  grid-column: 1 / -1;
-  aspect-ratio: 16 / 10;
-}
-
-.pd-grid-item {
+.pd-grid-image-item {
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
   overflow: hidden;
   background-color: var(--color-grey-100);
   border: 1px solid var(--color-grey-200);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm, 6px);
   cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: transform 300ms var(--ease-smooth), box-shadow 300ms var(--ease-smooth);
+}
+
+.pd-grid-image-item:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.pd-grid-image-item.is-single {
+  grid-column: span 2;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
 .pd-grid-img {
@@ -111,31 +104,35 @@
   object-fit: cover;
   object-position: center top;
   display: block;
-  transition: transform 600ms var(--ease-smooth);
+  transition: transform 500ms var(--ease-smooth);
 }
 
-.pd-grid-item:hover .pd-grid-img {
-  transform: scale(1.04);
+.pd-grid-image-item:hover .pd-grid-img {
+  transform: scale(1.035);
 }
 
+/* Zoom Hint */
 .pd-zoom-hint {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.88);
+  top: 12px;
+  right: 12px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 5px;
   color: var(--color-ink);
+  font-size: 11px;
+  font-weight: 600;
   opacity: 0;
   transition: opacity var(--dur-fast);
+  z-index: 3;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.pd-grid-item:hover .pd-zoom-hint {
+.pd-grid-image-item:hover .pd-zoom-hint {
   opacity: 1;
 }
 
@@ -249,7 +246,14 @@
   gap: 10px;
 }
 
-.pd-stars {
+.pd-stars-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pd-stars,
+.pd-stars-display {
   display: flex;
   align-items: center;
   gap: 3px;
@@ -1208,6 +1212,47 @@
   box-shadow: var(--shadow-xl);
 }
 
+.pd-lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: var(--color-ink);
+  font-size: 28px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  transition: all 180ms ease;
+  user-select: none;
+}
+
+.pd-lightbox-arrow:hover {
+  background: var(--color-ink);
+  color: #FFFFFF;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.pd-lightbox-prev {
+  left: -54px;
+}
+
+.pd-lightbox-next {
+  right: -54px;
+}
+
+@media (max-width: 900px) {
+  .pd-lightbox-prev { left: 8px; }
+  .pd-lightbox-next { right: 8px; }
+}
+
 /* ── Not Found State ─────────────────────────────────────────── */
 .pd-not-found {
   padding: clamp(80px, 12vw, 140px) 0;
@@ -1412,127 +1457,6 @@
   }
 }
 
-/* Shiprocket Pincode Delivery Checker Styles */
-.pd-pincode-checker-box {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--color-grey-200);
-}
 
-.pd-pincode-label {
-  display: block;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-grey-600);
-  margin-bottom: 8px;
-}
 
-.pd-pincode-form {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
 
-.pd-pincode-input {
-  flex: 1;
-  max-width: 220px;
-  height: 38px;
-  padding: 0 12px;
-  background-color: var(--color-white);
-  border: 1px solid var(--color-grey-200);
-  border-radius: var(--radius-xs);
-  font-family: var(--font-primary, "Plus Jakarta Sans", sans-serif);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-ink);
-  letter-spacing: 0.05em;
-  outline: none;
-  transition: border-color 150ms ease;
-}
-
-.pd-pincode-input:focus {
-  border-color: #FAA703;
-}
-
-.pd-pincode-btn {
-  height: 38px;
-  padding: 0 18px;
-  background-color: var(--color-ink);
-  color: #FFFFFF;
-  border: 1px solid var(--color-ink);
-  border-radius: var(--radius-xs);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 150ms ease;
-}
-
-.pd-pincode-btn:hover:not(:disabled) {
-  background-color: #FAA703;
-  border-color: #FAA703;
-  color: var(--color-ink);
-}
-
-.pd-pincode-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.pd-pincode-error {
-  font-size: 0.78rem;
-  color: #DC2626;
-  margin-top: 6px;
-  font-weight: 500;
-}
-
-.pd-pincode-result {
-  margin-top: 10px;
-  background-color: #F0FDF4;
-  border: 1px solid #BBF7D0;
-  border-radius: var(--radius-xs);
-  padding: 10px 12px;
-  animation: fadeIn 200ms ease-out;
-}
-
-.pd-pincode-res-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.pd-pincode-res-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background-color: #16A34A;
-  color: #FFFFFF;
-  font-size: 11px;
-  font-weight: 800;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.pd-pincode-res-content strong {
-  font-size: 0.82rem;
-  color: #166534;
-  display: block;
-}
-
-.pd-pincode-res-fee {
-  font-size: 0.78rem;
-  color: #1F2937;
-  margin: 3px 0 2px 0;
-}
-
-.pd-pincode-courier-note {
-  font-size: 0.72rem;
-  color: #64748B;
-  margin: 0;
-}

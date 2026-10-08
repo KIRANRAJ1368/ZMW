@@ -60,7 +60,7 @@ module.exports = {
   },
 
   upload: {
-    maxFileSizeMb: parseInt(process.env.UPLOAD_MAX_FILE_SIZE_MB, 10) || 5
+    maxFileSizeMb: parseInt(process.env.UPLOAD_MAX_FILE_SIZE_MB, 10) || 10
   },
 
   seedAdmin: {

@@ -9,7 +9,6 @@ import SubcategoryFormModal from "./SubcategoryFormModal";
 import SubcategoryViewModal from "../../components/EntityViewModal/SubcategoryViewModal";
 import ImageLightboxModal from "../../components/ImageLightboxModal/ImageLightboxModal";
 import { resolveImageUrl } from "../../utils/imageUrl";
-import { getSubcategoryImageUrl } from "../../utils/categoryImageResolver";
 
 export default function SubcategoriesPage() {
   const [subcategories, setSubcategories] = useState([]);
@@ -160,11 +159,14 @@ export default function SubcategoriesPage() {
           columns={[
             {
               key: "image_url",
-              label: "Thumbnail",
+              label: "Image",
               width: "75px",
               align: "center",
               render: (row) => {
-                const img = getSubcategoryImageUrl(row);
+                const img = row.image_url && typeof row.image_url === "string" && row.image_url.trim();
+                if (!img) {
+                  return <span style={{ color: "var(--text-muted)", fontSize: 12 }}>—</span>;
+                }
                 return (
                   <img
                     src={resolveImageUrl(img)}
@@ -175,9 +177,9 @@ export default function SubcategoriesPage() {
                       e.stopPropagation();
                       setLightboxImg(resolveImageUrl(img));
                     }}
-                    title="Click to inspect thumbnail in Full HD"
+                    title="Click to inspect image in Full HD"
                     onError={(e) => {
-                      e.target.src = "/images/cat-men-round-neck.jpg";
+                      e.target.style.display = "none";
                     }}
                   />
                 );

@@ -780,11 +780,15 @@ function VariantModal({ editingData, products, onClose, onSave }) {
       f.type.startsWith("image/")
     );
     if (imageFiles.length === 0) {
-      toast.error("Please select a valid image file");
+      toast.error("Please select a valid image file (JPG, PNG, or WEBP).");
       return;
     }
-    if (!imageUrl && galleryImages.length >= 2) {
-      toast.error("Maximum 2 images are allowed.");
+    if (imageFiles[0].size > 10 * 1024 * 1024) {
+      toast.error(`"${imageFiles[0].name}" exceeds 10MB. Please choose an image under 10MB.`);
+      return;
+    }
+    if (!imageUrl && galleryImages.length >= 10) {
+      toast.error("Maximum 10 photos allowed for this variant. Please remove an existing photo first.");
       return;
     }
     setIsUploadingMain(true);
@@ -792,9 +796,9 @@ function VariantModal({ editingData, products, onClose, onSave }) {
       const { data } = await uploadApi.upload("variants", imageFiles.slice(0, 1));
       const url = data.files?.[0]?.url || "";
       setImageUrl(url);
-      toast.success("Variant image uploaded");
+      toast.success("Variant photo uploaded successfully!");
     } catch (err) {
-      toast.error(err.message || "Failed to upload image");
+      toast.error(err.message || "Failed to upload image. Please try again.");
     } finally {
       setIsUploadingMain(false);
       if (mainImgRef.current) mainImgRef.current.value = "";
@@ -808,8 +812,8 @@ function VariantModal({ editingData, products, onClose, onSave }) {
       f.type.startsWith("image/")
     );
     if (imageFiles.length === 0) return;
-    if (galleryImages.length + (imageUrl ? 1 : 0) + imageFiles.length > 2) {
-      toast.error("Maximum 2 images are allowed.");
+    if (galleryImages.length + (imageUrl ? 1 : 0) + imageFiles.length > 10) {
+      toast.error("Maximum 10 images are allowed.");
       return;
     }
     setIsUploadingGallery(true);
@@ -837,11 +841,19 @@ function VariantModal({ editingData, products, onClose, onSave }) {
     if (!productId) newErrors.productId = "Please select a product";
     if (!colorName.trim()) newErrors.colorName = "Color name is required";
     if (!size.trim()) newErrors.size = "Size is required";
-    if (!sku.trim()) newErrors.sku = "SKU is required";
-    if (!price || isNaN(parseFloat(price)) || parseFloat(price) < 500)
+    const numPrice = parseFloat(price);
+    const numOriginal = parseFloat(originalPrice);
+
+    if (!price || isNaN(numPrice) || numPrice < 500)
       newErrors.price = "Selling price must be at least ₹500";
-    if (!originalPrice || isNaN(parseFloat(originalPrice)) || parseFloat(originalPrice) <= parseFloat(price))
-      newErrors.originalPrice = "Original price must be higher than selling price";
+    if (!originalPrice || isNaN(numOriginal) || numOriginal < 500)
+      newErrors.originalPrice = "Original / MRP price must be at least ₹500";
+    else if (Number.isFinite(numPrice) && numOriginal <= numPrice) {
+      newErrors.originalPrice = `Original / MRP price (₹${numOriginal}) must be higher than selling price (₹${numPrice})`;
+      if (!newErrors.price) {
+        newErrors.price = `Selling price (₹${numPrice}) must be lower than original price (₹${numOriginal})`;
+      }
+    }
     if (
       !stockQty ||
       isNaN(parseInt(stockQty, 10)) ||
@@ -1128,10 +1140,14 @@ function VariantModal({ editingData, products, onClose, onSave }) {
                   id="v-input-price"
                   type="number"
                   step="1"
-                  min="500"
+                  min="0"
                   placeholder="500"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => {
+                    setPrice(e.target.value);
+                    if (errors.price) setErrors((prev) => ({ ...prev, price: undefined }));
+                    if (errors.originalPrice) setErrors((prev) => ({ ...prev, originalPrice: undefined }));
+                  }}
                   className={`v-input ${errors.price ? "is-invalid" : ""}`}
                 />
                 {errors.price && (
@@ -1143,18 +1159,21 @@ function VariantModal({ editingData, products, onClose, onSave }) {
 
               <div className="v-field-group">
                 <label className="v-label" htmlFor="v-input-mrp">
-                  MRP / Original Price (₹) *
+                  MRP / Original Price (₹) <span className="v-req">*</span>
                 </label>
                 <input
                   id="v-input-mrp"
                   type="number"
                   step="1"
-                  min="500"
+                  min="0"
                   placeholder="600"
                   value={originalPrice}
-                  onChange={(e) => setOriginalPrice(e.target.value)}
-                  className="v-input"
-                  required
+                  onChange={(e) => {
+                    setOriginalPrice(e.target.value);
+                    if (errors.originalPrice) setErrors((prev) => ({ ...prev, originalPrice: undefined }));
+                    if (errors.price) setErrors((prev) => ({ ...prev, price: undefined }));
+                  }}
+                  className={`v-input ${errors.originalPrice ? "is-invalid" : ""}`}
                 />
                 {errors.originalPrice && (
                   <span className="v-field-error">

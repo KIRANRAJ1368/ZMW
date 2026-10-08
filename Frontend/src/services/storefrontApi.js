@@ -24,6 +24,7 @@ function get(path) {
 
 export const storefrontApi = {
   home: () => get("/home"),
+  categories: () => get("/categories"),
   products: async () => {
     // The public endpoint is paginated (at most 100 items per request).
     // Fetch every page so new admin products are never silently omitted.
@@ -39,6 +40,13 @@ export const storefrontApi = {
     return [first?.data || [], ...pages.map((page) => page?.data || [])].flat();
   },
   product: (idOrSlug) => get(`/products/${encodeURIComponent(idOrSlug)}`),
+  getProductReviews: (idOrSlug) => get(`/products/${encodeURIComponent(idOrSlug)}/reviews`),
+  submitProductReview: (idOrSlug, reviewData) =>
+    request(`/products/${encodeURIComponent(idOrSlug)}/reviews`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(reviewData)
+    }),
   createOrder: (order, token = null) => {
     const headers = { "Content-Type": "application/json" };
     if (token) headers["Authorization"] = `Bearer ${token}`;

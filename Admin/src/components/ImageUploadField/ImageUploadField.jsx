@@ -28,7 +28,13 @@ export default function ImageUploadField({
     if (!files || files.length === 0) return;
     const file = files[0];
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image file (JPG, PNG, WEBP, GIF)");
+      toast.error("Please select a valid image file (JPG, PNG, WEBP, or GIF).");
+      return;
+    }
+
+    const MAX_SIZE_MB = 10;
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      toast.error(`"${file.name}" is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Please choose an image under ${MAX_SIZE_MB}MB.`);
       return;
     }
 
@@ -41,13 +47,13 @@ export default function ImageUploadField({
       if (uploadedUrl) {
         onChange(uploadedUrl);
         setLocalPreview(null);
-        toast.success("Image uploaded successfully");
+        toast.success("Image uploaded successfully! Preview is ready.");
       } else {
         throw new Error("No image URL returned from upload server");
       }
     } catch (err) {
       setLocalPreview(null);
-      toast.error(err.message || "Failed to upload image");
+      toast.error(err.message || "Failed to upload image. Please try again.");
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -137,10 +143,10 @@ export default function ImageUploadField({
           <div className="image-preview-info-col">
             <div className="image-preview-heading">
               <span className="image-preview-success-dot" />
-              <strong>{isUploading ? "Uploading photo to server..." : "Image attached & ready to save"}</strong>
+              <strong>{isUploading ? "Uploading photo to server..." : "Image attached successfully"}</strong>
             </div>
             <p className="image-preview-sub">
-              Click the preview thumbnail to inspect in full resolution lightbox.
+              Your photo is uploaded and ready. Click the thumbnail to enlarge, or click Replace to change.
             </p>
 
             <div className="image-preview-actions">
@@ -160,6 +166,7 @@ export default function ImageUploadField({
                 onClick={() => {
                   setLocalPreview(null);
                   onChange("");
+                  toast.info("Image removed.");
                 }}
                 disabled={isUploading}
                 title="Remove this image"
@@ -186,8 +193,8 @@ export default function ImageUploadField({
             <UploadCloud size={28} className={isUploading ? "bounce-anim" : ""} />
           </div>
           <div className="upload-dropzone-text">
-            <strong>{isUploading ? "Uploading Image..." : "Click to select or drag & drop photo"}</strong>
-            <p>Upload directly from your device (JPG, PNG, WEBP, GIF up to 10MB)</p>
+            <strong>{isUploading ? "Uploading image, please wait..." : "Click to select or drag & drop photo"}</strong>
+            <p>Supported formats: JPG, PNG, WEBP, GIF (Max 10MB per image)</p>
           </div>
           <button
             type="button"

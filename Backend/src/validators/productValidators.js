@@ -18,9 +18,14 @@ function productRules() {
     body("product_type").optional({ values: "null" }).isString().isLength({ max: 60 }),
     body("description").optional({ values: "null" }).isString(),
     body("price").isFloat({ min: 500 }).withMessage("Selling price must be at least ₹500"),
-    body("original_price").optional({ values: "null" }).isFloat({ min: 500 }).custom((value, { req }) =>
-      req.body.price === undefined || req.body.price === null || req.body.price === "" || Number(value) > Number(req.body.price)
-    ).withMessage("Original price must be higher than selling price"),
+    body("original_price")
+      .optional({ values: "null" })
+      .isFloat({ min: 500 })
+      .withMessage("Original / MRP price must be at least ₹500")
+      .custom((value, { req }) =>
+        req.body.price === undefined || req.body.price === null || req.body.price === "" || Number(value) > Number(req.body.price)
+      )
+      .withMessage("Original / MRP price must be higher than selling price"),
     body("stock_count").optional().isInt({ min: 0 }),
     body("in_stock").optional().isBoolean(),
     body("is_best_seller").optional().isBoolean(),
@@ -28,8 +33,16 @@ function productRules() {
     body("is_sale").optional().isBoolean(),
     body("badge_label").optional({ values: "null" }).isString().isLength({ max: 40 }),
     body("badge_type").optional({ values: "null" }).isIn(["hot", "new", "sale"]),
-    body("images").optional().isArray({ max: 2 }).withMessage("Maximum 2 images are allowed."),
-    body("images.*.url").optional().isString().notEmpty(),
+    body("images")
+      .isArray({ min: 2, max: 10 })
+      .withMessage("At least 2 product images are required (1 Main product image + at least 1 gallery photo). Maximum 10 images allowed."),
+    body("images.*")
+      .custom((val) => {
+        if (typeof val === "string" && val.trim().length > 0) return true;
+        if (typeof val === "object" && val !== null && typeof val.url === "string" && val.url.trim().length > 0) return true;
+        throw new Error("Invalid image entry");
+      })
+      .withMessage("Each image must have a valid URL"),
     body("colors").optional().isArray(),
     body("colors.*.name").optional().isString().notEmpty(),
     body("colors.*.hex").optional().isString(),

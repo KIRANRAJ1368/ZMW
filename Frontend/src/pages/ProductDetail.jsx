@@ -13,19 +13,45 @@ function availableColors(product) {
     product.variants.forEach((variant) => {
       if (variant.color) {
         const key = variant.color.toLowerCase();
-        if (!colors.has(key)) colors.set(key, { name: variant.color, hex: variant.colorHex });
+        if (!colors.has(key)) colors.set(key, { name: variant.color, hex: variant.colorHex || "#181715" });
       }
     });
-    return [...colors.values()];
+    if (colors.size > 0) return [...colors.values()];
   }
-  return product?.colors || [];
+  if (Array.isArray(product?.colors)) {
+    return product.colors.map((c) => {
+      if (typeof c === "string") return { name: c, hex: "#181715" };
+      return { name: c.name || "Default", hex: c.hex || c.hexCode || c.hex_code || "#181715" };
+    });
+  }
+  return [];
 }
 
 function availableSizes(product) {
   if (product?.variants?.length) {
-    return [...new Set(product.variants.map((variant) => variant.size).filter(Boolean))];
+    const sizes = [...new Set(product.variants.map((variant) => variant.size).filter(Boolean))];
+    if (sizes.length > 0) return sizes;
   }
-  return product?.sizes || [];
+  if (Array.isArray(product?.sizes)) {
+    return product.sizes.map((s) => (typeof s === "object" && s !== null ? (s.label || s.size || s.name) : s)).filter(Boolean);
+  }
+  return [];
+}
+
+function getDefaultSelection(prod) {
+  if (!prod) return { color: null, size: null };
+  if (prod.variants?.length) {
+    const inStock = prod.variants.find((v) => Number(v.stockCount ?? 0) > 0);
+    const chosen = inStock || prod.variants[0];
+    return {
+      color: chosen.color || availableColors(prod)[0]?.name || null,
+      size: chosen.size || availableSizes(prod)[0] || null
+    };
+  }
+  return {
+    color: availableColors(prod)[0]?.name ?? null,
+    size: availableSizes(prod)[0] || null
+  };
 }
 
 export default function ProductDetail() {
@@ -42,7 +68,7 @@ export default function ProductDetail() {
     findProduct,
     recentlyViewed,
     trackRecentlyViewed,
-    freeShippingThreshold
+    categories
   } = useShop();
 
   const [product, setProduct] = useState(() => findProduct(productId));
@@ -65,42 +91,6 @@ export default function ProductDetail() {
     shipping: false
   });
 
-  // Shiprocket Pincode Delivery Checker State
-  const [pincodeCheck, setPincodeCheck] = useState("");
-  const [pincodeResult, setPincodeResult] = useState(null);
-  const [isCheckingPincode, setIsCheckingPincode] = useState(false);
-  const [pincodeError, setPincodeError] = useState("");
-
-  const handleCheckPincode = async (e) => {
-    e.preventDefault();
-    const cleanPin = pincodeCheck.trim().replace(/\D/g, "");
-    if (cleanPin.length !== 6) {
-      setPincodeError("Please enter a valid 6-digit PIN code");
-      return;
-    }
-    setPincodeError("");
-    setIsCheckingPincode(true);
-    try {
-      const res = await storefrontApi.calculateShippingRate({
-        pincode: cleanPin
-      });
-      const rate = res?.data?.is_serviceable !== undefined ? res.data : (res?.data || res);
-      if (rate) {
-        if (rate.is_serviceable && rate.shipping_fee !== null) {
-          setPincodeResult(rate);
-          setPincodeError("");
-        } else {
-          setPincodeResult(null);
-          setPincodeError(rate.message || "Delivery is not serviceable for this PIN code.");
-        }
-      }
-    } catch (err) {
-      setPincodeError(err.message || "Unable to check delivery for this PIN code");
-    } finally {
-      setIsCheckingPincode(false);
-    }
-  };
-
   const toggleAccordion = (key) => {
     setOpenAccordions((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -122,8 +112,9 @@ export default function ProductDetail() {
 
     if (initialMatch) {
       setProduct(initialMatch);
-      setSelectedColor(availableColors(initialMatch)[0]?.name ?? null);
-      setSelectedSize(availableSizes(initialMatch)[0] || null);
+      const defaults = getDefaultSelection(initialMatch);
+      setSelectedColor(defaults.color);
+      setSelectedSize(defaults.size);
       trackRecentlyViewed(initialMatch.id);
       setIsLoading(false);
     } else {
@@ -137,13 +128,14 @@ export default function ProductDetail() {
       .then((data) => {
         if (!isMounted || !data) return;
         setProduct(data);
+        const defaults = getDefaultSelection(data);
         setSelectedColor((prev) => {
-          if (prev && availableColors(data).some((c) => c.name === prev)) return prev;
-          return availableColors(data)[0]?.name ?? null;
+          if (prev && availableColors(data).some((c) => c.name.toLowerCase() === prev.toLowerCase())) return prev;
+          return defaults.color;
         });
         setSelectedSize((prev) => {
-          if (prev && availableSizes(data).includes(prev)) return prev;
-          return availableSizes(data)[0] || null;
+          if (prev && availableSizes(data).some((s) => s.toLowerCase() === prev.toLowerCase())) return prev;
+          return defaults.size;
         });
         trackRecentlyViewed(data.id);
         setIsLoading(false);
@@ -165,6 +157,16 @@ export default function ProductDetail() {
     const latestProduct = findProduct(productId);
     if (latestProduct) setProduct(latestProduct);
   }, [allProducts, findProduct, productId]);
+
+  // Close Lightbox preview modal on Escape key
+  useEffect(() => {
+    if (!previewImage) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setPreviewImage(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [previewImage]);
 
   // Resolve one active variant for images, stock, and price alike.
   const currentVariant = useMemo(() => {
@@ -213,6 +215,13 @@ export default function ProductDetail() {
     : null;
   const isLowStock = !isOutOfStock && activeStockCount > 0 && activeStockCount <= 5;
 
+  // Clamp quantity if active stock changes or becomes lower
+  useEffect(() => {
+    if (activeStockCount > 0 && quantity > activeStockCount) {
+      setQuantity(activeStockCount);
+    }
+  }, [activeStockCount, quantity]);
+
   // Map of unavailable sizes for the currently selected color
   const unavailableSizes = useMemo(() => {
     if (!product?.variants || product.variants.length === 0 || !selectedColor) return new Set();
@@ -248,11 +257,11 @@ export default function ProductDetail() {
           <h2>Product Not Found</h2>
           <p>{loadError || "The product you are looking for is no longer available."}</p>
           <div className="hero-cta-group" style={{ justifyContent: "center" }}>
-            <Link to="/collection?category=mens" className="btn btn-primary">
-              Browse Mens' Collection
+            <Link to="/collection" className="btn btn-primary">
+              Browse All Products
             </Link>
-            <Link to="/collection?category=women" className="btn btn-secondary">
-              Browse Women's Collection
+            <Link to="/" className="btn btn-secondary">
+              Return to Home
             </Link>
           </div>
         </div>
@@ -265,24 +274,46 @@ export default function ProductDetail() {
     ? Math.round(((displayOriginalPrice - activePrice) / displayOriginalPrice) * 100)
     : null;
 
-  // Determine category page navigation
-  const CATEGORY_COLLECTION = {
-    mens: { path: "/collection?category=mens", label: "Mens' Collection" },
-    boys: { path: "/collection?category=boys", label: "Boys' Collection" },
-    girls: { path: "/collection?category=girls", label: "Girls' Collection" },
-    babies: { path: "/collection?category=babies", label: "Babies' Collection" },
-    women: { path: "/collection?category=women", label: "Women's Collection" },
-    kids: { path: "/collection?category=kids", label: "Kids' Collection" },
-    men: { path: "/collection?category=mens", label: "Mens' Collection" }
+  // Determine category page navigation dynamically from real categories
+  const catKey = (product.category || "").toLowerCase();
+  const matchedCategory = (categories || []).find(
+    (c) => c.slug?.toLowerCase() === catKey || (catKey === "mens" && c.slug?.toLowerCase() === "men") || (catKey === "men" && c.slug?.toLowerCase() === "mens")
+  );
+  const collectionPath = `/collection?category=${encodeURIComponent(matchedCategory?.slug || catKey || "all")}`;
+  const formatCollectionLabel = (name) => {
+    if (!name) return "Collection";
+    const trimmed = name.trim();
+    if (trimmed.toLowerCase().endsWith("s")) return `${trimmed}' Collection`;
+    return `${trimmed}'s Collection`;
   };
-  const catKey = (product.category || "mens").toLowerCase();
-  const catMeta = CATEGORY_COLLECTION[catKey] || CATEGORY_COLLECTION.mens;
-  const collectionPath = catMeta.path;
-  const collectionLabel = catMeta.label;
+  const collectionLabel = formatCollectionLabel(matchedCategory?.name || (catKey ? catKey.charAt(0).toUpperCase() + catKey.slice(1) : ""));
 
-  const isWomensProduct = catKey === "women";
+  const isWomensProduct = catKey === "women" || catKey === "womens";
   const isKidsProduct = ["kids", "boys", "girls", "babies"].includes(catKey);
   const isBabiesProduct = catKey === "babies";
+
+  // Intelligent Color Select: switches to in-stock size if current size isn't available in new color
+  const handleColorSelect = (colorName) => {
+    setSelectedColor(colorName);
+    if (product?.variants?.length) {
+      const variantsForColor = product.variants.filter(
+        (v) => v.color && v.color.toLowerCase() === colorName.toLowerCase()
+      );
+      if (variantsForColor.length > 0) {
+        const currentSizeHasStock = variantsForColor.some(
+          (v) => v.size && v.size.toLowerCase() === selectedSize?.toLowerCase() && Number(v.stockCount ?? 0) > 0
+        );
+        if (!currentSizeHasStock) {
+          const firstInStock = variantsForColor.find((v) => Number(v.stockCount ?? 0) > 0);
+          if (firstInStock?.size) {
+            setSelectedSize(firstInStock.size);
+          } else if (variantsForColor[0]?.size) {
+            setSelectedSize(variantsForColor[0].size);
+          }
+        }
+      }
+    }
+  };
 
   // Add to Cart handler
   const handleAddToCart = () => {
@@ -402,15 +433,15 @@ export default function ProductDetail() {
       <section className="pd-main-section">
         <div className="container">
           <div className="pd-layout">
-            {/* ── Left: Dynamic High-Quality Product Image Gallery ── */}
+            {/* ── Left: Dual-Image (Two Side-by-Side) Fashion Grid ── */}
             <div className="pd-gallery-col">
-              <div className={`pd-image-grid-2x2 pd-gallery-count-${galleryImages.length}`}>
+              <div className="pd-dual-images-grid">
                 {galleryImages.map((img, idx) => (
                   <div
                     key={`${img}-${idx}`}
-                    className={`pd-grid-item pd-grid-item-${idx} ${galleryImages.length === 1 ? "pd-grid-single" : ""}`}
+                    className={`pd-grid-image-item ${galleryImages.length === 1 ? "is-single" : ""}`}
                     onClick={() => setPreviewImage(img)}
-                    title="Click to view high-resolution image"
+                    title="Click to view full resolution"
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => e.key === "Enter" && setPreviewImage(img)}
@@ -431,6 +462,7 @@ export default function ProductDetail() {
                         </span>
                       </>
                     )}
+
                     <img
                       src={imageUrl(img)}
                       alt={`${product.name} - view ${idx + 1}`}
@@ -438,6 +470,7 @@ export default function ProductDetail() {
                       loading={idx < 2 ? "eager" : "lazy"}
                       onError={(event) => { event.currentTarget.src = "/images/zmw-logo-transparent.png"; }}
                     />
+
                     <div className="pd-zoom-hint">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="11" cy="11" r="8" />
@@ -445,6 +478,7 @@ export default function ProductDetail() {
                         <line x1="11" y1="8" x2="11" y2="14" />
                         <line x1="8" y1="11" x2="14" y2="11" />
                       </svg>
+                      <span>Enlarge</span>
                     </div>
                   </div>
                 ))}
@@ -480,14 +514,16 @@ export default function ProductDetail() {
 
                 {/* Rating & SKU */}
                 <div className="pd-rating-sku-row">
-                  <div className="pd-stars">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <svg key={star} width="15" height="15" viewBox="0 0 24 24" fill={star <= Math.round(product.rating) ? "var(--color-accent)" : "none"} stroke="var(--color-accent)" strokeWidth="1.5">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                    <span className="pd-rating-val">{product.rating}</span>
-                    <span className="pd-rating-count">({product.reviewCount} customer reviews)</span>
+                  <div className="pd-stars-wrap">
+                    <div className="pd-stars">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <svg key={star} width="15" height="15" viewBox="0 0 24 24" fill={star <= Math.round(Number(product.rating || 5)) ? "var(--color-accent)" : "none"} stroke="var(--color-accent)" strokeWidth="1.5">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                      ))}
+                    </div>
+                    <span className="pd-rating-val">{product.rating && Number(product.rating) > 0 ? product.rating : "5.0"}</span>
+                    <span className="pd-rating-count">({product.reviewCount && Number(product.reviewCount) > 0 ? `${product.reviewCount} customer reviews` : "Verified Collection"})</span>
                   </div>
                   <span className="pd-sku-label">SKU: <strong>{currentVariant?.skuSuffix ? `${product.sku}-${currentVariant.skuSuffix}` : product.sku}</strong></span>
                 </div>
@@ -503,7 +539,7 @@ export default function ProductDetail() {
                   </>
                 )}
               </div>
-              <p className="pd-tax-caption">Price inclusive of all taxes. Real-time courier shipping calculated by delivery PIN code.</p>
+              <p className="pd-tax-caption">Price inclusive of all taxes. Free express shipping available across India.</p>
 
               {/* Essential Product Description (Directly Visible) */}
               <div className="pd-main-description-box">
@@ -554,7 +590,7 @@ export default function ProductDetail() {
                         type="button"
                         className={`pd-color-dot ${selectedColor === c.name ? "active" : ""}`}
                         style={{ backgroundColor: c.hex }}
-                        onClick={() => setSelectedColor(c.name)}
+                        onClick={() => handleColorSelect(c.name)}
                         title={c.name}
                         aria-pressed={selectedColor === c.name}
                       />
@@ -699,54 +735,6 @@ export default function ProductDetail() {
                     </svg>
                     <span><strong>Doorstep Delivery & 14-Day Returns:</strong> Hassle-free exchanges</span>
                   </div>
-                </div>
-
-                {/* Shiprocket Pincode Delivery & Shipping Estimator */}
-                <div className="pd-pincode-checker-box">
-                  <span className="pd-pincode-label">CHECK DELIVERY & SHIPROCKET SHIPPING CHARGE</span>
-                  <form onSubmit={handleCheckPincode} className="pd-pincode-form">
-                    <input
-                      type="text"
-                      maxLength="6"
-                      placeholder="Enter 6-digit PIN Code (e.g. 641004)"
-                      value={pincodeCheck}
-                      onChange={(e) => {
-                        setPincodeCheck(e.target.value.replace(/\D/g, ""));
-                        if (pincodeError) setPincodeError("");
-                      }}
-                      className="pd-pincode-input"
-                    />
-                    <button
-                      type="submit"
-                      disabled={isCheckingPincode || pincodeCheck.length !== 6}
-                      className="pd-pincode-btn"
-                    >
-                      {isCheckingPincode ? "Checking..." : "Check"}
-                    </button>
-                  </form>
-
-                  {pincodeError && <p className="pd-pincode-error">{pincodeError}</p>}
-
-                  {pincodeResult && (
-                    <div className="pd-pincode-result">
-                      <div className="pd-pincode-res-row">
-                        <span className="pd-pincode-res-icon">✓</span>
-                        <div className="pd-pincode-res-content">
-                          <strong>
-                            Delivery Available to {pincodeResult.delivery_pincode}
-                          </strong>
-                          <p className="pd-pincode-res-fee">
-                            Shipping Charge: <strong>{formatPrice(pincodeResult.shipping_fee)}</strong>
-                          </p>
-                          {pincodeResult.courier_name && (
-                            <p className="pd-pincode-courier-note">
-                              Courier Partner: {pincodeResult.courier_name}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -923,6 +911,36 @@ export default function ProductDetail() {
             >
               ✕
             </button>
+            {galleryImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className="pd-lightbox-arrow pd-lightbox-prev"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const curIdx = galleryImages.indexOf(previewImage);
+                    const prevIdx = curIdx > 0 ? curIdx - 1 : galleryImages.length - 1;
+                    setPreviewImage(galleryImages[prevIdx]);
+                  }}
+                  aria-label="Previous image"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  className="pd-lightbox-arrow pd-lightbox-next"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const curIdx = galleryImages.indexOf(previewImage);
+                    const nextIdx = curIdx < galleryImages.length - 1 ? curIdx + 1 : 0;
+                    setPreviewImage(galleryImages[nextIdx]);
+                  }}
+                  aria-label="Next image"
+                >
+                  ›
+                </button>
+              </>
+            )}
             <img src={imageUrl(previewImage)} alt={`${product.name} enlarged`} className="pd-lightbox-img" />
           </div>
         </div>

@@ -1,91 +1,56 @@
 import { useState } from "react";
 import Modal from "../../components/Modal/Modal";
 import FormField from "../../components/FormField/FormField";
-import ImageUploadField from "../../components/ImageUploadField/ImageUploadField";
 import { categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { ApiError } from "../../services/api";
 import { slugify } from "../../utils/slugify";
-import { getCategoryImageUrl } from "../../utils/categoryImageResolver";
 
 export default function CategoryFormModal({ category, onClose, onSaved }) {
-  const isEdit = !!category.id;
-  const [form, setForm] = useState({
-    name: category.name || "",
-    slug: category.slug || "",
-    description: category.description || "",
-    image_url: category.image_url || (isEdit ? getCategoryImageUrl(category) : ""),
-    sort_order: category.sort_order ?? 0,
-    is_active: category.is_active ?? true,
-    show_on_homepage: category.show_on_homepage ?? true
-  });
-  const [errors, setErrors] = useState({});
+  const isEdit = !!category?.id;
+  const [name, setName] = useState(category?.name || "");
+  const [sortOrder, setSortOrder] = useState(category?.sort_order ?? 0);
+  const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [slugTouched, setSlugTouched] = useState(isEdit);
   const toast = useToast();
 
-  function update(field, value) {
-    setForm((f) => ({ ...f, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[field];
-        return next;
-      });
-    }
-  }
-
   function handleNameChange(value) {
-    update("name", value);
-    if (!slugTouched) update("slug", slugify(value));
+    setName(value);
+    if (error) setError("");
   }
 
   function validate() {
-    const errs = {};
-    const trimmedName = (form.name || "").trim();
-    const trimmedSlug = (form.slug || "").trim();
-    const trimmedImage = (form.image_url || "").trim();
-
-    if (!trimmedName) {
-      errs.name = "Category name is required";
-    } else if (trimmedName.length > 80) {
-      errs.name = "Category name must be under 80 characters";
+    const trimmed = (name || "").trim();
+    if (!trimmed) {
+      return "Category name is required";
     }
-
-    if (!trimmedSlug) {
-      errs.slug = "URL slug is required";
-    } else if (!/^[a-z0-9-]+$/.test(trimmedSlug)) {
-      errs.slug = "Slug may only contain lowercase letters, numbers, and hyphens";
+    if (trimmed.length > 80) {
+      return "Category name must be under 80 characters";
     }
-
-    if (!trimmedImage) {
-      errs.image_url = "Category cover photo is required. Please upload an image.";
-    }
-
-    return errs;
+    return "";
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      const firstError = Object.values(validationErrors)[0];
-      toast.error(firstError || "Please fill in all required fields.");
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      toast.error(validationError);
       return;
     }
 
-    setErrors({});
+    setError("");
     setIsSaving(true);
     try {
+      const cleanName = name.trim();
+      const generatedSlug = slugify(cleanName);
+
       const payload = {
-        name: form.name.trim(),
-        slug: form.slug.trim(),
-        description: form.description ? form.description.trim() : "",
-        image_url: form.image_url.trim(),
-        sort_order: Number(form.sort_order) || 0,
-        is_active: Boolean(form.is_active),
-        show_on_homepage: Boolean(form.show_on_homepage)
+        name: cleanName,
+        slug: generatedSlug,
+        sort_order: Number(sortOrder) || 0,
+        is_active: category?.is_active ?? true,
+        show_on_homepage: category?.show_on_homepage ?? true,
       };
 
       if (isEdit) {
@@ -98,7 +63,8 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
       onSaved();
     } catch (err) {
       if (err instanceof ApiError && err.details?.length) {
-        setErrors(Object.fromEntries(err.details.map((d) => [d.field, d.message])));
+        const first = err.details[0]?.message;
+        if (first) setError(first);
       }
       toast.error(err.message || "Failed to save category");
     } finally {
@@ -110,103 +76,42 @@ export default function CategoryFormModal({ category, onClose, onSaved }) {
     <Modal
       title={isEdit ? "Edit Category" : "Add New Category"}
       onClose={onClose}
-      width={600}
+      width={460}
     >
       <form onSubmit={handleSubmit}>
-        <div className="form-grid">
-          <FormField label="Category Name *" htmlFor="cat-name" error={errors.name}>
-            <input
-              id="cat-name"
-              placeholder="e.g. Men, Women, Kids, Unisex"
-              value={form.name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              className={errors.name ? "has-error" : ""}
-              required
-            />
-          </FormField>
-
-          <FormField
-            label="URL Slug *"
-            htmlFor="cat-slug"
-            error={errors.slug}
-            hint="Path on storefront (e.g. mens)"
-          >
-            <input
-              id="cat-slug"
-              placeholder="mens"
-              value={form.slug}
-              onChange={(e) => {
-                setSlugTouched(true);
-                update("slug", e.target.value);
-              }}
-              className={errors.slug ? "has-error" : ""}
-              required
-            />
-          </FormField>
-        </div>
-
-        <FormField label="Description (Optional)" htmlFor="cat-desc" hint="Tagline or overview for collection cards">
-          <textarea
-            id="cat-desc"
-            rows={2}
-            placeholder="Contemporary luxury silhouettes crafted for discerning lifestyles..."
-            value={form.description}
-            onChange={(e) => update("description", e.target.value)}
+        <FormField
+          label="Category Name *"
+          htmlFor="cat-name"
+          error={error}
+          hint="Primary storefront category title (e.g. Men, Women, Kids)"
+        >
+          <input
+            id="cat-name"
+            placeholder="e.g. Kids, Men, Women, Accessories"
+            value={name}
+            onChange={(e) => handleNameChange(e.target.value)}
+            className={error ? "has-error" : ""}
+            autoFocus
+            required
           />
         </FormField>
 
-        {/* Category Cover Photo */}
-        <ImageUploadField
-          label="Category Cover Photo"
-          value={form.image_url}
-          onChange={(url) => update("image_url", url)}
-          folder="categories"
-          hint="Recommended: 4:5 portrait ratio (e.g. 800 × 1000px). Displayed across category cards on storefront."
-          error={errors.image_url}
-          required
-        />
+        <FormField
+          label="Sequence Number"
+          htmlFor="cat-sort-order"
+          hint="Controls display order on the storefront (lower number = appears first)"
+        >
+          <input
+            id="cat-sort-order"
+            type="number"
+            min="0"
+            placeholder="e.g. 1, 2, 3"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+          />
+        </FormField>
 
-        <div className="form-grid">
-          <FormField label="Display Order" htmlFor="cat-sort" hint="Lower sequence numbers appear first">
-            <input
-              id="cat-sort"
-              type="number"
-              value={form.sort_order}
-              onChange={(e) => update("sort_order", Number(e.target.value))}
-            />
-          </FormField>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingTop: 10 }}>
-            <label className="checkbox-row" style={{ marginBottom: 0 }}>
-              <input
-                id="cat-active"
-                type="checkbox"
-                checked={form.is_active}
-                onChange={(e) => update("is_active", e.target.checked)}
-              />
-              <span>
-                <strong>Active in Store Catalog</strong>
-              </span>
-            </label>
-
-            <label className="checkbox-row" style={{ marginBottom: 0 }}>
-              <input
-                id="cat-homepage"
-                type="checkbox"
-                checked={form.show_on_homepage}
-                onChange={(e) => update("show_on_homepage", e.target.checked)}
-              />
-              <span>
-                <strong>Show on Homepage</strong>
-                <span style={{ display: "block", fontSize: 11.5, color: "var(--text-muted)", marginTop: 2 }}>
-                  Display this category section on the customer storefront homepage
-                </span>
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <div className="form-actions">
+        <div className="form-actions" style={{ marginTop: 24 }}>
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancel
           </button>

@@ -693,6 +693,7 @@ export const ShopProvider = ({ children }) => {
         productsByCategory,
         findProduct,
         homeData,
+        categories: homeData?.categories || [],
         refreshHomeData,
         storefrontStatus,
         recentlyViewed,

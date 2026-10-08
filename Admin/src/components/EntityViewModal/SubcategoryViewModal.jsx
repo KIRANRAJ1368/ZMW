@@ -4,7 +4,6 @@ import Modal from "../Modal/Modal";
 import StatusBadge from "../StatusBadge/StatusBadge";
 import ImageLightboxModal from "../ImageLightboxModal/ImageLightboxModal";
 import { resolveImageUrl } from "../../utils/imageUrl";
-import { getSubcategoryImageUrl } from "../../utils/categoryImageResolver";
 import "./EntityViewModal.css";
 
 const formatDate = (value) =>
@@ -30,8 +29,8 @@ export default function SubcategoryViewModal({ subcategory, onEdit, onClose }) {
   }
 
   const parent = data.category || null;
-  const imageUrl = getSubcategoryImageUrl(data);
-  const resolvedImg = resolveImageUrl(imageUrl);
+  const rawImage = data.image_url && typeof data.image_url === "string" ? data.image_url.trim() : "";
+  const resolvedImg = rawImage ? resolveImageUrl(rawImage) : "";
 
   return (
     <Modal title="Subcategory Overview" onClose={onClose} width={740}>
@@ -58,28 +57,49 @@ export default function SubcategoryViewModal({ subcategory, onEdit, onClose }) {
         <div className="ev-grid">
           <div className="ev-media">
             <div className="ev-section-label">Item Group Thumbnail</div>
-            <div
-              className="ev-image-frame ev-image-frame-tall ev-image-clickable"
-              onClick={() => setShowLightbox(true)}
-              title="Click to inspect in Full HD"
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === "Enter" && setShowLightbox(true)}
-            >
-              <span className="ev-image-badge">Filter Pill Thumbnail</span>
-              <img
-                src={resolvedImg}
-                alt={data.name}
-                loading="lazy"
-                onError={(e) => {
-                  e.currentTarget.src = "/images/cat-men-round-neck.jpg";
-                }}
-              />
-              <div className="ev-image-hover-hint">
-                <ZoomIn size={14} />
-                <span>Enlarge HD</span>
+            {resolvedImg ? (
+              <div
+                className="ev-image-frame ev-image-frame-tall ev-image-clickable"
+                onClick={() => setShowLightbox(true)}
+                title="Click to inspect in Full HD"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && setShowLightbox(true)}
+              >
+                <span className="ev-image-badge">Filter Pill Thumbnail</span>
+                <img
+                  src={resolvedImg}
+                  alt={data.name}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+                <div className="ev-image-hover-hint">
+                  <ZoomIn size={14} />
+                  <span>Enlarge HD</span>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div
+                className="ev-image-frame ev-image-frame-tall"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "var(--surface-muted, #f8fafc)",
+                  border: "1.5px dashed var(--border, #e2e8f0)",
+                  color: "var(--text-muted, #64748b)"
+                }}
+              >
+                <p style={{ fontSize: 13, fontWeight: 500, margin: 0, textAlign: "center", padding: "0 16px" }}>
+                  No image uploaded
+                  <br />
+                  <span style={{ fontSize: 11, opacity: 0.8 }}>Default badge used on storefront</span>
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="ev-details">

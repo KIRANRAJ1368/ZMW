@@ -6,7 +6,6 @@ import { subcategoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { ApiError } from "../../services/api";
 import { slugify } from "../../utils/slugify";
-import { getSubcategoryImageUrl } from "../../utils/categoryImageResolver";
 
 export default function SubcategoryFormModal({ subcategory, categories, onClose, onSaved }) {
   const isEdit = !!subcategory.id;
@@ -14,7 +13,7 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
     category_id: subcategory.category_id || subcategory.category?.id || categories[0]?.id || "",
     name: subcategory.name || "",
     slug: subcategory.slug || "",
-    image_url: subcategory.image_url || (isEdit ? getSubcategoryImageUrl(subcategory) : ""),
+    image_url: subcategory.image_url || "",
     sort_order: subcategory.sort_order ?? 0,
     is_active: subcategory.is_active ?? true,
     show_on_homepage: subcategory.show_on_homepage ?? true
@@ -44,7 +43,6 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
     const errs = {};
     const trimmedName = (form.name || "").trim();
     const trimmedSlug = (form.slug || "").trim();
-    const trimmedImage = (form.image_url || "").trim();
     const catId = Number(form.category_id);
 
     if (!catId) {
@@ -61,10 +59,6 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
       errs.slug = "URL slug is required";
     } else if (!/^[a-z0-9-]+$/.test(trimmedSlug)) {
       errs.slug = "Slug may only contain lowercase letters, numbers, and hyphens";
-    }
-
-    if (!trimmedImage) {
-      errs.image_url = "Subcategory thumbnail is required. Please upload an image.";
     }
 
     return errs;
@@ -87,7 +81,7 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
         category_id: Number(form.category_id),
         name: form.name.trim(),
         slug: form.slug.trim(),
-        image_url: form.image_url.trim(),
+        image_url: form.image_url && form.image_url.trim() ? form.image_url.trim() : null,
         sort_order: Number(form.sort_order) || 0,
         is_active: Boolean(form.is_active),
         show_on_homepage: Boolean(form.show_on_homepage)
@@ -162,15 +156,16 @@ export default function SubcategoryFormModal({ subcategory, categories, onClose,
           </FormField>
         </div>
 
-        {/* Subcategory Image */}
+        {/* Subcategory Image Upload */}
         <ImageUploadField
-          label="Subcategory Thumbnail"
+          label="Subcategory Image (Optional)"
           value={form.image_url}
           onChange={(url) => update("image_url", url)}
           folder="subcategories"
-          hint="Recommended: 3:4 portrait (e.g. 600 × 800px). Used for filter pill previews."
+          aspectRatio="4/5"
+          previewHeight={170}
+          hint="Optional: Upload a clean photo for this subcategory card (Recommended: 600 × 750px portrait). Once uploaded, it will appear on the Homepage."
           error={errors.image_url}
-          required
         />
 
         <div className="form-grid">

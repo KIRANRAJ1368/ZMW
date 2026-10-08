@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Plus, Edit2, Trash2, Eye, Image as ImageIcon, Sparkles, Layout, ExternalLink } from "lucide-react";
-import { bannersApi } from "../../services/resources";
+import { bannersApi, categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../components/ConfirmDialog/ConfirmDialog";
 import DataTable from "../../components/DataTable/DataTable";
@@ -12,6 +12,7 @@ import { resolveImageUrl } from "../../utils/imageUrl";
 
 export default function BannersPage() {
   const [banners, setBanners] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
@@ -24,10 +25,18 @@ export default function BannersPage() {
   async function load() {
     setIsLoading(true);
     try {
-      const { data } = await bannersApi.list();
-      setBanners((data || []).map((banner) =>
-        banner.placement === "home_hero" ? { ...banner, placement: "hero" } : banner
-      ));
+      const [bannersRes, catsRes] = await Promise.allSettled([
+        bannersApi.list(),
+        categoriesApi.list({ includeInactive: "false" })
+      ]);
+      if (bannersRes.status === "fulfilled") {
+        setBanners((bannersRes.value.data || []).map((banner) =>
+          banner.placement === "home_hero" ? { ...banner, placement: "hero" } : banner
+        ));
+      }
+      if (catsRes.status === "fulfilled" && Array.isArray(catsRes.value.data)) {
+        setCategories(catsRes.value.data);
+      }
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -72,8 +81,9 @@ export default function BannersPage() {
       toast.error("Maximum 3 Hero Banners can be added.");
       return;
     }
+    const defaultCollectionPlacement = categories[0]?.slug || "mens";
     setEditing({
-      placement: activeTab === "collection" ? "mens" : activeTab === "hero" ? "hero" : (heroCount >= 3 ? "mens" : "hero")
+      placement: activeTab === "collection" ? defaultCollectionPlacement : activeTab === "hero" ? "hero" : (heroCount >= 3 ? defaultCollectionPlacement : "hero")
     });
   }
 
@@ -329,22 +339,36 @@ export default function BannersPage() {
               label: "Target Placement",
               width: "135px",
               align: "center",
-              render: (row) =>
-                row.placement === "hero" ? (
-                  <span
-                    className="pill-badge"
-                    style={{
-                      background: "#eef2ff",
-                      color: "#4f46e5",
-                      border: "1px solid #c7d2fe",
-                      fontSize: 11,
-                      whiteSpace: "nowrap"
-                    }}
-                  >
-                    <Sparkles size={11} />
-                    <span>Hero Slider</span>
-                  </span>
-                ) : (
+              render: (row) => {
+                if (row.placement === "hero") {
+                  return (
+                    <span
+                      className="pill-badge"
+                      style={{
+                        background: "#eef2ff",
+                        color: "#4f46e5",
+                        border: "1px solid #c7d2fe",
+                        fontSize: 11,
+                        whiteSpace: "nowrap"
+                      }}
+                    >
+                      <Sparkles size={11} />
+                      <span>Hero Slider</span>
+                    </span>
+                  );
+                }
+                const matchedCat = categories.find((c) => c.slug === row.placement);
+                const label = matchedCat
+                  ? `${matchedCat.name} Header`
+                  : row.placement === "best-sellers"
+                  ? "Best Sellers"
+                  : row.placement === "new-arrivals"
+                  ? "New Arrivals"
+                  : row.placement === "default"
+                  ? "Default Fallback"
+                  : row.placement;
+
+                return (
                   <span
                     className="pill-badge"
                     style={{
@@ -355,9 +379,10 @@ export default function BannersPage() {
                       whiteSpace: "nowrap"
                     }}
                   >
-                    <span>{row.placement}</span>
+                    <span>{label}</span>
                   </span>
-                )
+                );
+              }
             },
             {
               key: "primary_cta_text",
@@ -369,7 +394,7 @@ export default function BannersPage() {
                     <span style={{ fontWeight: 600, color: "var(--text-main)", whiteSpace: "nowrap" }}>
                       {row.primary_cta_text}
                     </span>
-                    {row.primary_cta_link && (
+                    {row.primary_cta_link && row.primary_cta_link !== "#collection-catalog" && !row.primary_cta_link.startsWith("#") && (
                       <div className="cell-muted" style={{ fontSize: 11, marginTop: 2 }}>
                         <code style={{ fontSize: 10.5, padding: "1px 5px", whiteSpace: "nowrap" }}>
                           {row.primary_cta_link}

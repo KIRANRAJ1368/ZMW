@@ -26,8 +26,13 @@ function assertPriceRange(price, originalPrice) {
   if (!Number.isFinite(selling) || selling < 500) {
     throw ApiError.badRequest("Selling price must be at least ₹500");
   }
-  if (!Number.isFinite(original) || original <= selling) {
-    throw ApiError.badRequest("Original price must be higher than selling price");
+  if (!Number.isFinite(original) || original < 500) {
+    throw ApiError.badRequest("Original / MRP price must be at least ₹500");
+  }
+  if (original <= selling) {
+    throw ApiError.badRequest(
+      `Original / MRP price (₹${original}) must be higher than selling price (₹${selling}). Selling price must be lower than original price.`
+    );
   }
 }
 
@@ -39,7 +44,9 @@ function assertVariantPriceOverride(priceOverride, originalPrice) {
   if (originalPrice !== null && originalPrice !== undefined) {
     const original = Number(originalPrice);
     if (Number.isFinite(original) && original > 0 && original <= selling) {
-      throw ApiError.badRequest("Original price must be higher than variant price override");
+      throw ApiError.badRequest(
+        `Original / MRP price (₹${original}) must be higher than variant price override (₹${selling}). Selling price must be lower than original price.`
+      );
     }
   }
 }
@@ -146,8 +153,15 @@ async function listProducts(query) {
 }
 
 async function replaceNestedCollections(product, body, transaction) {
-  if (Array.isArray(body.images) && body.images.length > 2) {
-    throw ApiError.badRequest("Maximum 2 images are allowed.");
+  if (Array.isArray(body.images)) {
+    if (body.images.length < 2) {
+      throw ApiError.badRequest(
+        "At least 2 product images are required (1 Main product image + at least 1 gallery photo are compulsory)."
+      );
+    }
+    if (body.images.length > 10) {
+      throw ApiError.badRequest("Maximum 10 images are allowed per product.");
+    }
   }
   if (Array.isArray(body.variants) && body.variants.some((variant) => {
     const mainImageCount = variant.image_url || variant.imageUrl ? 1 : 0;
@@ -156,9 +170,9 @@ async function replaceNestedCollections(product, body, transaction) {
       : Array.isArray(variant.galleryImages)
       ? variant.galleryImages.length
       : 0;
-    return mainImageCount + galleryCount > 2;
+    return mainImageCount + galleryCount > 10;
   })) {
-    throw ApiError.badRequest("Maximum 2 images are allowed.");
+    throw ApiError.badRequest("Maximum 10 images are allowed per variant.");
   }
   if (Array.isArray(body.images)) {
     await ProductImage.destroy({ where: { product_id: product.id }, transaction });
@@ -290,6 +304,14 @@ async function replaceNestedCollections(product, body, transaction) {
 
 async function createProduct(body) {
   assertPriceRange(body.price, body.original_price);
+  if (!Array.isArray(body.images) || body.images.length < 2) {
+    throw ApiError.badRequest(
+      "At least 2 product images are required (1 Main product image + at least 1 gallery photo are compulsory)."
+    );
+  }
+  if (body.images.length > 10) {
+    throw ApiError.badRequest("Maximum 10 images are allowed per product.");
+  }
   return sequelize.transaction(async (transaction) => {
     const sku = await generateUniqueSku(body.name, transaction);
     const existingSlug = await Product.findOne({ where: { slug: body.slug }, transaction });
@@ -333,6 +355,17 @@ async function updateProduct(productOrId, body) {
     ? body.original_price
     : product.original_price;
   assertPriceRange(body.price ?? product.price, nextOriginalPrice);
+
+  if (body.images !== undefined) {
+    if (!Array.isArray(body.images) || body.images.length < 2) {
+      throw ApiError.badRequest(
+        "At least 2 product images are required (1 Main product image + at least 1 gallery photo are compulsory)."
+      );
+    }
+    if (body.images.length > 10) {
+      throw ApiError.badRequest("Maximum 10 images are allowed per product.");
+    }
+  }
 
   return sequelize.transaction(async (transaction) => {
     const nextSku = product.sku;

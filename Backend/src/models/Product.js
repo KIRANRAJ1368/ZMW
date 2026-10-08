@@ -58,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     Product.hasMany(db.ProductSize, { foreignKey: "product_id", as: "sizes", onDelete: "CASCADE" });
     Product.hasMany(db.ProductVariant, { foreignKey: "product_id", as: "variants", onDelete: "CASCADE" });
     Product.hasMany(db.OrderItem, { foreignKey: "product_id", as: "orderItems" });
+    Product.hasMany(db.Review, { foreignKey: "product_id", as: "reviews", onDelete: "CASCADE" });
   };
 
   return Product;

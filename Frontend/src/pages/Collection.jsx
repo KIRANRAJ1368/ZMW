@@ -87,15 +87,6 @@ function renderHeroIcon(name) {
   }
 }
 
-const HERO_CATEGORY_TABS = [
-  { id: "all", label: "All Styles", key: "default" },
-  { id: "mens", label: "Men", key: "mens" },
-  { id: "women", label: "Women", key: "women" },
-  { id: "boys", label: "Boys", key: "boys" },
-  { id: "girls", label: "Girls", key: "girls" },
-  { id: "babies", label: "Babies", key: "babies" }
-];
-
 const BANNER_CONFIG = {
   mens: {
     categoryName: "Men",
@@ -111,9 +102,8 @@ const BANNER_CONFIG = {
       { icon: "star", label: "4.9★ Customer Rating" },
       { icon: "tag", label: "100% Combed Cotton" }
     ],
-    ctaText: "EXPLORE NOW",
+    ctaText: "Shop Now",
     urgencyTag: "✨ Fresh Drop",
-    primaryHash: "#collection-catalog",
     image: "/images/banner-mens.jpg",
     imagePosition: "85% top"
   },
@@ -131,9 +121,8 @@ const BANNER_CONFIG = {
       { icon: "star", label: "4.9★ Customer Rating" },
       { icon: "tag", label: "100% Combed Cotton" }
     ],
-    ctaText: "EXPLORE NOW",
+    ctaText: "Shop Now",
     urgencyTag: "✨ Fresh Drop",
-    primaryHash: "#collection-catalog",
     image: "/images/banner-womens.jpg",
     imagePosition: "85% top"
   },
@@ -151,9 +140,8 @@ const BANNER_CONFIG = {
       { icon: "star", label: "4.8★ Parent Approved" },
       { icon: "truck", label: SHIPPING_LABEL }
     ],
-    ctaText: "EXPLORE NOW",
+    ctaText: "Shop Now",
     urgencyTag: "⚡ Selling Out Fast",
-    primaryHash: "#collection-catalog",
     image: "/images/banner-boys.jpg",
     imagePosition: "85% top"
   },
@@ -171,9 +159,8 @@ const BANNER_CONFIG = {
       { icon: "star", label: "4.9★ Customer Rating" },
       { icon: "tag", label: "100% Pure Cotton" }
     ],
-    ctaText: "EXPLORE NOW",
+    ctaText: "Shop Now",
     urgencyTag: "✨ Fresh Drop",
-    primaryHash: "#collection-catalog",
     image: "/images/banner-girls.jpg",
     imagePosition: "85% top"
   },
@@ -191,30 +178,9 @@ const BANNER_CONFIG = {
       { icon: "shield", label: "Zero Harsh Chemicals" },
       { icon: "tag", label: "Easy Snap Fastening" }
     ],
-    ctaText: "EXPLORE NOW",
+    ctaText: "Shop Now",
     urgencyTag: "🍼 Gentle Care",
-    primaryHash: "#collection-catalog",
     image: "/images/banner-babies.jpg",
-    imagePosition: "85% top"
-  },
-  kids: {
-    categoryName: "Kids",
-    badge: "Kids' Edit",
-    badgeIcon: "sparkle",
-    subBadge: "Season 2026",
-    offer: "FLAT 25% OFF",
-    offerTag: "AUTO-APPLIED AT CHECKOUT",
-    title: "BUILT FOR PLAY",
-    subtitle: "Super-soft bio-washed cotton, cheerful artwork, and all-day play durability for growing kids.",
-    perks: [
-      { icon: "shield", label: "100% Bio-Wash Cotton" },
-      { icon: "star", label: "4.9★ Customer Rating" },
-      { icon: "truck", label: SHIPPING_LABEL }
-    ],
-    ctaText: "EXPLORE NOW",
-    urgencyTag: "✨ Fresh Drop",
-    primaryHash: "#collection-catalog",
-    image: "/images/banner-boys.jpg",
     imagePosition: "85% top"
   },
   "best-sellers": {
@@ -231,8 +197,7 @@ const BANNER_CONFIG = {
       { icon: "bolt", label: "Fast Express Dispatch" },
       { icon: "shield", label: "Guaranteed Satisfaction" }
     ],
-    ctaText: "Explore Best Sellers",
-    primaryHash: "#collection-catalog",
+    ctaText: "Shop Best Sellers",
     image: "/images/hero-mens-tshirt-banner-2.jpg",
     imagePosition: "center 20%"
   },
@@ -250,8 +215,7 @@ const BANNER_CONFIG = {
       { icon: "tag", label: "Modern Street Silhouettes" },
       { icon: "truck", label: "Fast Track Delivery" }
     ],
-    ctaText: "Explore New Arrivals",
-    primaryHash: "#collection-catalog",
+    ctaText: "Shop New Arrivals",
     image: "/images/hero-mens-tshirt-banner-3.jpg",
     imagePosition: "center 20%"
   },
@@ -263,14 +227,13 @@ const BANNER_CONFIG = {
     offer: "ALL STYLES",
     offerTag: "EVERY STYLE UNDER ONE ROOF",
     title: "One Store, Every Style.",
-    subtitle: "Men, Women, Boys, Girls, and Babies — explore our unified catalogue of premium wardrobe essentials.",
+    subtitle: "Explore our unified catalogue of premium wardrobe essentials.",
     perks: [
       { icon: "truck", label: SHIPPING_LABEL },
       { icon: "shield", label: "7-Day Easy Returns" },
       { icon: "tag", label: "100% Quality Checked" }
     ],
-    ctaText: "Explore Collection",
-    primaryHash: "#collection-catalog",
+    ctaText: "Shop Collection",
     image: "/images/dept-family-banner.jpg",
     imagePosition: "75% 25%"
   }
@@ -367,9 +330,78 @@ export default function Collection() {
     setVisibleCount(INITIAL_PAGE_SIZE);
   }, [searchParams]);
 
+  const homeCategories = useMemo(() => homeData?.categories || [], [homeData]);
+  const currentCategoryKey = categoryParam === "all" ? "all" : categoryParam;
+  const matchedCategory = homeCategories.find(
+    (c) => c.slug === currentCategoryKey || c.slug === CATEGORY_ALIASES[currentCategoryKey]
+  );
+  const activeCategoryLabel = matchedCategory
+    ? matchedCategory.name
+    : currentCategoryKey === "all"
+    ? "All Products"
+    : currentCategoryKey.charAt(0).toUpperCase() + currentCategoryKey.slice(1);
+
   const bannerKey = collectionParam !== "all" ? collectionParam : categoryParam !== "all" ? categoryParam : "default";
-  const managedBanner = homeData?.banners?.[bannerKey]?.[0];
-  const config = BANNER_CONFIG[bannerKey] || BANNER_CONFIG.default;
+
+  const possibleBannerKeys = useMemo(() => {
+    if (collectionParam !== "all") return [collectionParam];
+    if (categoryParam !== "all") {
+      const keys = [
+        categoryParam,
+        matchedCategory?.slug,
+        CATEGORY_ALIASES[categoryParam],
+        categoryParam === "mens" ? "men" : categoryParam === "men" ? "mens" : null,
+        categoryParam === "women" ? "womens" : categoryParam === "womens" ? "women" : null
+      ].filter(Boolean);
+      return [...new Set(keys)];
+    }
+    return ["default"];
+  }, [collectionParam, categoryParam, matchedCategory]);
+
+  const managedBanner = useMemo(() => {
+    if (!homeData?.banners) return null;
+    for (const key of possibleBannerKeys) {
+      const list = homeData.banners[key];
+      if (Array.isArray(list) && list.length > 0) {
+        return list[0];
+      }
+    }
+    return null;
+  }, [homeData, possibleBannerKeys]);
+
+  const dynamicCategoryBanner = useMemo(() => {
+    if (!matchedCategory && categoryParam === "all") return null;
+    const catName = matchedCategory?.name || (categoryParam !== "all" ? categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1) : "Collection");
+    const catUpper = catName.toUpperCase();
+    const catLower = catName.toLowerCase();
+    return {
+      categoryName: catName,
+      badge: "New Arrivals",
+      badgeIcon: "sparkle",
+      subBadge: "Season 2026",
+      offer: `${catUpper} STYLES`,
+      offerTag: "SEASON 2026",
+      title: `${catUpper} COLLECTION`,
+      subtitle: matchedCategory?.description || `Explore our premium ${catLower} essentials crafted for elevated comfort and everyday style.`,
+      perks: [
+        { icon: "shield", label: "100% Quality Checked" },
+        { icon: "star", label: "4.9★ Customer Rating" },
+        { icon: "tag", label: "Pure Cotton Comfort" }
+      ],
+      ctaText: "Shop Now",
+      urgencyTag: "",
+      image: "/images/dept-family-banner.jpg",
+      imagePosition: "75% 25%"
+    };
+  }, [matchedCategory, categoryParam]);
+
+  const rawConfig = BANNER_CONFIG[bannerKey] || dynamicCategoryBanner || BANNER_CONFIG.default;
+  const config = {
+    ...rawConfig,
+    categoryName: matchedCategory?.name || rawConfig.categoryName,
+    subtitle: matchedCategory?.description || rawConfig.subtitle
+  };
+
   // "Starting at" claims are generated from the real Admin catalog so a banner
   // can never advertise an amount the storefront does not actually charge.
   const categoryMinPrice = useMemo(() => {
@@ -387,22 +419,25 @@ export default function Collection() {
     ...(managedBanner
       ? {
           ...config,
+          title: managedBanner.title || config.title,
+          subtitle: managedBanner.subtitle || config.subtitle,
+          badge: managedBanner.tag || config.badge,
+          subBadge: managedBanner.badge_promo || config.subBadge,
           image: managedBanner.image_url || config.image,
-          imagePosition: managedBanner.image_position || config.imagePosition || "85% top",
-          badge: config.badge,
-          badgeIcon: config.badgeIcon,
-          subBadge: config.subBadge,
-          ctaText: config.ctaText,
-          urgencyTag: config.urgencyTag,
+          imagePosition: managedBanner.image_position || config.imagePosition || "75% 25%",
+          ctaText: managedBanner.primary_cta_text?.trim() || config.ctaText || "Shop Now",
+          ctaLink: (managedBanner.primary_cta_link && !managedBanner.primary_cta_link.startsWith("#")) ? managedBanner.primary_cta_link : null,
+          urgencyTag: managedBanner.secondary_cta_text || config.urgencyTag,
           perks: config.perks
         }
-      : config),
-    offer: applyMinPrice(config.offer),
+      : {
+          ...config,
+          ctaText: config.ctaText || "Shop Now",
+          ctaLink: null
+        }),
+    offer: applyMinPrice(managedBanner?.badge_promo || config.offer),
     offerTag: applyMinPrice(config.offerTag)
   };
-
-  const currentCategoryKey = categoryParam === "all" ? "all" : categoryParam;
-  const activeCategoryLabel = HERO_CATEGORY_TABS.find((t) => t.id === currentCategoryKey)?.label || "Collection";
 
   // A subcategory is requested whenever ?type= is present. Its page shows the
   // products directly, with no banner.
@@ -410,13 +445,6 @@ export default function Collection() {
   const isBannerlessCollection = collectionParam === "best-sellers" || collectionParam === "new-arrivals";
   const isSearchListing = Boolean(searchParam);
   const isBannerlessListing = isSubcategoryView || isBannerlessCollection || isSearchListing;
-
-  // Resolve ?type= to a real subcategory record. Links arrive in two forms: the
-  // navbar dropdown sends the display name, the homepage tiles send the slug, so
-  // both are accepted. Subcategory slugs repeat across departments
-  // (round-neck exists under women, boys and girls), which is why the category
-  // in the URL is what disambiguates.
-  const homeCategories = useMemo(() => homeData?.categories || [], [homeData]);
 
   const activeSubcategory = useMemo(() => {
     const needle = normalizeToken(typeParam);
@@ -515,16 +543,18 @@ export default function Collection() {
       if (!searchMatches) return false;
     }
     if (categoryParam === "all") return true;
-    if (categoryParam === "kids") return p.category === "boys" || p.category === "girls";
+    // Strict: only match products whose category slug exactly equals the URL param.
+    // No cross-category aliases (e.g. "kids" must NOT pull in boys/girls products).
+    // Each category is independent — products appear only when Admin assigns them
+    // to that specific category.
     if (p.category === categoryParam) return true;
 
-    // Support preserved subcategory/style query parameters (e.g. ?category=Oversized%20T-Shirts)
-    const sub = (p.subCategory || "").toLowerCase();
-    const type = (p.productType || "").toLowerCase();
-    const name = (p.name || "").toLowerCase();
-    if (sub && (sub === categoryParam || sub.includes(categoryParam) || categoryParam.includes(sub))) return true;
-    if (type && (type === categoryParam || type.includes(categoryParam) || categoryParam.includes(type))) return true;
-    if (name && name.includes(categoryParam)) return true;
+    // Support subcategory filter links (e.g. ?category=oversized-t-shirts).
+    // Only exact subcategory slug match is used — no partial string matching
+    // to prevent unrelated products leaking in.
+    const sub = (p.subCategory || "").toLowerCase().replace(/\s+/g, "-");
+    if (sub && sub === categoryParam) return true;
+
     return false;
   };
 
@@ -1027,13 +1057,32 @@ export default function Collection() {
 
                 {/* 3. CALL TO ACTION & URGENCY PILL */}
                 <div className="hero-cta-group coll-hero-cta-group">
-                  <a href="#collection-catalog" className="hero-btn-primary coll-hero-btn-primary">
-                    <span>{banner.ctaText || "EXPLORE NOW"}</span>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </a>
+                  {banner.ctaLink ? (
+                    <Link to={banner.ctaLink} className="hero-btn-primary coll-hero-btn-primary">
+                      <span>{banner.ctaText || "Shop Now"}</span>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      className="hero-btn-primary coll-hero-btn-primary"
+                      onClick={() => {
+                        const catalogEl = document.getElementById("collection-catalog");
+                        if (catalogEl) {
+                          catalogEl.scrollIntoView({ behavior: "smooth" });
+                        }
+                      }}
+                    >
+                      <span>{banner.ctaText || "Shop Now"}</span>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                  )}
                   {banner.urgencyTag && (
                     <span className="hero-urgency-pill coll-hero-urgency-pill">
                       {banner.urgencyTag}

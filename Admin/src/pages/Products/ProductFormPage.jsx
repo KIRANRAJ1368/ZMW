@@ -50,7 +50,8 @@ export default function ProductFormPage() {
   const isEdit = !!id;
   const navigate = useNavigate();
   const toast = useToast();
-  const fileInputRef = useRef(null);
+  const mainFileInputRef = useRef(null);
+  const galleryFileInputRef = useRef(null);
 
   const [form, setForm] = useState(BLANK_FORM);
   const [categories, setCategories] = useState([]);
@@ -58,8 +59,12 @@ export default function ProductFormPage() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(isEdit);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isDraggingPhotos, setIsDraggingPhotos] = useState(false);
+  const [mainImage, setMainImage] = useState("");
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [isUploadingMain, setIsUploadingMain] = useState(false);
+  const [isUploadingGallery, setIsUploadingGallery] = useState(false);
+  const [isDraggingMain, setIsDraggingMain] = useState(false);
+  const [isDraggingGallery, setIsDraggingGallery] = useState(false);
   const [lightboxImg, setLightboxImg] = useState(null);
   const [slugTouched, setSlugTouched] = useState(isEdit);
 
@@ -78,6 +83,10 @@ export default function ProductFormPage() {
           navigate("/products");
           return;
         }
+        const loadedImgs = Array.isArray(p.images) ? p.images : [];
+        setMainImage(loadedImgs[0] || "");
+        setGalleryImages(loadedImgs.slice(1) || []);
+
         setForm({
           name: p.name,
           slug: p.slug,
@@ -96,7 +105,7 @@ export default function ProductFormPage() {
           badge_label: p.badge || "",
           badge_type: p.badgeType || "",
           is_active: p.isActive,
-          images: p.images || [],
+          images: loadedImgs,
           _categorySlug: p.category,
           _subcategoryName: p.subCategory
         });
@@ -134,14 +143,46 @@ export default function ProductFormPage() {
   }, [form.category_id, categories]);
 
   function update(field, value) {
-    setForm((f) => ({ ...f, [field]: value }));
+    setForm((f) => {
+      const nextForm = { ...f, [field]: value };
+      return nextForm;
+    });
+
     setErrors((previous) => {
-      const fieldsToClear = field === "price" || field === "original_price"
-        ? ["price", "original_price"]
-        : [field];
-      if (!fieldsToClear.some((key) => previous[key])) return previous;
       const next = { ...previous };
-      fieldsToClear.forEach((key) => delete next[key]);
+      if (field === "price" || field === "original_price") {
+        delete next.price;
+        delete next.original_price;
+
+        const currentPriceVal = field === "price" ? value : form.price;
+        const currentMrpVal = field === "original_price" ? value : form.original_price;
+
+        const sPrice = Number(currentPriceVal);
+        const oPrice = Number(currentMrpVal);
+
+        if (currentPriceVal !== "" && Number.isFinite(sPrice) && sPrice < 500) {
+          next.price = "Selling price must be at least ₹500";
+        }
+        if (currentMrpVal !== "" && Number.isFinite(oPrice) && oPrice < 500) {
+          next.original_price = "Original / MRP price must be at least ₹500";
+        }
+
+        if (
+          currentPriceVal !== "" &&
+          currentMrpVal !== "" &&
+          Number.isFinite(sPrice) &&
+          Number.isFinite(oPrice) &&
+          sPrice > 0 &&
+          oPrice > 0
+        ) {
+          if (sPrice >= oPrice) {
+            next.original_price = `Original / MRP price (₹${oPrice}) must be higher than selling price (₹${sPrice})`;
+            next.price = `Selling price (₹${sPrice}) must be lower than original price (₹${oPrice})`;
+          }
+        }
+      } else {
+        delete next[field];
+      }
       return next;
     });
   }
@@ -151,51 +192,121 @@ export default function ProductFormPage() {
     if (!slugTouched) update("slug", slugify(value));
   }
 
-  // ── Images ──
-  function removeImage(idx) {
-    update("images", form.images.filter((_, i) => i !== idx));
+  // ── Images Management ──
+  async function handleMainImageUpload(fileList) {
+    if (!fileList || fileList.length === 0) return;
+    const file = Array.from(fileList).find((f) => f.type.startsWith("image/"));
+    if (!file) {
+      toast.error("Please select a valid image file (JPG, PNG, or WEBP).");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error(`"${file.name}" exceeds 10MB. Please choose an image under 10MB.`);
+      return;
+    }
+    setIsUploadingMain(true);
+    try {
+      const { data } = await uploadApi.upload("products", [file]);
+      const url = data.files?.[0]?.url;
+      if (url) {
+        setMainImage(url);
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next.mainImage;
+          delete next.images;
+          return next;
+        });
+        toast.success("Main Product Image uploaded successfully!");
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to upload main product image. Please try again.");
+    } finally {
+      setIsUploadingMain(false);
+      if (mainFileInputRef.current) mainFileInputRef.current.value = "";
+    }
   }
 
-  function makeCoverPhoto(idx) {
-    if (idx === 0) return;
-    const target = form.images[idx];
-    const rest = form.images.filter((_, i) => i !== idx);
-    update("images", [target, ...rest]);
-    toast.success("Cover photo updated");
+  function handleMainPhotoDrop(e) {
+    e.preventDefault();
+    setIsDraggingMain(false);
+    if (isUploadingMain) return;
+    if (e.dataTransfer.files?.length) {
+      handleMainImageUpload(e.dataTransfer.files);
+    }
   }
 
-  async function handlePhotoFiles(fileList) {
+  async function handleGalleryImageUpload(fileList) {
     if (!fileList || fileList.length === 0) return;
     const files = Array.from(fileList).filter((f) => f.type.startsWith("image/"));
     if (files.length === 0) {
-      toast.error("Please select valid image files (JPG, PNG, WEBP, GIF)");
+      toast.error("Please select valid image files (JPG, PNG, or WEBP).");
       return;
     }
-    if (form.images.length + files.length > 2) {
-      toast.error("Maximum 2 images are allowed.");
+    const oversized = files.filter((f) => f.size > 10 * 1024 * 1024);
+    if (oversized.length > 0) {
+      toast.error(`"${oversized[0].name}" exceeds 10MB. Please choose images under 10MB.`);
       return;
     }
-    setIsUploading(true);
+    const maxGallery = 9; // 1 Main + up to 9 Gallery = 10 total images
+    const remainingSlots = maxGallery - galleryImages.length;
+    if (remainingSlots <= 0) {
+      toast.error("Maximum 9 gallery images already attached. Total 10 images limit reached.");
+      return;
+    }
+    if (files.length > remainingSlots) {
+      toast.error(`You can only add up to ${remainingSlots} more gallery image(s). Maximum 10 images total allowed.`);
+      return;
+    }
+
+    setIsUploadingGallery(true);
     try {
       const { data } = await uploadApi.upload("products", files);
       const newUrls = (data.files || []).map((f) => f.url);
-      update("images", [...form.images, ...newUrls]);
-      toast.success(`${newUrls.length} product photo(s) uploaded successfully`);
+      setGalleryImages((prev) => [...prev, ...newUrls]);
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.galleryImages;
+        delete next.images;
+        return next;
+      });
+      toast.success(`${newUrls.length} gallery image(s) uploaded successfully!`);
     } catch (err) {
-      toast.error(err.message || "Failed to upload product photo");
+      toast.error(err.message || "Failed to upload gallery images. Please try again.");
     } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      setIsUploadingGallery(false);
+      if (galleryFileInputRef.current) galleryFileInputRef.current.value = "";
     }
   }
 
-  function handlePhotoDrop(e) {
+  function handleGalleryPhotoDrop(e) {
     e.preventDefault();
-    setIsDraggingPhotos(false);
-    if (isUploading) return;
+    setIsDraggingGallery(false);
+    if (isUploadingGallery) return;
     if (e.dataTransfer.files?.length) {
-      handlePhotoFiles(e.dataTransfer.files);
+      handleGalleryImageUpload(e.dataTransfer.files);
     }
+  }
+
+  function removeMainImage() {
+    setMainImage("");
+    toast.info("Main Product Image removed.");
+  }
+
+  function removeGalleryImage(idx) {
+    setGalleryImages((prev) => prev.filter((_, i) => i !== idx));
+    toast.info("Gallery thumbnail removed.");
+  }
+
+  function promoteToMainImage(idx) {
+    const selected = galleryImages[idx];
+    const rest = galleryImages.filter((_, i) => i !== idx);
+    if (mainImage) {
+      setGalleryImages([mainImage, ...rest]);
+    } else {
+      setGalleryImages(rest);
+    }
+    setMainImage(selected);
+    toast.success("Cover photo updated! This photo is now the Main Product Image.");
   }
 
   const isValid = useMemo(
@@ -208,14 +319,60 @@ export default function ProductFormPage() {
     const validationErrors = {};
     const sellingPrice = Number(form.price);
     const originalPrice = Number(form.original_price);
-    if (!Number.isFinite(sellingPrice) || sellingPrice < 500) {
+
+    if (form.price === "" || form.price === null || form.price === undefined) {
+      validationErrors.price = "Selling price is required";
+    } else if (!Number.isFinite(sellingPrice) || sellingPrice <= 0) {
+      validationErrors.price = "Please enter a valid selling price";
+    } else if (sellingPrice < 500) {
       validationErrors.price = "Selling price must be at least ₹500";
     }
-    if (!Number.isFinite(originalPrice) || originalPrice <= sellingPrice) {
-      validationErrors.original_price = "Original price must be higher than selling price";
+
+    if (form.original_price === "" || form.original_price === null || form.original_price === undefined) {
+      validationErrors.original_price = "Original / MRP price is required";
+    } else if (!Number.isFinite(originalPrice) || originalPrice <= 0) {
+      validationErrors.original_price = "Please enter a valid original / MRP price";
+    } else if (originalPrice < 500) {
+      validationErrors.original_price = "Original / MRP price must be at least ₹500";
+    } else if (sellingPrice >= originalPrice) {
+      validationErrors.original_price = `Original / MRP price (₹${originalPrice}) must be higher than selling price (₹${sellingPrice})`;
+      validationErrors.price = `Selling price (₹${sellingPrice}) must be lower than original price (₹${originalPrice})`;
     }
+
+    // Image Validations:
+    // 2 images compulsory (Main image + at least 1 Gallery image).
+    // Maximum 10 images total (1 Main + up to 9 Gallery images).
+    // Remaining up to 8 thumbnails are optional.
+    if (!mainImage) {
+      validationErrors.mainImage = "Main Product Image is required (Compulsory).";
+    }
+    if (galleryImages.length === 0) {
+      validationErrors.galleryImages = "At least 1 Gallery thumbnail image is required (Compulsory).";
+    }
+    const combinedImages = [mainImage, ...galleryImages].filter(Boolean);
+    if (combinedImages.length < 2) {
+      validationErrors.images = "At least 2 product images are compulsory (1 Main image + at least 1 thumbnail).";
+    } else if (combinedImages.length > 10) {
+      validationErrors.images = "Maximum 10 images allowed per product (1 Main + up to 9 gallery photos).";
+    }
+
     setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+    if (Object.keys(validationErrors).length > 0) {
+      if (validationErrors.mainImage && validationErrors.galleryImages) {
+        toast.error("Both Main Image and at least 1 Gallery thumbnail are compulsory (Minimum 2 images).");
+      } else if (validationErrors.mainImage) {
+        toast.error("Please upload the compulsory Main Product Image.");
+      } else if (validationErrors.galleryImages) {
+        toast.error("Please upload at least 1 compulsory Gallery thumbnail image.");
+      } else if (validationErrors.images) {
+        toast.error(validationErrors.images);
+      } else if (validationErrors.price?.includes("lower than") || validationErrors.original_price?.includes("higher than")) {
+        toast.error("Selling price must be lower than the Original / MRP price.");
+      } else {
+        toast.error("Please fill in all required fields properly.");
+      }
+      return;
+    }
 
     setIsSaving(true);
     try {
@@ -228,7 +385,7 @@ export default function ProductFormPage() {
         stock_count: Number(form.stock_count),
         in_stock: Boolean(form.in_stock),
         badge_type: form.badge_type || null,
-        images: form.images.filter(Boolean)
+        images: combinedImages
       };
       delete payload._categorySlug;
       delete payload._subcategoryName;
@@ -245,8 +402,11 @@ export default function ProductFormPage() {
       if (err instanceof ApiError && err.details?.length) {
         const errObj = Object.fromEntries(err.details.map((d) => [d.field, d.message]));
         setErrors(errObj);
+        const firstMsg = err.details[0]?.message || err.details[0]?.msg;
+        toast.error(firstMsg || "Please check the form fields and try again.");
+      } else {
+        toast.error(err.message || "Failed to save product. Please try again.");
       }
-      toast.error(err.message);
     } finally {
       setIsSaving(false);
     }
@@ -281,7 +441,7 @@ export default function ProductFormPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="product-form-layout">
+      <form onSubmit={handleSubmit} className="product-form-layout" noValidate>
         {/* Section 1: General Info */}
         <div className="card form-section-card">
           <div className="section-card-heading">
@@ -389,16 +549,20 @@ export default function ProductFormPage() {
           </div>
 
           <div className="form-grid">
-            <FormField label="Selling Price (₹) *" htmlFor="p-price" error={errors.price} hint="Active price charged at checkout">
+            <FormField
+              label="Selling Price (₹) *"
+              htmlFor="p-price"
+              error={errors.price}
+              hint="Active price charged at checkout (must be lower than MRP)"
+            >
               <input
                 id="p-price"
                 type="number"
-                min="500"
-                step="0.01"
+                min="0"
+                step="1"
                 placeholder="e.g. 500"
                 value={form.price}
                 onChange={(e) => update("price", e.target.value)}
-                required
               />
             </FormField>
 
@@ -407,20 +571,21 @@ export default function ProductFormPage() {
               htmlFor="p-original-price"
               error={errors.original_price}
               hint={
-                form.original_price && Number(form.original_price) > Number(form.price)
+                form.original_price && form.price && Number(form.original_price) > Number(form.price)
                   ? `Discount: ${Math.round(((Number(form.original_price) - Number(form.price)) / Number(form.original_price)) * 100)}% OFF (Save ${formatINR(Number(form.original_price) - Number(form.price))})`
+                  : form.original_price && form.price && Number(form.price) >= Number(form.original_price)
+                  ? "Original price must be greater than selling price to offer a discount"
                   : "Displays as strikethrough comparison price"
               }
             >
               <input
                 id="p-original-price"
                 type="number"
-                min="500"
-                step="0.01"
+                min="0"
+                step="1"
                 placeholder="e.g. 600"
                 value={form.original_price}
                 onChange={(e) => update("original_price", e.target.value)}
-                required
               />
             </FormField>
           </div>
@@ -532,76 +697,166 @@ export default function ProductFormPage() {
           </div>
         </div>
 
-        {/* Section 4: Image Gallery */}
-        <div className="card form-section-card">
-          <div className="section-card-heading">
-            <div className="section-icon-wrap">
-              <ImageIcon size={18} />
+        {/* Section 4: Product Images (Dual Card: Main Image + Gallery Thumbnails) */}
+        <div className="product-images-dual-container">
+          {/* Card 1: Main Product Image (Compulsory #1) */}
+          <div className={`card product-image-card main-image-card ${errors.mainImage || errors.images ? "has-image-error" : ""}`}>
+            <div className="product-image-card-header">
+              <div>
+                <h3 className="section-title">
+                  Main Product Image <span className="required-asterisk">* (Compulsory #1)</span>
+                </h3>
+                <p className="section-sub">Primary image shown in catalog &amp; search cards.</p>
+              </div>
+              {mainImage && (
+                <span className="badge-primary-cover">★ Main Image (Compulsory #1)</span>
+              )}
             </div>
-            <div>
-              <h3 className="section-title">Product Image Gallery</h3>
-              <p className="section-sub">
-                Portrait 3:4 ratio photography (minimum 900 × 1200px recommended). The first image serves as the storefront cover. Click any photo to view full resolution.
-              </p>
-            </div>
-          </div>
 
-          {/* Device Dropzone / Upload Area */}
-          <div
-            className={`gallery-dropzone ${isDraggingPhotos ? "is-dragging" : ""} ${isUploading ? "is-uploading" : ""}`}
-            onClick={() => !isUploading && fileInputRef.current?.click()}
-            onDrop={handlePhotoDrop}
-            onDragOver={(e) => {
-              e.preventDefault();
-              if (!isDraggingPhotos) setIsDraggingPhotos(true);
-            }}
-            onDragLeave={(e) => {
-              e.preventDefault();
-              setIsDraggingPhotos(false);
-            }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && !isUploading && fileInputRef.current?.click()}
-          >
-            <div className="gallery-dropzone-icon">
-              <UploadCloud size={28} className={isUploading ? "spin" : ""} />
-            </div>
-            <div className="gallery-dropzone-text">
-              <strong>{isUploading ? "Uploading photos..." : "Click to select or drag & drop product photos"}</strong>
-              <p>Upload directly from your device (JPG, PNG, WEBP, GIF). Multiple files supported.</p>
-            </div>
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm gallery-upload-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                fileInputRef.current?.click();
-              }}
-              disabled={isUploading}
-            >
-              <UploadCloud size={14} />
-              <span>{isUploading ? "Uploading..." : "Browse Device Photos"}</span>
-            </button>
+            {mainImage ? (
+              <div className="main-image-preview-block">
+                <div
+                  className="main-image-frame"
+                  onClick={() => setLightboxImg(resolveImageUrl(mainImage))}
+                  title="Click to view full image"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === "Enter" && setLightboxImg(resolveImageUrl(mainImage))}
+                >
+                  <img
+                    src={resolveImageUrl(mainImage)}
+                    alt="Main Product Preview"
+                    className="main-image-img"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                      const fb = e.currentTarget.parentElement.querySelector(".main-image-fallback");
+                      if (fb) fb.style.display = "flex";
+                    }}
+                  />
+                  <div className="main-image-fallback" style={{ display: "none" }}>
+                    <ImageIcon size={32} />
+                    <span>Preview Unavailable</span>
+                  </div>
+                  <div className="image-hover-zoom-overlay">
+                    <ZoomIn size={20} />
+                    <span>View Larger</span>
+                  </div>
+                </div>
+
+                <div className="main-image-toolbar">
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => mainFileInputRef.current?.click()}
+                    disabled={isUploadingMain}
+                  >
+                    <UploadCloud size={14} />
+                    <span>{isUploadingMain ? "Uploading..." : "Change Image"}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm btn-delete-img"
+                    onClick={removeMainImage}
+                    title="Remove main image"
+                  >
+                    <Trash2 size={15} />
+                    <span>Remove</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div
+                className={`main-image-upload-box ${isDraggingMain ? "is-dragging" : ""} ${isUploadingMain ? "is-uploading" : ""}`}
+                onClick={() => !isUploadingMain && mainFileInputRef.current?.click()}
+                onDrop={handleMainPhotoDrop}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (!isDraggingMain) setIsDraggingMain(true);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  setIsDraggingMain(false);
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && !isUploadingMain && mainFileInputRef.current?.click()}
+              >
+                <div className="main-upload-arrow-wrap">
+                  <span className="main-upload-arrow">↑</span>
+                </div>
+                <strong className="main-upload-title">
+                  {isUploadingMain ? "Uploading Main Image..." : "Upload Main Product Image"}
+                </strong>
+                <p className="main-upload-sub">PNG, JPG or WEBP up to 10MB</p>
+                <span className="main-compulsory-tag">Compulsory #1 (Required)</span>
+              </div>
+            )}
+
             <input
-              ref={fileInputRef}
+              ref={mainFileInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
-              multiple
               hidden
-              onChange={(e) => handlePhotoFiles(e.target.files)}
-              disabled={isUploading}
+              onChange={(e) => handleMainImageUpload(e.target.files)}
+              disabled={isUploadingMain}
             />
+
+            {errors.mainImage && (
+              <div className="field-error-text" style={{ marginTop: 8 }}>{errors.mainImage}</div>
+            )}
           </div>
 
-          {/* Image Cards Grid */}
-          {form.images.length > 0 ? (
-            <div className="image-gallery-grid">
-              {form.images.map((url, idx) => {
+          {/* Card 2: Gallery Images (Thumbnails - 1 compulsory, up to 8 optional) */}
+          <div className={`card product-image-card gallery-image-card ${errors.galleryImages ? "has-image-error" : ""}`}>
+            <div className="product-image-card-header">
+              <div>
+                <div className="gallery-header-title-row">
+                  <h3 className="section-title">Gallery Thumbnails</h3>
+                  <span className="gallery-counter-pill">
+                    {galleryImages.length}/9 ({galleryImages.length > 0 ? "1 Compulsory" : "0/1 Compulsory"} + {Math.max(0, galleryImages.length - 1)}/8 Optional)
+                  </span>
+                </div>
+                <p className="section-sub">Thumb #1 is compulsory (#2 required photo). Up to 8 more are optional.</p>
+              </div>
+              <span className="gallery-max-note">2 Compulsory + 8 Optional = 10 Max</span>
+            </div>
+
+            {/* Gallery Upload & Thumbnail Tiles */}
+            <div className="gallery-tiles-layout">
+              {/* Golden dashed "+ Add Image" tile matching reference screenshot */}
+              {galleryImages.length < 9 && (
+                <div
+                  className={`gallery-gold-add-tile ${isUploadingGallery ? "is-uploading" : ""}`}
+                  onClick={() => !isUploadingGallery && galleryFileInputRef.current?.click()}
+                  onDrop={handleGalleryPhotoDrop}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (!isDraggingGallery) setIsDraggingGallery(true);
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    setIsDraggingGallery(false);
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === "Enter" && !isUploadingGallery && galleryFileInputRef.current?.click()}
+                  title="Click to add thumbnail image"
+                >
+                  <span className="gold-plus-icon">+</span>
+                  <span className="gold-plus-label">
+                    {isUploadingGallery ? "Uploading..." : "Add Image"}
+                  </span>
+                </div>
+              )}
+
+              {/* Uploaded Gallery Thumbnails */}
+              {galleryImages.map((url, idx) => {
                 const resolved = resolveImageUrl(url);
+                const isCompulsoryThumb = idx === 0;
                 return (
-                  <div key={idx} className="image-gallery-card">
+                  <div key={idx} className="gallery-thumb-tile">
                     <div
-                      className="image-preview-wrap"
+                      className="gallery-thumb-media"
                       onClick={() => setLightboxImg(resolved)}
                       title="Click to view larger image"
                       role="button"
@@ -610,68 +865,91 @@ export default function ProductFormPage() {
                     >
                       <img
                         src={resolved}
-                        alt={`Product #${idx + 1}`}
-                        className="image-preview-img"
+                        alt={`Thumb #${idx + 1}`}
+                        className="gallery-thumb-img"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
-                          const fallback = e.currentTarget.parentElement.querySelector(".image-preview-empty");
-                          if (fallback) fallback.style.display = "flex";
+                          const fb = e.currentTarget.parentElement.querySelector(".gallery-thumb-fallback");
+                          if (fb) fb.style.display = "flex";
                         }}
                       />
-                      <div className="image-preview-empty" style={{ display: "none" }}>
-                        <ImageIcon size={26} />
-                        <span>Preview Unavailable</span>
+                      <div className="gallery-thumb-fallback" style={{ display: "none" }}>
+                        <ImageIcon size={20} />
                       </div>
-                      <div className="image-gallery-hover-overlay">
-                        <ZoomIn size={18} />
-                        <span>Enlarge</span>
+                      <div className="image-hover-zoom-overlay">
+                        <ZoomIn size={16} />
                       </div>
-                      {idx === 0 && <span className="image-primary-badge">Cover Photo</span>}
-                      <span className="image-order-badge">#{idx + 1}</span>
+                      <span className="gallery-thumb-num">#{idx + 1}</span>
+                      <span className={`gallery-role-pill ${isCompulsoryThumb ? "compulsory" : "optional"}`}>
+                        {isCompulsoryThumb ? "Compulsory #2" : `Optional #${idx}`}
+                      </span>
                     </div>
-                    <div className="image-card-footer">
-                      <div className="image-card-actions-left">
-                        {idx > 0 ? (
-                          <button
-                            type="button"
-                            className="btn-make-cover"
-                            onClick={() => makeCoverPhoto(idx)}
-                            title="Set this photo as primary cover"
-                          >
-                            Set as Cover
-                          </button>
-                        ) : (
-                          <span className="cover-label-pill">Main Cover</span>
-                        )}
-                      </div>
+
+                    <div className="gallery-thumb-bar">
+                      <button
+                        type="button"
+                        className="btn-set-main"
+                        onClick={() => promoteToMainImage(idx)}
+                        title="Set this thumbnail as Main Product Image"
+                      >
+                        ★ Set as Main
+                      </button>
                       <button
                         type="button"
                         className="btn btn-ghost btn-sm btn-delete-img"
-                        onClick={() => removeImage(idx)}
-                        title="Remove Photo"
+                        onClick={() => removeGalleryImage(idx)}
+                        title="Remove photo"
                       >
-                        <Trash2 size={15} />
+                        <Trash2 size={13} />
                       </button>
                     </div>
                   </div>
                 );
               })}
             </div>
-          ) : (
-            <div className="no-images-notice">
-              <ImageIcon size={22} />
-              <span>No product photos attached yet. Use the upload area above to attach photos from your device.</span>
-            </div>
-          )}
 
-          {lightboxImg && (
-            <ImageLightboxModal
-              src={lightboxImg}
-              alt="Product Photo Preview"
-              onClose={() => setLightboxImg(null)}
+            <input
+              ref={galleryFileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              multiple
+              hidden
+              onChange={(e) => handleGalleryImageUpload(e.target.files)}
+              disabled={isUploadingGallery || galleryImages.length >= 9}
             />
-          )}
+
+            {/* Gallery Guidance / Rule Status Strip */}
+            <div className="gallery-status-footer">
+              {galleryImages.length === 0 ? (
+                <div className="gallery-rule-alert warning">
+                  <span>⚠️ <strong>1 Gallery Thumbnail is compulsory</strong> (1 Main + 1 Gallery = 2 minimum). Up to 8 more thumbnails are optional.</span>
+                </div>
+              ) : (
+                <div className="gallery-rule-alert success">
+                  <span>✓ <strong>{galleryImages.length} gallery image(s) attached</strong> (1 Compulsory + {Math.max(0, galleryImages.length - 1)}/8 Optional) • Total: <strong>{(mainImage ? 1 : 0) + galleryImages.length}/10 images</strong> ({9 - galleryImages.length} slots left)</span>
+                </div>
+              )}
+            </div>
+
+            {errors.galleryImages && (
+              <div className="field-error-text" style={{ marginTop: 8 }}>{errors.galleryImages}</div>
+            )}
+          </div>
         </div>
+
+        {errors.images && (
+          <div className="card-error-banner" style={{ marginTop: 12, padding: "10px 14px", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8, color: "#b91c1c", fontSize: 13, fontWeight: 500 }}>
+            {errors.images}
+          </div>
+        )}
+
+        {lightboxImg && (
+          <ImageLightboxModal
+            src={lightboxImg}
+            alt="Product Photo Preview"
+            onClose={() => setLightboxImg(null)}
+          />
+        )}
 
         {/* Sticky Footer */}
         <div className="product-form-sticky-footer">

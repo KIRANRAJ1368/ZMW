@@ -226,13 +226,86 @@
 }
 
 /* ---------- Nav Links ---------- */
+.nav-links-scroll-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-links-scroll-track {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0;
+}
+
+.nav-links-scroll-track::-webkit-scrollbar {
+  display: none;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: nowrap;
   gap: 6px;
   flex: 1;
-  min-width: 0;
+  min-width: max-content;
+  margin: 0 auto;
+}
+
+.nav-links-scroll-track.is-overflowing .nav-links {
+  justify-content: flex-start;
+  margin: 0;
+}
+
+.nav-scroll-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: var(--color-ink, #111827);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  flex-shrink: 0;
+  z-index: 10;
+  transition: all var(--dur-fast, 0.15s) var(--ease-smooth, ease);
+  padding: 0;
+}
+
+.nav-scroll-arrow:hover {
+  background: var(--color-white, #ffffff);
+  color: var(--color-accent-deep, #faa703);
+  border-color: rgba(15, 23, 42, 0.22);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  transform: scale(1.06);
+}
+
+.nav-scroll-arrow:active {
+  transform: scale(0.96);
+}
+
+.nav-scroll-arrow-left {
+  margin-right: 6px;
+}
+
+.nav-scroll-arrow-right {
+  margin-left: 6px;
 }
 
 .nav-links > li {
@@ -636,6 +709,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .action-btn {
@@ -1032,7 +1106,7 @@
   .navbar-inner {
     padding-left: 16px;
     padding-right: 16px;
-    gap: 8px;
+    gap: 12px;
   }
 
   .brand-logo-img {
@@ -1041,18 +1115,18 @@
   }
 
   .nav-links {
-    gap: 1px;
+    gap: 4px;
   }
 
   .nav-link {
-    padding: 6px 6px;
-    font-size: 0.72rem;
-    letter-spacing: 0.02em;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
   }
 
   .nav-caret-btn {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
 
   .nav-actions {
@@ -1066,6 +1140,7 @@
 }
 
 @media (max-width: 992px) {
+  .nav-links-scroll-wrapper,
   .nav-links {
     display: none;
   }

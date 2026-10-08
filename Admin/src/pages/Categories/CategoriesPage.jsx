@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, Eye, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye } from "lucide-react";
 import { categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { useConfirm } from "../../components/ConfirmDialog/ConfirmDialog";
@@ -7,16 +7,12 @@ import DataTable from "../../components/DataTable/DataTable";
 import StatusBadge from "../../components/StatusBadge/StatusBadge";
 import CategoryFormModal from "./CategoryFormModal";
 import CategoryViewModal from "../../components/EntityViewModal/CategoryViewModal";
-import ImageLightboxModal from "../../components/ImageLightboxModal/ImageLightboxModal";
-import { resolveImageUrl } from "../../utils/imageUrl";
-import { getCategoryImageUrl } from "../../utils/categoryImageResolver";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(null); // null = closed, {} = new, {...} = edit
   const [viewing, setViewing] = useState(null);
-  const [lightboxImg, setLightboxImg] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
   const toast = useToast();
   const [confirm, ConfirmModal] = useConfirm();
@@ -86,7 +82,7 @@ export default function CategoriesPage() {
             </span>
           </h1>
           <p className="page-subtitle">
-            Configure primary store navigational categories (Men, Women, Boys, Girls, Babies) and cover imagery.
+            Configure primary store navigational categories.
           </p>
         </div>
         <button type="button" className="btn btn-accent btn-lg" onClick={() => setEditing({})}>
@@ -109,31 +105,6 @@ export default function CategoriesPage() {
             </button>
           }
           columns={[
-            {
-              key: "image_url",
-              label: "Cover Image",
-              width: "80px",
-              align: "center",
-              render: (row) => {
-                const img = getCategoryImageUrl(row);
-                return (
-                  <img
-                    src={resolveImageUrl(img)}
-                    alt={row.name}
-                    className="cell-thumb"
-                    style={{ width: 46, height: 58, borderRadius: 8, objectFit: "cover", cursor: "pointer" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setLightboxImg(resolveImageUrl(img));
-                    }}
-                    title="Click to inspect cover image in Full HD"
-                    onError={(e) => {
-                      e.target.src = "/images/dept-family-banner.jpg";
-                    }}
-                  />
-                );
-              }
-            },
             {
               key: "name",
               label: "Category Title",
@@ -283,13 +254,6 @@ export default function CategoriesPage() {
           category={viewing}
           onEdit={(cat) => setEditing(cat)}
           onClose={() => setViewing(null)}
-        />
-      )}
-      {lightboxImg && (
-        <ImageLightboxModal
-          src={lightboxImg}
-          alt="Category Preview"
-          onClose={() => setLightboxImg(null)}
         />
       )}
       <ConfirmModal />

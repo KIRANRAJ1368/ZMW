@@ -1,10 +1,6 @@
-import { useState } from "react";
-import { ZoomIn, FolderTree, ArrowUpRight, Hash, Layers, Eye } from "lucide-react";
+import { FolderTree, Hash, Layers, Eye } from "lucide-react";
 import Modal from "../Modal/Modal";
 import StatusBadge from "../StatusBadge/StatusBadge";
-import ImageLightboxModal from "../ImageLightboxModal/ImageLightboxModal";
-import { resolveImageUrl } from "../../utils/imageUrl";
-import { getCategoryImageUrl } from "../../utils/categoryImageResolver";
 import "./EntityViewModal.css";
 
 const formatDate = (value) =>
@@ -13,7 +9,6 @@ const formatDate = (value) =>
     : "—";
 
 export default function CategoryViewModal({ category, onEdit, onClose }) {
-  const [showLightbox, setShowLightbox] = useState(false);
   const data = category || null;
 
   if (!data) {
@@ -30,11 +25,9 @@ export default function CategoryViewModal({ category, onEdit, onClose }) {
   }
 
   const subcategories = data.subcategories || [];
-  const imageUrl = getCategoryImageUrl(data);
-  const resolvedImg = resolveImageUrl(imageUrl);
 
   return (
-    <Modal title="Category Overview" onClose={onClose} width={740}>
+    <Modal title="Category Overview" onClose={onClose} width={620}>
       <div className="ev">
         {/* Header Banner */}
         <div className="ev-header">
@@ -56,89 +49,59 @@ export default function CategoryViewModal({ category, onEdit, onClose }) {
           </div>
         </div>
 
-        {/* 2-Column Body: Spotlight + Stat Cards */}
-        <div className="ev-grid">
-          <div className="ev-media">
-            <div className="ev-section-label">Department Photography</div>
-            <div
-              className="ev-image-frame ev-image-frame-portrait ev-image-clickable"
-              onClick={() => setShowLightbox(true)}
-              title="Click to inspect in Full HD"
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === "Enter" && setShowLightbox(true)}
-            >
-              <span className="ev-image-badge">Storefront Cover</span>
-              <img
-                src={resolvedImg}
-                alt={data.name}
-                loading="lazy"
-                onError={(e) => {
-                  e.currentTarget.src = "/images/dept-family-banner.jpg";
-                }}
-              />
-              <div className="ev-image-hover-hint">
-                <ZoomIn size={14} />
-                <span>Enlarge HD</span>
-              </div>
+        {/* Specifications & Overview */}
+        <div className="ev-details" style={{ width: "100%" }}>
+          <div className="ev-section-label">Storefront Specifications</div>
+
+          <div className="ev-stat-grid">
+            <div className="ev-stat-card">
+              <span className="ev-stat-label">Navigation Slug</span>
+              <span className="ev-stat-value">
+                <code>/{data.slug || "—"}</code>
+              </span>
+            </div>
+
+            <div className="ev-stat-card">
+              <span className="ev-stat-label">Sort Priority</span>
+              <span className="ev-stat-value">
+                <Hash size={14} style={{ color: "var(--indigo)" }} />
+                <span>Sequence #{data.sort_order ?? 0}</span>
+              </span>
+            </div>
+
+            <div className="ev-stat-card">
+              <span className="ev-stat-label">Subcategories</span>
+              <span className="ev-stat-value">
+                <Layers size={14} style={{ color: "var(--indigo)" }} />
+                <span>{subcategories.length} Classified Groups</span>
+              </span>
+            </div>
+
+            <div className="ev-stat-card">
+              <span className="ev-stat-label">Catalog Status</span>
+              <span className="ev-stat-value">
+                <Eye size={14} style={{ color: data.is_active ? "#059669" : "#94a3b8" }} />
+                <span>{data.is_active ? "Live on Store" : "Hidden"}</span>
+              </span>
+            </div>
+
+            <div className="ev-stat-card">
+              <span className="ev-stat-label">Show on Homepage</span>
+              <span className="ev-stat-value">
+                <Eye size={14} style={{ color: data.show_on_homepage !== false ? "#059669" : "#94a3b8" }} />
+                <span>{data.show_on_homepage !== false ? "Visible on Homepage" : "Hidden from Homepage"}</span>
+              </span>
             </div>
           </div>
 
-          <div className="ev-details">
-            <div className="ev-section-label">Storefront Specifications</div>
-
-            <div className="ev-stat-grid">
-              <div className="ev-stat-card">
-                <span className="ev-stat-label">Navigation Slug</span>
-                <span className="ev-stat-value">
-                  <code>/{data.slug || "—"}</code>
-                </span>
-              </div>
-
-              <div className="ev-stat-card">
-                <span className="ev-stat-label">Sort Priority</span>
-                <span className="ev-stat-value">
-                  <Hash size={14} style={{ color: "var(--indigo)" }} />
-                  <span>Sequence #{data.sort_order ?? 0}</span>
-                </span>
-              </div>
-
-              <div className="ev-stat-card">
-                <span className="ev-stat-label">Subcategories</span>
-                <span className="ev-stat-value">
-                  <Layers size={14} style={{ color: "var(--indigo)" }} />
-                  <span>{subcategories.length} Classified Groups</span>
-                </span>
-              </div>
-
-              <div className="ev-stat-card">
-                <span className="ev-stat-label">Catalog Status</span>
-                <span className="ev-stat-value">
-                  <Eye size={14} style={{ color: data.is_active ? "#059669" : "#94a3b8" }} />
-                  <span>{data.is_active ? "Live on Store" : "Hidden"}</span>
-                </span>
-              </div>
-
-              <div className="ev-stat-card">
-                <span className="ev-stat-label">Show on Homepage</span>
-                <span className="ev-stat-value">
-                  <Eye size={14} style={{ color: data.show_on_homepage !== false ? "#059669" : "#94a3b8" }} />
-                  <span>{data.show_on_homepage !== false ? "Visible on Homepage" : "Hidden from Homepage"}</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Editorial Description */}
+          {data.description && (
             <div>
               <div className="ev-section-label">Department Overview</div>
               <div className="ev-desc-card">
-                <p>
-                  {data.description ||
-                    `Bespoke wardrobe essentials curated for iconic fashion and luxury lifestyle within the ${data.name} department.`}
-                </p>
+                <p>{data.description}</p>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Subcategories Chips */}
@@ -189,14 +152,6 @@ export default function CategoryViewModal({ category, onEdit, onClose }) {
           </div>
         </div>
       </div>
-
-      {showLightbox && (
-        <ImageLightboxModal
-          src={resolvedImg}
-          alt={data.name}
-          onClose={() => setShowLightbox(false)}
-        />
-      )}
     </Modal>
   );
 }

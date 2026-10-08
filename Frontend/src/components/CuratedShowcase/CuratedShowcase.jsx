@@ -7,7 +7,7 @@ import {
 } from "../../utils/merchandising";
 import CuratedCard from "./CuratedCard";
 import CTABanner from "../CTABanner/CTABanner";
-import useCarousel from "../../hooks/useCarousel";
+import useManualScrollCarousel from "../../hooks/useManualScrollCarousel";
 import "./CuratedShowcase.css";
 
 /* ── ProductCarousel Component ── */
@@ -45,11 +45,9 @@ function ProductCarousel({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const { index, maxIndex, next, prev, setPaused } = useCarousel(
-    products.length,
-    visibleCount,
-    4000
-  );
+  const { trackRef, scrollNext, scrollPrev, containerProps, trackProps } = useManualScrollCarousel({
+    autoDelayMs: 4000
+  });
 
   return (
     <section
@@ -75,7 +73,7 @@ function ProductCarousel({
         </div>
 
         {/* Filter Pills (e.g. for New Arrivals) */}
-        {filterPills && (
+        {filterPills && filterPills.length > 1 && (
           <div className="curated-dept-pills">
             {filterPills.map((d) => (
               <button
@@ -91,18 +89,12 @@ function ProductCarousel({
         )}
 
         {/* Carousel Viewport & Floating Arrows */}
-        <div
-          className="carousel-container"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onTouchStart={() => setPaused(true)}
-          onTouchEnd={() => setPaused(false)}
-        >
+        <div className="carousel-container" {...containerProps}>
           {/* Side arrow left */}
           <button
             type="button"
             className="carousel-side-arrow left"
-            onClick={prev}
+            onClick={scrollPrev}
             aria-label="Previous slide"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -111,14 +103,8 @@ function ProductCarousel({
           </button>
 
           {/* Track Viewport */}
-          <div className="carousel-viewport">
-            <div
-              className="carousel-slider-track"
-              style={{
-                transform: `translateX(-${index * (100 / visibleCount)}%)`,
-                transition: "transform 450ms cubic-bezier(0.25, 1, 0.5, 1)",
-              }}
-            >
+          <div className="carousel-viewport" {...trackProps}>
+            <div className="carousel-slider-track">
               {products.map((item) => (
                 <div
                   key={item.id}
@@ -142,7 +128,7 @@ function ProductCarousel({
           <button
             type="button"
             className="carousel-side-arrow right"
-            onClick={next}
+            onClick={scrollNext}
             aria-label="Next slide"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -184,21 +170,15 @@ export function NewArrivalsSection() {
   const displayedNewArrivals = useMemo(() => {
     if (selectedDept === "all") return newArrivals;
     const matchDept = (p) => {
+      if (selectedDept === "all") return true;
       const cat = (p.category || "").toLowerCase();
       const sub = (p.subCategory || "").toLowerCase();
       const name = (p.name || "").toLowerCase();
-      if (selectedDept === "mens") return cat === "mens" || cat === "men";
-      if (selectedDept === "women") return cat === "women" || cat === "womens";
-      if (selectedDept === "boys") return cat === "boys";
-      if (selectedDept === "girls") return cat === "girls";
-      if (selectedDept === "kids") return cat === "kids" || cat === "boys" || cat === "girls";
-      if (selectedDept === "babies")
-        return (
-          cat === "babies" ||
-          sub.includes("bab") ||
-          name.includes("baby")
-        );
-      return true;
+      const sel = selectedDept.toLowerCase();
+
+      if (sel === "mens" || sel === "men") return cat === "mens" || cat === "men";
+      if (sel === "women" || sel === "womens") return cat === "women" || cat === "womens";
+      return cat === sel || sub.includes(sel) || name.includes(sel);
     };
     const inNewArrivals = newArrivals.filter(matchDept);
     if (inNewArrivals.length > 0) return inNewArrivals;
@@ -210,15 +190,18 @@ export function NewArrivalsSection() {
     return generateCatalogJsonLd(newArrivals, "ZMW New Arrivals Collection");
   }, [newArrivals]);
 
-  const deptPills = [
-    { id: "all", label: "All Items" },
-    { id: "mens", label: "Men" },
-    { id: "women", label: "Women" },
-    { id: "boys", label: "Boys" },
-    { id: "girls", label: "Girls" },
-    { id: "kids", label: "Kids" },
-    { id: "babies", label: "Babies" },
-  ];
+  const deptPills = useMemo(() => {
+    const defaultPills = [{ id: "all", label: "All Items" }];
+    if (homeData?.categories && homeData.categories.length > 0) {
+      const activeCats = homeData.categories.filter((c) => c.is_active !== false);
+      const catPills = activeCats.map((c) => ({
+        id: c.slug,
+        label: c.name
+      }));
+      return [...defaultPills, ...catPills];
+    }
+    return defaultPills;
+  }, [homeData]);
 
   return (
     <>

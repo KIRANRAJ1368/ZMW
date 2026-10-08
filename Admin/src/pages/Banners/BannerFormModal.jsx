@@ -1,43 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Sparkles, AlertCircle } from "lucide-react";
 import Modal from "../../components/Modal/Modal";
 import FormField from "../../components/FormField/FormField";
 import ImageUploadField from "../../components/ImageUploadField/ImageUploadField";
-import { bannersApi } from "../../services/resources";
+import { bannersApi, categoriesApi } from "../../services/resources";
 import { useToast } from "../../context/ToastContext";
 import { ApiError } from "../../services/api";
 
-const PLACEMENTS = [
+const CORE_PLACEMENTS = [
   { value: "hero", label: "Hero Carousel (Storefront Homepage Top)" },
-  { value: "mens", label: "Men's Collection Header" },
-  { value: "women", label: "Women's Collection Header" },
-  { value: "kids", label: "Kids Collection Header" },
-  { value: "boys", label: "Boys Collection Header" },
-  { value: "girls", label: "Girls Collection Header" },
-  { value: "babies", label: "Babies Collection Header" },
   { value: "best-sellers", label: "Best Sellers Promo Banner" },
   { value: "new-arrivals", label: "New Arrivals Promo Banner" },
   { value: "default", label: "Default Fallback Banner" }
 ];
 
-/**
- * Destinations for the primary "Explore Now" button — one per department.
- * Paths mirror the public routes in Frontend/src/App.jsx and use the same
- * /collection?category=... query format as the Navbar so the click stays a
- * client-side navigation.
- */
-const CTA_DEPARTMENTS = [
-  { value: "/collection?category=mens", label: "Men" },
-  { value: "/collection?category=women", label: "Women" },
-  { value: "/collection?category=boys", label: "Boys" },
-  { value: "/collection?category=girls", label: "Girls" },
-  { value: "/collection?category=babies", label: "Babies" }
-];
-
-const CTA_DEPARTMENT_VALUES = CTA_DEPARTMENTS.map((option) => option.value);
-
 export default function BannerFormModal({ banner, heroCount = 0, onClose, onSaved }) {
   const isEdit = !!banner.id;
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    categoriesApi
+      .list({ includeInactive: "false" })
+      .then((res) => {
+        if (Array.isArray(res?.data)) setCategories(res.data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const dynamicPlacements = useMemo(() => {
+    const list = [
+      { value: "hero", label: "Hero Carousel (Storefront Homepage Top)" }
+    ];
+    categories.forEach((cat) => {
+      list.push({
+        value: cat.slug,
+        label: `${cat.name}'s Collection Header`
+      });
+    });
+    list.push(
+      { value: "best-sellers", label: "Best Sellers Promo Banner" },
+      { value: "new-arrivals", label: "New Arrivals Promo Banner" },
+      { value: "default", label: "Default Fallback Banner" }
+    );
+    // If editing a banner whose placement isn't in the list, keep it visible
+    if (banner?.placement && !list.some((p) => p.value === banner.placement)) {
+      list.push({
+        value: banner.placement,
+        label: `${banner.placement.charAt(0).toUpperCase() + banner.placement.slice(1)} Header`
+      });
+    }
+    return list;
+  }, [categories, banner]);
+
+  const dynamicCtaDepartments = useMemo(() => {
+    return categories.map((cat) => ({
+      value: `/collection?category=${encodeURIComponent(cat.slug)}`,
+      label: cat.name
+    }));
+  }, [categories]);
+
+  const dynamicCtaDepartmentValues = useMemo(() => {
+    return dynamicCtaDepartments.map((d) => d.value);
+  }, [dynamicCtaDepartments]);
 
   function defaultPlacement() {
     if (banner.placement) return banner.placement;
@@ -83,6 +107,12 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
       return;
     }
 
+    if (!form.image_url) {
+      toast.error("Please upload a banner image.");
+      setErrors((prev) => ({ ...prev, image_url: "Please upload a banner image" }));
+      return;
+    }
+
     setErrors({});
     setIsSaving(true);
     try {
@@ -117,9 +147,9 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
   // stored value is preserved on save unless the admin actually picks one.
   const storedCtaLink = banner.primary_cta_link || "";
   const ctaLinkValue = form.primary_cta_link || "";
-  const ctaLinkSelectValue = CTA_DEPARTMENT_VALUES.includes(ctaLinkValue) ? ctaLinkValue : "";
+  const ctaLinkSelectValue = dynamicCtaDepartmentValues.includes(ctaLinkValue) ? ctaLinkValue : "";
   const ctaLinkIsUnmapped =
-    isEdit && ctaLinkValue !== "" && !CTA_DEPARTMENT_VALUES.includes(ctaLinkValue);
+    isEdit && ctaLinkValue !== "" && !dynamicCtaDepartmentValues.includes(ctaLinkValue);
   const ctaLinkChanged = ctaLinkValue !== storedCtaLink;
 
   return (
@@ -161,7 +191,7 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
               value={form.placement}
               onChange={(e) => update("placement", e.target.value)}
             >
-              {PLACEMENTS.map((p) => {
+              {dynamicPlacements.map((p) => {
                 const isHeroOptionDisabled =
                   p.value === "hero" && (!isEdit || banner.placement !== "hero") && heroCount >= 3;
                 return (
@@ -191,7 +221,7 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
           folder="banners"
           aspectRatio="16/9"
           previewHeight={180}
-          hint="Recommended: 1920 × 800px (16:9 / 21:9 wide landscape). Supports JPG, PNG, WEBP."
+          hint="Upload a high-resolution landscape banner (Recommended: 1920 × 800px or 16:9 ratio). Supports JPG, PNG, WEBP up to 10MB."
           error={errors.image_url}
           required
         />
@@ -286,32 +316,12 @@ export default function BannerFormModal({ banner, heroCount = 0, onClose, onSave
               onChange={(e) => update("primary_cta_link", e.target.value)}
             >
               <option value="">— Select department —</option>
-              {CTA_DEPARTMENTS.map((option) => (
+              {dynamicCtaDepartments.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
             </select>
-          </FormField>
-        </div>
-
-        <div className="form-grid">
-          <FormField label="Secondary CTA Text (Optional)" htmlFor="b-cta2-text">
-            <input
-              id="b-cta2-text"
-              placeholder="e.g. View Lookbook"
-              value={form.secondary_cta_text}
-              onChange={(e) => update("secondary_cta_text", e.target.value)}
-            />
-          </FormField>
-
-          <FormField label="Secondary CTA Link" htmlFor="b-cta2-link">
-            <input
-              id="b-cta2-link"
-              placeholder="e.g. /collection?collection=new-arrivals"
-              value={form.secondary_cta_link}
-              onChange={(e) => update("secondary_cta_link", e.target.value)}
-            />
           </FormField>
         </div>
 
